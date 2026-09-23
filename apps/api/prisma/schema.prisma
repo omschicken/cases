@@ -77,6 +77,13 @@ model User {
   id              String    @id @default(uuid())
   email           String    @unique
   passwordHash    String
+  // Set only for accounts created via Steam login. The random passwordHash
+  // above still gets filled in for these (nobody can ever guess it), so
+  // password-login continues to safely reject Steam-only accounts without
+  // needing passwordHash itself to be nullable.
+  steamId         String?   @unique
+  steamAvatarUrl  String?
+  displayName     String?
   role            UserRole  @default(USER)
   kycStatus       KycStatus @default(UNVERIFIED)
   ageConfirmedAt  DateTime

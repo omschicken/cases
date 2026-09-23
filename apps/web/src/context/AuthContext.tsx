@@ -18,6 +18,8 @@ interface AuthContextValue {
     ageConfirmed: true;
     referralCode?: string;
   }) => Promise<void>;
+  /** Re-fetches the current user — used after tokens are stored outside of login/register, e.g. the Steam callback. */
+  refreshUser: () => Promise<void>;
   logout: () => void;
 }
 
@@ -72,8 +74,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, login, register, logout }),
-    [user, loading, login, register, logout],
+    () => ({ user, loading, login, register, refreshUser: loadMe, logout }),
+    [user, loading, login, register, loadMe, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

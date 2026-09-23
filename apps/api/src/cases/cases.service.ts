@@ -206,14 +206,14 @@ export class CasesService {
       include: {
         resultCaseItem: true,
         case: { select: { name: true } },
-        user: { select: { email: true } },
+        user: { select: { email: true, displayName: true } },
       },
     });
 
     return events.map((event) => ({
       id: event.id,
       createdAt: event.createdAt,
-      userLabel: maskEmail(event.user.email),
+      userLabel: event.user.displayName ?? maskEmail(event.user.email),
       caseName: event.case.name,
       item: {
         name: event.resultCaseItem.name,

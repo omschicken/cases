@@ -1,10 +1,13 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { api } from "../lib/api";
+import { api, API_URL } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import type { WalletDto } from "../lib/types";
 import ak47 from "../assets/ak47.png";
+import { Sidebar } from "./Sidebar";
+import { DropsTicker } from "./DropsTicker";
+import { PagesBar } from "./PagesBar";
 
 export function Layout() {
   const { user, logout } = useAuth();
@@ -23,6 +26,7 @@ export function Layout() {
 
   return (
     <div className="app-shell">
+      <DropsTicker />
       <header className="top-nav">
         <NavLink to="/" className="brand">
           <img src={ak47} alt="" className="brand-mark" aria-hidden="true" />
@@ -30,32 +34,32 @@ export function Layout() {
             DONE<span className="brand-suffix">.CASE</span>
           </span>
         </NavLink>
-        <nav>
-          <NavLink to="/">Cases</NavLink>
-          {user && <NavLink to="/inventory">Inventory</NavLink>}
-          {user && <NavLink to="/wallet">Wallet</NavLink>}
-          {user && <NavLink to="/referral">Referral</NavLink>}
-          {user && <NavLink to="/profile">Profile</NavLink>}
-          {user?.role === "ADMIN" && <NavLink to="/admin">Admin</NavLink>}
-        </nav>
         <div className="nav-right">
+          {user && <NavLink to="/profile">Profile</NavLink>}
           {user ? (
             <>
-              {balanceMinor !== null && <span className="balance-pill">{formatMinor(balanceMinor)}</span>}
-              <span className="user-email">{user.email}</span>
+              {balanceMinor !== null && (
+                <NavLink to="/wallet" className="balance-pill">
+                  {formatMinor(balanceMinor)}
+                </NavLink>
+              )}
+              <span className="user-email">{user.displayName ?? user.email}</span>
               <button onClick={logout}>Log out</button>
             </>
           ) : (
-            <>
-              <NavLink to="/login">Log in</NavLink>
-              <NavLink to="/register">Sign up</NavLink>
-            </>
+            <a href={`${API_URL}/auth/steam`} className="steam-login-button">
+              Log in via Steam
+            </a>
           )}
         </div>
       </header>
-      <main className="page-content">
-        <Outlet />
-      </main>
+      <PagesBar />
+      <div className="body-row">
+        <Sidebar />
+        <main className="page-content">
+          <Outlet />
+        </main>
+      </div>
       <footer className="site-footer">
         GunDone.case — 18+ only. Gambling can be addictive, play responsibly.
         Provably-fair RNG: every case result can be independently verified.

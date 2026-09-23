@@ -14,6 +14,8 @@ export interface AuthenticatedUser {
   id: string;
   email: string;
   role: UserRole;
+  displayName?: string | null;
+  steamAvatarUrl?: string | null;
 }
 
 export interface CaseItem {
