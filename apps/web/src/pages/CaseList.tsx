@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
+import { HeroBanner } from "../components/HeroBanner";
+import { StatsBar } from "../components/StatsBar";
+import { RecentDrops } from "../components/RecentDrops";
 import type { CaseDto } from "../lib/types";
 
 export function CaseListPage() {
@@ -17,7 +20,11 @@ export function CaseListPage() {
 
   return (
     <div>
-      <h1>Cases</h1>
+      <HeroBanner />
+      <StatsBar />
+      <RecentDrops />
+
+      <h1 className="section-heading">Cases</h1>
       {error && <p className="form-error">{error}</p>}
       <div className="case-grid">
         {cases.map((c) => (

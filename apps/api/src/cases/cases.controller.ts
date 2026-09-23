@@ -15,6 +15,19 @@ export class CasesController {
     return this.casesService.listActive();
   }
 
+  // Must be declared before the ":slug" route below — both are single path
+  // segments, and NestJS/Express matches in registration order, so ":slug"
+  // would otherwise swallow these as if they were a case slug.
+  @Get("recent-drops")
+  recentDrops() {
+    return this.casesService.listRecentDrops();
+  }
+
+  @Get("stats")
+  stats() {
+    return this.casesService.getPublicStats();
+  }
+
   @Get(":slug")
   getBySlug(@Param("slug") slug: string) {
     return this.casesService.getBySlug(slug);

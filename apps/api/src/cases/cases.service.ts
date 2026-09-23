@@ -10,6 +10,7 @@ import {
 import { PrismaService } from "../prisma/prisma.service";
 import { WalletService } from "../wallet/wallet.service";
 import { CreateCaseDto } from "./dto/admin-case.dto";
+import { maskEmail } from "../common/util/mask";
 
 @Injectable()
 export class CasesService {
@@ -195,6 +196,51 @@ export class CasesService {
     });
 
     return { verifiable: true, ...result };
+  }
+
+  /** Public live-drops feed — real openings, not mocked. Username is masked. */
+  async listRecentDrops(take = 16) {
+    const events = await this.prisma.caseOpenEvent.findMany({
+      orderBy: { createdAt: "desc" },
+      take,
+      include: {
+        resultCaseItem: true,
+        case: { select: { name: true } },
+        user: { select: { email: true } },
+      },
+    });
+
+    return events.map((event) => ({
+      id: event.id,
+      createdAt: event.createdAt,
+      userLabel: maskEmail(event.user.email),
+      caseName: event.case.name,
+      item: {
+        name: event.resultCaseItem.name,
+        imageUrl: event.resultCaseItem.imageUrl,
+        valueMinor: event.resultCaseItem.valueMinor,
+        currency: event.resultCaseItem.currency,
+        rarity: event.resultCaseItem.rarity,
+      },
+    }));
+  }
+
+  /** Public headline numbers for the homepage stats bar. */
+  async getPublicStats() {
+    const [{ opens, totalValueMinor }] = await this.prisma.$queryRaw<
+      { opens: bigint; totalValueMinor: bigint }[]
+    >`
+      SELECT COUNT(*)::bigint AS opens, COALESCE(SUM(ci."valueMinor"), 0)::bigint AS "totalValueMinor"
+      FROM "CaseOpenEvent" eo
+      JOIN "CaseItem" ci ON ci.id = eo."resultCaseItemId"
+    `;
+    const playerCount = await this.prisma.user.count();
+
+    return {
+      totalOpens: opens,
+      totalValueMinor,
+      playerCount,
+    };
   }
 
   // --- Admin management ---

@@ -67,3 +67,23 @@ export interface LedgerEntryDto {
   referenceId: string;
   createdAt: string;
 }
+
+export interface RecentDropDto {
+  id: string;
+  createdAt: string;
+  userLabel: string;
+  caseName: string;
+  item: {
+    name: string;
+    imageUrl: string;
+    valueMinor: string;
+    currency: string;
+    rarity: ItemRarity;
+  };
+}
+
+export interface PublicStatsDto {
+  totalOpens: string;
+  totalValueMinor: string;
+  playerCount: number;
+}
