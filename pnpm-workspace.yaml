@@ -8,3 +8,10 @@ allowBuilds:
   argon2: true
   esbuild: true
   prisma: true
+# pnpm's supply-chain "minimum release age" check rejects lockfile entries
+# published too recently. Excluded here: browserslist's data-only transitive
+# deps, which publish near-daily and have no install scripts — the check's
+# general 1-2 day protection stays on for everything else.
+minimumReleaseAgeExclude:
+  - electron-to-chromium
+  - node-releases
