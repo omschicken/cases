@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import type { WalletDto } from "../lib/types";
+import ak47 from "../assets/ak47.png";
 
 export function Layout() {
   const { user, logout } = useAuth();
@@ -24,8 +25,10 @@ export function Layout() {
     <div className="app-shell">
       <header className="top-nav">
         <NavLink to="/" className="brand">
-          <span className="brand-crosshair" aria-hidden="true" />
-          GunDone<span className="brand-suffix">.case</span>
+          <img src={ak47} alt="" className="brand-mark" aria-hidden="true" />
+          <span className="brand-word">
+            DONE<span className="brand-suffix">.CASE</span>
+          </span>
         </NavLink>
         <nav>
           <NavLink to="/">Cases</NavLink>
