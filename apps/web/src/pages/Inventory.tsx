@@ -1,6 +1,8 @@
+import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
+import { rarityColor } from "../lib/rarity";
 import type { InventoryItemDto } from "../lib/types";
 
 export function InventoryPage() {
@@ -36,7 +38,11 @@ export function InventoryPage() {
       {error && <p className="form-error">{error}</p>}
       <div className="item-grid">
         {items.map((inv) => (
-          <div className="item-card" key={inv.id}>
+          <div
+            className="item-card"
+            key={inv.id}
+            style={{ "--rarity-color": rarityColor(inv.caseItem.rarity) } as CSSProperties}
+          >
             <img src={inv.caseItem.imageUrl} alt={inv.caseItem.name} />
             <p>{inv.caseItem.name}</p>
             <p className="value">{formatMinor(inv.caseItem.valueMinor, inv.caseItem.currency)}</p>

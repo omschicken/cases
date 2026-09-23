@@ -214,6 +214,7 @@ export class CasesService {
             weight: item.weight,
             valueMinor: item.valueMinor,
             currency: item.currency,
+            rarity: item.rarity,
           })),
         },
       },

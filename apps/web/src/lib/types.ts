@@ -1,6 +1,14 @@
 export type UserRole = "USER" | "ADMIN";
 export type KycStatus = "UNVERIFIED" | "PENDING" | "VERIFIED" | "REJECTED";
 export type PaymentRail = "CARD" | "CRYPTO" | "STEAM_SKIN";
+export type ItemRarity =
+  | "CONSUMER"
+  | "INDUSTRIAL"
+  | "MIL_SPEC"
+  | "RESTRICTED"
+  | "CLASSIFIED"
+  | "COVERT"
+  | "GOLD";
 
 export interface AuthenticatedUser {
   id: string;
@@ -15,6 +23,7 @@ export interface CaseItem {
   weight: number;
   valueMinor: string; // BigInt serialized as string by the API
   currency: string;
+  rarity: ItemRarity;
 }
 
 export interface CaseDto {

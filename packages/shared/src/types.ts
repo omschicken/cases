@@ -12,6 +12,15 @@ export type LedgerReason =
 
 export type PaymentRail = "CARD" | "CRYPTO" | "STEAM_SKIN";
 
+export type ItemRarity =
+  | "CONSUMER"
+  | "INDUSTRIAL"
+  | "MIL_SPEC"
+  | "RESTRICTED"
+  | "CLASSIFIED"
+  | "COVERT"
+  | "GOLD";
+
 export type DepositStatus = "PENDING" | "CONFIRMED" | "FAILED";
 
 export type WithdrawalStatus = "PENDING" | "APPROVED" | "REJECTED" | "PAID" | "FAILED";
@@ -23,6 +32,7 @@ export interface CaseItemDto {
   weight: number;
   valueMinor: number;
   currency: string;
+  rarity: ItemRarity;
 }
 
 export interface CaseDto {

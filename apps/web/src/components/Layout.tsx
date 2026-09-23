@@ -24,7 +24,8 @@ export function Layout() {
     <div className="app-shell">
       <header className="top-nav">
         <NavLink to="/" className="brand">
-          CS2 Cases
+          <span className="brand-crosshair" aria-hidden="true" />
+          GunDone<span className="brand-suffix">.case</span>
         </NavLink>
         <nav>
           <NavLink to="/">Cases</NavLink>
@@ -53,9 +54,9 @@ export function Layout() {
         <Outlet />
       </main>
       <footer className="site-footer">
-        18+ only. Gambling can be addictive — play responsibly. Provably-fair
-        RNG: every case result can be independently verified. Licensed
-        operator; licence status shown in the footer of the production site.
+        GunDone.case — 18+ only. Gambling can be addictive, play responsibly.
+        Provably-fair RNG: every case result can be independently verified.
+        Licensed operator; licence status shown here in production.
       </footer>
     </div>
   );

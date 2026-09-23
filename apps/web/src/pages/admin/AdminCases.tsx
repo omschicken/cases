@@ -1,7 +1,8 @@
 import { FormEvent, useEffect, useState } from "react";
 import { api, ApiError } from "../../lib/api";
 import { formatMinor } from "../../lib/money";
-import type { CaseDto } from "../../lib/types";
+import { RARITY_LABELS } from "../../lib/rarity";
+import type { CaseDto, ItemRarity } from "../../lib/types";
 
 interface ItemForm {
   name: string;
@@ -9,10 +10,13 @@ interface ItemForm {
   weight: string;
   valueMinor: string;
   currency: string;
+  rarity: ItemRarity;
 }
 
+const RARITY_OPTIONS = Object.keys(RARITY_LABELS) as ItemRarity[];
+
 function emptyItem(): ItemForm {
-  return { name: "", imageUrl: "", weight: "10", valueMinor: "500", currency: "USD" };
+  return { name: "", imageUrl: "", weight: "10", valueMinor: "500", currency: "USD", rarity: "MIL_SPEC" };
 }
 
 export function AdminCases() {
@@ -57,6 +61,7 @@ export function AdminCases() {
           weight: Number(it.weight),
           valueMinor: Number(it.valueMinor),
           currency: it.currency,
+          rarity: it.rarity,
         })),
       });
       setInfo("Case created.");
@@ -164,6 +169,16 @@ export function AdminCases() {
               onChange={(e) => updateItem(i, { currency: e.target.value })}
               required
             />
+            <select
+              value={item.rarity}
+              onChange={(e) => updateItem(i, { rarity: e.target.value as ItemRarity })}
+            >
+              {RARITY_OPTIONS.map((r) => (
+                <option key={r} value={r}>
+                  {RARITY_LABELS[r]}
+                </option>
+              ))}
+            </select>
           </div>
         ))}
         <button type="button" onClick={() => setItems((prev) => [...prev, emptyItem()])}>

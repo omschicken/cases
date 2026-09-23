@@ -1,7 +1,9 @@
-# CS2 Cases
+# GunDone.case
 
 A real-money CS2 case-opening platform: users deposit, open cases with a
 provably-fair RNG, and withdraw winnings as cash, crypto, or CS2 skins.
+Design direction: Stake.com (dark/violet brand palette) + Upgrader.vip
+(the spinning case-opening reel).
 
 ## ⚠️ Legal status — read before deploying with real money
 

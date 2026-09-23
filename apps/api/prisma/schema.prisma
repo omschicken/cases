@@ -48,6 +48,19 @@ enum WithdrawalStatus {
   FAILED
 }
 
+/// CS2-style rarity tiers, ordered low to high. Purely cosmetic (card
+/// color/glow) — actual drop odds come from CaseItem.weight, set
+/// independently by the admin creating the case.
+enum ItemRarity {
+  CONSUMER
+  INDUSTRIAL
+  MIL_SPEC
+  RESTRICTED
+  CLASSIFIED
+  COVERT
+  GOLD
+}
+
 enum InventoryItemStatus {
   IN_INVENTORY
   SOLD
@@ -163,6 +176,7 @@ model CaseItem {
   weight      Float    // relative drop weight within the case
   valueMinor  BigInt   // resale / withdrawal value
   currency    String   @default("USD")
+  rarity      ItemRarity @default(MIL_SPEC)
   createdAt   DateTime @default(now())
 
   inventoryItems InventoryItem[]

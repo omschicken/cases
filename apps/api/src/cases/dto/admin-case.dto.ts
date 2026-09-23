@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 import {
   ArrayMinSize,
   IsArray,
+  IsEnum,
   IsInt,
   IsPositive,
   IsString,
@@ -10,6 +11,7 @@ import {
   Min,
   ValidateNested,
 } from "class-validator";
+import { ItemRarity } from "@prisma/client";
 
 export class CreateCaseItemDto {
   @IsString()
@@ -29,6 +31,9 @@ export class CreateCaseItemDto {
   @IsString()
   @Length(3, 8)
   currency!: string;
+
+  @IsEnum(ItemRarity)
+  rarity!: ItemRarity;
 }
 
 export class CreateCaseDto {

@@ -1,8 +1,11 @@
+import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
+import { rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
+import { CaseOpeningReel } from "../components/CaseOpeningReel";
 import type { CaseDto, OpenCaseResult } from "../lib/types";
 
 export function CaseDetailPage() {
@@ -13,6 +16,8 @@ export function CaseDetailPage() {
   const [clientSeed, setClientSeed] = useState<string | null>(null);
   const [opening, setOpening] = useState(false);
   const [result, setResult] = useState<OpenCaseResult | null>(null);
+  const [revealed, setRevealed] = useState(false);
+  const [spinKey, setSpinKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,10 +43,14 @@ export function CaseDetailPage() {
     if (!theCase) return;
     setError(null);
     setOpening(true);
+    setRevealed(false);
     setResult(null);
     try {
+      // The result is fully determined here — the reel below just animates
+      // toward it, it never influences the outcome.
       const res = await api.post<OpenCaseResult>("/cases/open", { caseId: theCase.id });
       setResult(res);
+      setSpinKey((k) => k + 1);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Could not open case");
     } finally {
@@ -52,14 +61,29 @@ export function CaseDetailPage() {
   if (error && !theCase) return <p className="form-error">{error}</p>;
   if (!theCase) return <p>Loading…</p>;
 
+  const spinning = result !== null && !revealed;
+
   return (
     <div className="case-detail">
       <h1>{theCase.name}</h1>
       <p className="price">{formatMinor(theCase.priceMinor, theCase.currency)}</p>
 
+      {result && (
+        <CaseOpeningReel
+          key={spinKey}
+          poolItems={theCase.items}
+          winningItem={result.item}
+          onFinished={() => setRevealed(true)}
+        />
+      )}
+
       <div className="item-grid">
         {theCase.items.map((item) => (
-          <div className="item-card" key={item.id}>
+          <div
+            className="item-card"
+            key={item.id}
+            style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}
+          >
             <img src={item.imageUrl} alt={item.name} />
             <p>{item.name}</p>
             <p className="value">{formatMinor(item.valueMinor, item.currency)}</p>
@@ -68,8 +92,8 @@ export function CaseDetailPage() {
       </div>
 
       {user ? (
-        <button onClick={openCase} disabled={opening} className="open-button">
-          {opening ? "Opening…" : `Open for ${formatMinor(theCase.priceMinor, theCase.currency)}`}
+        <button onClick={openCase} disabled={opening || spinning} className="open-button">
+          {opening ? "Rolling…" : spinning ? "Spinning…" : `Open for ${formatMinor(theCase.priceMinor, theCase.currency)}`}
         </button>
       ) : (
         <p>
@@ -97,8 +121,8 @@ export function CaseDetailPage() {
         </div>
       )}
 
-      {result && (
-        <div className="result-panel">
+      {result && revealed && (
+        <div className="result-panel" style={{ "--rarity-color": rarityColor(result.item.rarity) } as CSSProperties}>
           <h2>You got: {result.item.name}</h2>
           <img src={result.item.imageUrl} alt={result.item.name} className="result-image" />
           <p className="value">{formatMinor(result.item.valueMinor, result.item.currency)}</p>
