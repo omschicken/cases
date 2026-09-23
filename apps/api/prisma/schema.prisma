@@ -1,0 +1,292 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum KycStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum LedgerReason {
+  DEPOSIT
+  WITHDRAWAL
+  CASE_OPEN
+  ITEM_SELL
+  REFERRAL_COMMISSION
+  ADMIN_ADJUSTMENT
+}
+
+enum PaymentRail {
+  CARD
+  CRYPTO
+  STEAM_SKIN
+}
+
+enum DepositStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+  FAILED
+}
+
+enum InventoryItemStatus {
+  IN_INVENTORY
+  SOLD
+  WITHDRAWN
+}
+
+enum DocumentType {
+  PASSPORT
+  NATIONAL_ID
+  DRIVERS_LICENSE
+}
+
+model User {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  passwordHash    String
+  role            UserRole  @default(USER)
+  kycStatus       KycStatus @default(UNVERIFIED)
+  ageConfirmedAt  DateTime
+  referralCode    String    @unique
+  referredById    String?
+  referredBy      User?     @relation("Referrals", fields: [referredById], references: [id])
+  referrals       User[]    @relation("Referrals")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  wallet          Wallet?
+  kycRecords      KycRecord[]
+  inventoryItems  InventoryItem[]
+  caseOpenEvents  CaseOpenEvent[]
+  provablyFairSeeds ProvablyFairSeed[]
+  deposits        Deposit[]
+  withdrawals     Withdrawal[]
+  referralEarningsAsReferrer ReferralEarning[] @relation("ReferrerEarnings")
+  referralEarningsAsReferred ReferralEarning[] @relation("ReferredEarnings")
+  adminAuditLogs  AdminAuditLog[]
+
+  @@index([referredById])
+}
+
+model Wallet {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  balanceMinor  BigInt   @default(0)
+  currency      String   @default("USD")
+  version       Int      @default(0) // optimistic-lock guard alongside row-level FOR UPDATE
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  ledgerEntries LedgerEntry[]
+}
+
+/// Append-only ledger. balanceAfterMinor is the wallet balance immediately
+/// after this entry, written inside the same DB transaction as the wallet
+/// update so it can be replayed/audited independently of Wallet.balanceMinor.
+model LedgerEntry {
+  id                String       @id @default(uuid())
+  walletId          String
+  wallet            Wallet       @relation(fields: [walletId], references: [id])
+  amountMinor       BigInt       // signed: positive = credit, negative = debit
+  balanceAfterMinor BigInt
+  reason            LedgerReason
+  referenceType     String       // e.g. "Deposit", "CaseOpenEvent", "Withdrawal"
+  referenceId       String
+  createdAt         DateTime     @default(now())
+
+  @@index([walletId, createdAt])
+  @@index([referenceType, referenceId])
+}
+
+model KycRecord {
+  id                String       @id @default(uuid())
+  userId            String
+  user              User         @relation(fields: [userId], references: [id])
+  status            KycStatus    @default(PENDING)
+  fullName          String
+  dateOfBirth       DateTime
+  documentType      DocumentType
+  documentFrontUrl  String
+  documentBackUrl   String?
+  selfieUrl         String
+  providerRef       String?      // external KYC provider's verification id
+  reviewedByAdminId String?
+  reviewedAt        DateTime?
+  rejectionReason   String?
+  createdAt         DateTime     @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model Case {
+  id        String     @id @default(uuid())
+  slug      String     @unique
+  name      String
+  priceMinor BigInt
+  currency  String     @default("USD")
+  imageUrl  String
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  items         CaseItem[]
+  openEvents    CaseOpenEvent[]
+}
+
+model CaseItem {
+  id          String   @id @default(uuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id])
+  name        String
+  imageUrl    String
+  weight      Float    // relative drop weight within the case
+  valueMinor  BigInt   // resale / withdrawal value
+  currency    String   @default("USD")
+  createdAt   DateTime @default(now())
+
+  inventoryItems InventoryItem[]
+  openEvents     CaseOpenEvent[]
+
+  @@index([caseId])
+}
+
+/// One active provably-fair seed pair per user. Rotating reveals the
+/// previous serverSeed and starts a fresh (serverSeed, clientSeed, nonce=0).
+model ProvablyFairSeed {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  serverSeed      String    // kept secret while active; readable once revealed
+  serverSeedHash  String    // published to the client immediately on creation
+  clientSeed      String
+  nonce           Int       @default(0) // next nonce to be consumed
+  isActive        Boolean   @default(true)
+  isRevealed      Boolean   @default(false)
+  revealedAt      DateTime?
+  createdAt       DateTime  @default(now())
+
+  openEvents      CaseOpenEvent[]
+
+  @@index([userId, isActive])
+}
+
+model CaseOpenEvent {
+  id                  String           @id @default(uuid())
+  userId              String
+  user                User             @relation(fields: [userId], references: [id])
+  caseId              String
+  case                Case             @relation(fields: [caseId], references: [id])
+  resultCaseItemId    String
+  resultCaseItem      CaseItem         @relation(fields: [resultCaseItemId], references: [id])
+  provablyFairSeedId  String
+  provablyFairSeed    ProvablyFairSeed @relation(fields: [provablyFairSeedId], references: [id])
+  nonce               Int
+  roll                Float
+  inventoryItemId     String?          @unique
+  inventoryItem       InventoryItem?   @relation(fields: [inventoryItemId], references: [id])
+  createdAt           DateTime         @default(now())
+
+  @@index([userId, createdAt])
+  @@index([provablyFairSeedId, nonce])
+}
+
+model InventoryItem {
+  id          String               @id @default(uuid())
+  userId      String
+  user        User                 @relation(fields: [userId], references: [id])
+  caseItemId  String
+  caseItem    CaseItem             @relation(fields: [caseItemId], references: [id])
+  status      InventoryItemStatus  @default(IN_INVENTORY)
+  acquiredAt  DateTime             @default(now())
+  resolvedAt  DateTime?            // sold or withdrawn timestamp
+
+  caseOpenEvent CaseOpenEvent?
+
+  @@index([userId, status])
+}
+
+model Deposit {
+  id            String         @id @default(uuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  rail          PaymentRail
+  amountMinor   BigInt
+  currency      String
+  status        DepositStatus  @default(PENDING)
+  providerRef   String?        // external PSP/crypto/steam trade reference
+  createdAt     DateTime       @default(now())
+  confirmedAt   DateTime?
+
+  @@index([userId, createdAt])
+  @@index([providerRef])
+}
+
+model Withdrawal {
+  id                 String            @id @default(uuid())
+  userId             String
+  user               User              @relation(fields: [userId], references: [id])
+  rail               PaymentRail
+  amountMinor        BigInt
+  currency           String
+  destination        String            // IBAN / wallet address / Steam trade URL
+  status             WithdrawalStatus  @default(PENDING)
+  providerRef        String?
+  requestedAt        DateTime          @default(now())
+  reviewedByAdminId  String?
+  reviewedAt         DateTime?
+  rejectionReason    String?
+  paidAt             DateTime?
+
+  @@index([userId, requestedAt])
+  @@index([status])
+}
+
+model ReferralEarning {
+  id               String   @id @default(uuid())
+  referrerUserId   String
+  referrer         User     @relation("ReferrerEarnings", fields: [referrerUserId], references: [id])
+  referredUserId   String
+  referred         User     @relation("ReferredEarnings", fields: [referredUserId], references: [id])
+  amountMinor      BigInt
+  currency         String   @default("USD")
+  sourceType       String   // e.g. "DEPOSIT_COMMISSION"
+  sourceReferenceId String
+  createdAt        DateTime @default(now())
+
+  @@index([referrerUserId, createdAt])
+}
+
+model AdminAuditLog {
+  id            String   @id @default(uuid())
+  adminUserId   String
+  admin         User     @relation(fields: [adminUserId], references: [id])
+  action        String
+  targetType    String
+  targetId      String
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  @@index([adminUserId, createdAt])
+  @@index([targetType, targetId])
+}
