@@ -41,11 +41,7 @@ const RARITY_COLOR: Record<ItemRarity, string> = {
   GOLD: "#E4AE39",
 };
 
-/**
- * The case box art itself has no real-world equivalent to hotlink (crate
- * art isn't part of the public item dataset we use for skins), so it stays
- * a branded SVG placeholder. Item icons below are real Steam CDN renders.
- */
+/** Fallback only — every case in cs2-items.json now carries a real caseImageUrl. */
 function caseImage(color: string, name: string): string {
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='220'>
     <rect width='320' height='220' fill='#14151d'/>
@@ -68,6 +64,7 @@ interface CaseSeed {
   slug: string;
   name: string;
   priceMinor: number;
+  caseImageUrl?: string;
   items: ItemSeed[];
 }
 
@@ -195,8 +192,36 @@ async function seedBotDrops() {
   console.log(`seeded bot drops: ${BOT_NAMES.length} bots`);
 }
 
+/**
+ * Removes cases that are no longer in cs2-items.json (e.g. the old 5
+ * hand-picked demo cases, now superseded by the full real case catalog) —
+ * but only when every one of their items is free of real inventory/open
+ * history, same safety rule as the per-case item replacement below.
+ */
+async function pruneRetiredCases() {
+  const keepSlugs = new Set(CASES.map((c) => c.slug));
+  const existingCases = await prisma.case.findMany({ include: { items: true } });
+
+  for (const existing of existingCases) {
+    if (keepSlugs.has(existing.slug)) continue;
+
+    const untouched = await prisma.caseItem.count({
+      where: { caseId: existing.id, inventoryItems: { none: {} }, openEvents: { none: {} } },
+    });
+    if (untouched !== existing.items.length) {
+      console.log(`keep retired case (has real history): ${existing.slug}`);
+      continue;
+    }
+
+    await prisma.caseItem.deleteMany({ where: { caseId: existing.id } });
+    await prisma.case.delete({ where: { id: existing.id } });
+    console.log(`removed retired case: ${existing.slug}`);
+  }
+}
+
 async function main() {
   await purgeBotDrops();
+  await pruneRetiredCases();
 
   for (const c of CASES) {
     const existing = await prisma.case.findUnique({ where: { slug: c.slug }, include: { items: true } });
@@ -220,7 +245,7 @@ async function main() {
         data: {
           name: c.name,
           priceMinor: c.priceMinor,
-          imageUrl: caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
+          imageUrl: c.caseImageUrl ?? caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
           items: {
             create: c.items.map((item) => ({
               name: item.name,
@@ -243,7 +268,7 @@ async function main() {
         name: c.name,
         priceMinor: c.priceMinor,
         currency: "USD",
-        imageUrl: caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
+        imageUrl: c.caseImageUrl ?? caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
         items: {
           create: c.items.map((item) => ({
             name: item.name,
