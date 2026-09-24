@@ -931,3 +931,234 @@ button:disabled {
   color: var(--text-dim);
   line-height: 1.55;
 }
+
+.menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  padding: 0.4rem;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.menu-toggle:hover {
+  background: var(--panel-2);
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* =====================================================================
+   Mobile / tablet breakpoints
+   ===================================================================== */
+
+@media (max-width: 900px) {
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 260px;
+    height: 100vh;
+    z-index: 40;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    box-shadow: 8px 0 24px rgba(0, 0, 0, 0.4);
+    transition: left 0.2s ease;
+  }
+
+  .sidebar.sidebar-open {
+    left: 0;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 39;
+  }
+
+  .page-content {
+    padding: 1.1rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .top-nav {
+    padding: 0.6rem 0.85rem;
+    gap: 0.6rem;
+  }
+
+  .brand-mark {
+    height: 1.5rem;
+  }
+
+  .brand-word {
+    font-size: 1.3rem;
+  }
+
+  .nav-right {
+    gap: 0.45rem;
+  }
+
+  .nav-right a:not(.balance-pill) {
+    display: none;
+  }
+
+  .user-email {
+    display: none;
+  }
+
+  .balance-pill {
+    font-size: 0.8rem;
+    padding: 0.28rem 0.65rem;
+  }
+
+  .steam-login-button {
+    font-size: 0.78rem;
+    padding: 0.4rem 0.65rem;
+  }
+
+  .nav-right button {
+    font-size: 0.78rem;
+    padding: 0.4rem 0.7rem;
+  }
+
+  .language-switcher {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.4rem;
+  }
+
+  .pages-bar {
+    padding: 0.5rem 0.85rem;
+    gap: 1rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .drops-ticker-bar {
+    padding: 0.35rem 0.85rem;
+    gap: 0.5rem;
+  }
+
+  .drops-ticker-label {
+    font-size: 0.62rem;
+  }
+
+  .hero-banner {
+    padding: 1.5rem 1.25rem 1.25rem;
+    min-height: unset;
+  }
+
+  .hero-banner h2 {
+    font-size: 1.4rem;
+  }
+
+  .hero-banner-content {
+    max-width: 100%;
+  }
+
+  .hero-dots {
+    top: 0.85rem;
+    right: 0.85rem;
+  }
+
+  .stats-bar {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .stat-tile {
+    padding: 0.65rem 0.6rem;
+  }
+
+  .stat-value {
+    font-size: 1.05rem;
+  }
+
+  .stat-label {
+    font-size: 0.68rem;
+  }
+
+  .case-grid,
+  .item-grid {
+    grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .case-card,
+  .item-card {
+    padding: 0.65rem;
+  }
+
+  .case-card img,
+  .item-card img {
+    height: 80px;
+  }
+
+  .wallet-forms {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .item-form-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-nav {
+    flex-wrap: wrap;
+    gap: 0.6rem 1rem;
+  }
+
+  .reel-item {
+    flex: 0 0 110px;
+    height: 110px;
+  }
+
+  .reel-item img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .case-reel-viewport {
+    height: 130px;
+  }
+
+  .open-button {
+    width: 100%;
+  }
+
+  .site-footer {
+    padding: 1rem;
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .stats-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stats-bar .stat-tile:last-child {
+    grid-column: span 2;
+  }
+
+  .case-grid,
+  .item-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}

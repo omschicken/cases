@@ -23,6 +23,7 @@ export function AdminUsers() {
   return (
     <div>
       <h2>{t("admin.users.heading")}</h2>
+      <div className="table-scroll">
       <table className="admin-table">
         <thead>
           <tr>
@@ -45,6 +46,7 @@ export function AdminUsers() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

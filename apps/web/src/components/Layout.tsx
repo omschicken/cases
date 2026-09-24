@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
@@ -11,10 +11,20 @@ import { DropsTicker } from "./DropsTicker";
 import { PagesBar } from "./PagesBar";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
+function MenuIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
+      <path d="M3 5.5 L17 5.5 M3 10 L17 10 M3 14.5 L17 14.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function Layout() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
+  const location = useLocation();
   const [balanceMinor, setBalanceMinor] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -27,10 +37,21 @@ export function Layout() {
       .catch(() => setBalanceMinor(null));
   }, [user]);
 
+  // Close the mobile drawer whenever the route changes.
+  useEffect(() => setMenuOpen(false), [location.pathname]);
+
   return (
     <div className="app-shell">
       <DropsTicker />
       <header className="top-nav">
+        <button
+          className="menu-toggle"
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-label="Menu"
+          aria-expanded={menuOpen}
+        >
+          <MenuIcon />
+        </button>
         <NavLink to="/" className="brand">
           <img src={ak47} alt="" className="brand-mark" aria-hidden="true" />
           <span className="brand-word">
@@ -59,7 +80,8 @@ export function Layout() {
       </header>
       <PagesBar />
       <div className="body-row">
-        <Sidebar />
+        {menuOpen && <div className="sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
+        <Sidebar open={menuOpen} />
         <main className="page-content">
           <Outlet />
         </main>

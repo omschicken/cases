@@ -88,6 +88,7 @@ export function AdminCases() {
       {error && <p className="form-error">{error}</p>}
       {info && <p className="form-info">{info}</p>}
 
+      <div className="table-scroll">
       <table className="admin-table">
         <thead>
           <tr>
@@ -114,6 +115,7 @@ export function AdminCases() {
           ))}
         </tbody>
       </table>
+      </div>
 
       <h3>{t("admin.cases.createHeading")}</h3>
       <form onSubmit={createCase} className="auth-form">

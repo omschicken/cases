@@ -124,28 +124,30 @@ export function WalletPage() {
       </div>
 
       <h3>{t("wallet.recentActivity")}</h3>
-      <table className="ledger-table">
-        <thead>
-          <tr>
-            <th>{t("wallet.date")}</th>
-            <th>{t("wallet.reason")}</th>
-            <th>{t("wallet.amountCol")}</th>
-            <th>{t("wallet.balanceAfter")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ledger.map((entry) => (
-            <tr key={entry.id}>
-              <td>{new Date(entry.createdAt).toLocaleString()}</td>
-              <td>{entry.reason}</td>
-              <td className={Number(entry.amountMinor) < 0 ? "negative" : "positive"}>
-                {formatMinor(entry.amountMinor)}
-              </td>
-              <td>{formatMinor(entry.balanceAfterMinor)}</td>
+      <div className="table-scroll">
+        <table className="ledger-table">
+          <thead>
+            <tr>
+              <th>{t("wallet.date")}</th>
+              <th>{t("wallet.reason")}</th>
+              <th>{t("wallet.amountCol")}</th>
+              <th>{t("wallet.balanceAfter")}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {ledger.map((entry) => (
+              <tr key={entry.id}>
+                <td>{new Date(entry.createdAt).toLocaleString()}</td>
+                <td>{entry.reason}</td>
+                <td className={Number(entry.amountMinor) < 0 ? "negative" : "positive"}>
+                  {formatMinor(entry.amountMinor)}
+                </td>
+                <td>{formatMinor(entry.balanceAfterMinor)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

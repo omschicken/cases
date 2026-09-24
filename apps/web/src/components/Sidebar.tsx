@@ -75,12 +75,17 @@ const mainNavItems = [
   { to: "/cards", key: "cards", icon: IconCards, end: false },
 ] as const;
 
-export function Sidebar() {
+interface SidebarProps {
+  /** Only affects the mobile drawer — the sidebar is always visible on desktop. */
+  open?: boolean;
+}
+
+export function Sidebar({ open = false }: SidebarProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${open ? "sidebar-open" : ""}`}>
       <nav className="sidebar-nav">
         {mainNavItems.map(({ to, key, icon: Icon, end }) => (
           <NavLink key={to} to={to} end={end} className="sidebar-link">

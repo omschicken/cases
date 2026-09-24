@@ -43,6 +43,7 @@ export function AdminKycQueue() {
     <div>
       <h2>{t("admin.kycQueue.heading")}</h2>
       {error && <p className="form-error">{error}</p>}
+      <div className="table-scroll">
       <table className="admin-table">
         <thead>
           <tr>
@@ -83,6 +84,7 @@ export function AdminKycQueue() {
           )}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
