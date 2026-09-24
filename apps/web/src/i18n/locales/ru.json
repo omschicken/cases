@@ -65,6 +65,7 @@
   },
   "caseDetail": {
     "caseNotFound": "Кейс не найден",
+    "itemsHeading": "Содержимое кейса",
     "couldNotOpenCase": "Не удалось открыть кейс",
     "rolling": "Крутим…",
     "spinning": "Крутится…",

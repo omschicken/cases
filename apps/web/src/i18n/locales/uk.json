@@ -65,6 +65,7 @@
   },
   "caseDetail": {
     "caseNotFound": "Кейс не знайдено",
+    "itemsHeading": "Вміст кейса",
     "couldNotOpenCase": "Не вдалося відкрити кейс",
     "rolling": "Крутимо…",
     "spinning": "Крутиться…",

@@ -79,20 +79,6 @@ export function CaseDetailPage() {
         />
       )}
 
-      <div className="item-grid">
-        {theCase.items.map((item) => (
-          <div
-            className="item-card"
-            key={item.id}
-            style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}
-          >
-            <img src={item.imageUrl} alt={item.name} />
-            <p>{item.name}</p>
-            <p className="value">{formatMinor(item.valueMinor, item.currency)}</p>
-          </div>
-        ))}
-      </div>
-
       {user ? (
         <button onClick={openCase} disabled={opening || spinning} className="open-button">
           {opening
@@ -108,24 +94,6 @@ export function CaseDetailPage() {
       )}
 
       {error && <p className="form-error">{error}</p>}
-
-      {seedHash && (
-        <div className="fairness-panel">
-          <h3>{t("caseDetail.provablyFair")}</h3>
-          <p>
-            {t("caseDetail.serverSeedCommitment")}
-            <br />
-            <code>{seedHash}</code>
-          </p>
-          <p>
-            {t("caseDetail.yourClientSeed")} <code>{clientSeed}</code>
-          </p>
-          <p>
-            {t("caseDetail.rotateHintPrefix")} <Link to="/profile">{t("caseDetail.profileLink")}</Link>{" "}
-            {t("caseDetail.rotateHintSuffix")}
-          </p>
-        </div>
-      )}
 
       {result && revealed && (
         <div className="result-panel" style={{ "--rarity-color": rarityColor(result.item.rarity) } as CSSProperties}>
@@ -146,6 +114,39 @@ export function CaseDetailPage() {
           </details>
         </div>
       )}
+
+      {seedHash && (
+        <div className="fairness-panel">
+          <h3>{t("caseDetail.provablyFair")}</h3>
+          <p>
+            {t("caseDetail.serverSeedCommitment")}
+            <br />
+            <code>{seedHash}</code>
+          </p>
+          <p>
+            {t("caseDetail.yourClientSeed")} <code>{clientSeed}</code>
+          </p>
+          <p>
+            {t("caseDetail.rotateHintPrefix")} <Link to="/profile">{t("caseDetail.profileLink")}</Link>{" "}
+            {t("caseDetail.rotateHintSuffix")}
+          </p>
+        </div>
+      )}
+
+      <h2 className="section-heading">{t("caseDetail.itemsHeading")}</h2>
+      <div className="item-grid">
+        {theCase.items.map((item) => (
+          <div
+            className="item-card"
+            key={item.id}
+            style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}
+          >
+            <img src={item.imageUrl} alt={item.name} />
+            <p>{item.name}</p>
+            <p className="value">{formatMinor(item.valueMinor, item.currency)}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

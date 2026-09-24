@@ -65,6 +65,7 @@
   },
   "caseDetail": {
     "caseNotFound": "Case nicht gefunden",
+    "itemsHeading": "Inhalt der Case",
     "couldNotOpenCase": "Case konnte nicht geöffnet werden",
     "rolling": "Wird ausgewertet…",
     "spinning": "Dreht sich…",

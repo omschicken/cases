@@ -65,6 +65,7 @@
   },
   "caseDetail": {
     "caseNotFound": "Kasa bulunamadı",
+    "itemsHeading": "İçinde ne var",
     "couldNotOpenCase": "Kasa açılamadı",
     "rolling": "Çekiliyor…",
     "spinning": "Dönüyor…",

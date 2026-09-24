@@ -65,6 +65,7 @@
   },
   "caseDetail": {
     "caseNotFound": "Caja no encontrada",
+    "itemsHeading": "Qué hay dentro",
     "couldNotOpenCase": "No se pudo abrir la caja",
     "rolling": "Girando…",
     "spinning": "Girando…",

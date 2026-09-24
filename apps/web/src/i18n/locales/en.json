@@ -65,6 +65,7 @@
   },
   "caseDetail": {
     "caseNotFound": "Case not found",
+    "itemsHeading": "What's inside",
     "couldNotOpenCase": "Could not open case",
     "rolling": "Rolling…",
     "spinning": "Spinning…",
