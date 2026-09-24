@@ -225,7 +225,12 @@ export class CasesService {
     }));
   }
 
-  /** Public headline numbers for the homepage stats bar. */
+  /**
+   * Public headline numbers for the homepage stats bar. Excludes the
+   * bot-owned accounts the seed script uses to keep the drops feed looking
+   * alive on a fresh install — those are decoration, not real business
+   * volume, and must never inflate this.
+   */
   async getPublicStats() {
     const [{ opens, totalValueMinor }] = await this.prisma.$queryRaw<
       { opens: bigint; totalValueMinor: bigint }[]
@@ -233,8 +238,10 @@ export class CasesService {
       SELECT COUNT(*)::bigint AS opens, COALESCE(SUM(ci."valueMinor"), 0)::bigint AS "totalValueMinor"
       FROM "CaseOpenEvent" eo
       JOIN "CaseItem" ci ON ci.id = eo."resultCaseItemId"
+      JOIN "User" u ON u.id = eo."userId"
+      WHERE u.email NOT LIKE '%@bots.internal'
     `;
-    const playerCount = await this.prisma.user.count();
+    const playerCount = await this.prisma.user.count({ where: { email: { not: { endsWith: "@bots.internal" } } } });
 
     return {
       totalOpens: opens,

@@ -1,6 +1,34 @@
 import { PrismaClient, ItemRarity } from "@prisma/client";
+import * as argon2 from "argon2";
+import { randomUUID } from "node:crypto";
+import {
+  computeRoll,
+  generateClientSeed,
+  generateServerSeed,
+  hashServerSeed,
+  pickWeightedItem,
+} from "@cs2-cases/shared";
+import { generateReferralCode } from "../src/common/util/code";
+import cases from "./cs2-items.json";
 
 const prisma = new PrismaClient();
+
+// Marks accounts created purely to seed a non-empty "live drops" feed on a
+// fresh install — never real players. Recreated fresh on every seed run.
+const BOT_EMAIL_DOMAIN = "bots.internal";
+const BOT_NAMES = [
+  "ShadowFrost",
+  "VertexPlay",
+  "NoScopeKing",
+  "LunaDrops",
+  "GrimReaper94",
+  "PixelHunter",
+  "ZenithRoll",
+  "BlazeCase",
+  "NovaSkins",
+  "CoreBreak",
+];
+const BOT_STARTING_BALANCE_MINOR = 100_000; // $1,000 — enough to open any seeded case
 
 // CS2-authentic rarity colors, matching apps/web/src/lib/rarity.ts
 const RARITY_COLOR: Record<ItemRarity, string> = {
@@ -14,21 +42,10 @@ const RARITY_COLOR: Record<ItemRarity, string> = {
 };
 
 /**
- * Every image here is an inline SVG data URI — zero dependency on an
- * external image host, so cases render correctly in any environment
- * (including ones with restricted network egress). Swap for real skin
- * renders whenever real art is ready; nothing else needs to change.
+ * The case box art itself has no real-world equivalent to hotlink (crate
+ * art isn't part of the public item dataset we use for skins), so it stays
+ * a branded SVG placeholder. Item icons below are real Steam CDN renders.
  */
-function placeholderImage(color: string, label: string): string {
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'>
-    <rect width='240' height='240' fill='#14151d'/>
-    <rect x='24' y='24' width='192' height='192' rx='20' fill='${color}' fill-opacity='0.18' stroke='${color}' stroke-width='3'/>
-    <circle cx='120' cy='96' r='34' fill='${color}' fill-opacity='0.35' stroke='${color}' stroke-width='2'/>
-    <text x='120' y='168' font-family='sans-serif' font-weight='700' font-size='15' fill='${color}' text-anchor='middle'>${label}</text>
-  </svg>`;
-  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
-}
-
 function caseImage(color: string, name: string): string {
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='220'>
     <rect width='320' height='220' fill='#14151d'/>
@@ -44,6 +61,7 @@ interface ItemSeed {
   rarity: ItemRarity;
   weight: number;
   valueMinor: number;
+  imageUrl: string;
 }
 
 interface CaseSeed {
@@ -53,78 +71,169 @@ interface CaseSeed {
   items: ItemSeed[];
 }
 
-// Weights roughly mirror real CS2 case odds (heavily common-weighted).
-const CASES: CaseSeed[] = [
-  {
-    slug: "starter-case",
-    name: "Starter Case",
-    priceMinor: 250,
-    items: [
-      { name: "Steel Blue Scout", rarity: "CONSUMER", weight: 7992, valueMinor: 80 },
-      { name: "Urban Grey Rifle", rarity: "INDUSTRIAL", weight: 1598, valueMinor: 220 },
-      { name: "Night Ops Carbine", rarity: "MIL_SPEC", weight: 320, valueMinor: 650 },
-      { name: "Violet Storm SMG", rarity: "RESTRICTED", weight: 64, valueMinor: 2400 },
-      { name: "Neon Fracture Knife", rarity: "CLASSIFIED", weight: 26, valueMinor: 12000 },
-    ],
-  },
-  {
-    slug: "operation-case",
-    name: "Operation Case",
-    priceMinor: 500,
-    items: [
-      { name: "Desert Tan Pistol", rarity: "CONSUMER", weight: 7992, valueMinor: 150 },
-      { name: "Forest Camo Rifle", rarity: "INDUSTRIAL", weight: 1598, valueMinor: 450 },
-      { name: "Crimson Edge SMG", rarity: "MIL_SPEC", weight: 320, valueMinor: 1300 },
-      { name: "Arctic Ghost Sniper", rarity: "RESTRICTED", weight: 64, valueMinor: 4800 },
-      { name: "Phantom Blade Karambit", rarity: "CLASSIFIED", weight: 24, valueMinor: 22000 },
-      { name: "Dragon's Breath Gloves", rarity: "COVERT", weight: 2, valueMinor: 55000 },
-    ],
-  },
-  {
-    slug: "vanguard-case",
-    name: "Vanguard Case",
-    priceMinor: 1000,
-    items: [
-      { name: "Ashwood Pistol", rarity: "CONSUMER", weight: 7500, valueMinor: 300 },
-      { name: "Riot Shield Rifle", rarity: "INDUSTRIAL", weight: 1800, valueMinor: 900 },
-      { name: "Voidwalker SMG", rarity: "MIL_SPEC", weight: 480, valueMinor: 2600 },
-      { name: "Solar Flare AWP", rarity: "RESTRICTED", weight: 160, valueMinor: 9500 },
-      { name: "Obsidian Fang Knife", rarity: "CLASSIFIED", weight: 50, valueMinor: 38000 },
-      { name: "Crown Reaper Gloves", rarity: "COVERT", weight: 10, valueMinor: 85000 },
-    ],
-  },
-  {
-    slug: "budget-case",
-    name: "Budget Case",
-    priceMinor: 100,
-    items: [
-      { name: "Concrete Grey Pistol", rarity: "CONSUMER", weight: 8500, valueMinor: 30 },
-      { name: "Sandstorm Rifle", rarity: "INDUSTRIAL", weight: 1200, valueMinor: 90 },
-      { name: "Copper Line SMG", rarity: "MIL_SPEC", weight: 250, valueMinor: 260 },
-      { name: "Emerald Tide Knife", rarity: "RESTRICTED", weight: 45, valueMinor: 900 },
-      { name: "Static Pulse Gloves", rarity: "CLASSIFIED", weight: 5, valueMinor: 4200 },
-    ],
-  },
-  {
-    slug: "legendary-case",
-    name: "Legendary Case",
-    priceMinor: 5000,
-    items: [
-      { name: "Titanium Pistol", rarity: "INDUSTRIAL", weight: 6000, valueMinor: 1800 },
-      { name: "Warlord Rifle", rarity: "MIL_SPEC", weight: 2500, valueMinor: 5200 },
-      { name: "Eclipse SMG", rarity: "RESTRICTED", weight: 900, valueMinor: 18000 },
-      { name: "Bloodmoon Karambit", rarity: "CLASSIFIED", weight: 400, valueMinor: 60000 },
-      { name: "Sovereign Gloves", rarity: "COVERT", weight: 150, valueMinor: 140000 },
-      { name: "Golden Dragon Knife", rarity: "GOLD", weight: 50, valueMinor: 400000 },
-    ],
-  },
-];
+const CASES = cases as CaseSeed[];
+
+/**
+ * Bot-owned open events/inventory are purged and fully recreated on every
+ * seed run (never persisted across runs) — that keeps them from being
+ * mistaken for real history by the case-item replacement logic below, and
+ * keeps their timestamps looking freshly "live" every time this runs.
+ */
+async function purgeBotDrops() {
+  const bots = await prisma.user.findMany({
+    where: { email: { endsWith: `@${BOT_EMAIL_DOMAIN}` } },
+    select: { id: true },
+  });
+  if (bots.length === 0) return;
+  const botIds = bots.map((b) => b.id);
+
+  const wallets = await prisma.wallet.findMany({ where: { userId: { in: botIds } }, select: { id: true } });
+  await prisma.caseOpenEvent.deleteMany({ where: { userId: { in: botIds } } });
+  await prisma.inventoryItem.deleteMany({ where: { userId: { in: botIds } } });
+  await prisma.ledgerEntry.deleteMany({ where: { walletId: { in: wallets.map((w) => w.id) } } });
+  await prisma.provablyFairSeed.deleteMany({ where: { userId: { in: botIds } } });
+}
+
+async function seedBotDrops() {
+  const items = await prisma.caseItem.findMany({ include: { case: true } });
+  if (items.length === 0) return;
+
+  let ts = Date.now();
+
+  for (const name of BOT_NAMES) {
+    const email = `bot_${name.toLowerCase()}@${BOT_EMAIL_DOMAIN}`;
+    const passwordHash = await argon2.hash(randomUUID());
+
+    const bot = await prisma.user.upsert({
+      where: { email },
+      update: {},
+      create: {
+        email,
+        passwordHash,
+        displayName: name,
+        ageConfirmedAt: new Date(),
+        referralCode: generateReferralCode(),
+      },
+    });
+
+    const wallet = await prisma.wallet.upsert({
+      where: { userId: bot.id },
+      update: { balanceMinor: BOT_STARTING_BALANCE_MINOR },
+      create: { userId: bot.id, balanceMinor: BOT_STARTING_BALANCE_MINOR },
+    });
+
+    const serverSeed = generateServerSeed();
+    const seed = await prisma.provablyFairSeed.create({
+      data: {
+        userId: bot.id,
+        serverSeed,
+        serverSeedHash: hashServerSeed(serverSeed),
+        clientSeed: generateClientSeed(),
+        nonce: 0,
+        isActive: true,
+      },
+    });
+
+    // 2-4 opens per bot, each real weighted rolls against the item pool of
+    // a random seeded case — genuinely provably-fair, just bot-owned.
+    const opens = 2 + Math.floor(Math.random() * 3);
+    let balance = wallet.balanceMinor;
+    let nonce = 0;
+
+    for (let i = 0; i < opens; i++) {
+      const theCase = CASES[Math.floor(Math.random() * CASES.length)];
+      const caseItems = items.filter((it) => it.case.slug === theCase.slug);
+      const price = BigInt(theCase.priceMinor);
+      if (balance < price) continue;
+
+      const roll = computeRoll(serverSeed, seed.clientSeed, nonce);
+      const won = pickWeightedItem(
+        caseItems.map((it) => ({ id: it.id, weight: it.weight })),
+        roll,
+      );
+      const wonItem = caseItems.find((it) => it.id === won.id)!;
+
+      balance -= price;
+      // Spread drops out over the last ~90 minutes so the ticker reads as
+      // organic activity rather than a single burst.
+      ts -= 1000 * (30 + Math.floor(Math.random() * 300));
+
+      await prisma.ledgerEntry.create({
+        data: {
+          walletId: wallet.id,
+          amountMinor: -price,
+          balanceAfterMinor: balance,
+          reason: "CASE_OPEN",
+          referenceType: "Case",
+          referenceId: wonItem.caseId,
+          createdAt: new Date(ts),
+        },
+      });
+
+      const inventoryItem = await prisma.inventoryItem.create({
+        data: { userId: bot.id, caseItemId: wonItem.id, status: "IN_INVENTORY", acquiredAt: new Date(ts) },
+      });
+      await prisma.caseOpenEvent.create({
+        data: {
+          userId: bot.id,
+          caseId: wonItem.caseId,
+          resultCaseItemId: wonItem.id,
+          provablyFairSeedId: seed.id,
+          nonce,
+          roll,
+          inventoryItemId: inventoryItem.id,
+          createdAt: new Date(ts),
+        },
+      });
+      nonce += 1;
+    }
+
+    await prisma.wallet.update({ where: { id: wallet.id }, data: { balanceMinor: balance } });
+    await prisma.provablyFairSeed.update({ where: { id: seed.id }, data: { nonce } });
+  }
+
+  console.log(`seeded bot drops: ${BOT_NAMES.length} bots`);
+}
 
 async function main() {
+  await purgeBotDrops();
+
   for (const c of CASES) {
-    const existing = await prisma.case.findUnique({ where: { slug: c.slug } });
+    const existing = await prisma.case.findUnique({ where: { slug: c.slug }, include: { items: true } });
+
     if (existing) {
-      console.log(`skip (exists): ${c.slug}`);
+      // Only replace items that have never actually dropped for a real
+      // player — anything with inventory/open-event history stays put so
+      // we never orphan a real result.
+      const untouched = await prisma.caseItem.findMany({
+        where: { caseId: existing.id, inventoryItems: { none: {} }, openEvents: { none: {} } },
+        select: { id: true },
+      });
+      if (untouched.length !== existing.items.length) {
+        console.log(`skip items (has real history): ${c.slug}`);
+        continue;
+      }
+
+      await prisma.caseItem.deleteMany({ where: { id: { in: untouched.map((i) => i.id) } } });
+      await prisma.case.update({
+        where: { id: existing.id },
+        data: {
+          name: c.name,
+          priceMinor: c.priceMinor,
+          imageUrl: caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
+          items: {
+            create: c.items.map((item) => ({
+              name: item.name,
+              rarity: item.rarity,
+              weight: item.weight,
+              valueMinor: item.valueMinor,
+              currency: "USD",
+              imageUrl: item.imageUrl,
+            })),
+          },
+        },
+      });
+      console.log(`updated: ${c.slug} (${c.items.length} real items)`);
       continue;
     }
 
@@ -142,13 +251,15 @@ async function main() {
             weight: item.weight,
             valueMinor: item.valueMinor,
             currency: "USD",
-            imageUrl: placeholderImage(RARITY_COLOR[item.rarity], item.name),
+            imageUrl: item.imageUrl,
           })),
         },
       },
     });
-    console.log(`created: ${c.slug} (${c.items.length} items)`);
+    console.log(`created: ${c.slug} (${c.items.length} real items)`);
   }
+
+  await seedBotDrops();
 }
 
 main()

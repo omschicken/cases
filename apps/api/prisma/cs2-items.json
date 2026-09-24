@@ -1,0 +1,233 @@
+[
+  {
+    "slug": "starter-case",
+    "name": "Starter Case",
+    "priceMinor": 250,
+    "items": [
+      {
+        "name": "P250 | Facility Draft",
+        "rarity": "CONSUMER",
+        "weight": 7992,
+        "valueMinor": 80,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhzMOwwipC0PCifaF9MvmdGliCxOpJvOhuRz39l05wt2XRzNr7dHjCalBxXschRucD4xnpwIfhN7ngtVTe2tlCyi_5hzQJsHgA1f7ZYg"
+      },
+      {
+        "name": "MP7 | Motherboard",
+        "rarity": "INDUSTRIAL",
+        "weight": 1598,
+        "valueMinor": 220,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8jsHf_C9k7Pu8a7FkNPKcD3WU_ulkteRncCW6khUz_T7Wm9-vJHmWbAVzDJZzFuMP5hKwxIDiP7jlsQGI2Y9CzSr_j3tJ6i51o7FV2fbsGVQ"
+      },
+      {
+        "name": "Glock-18 | Reactor",
+        "rarity": "MIL_SPEC",
+        "weight": 320,
+        "valueMinor": 650,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1a4s2gfadhJfGBMXeR1fpzou84cC6_mh4sjDGMnYftb3yTbAQjA5NxR-4MtRjumtzkM-yzsVDegtkWyyX43ytBvC9tsrpRAKE7uvqAUKOQcp4"
+      },
+      {
+        "name": "Tec-9 | Red Quartz",
+        "rarity": "RESTRICTED",
+        "weight": 64,
+        "valueMinor": 2400,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLlm5W5wiNW0PG8cbd5IfyfB32VxdF6ueZhW2e3xU13tzmAmdqsIC6TPw8hCcF3ReADuxPtl9ThNu3qtVPbjdlFny2okGoXub5yNIFB"
+      },
+      {
+        "name": "Glock-18 | Twilight Galaxy",
+        "rarity": "CLASSIFIED",
+        "weight": 26,
+        "valueMinor": 12000,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1a4s2vebFsH_afC2Sb0tF6ueZhW2e3zR9-5mjcztv8cnjBbQMiA8ZzFLUKtBbsl4LuY77q4AHdj4pNmCz-kGoXudhVSAZp"
+      }
+    ]
+  },
+  {
+    "slug": "operation-case",
+    "name": "Operation Case",
+    "priceMinor": 500,
+    "items": [
+      {
+        "name": "Five-SeveN | Anodized Gunmetal",
+        "rarity": "CONSUMER",
+        "weight": 7992,
+        "valueMinor": 150,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3l4Dl7idN6vyRaapSJ-WdA2KEwOJJsvNoWSaMmRQguynLy9v_J3qTPAYmX8Z5F-YCskG5xtHgNe22sgTYjIIXmSX5jX5L6Ck-t_FCD_SvybkrEQ"
+      },
+      {
+        "name": "Nova | Caged Steel",
+        "rarity": "INDUSTRIAL",
+        "weight": 1598,
+        "valueMinor": 450,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL_kYDhwiNW0P24aahSKPWLMWuZxuZi_rY_FiqyxER2smrRztuoeX_CagAkA8d0RLYC50W5moe2PuKztAXd2t9bjXKpf1PVBjs"
+      },
+      {
+        "name": "M4A4 | Global Offensive",
+        "rarity": "MIL_SPEC",
+        "weight": 320,
+        "valueMinor": 1300,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0PG9b6tSI_GeAVicyOl-pK89HijjkU534mTRw478IirEOgUhXpshQrMK4xW9x4biYrvnsgDd3ohA02yg2Z7zUK8D"
+      },
+      {
+        "name": "Desert Eagle | Blaze",
+        "rarity": "RESTRICTED",
+        "weight": 64,
+        "valueMinor": 4800,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL1m5fn8Sdk7vORbqhsLfWAMWuZxuZi_uI_TX6wxxkjsGXXnImsJ37COlUoWcByEOMOtxa5kdXmNu3htVPZjN1bjXKpkHLRfQU"
+      },
+      {
+        "name": "AK-47 | Crane Flight",
+        "rarity": "CLASSIFIED",
+        "weight": 24,
+        "valueMinor": 22000,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiNQu6WRa7ZsLvWsCGuZxuZij-1gSCGn20wksT7Xzo6ueX6VOgUmWZQiTO5btxDrldbmNru05QLfiN5EmHmsj3hXrnE8mi375M8"
+      },
+      {
+        "name": "AWP | Fade",
+        "rarity": "COVERT",
+        "weight": 2,
+        "valueMinor": 55000,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_CNk7uW-V6JsJPWsAm6Xyfo45-c5GXDnwB534DuEwtuoIHOfaAYiAsYjF-QItUaxmoC0MO_h5ALcjJUFk3sEzfdk4w"
+      }
+    ]
+  },
+  {
+    "slug": "vanguard-case",
+    "name": "Vanguard Case",
+    "priceMinor": 1000,
+    "items": [
+      {
+        "name": "Nova | Army Sheen",
+        "rarity": "CONSUMER",
+        "weight": 7500,
+        "valueMinor": 300,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL_kYDhwiNW0PO8Zb1SM_iaAGKvzedxuPUnGXu1xEkktz-Dyd-oJH6ebwIpD5F5ReEJt0W-x4WxZOi0swCM34lNxDK-0H27DLwAVA"
+      },
+      {
+        "name": "USP-S | Desert Tactical",
+        "rarity": "INDUSTRIAL",
+        "weight": 1800,
+        "valueMinor": 900,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLkjYbf7itX6vytbbZSJ-OsG3SA0tFiseJ9RiqymSIksjCKpYPwJiPTcARxX5VzROcIuhLtl9HkMum25AbZ2YtDzCT5234b6Ho-67lRA6Bw_fDJz1aWLNvRpDs"
+      },
+      {
+        "name": "MAC-10 | Fade",
+        "rarity": "MIL_SPEC",
+        "weight": 480,
+        "valueMinor": 2600,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8n5WxrR1a7s2oaaBoH_yaCW-Ej-h347AwHyzqx04l4WvSyI77cCjCbQEhW8MjE-NcthG8loXlMujh7g3Ay9USCa6Cs30"
+      },
+      {
+        "name": "MP9 | Mount Fuji",
+        "rarity": "RESTRICTED",
+        "weight": 160,
+        "valueMinor": 9500,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8js_f_CNk4uL3V6J4KvmsHm6eytF6ueZhW2fgkUoh5m7dnt78eC7FPFQgXJByE-AL5Bixld20MO2x51DX2o1NxCyokGoXudOiZ_SY"
+      },
+      {
+        "name": "SSG 08 | Death Strike",
+        "rarity": "CLASSIFIED",
+        "weight": 50,
+        "valueMinor": 38000,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLijZGwpR1Y-s29e6M9eM-ADWiC0ed5vt5lRi67gVMh6jjTn9ygJSieaAEiAsB2F7Jfshe-xtHkPuvisQLXgt8UmCz523lM8G81tFON4mQ2"
+      },
+      {
+        "name": "M4A1-S | Fade",
+        "rarity": "COVERT",
+        "weight": 10,
+        "valueMinor": 85000,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_GSMWGRxetJvbVoHjqMmRQguynLm92pci2WagEkC5Z5Q7VetkbukIXjNrnm5QPbjt8WxS-vii4b5i5v4fFCD_TfxF4xWg"
+      }
+    ]
+  },
+  {
+    "slug": "budget-case",
+    "name": "Budget Case",
+    "priceMinor": 100,
+    "items": [
+      {
+        "name": "Tec-9 | Bamboo Forest",
+        "rarity": "CONSUMER",
+        "weight": 8500,
+        "valueMinor": 30,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLlm5W5wipC0PCvZaZiL8-ZG2mXzetJvOhuRz39kx90sjiBn9apcnPBOwRyDJcjTeUKtxbpwNzkZLm04geLjIsXzSivjTQJsHikA0D9yg"
+      },
+      {
+        "name": "P250 | Dark Filigree",
+        "rarity": "INDUSTRIAL",
+        "weight": 1200,
+        "valueMinor": 90,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhzMOwwiNW0OCrZptpIeKYMWuZxuZi_uBrSS3iwBty4zvSntv7Jy_DZg90Xsd2Qudb5xG_kIfuZurm7wHbjtlbjXKpFkxeYNg"
+      },
+      {
+        "name": "Tec-9 | Ossified",
+        "rarity": "MIL_SPEC",
+        "weight": 250,
+        "valueMinor": 260,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLlm5W5wiNW0P29e61rOc-fB2CY1aAvsrQ6TCzqzEwisT7QnIqudCjGZgV0CpJ0ROFct0PrlNO2MOzg4gSKlcsbmgSNht1O"
+      },
+      {
+        "name": "SSG 08 | Parallax",
+        "rarity": "RESTRICTED",
+        "weight": 45,
+        "valueMinor": 900,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLijZGwpR1Y-s29e6M9eM-QBnWfzO9iueJWQyC0nQlp5G6AnNuhJXmeOAd2CsMjQOUMuxC-moHgNOzh5VPXjogRmyn_iSNI5zErvbhpsYYNZg"
+      },
+      {
+        "name": "FAMAS | Meltdown",
+        "rarity": "CLASSIFIED",
+        "weight": 5,
+        "valueMinor": 4200,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3n5vh7h1a4s2gfadhJfGBMXeR1fpzou89cC-ymBw0jDGMnYftb3rDPQMhXppwRudet0O4xNLhMu7r7leMiY9Cmy34i39L7C9ssucBAvA7uvqAFyvbTO4"
+      }
+    ]
+  },
+  {
+    "slug": "legendary-case",
+    "name": "Legendary Case",
+    "priceMinor": 5000,
+    "items": [
+      {
+        "name": "Five-SeveN | Desert Seal",
+        "rarity": "INDUSTRIAL",
+        "weight": 6000,
+        "valueMinor": 1800,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3l4Dl7idN6vyRbq17JeOWGGKe_upzo-R7WxagkBwrjDGMnYftb3-SZgR1A5IhFLRc4xO6xoDuYuO35wLdjYpFySv4hnsf7H1s5-ZRUaI7uvqAnq2GNHw"
+      },
+      {
+        "name": "Five-SeveN | Silver Quartz",
+        "rarity": "MIL_SPEC",
+        "weight": 2500,
+        "valueMinor": 5200,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3l4Dl7idN6vyRaalSI-KKHXORzeJ_quRtcDq6mQsioQKJk4jxNWXCP1AmX8Z0EbIP5Be8w4fhNu7r5ATZ3t4Xzn782yJB63o-5bkLA_En5OSJ2KaCxRX6"
+      },
+      {
+        "name": "AK-47 | First Class",
+        "rarity": "RESTRICTED",
+        "weight": 900,
+        "valueMinor": 18000,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0PW8baFjH_yWD3OYxPxJseo9GBa_nBovp3PXmNmpdymUZwMnX8EhEeBbtBnrk4LjZLzi7wbe3opNmCn8iH8YvX5i_a9cBikeWj5H"
+      },
+      {
+        "name": "M4A1-S | Atomic Alloy",
+        "rarity": "CLASSIFIED",
+        "weight": 400,
+        "valueMinor": 60000,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_GeMWrEwL87o95oQyW8jCIooTyLnYrGLSLANkI-D5d2FrENtRG7wNDvZe-3slfci9pFmHj8jSof6yZjtugEB6QtrKTXhxaBb-PhITXxPA"
+      },
+      {
+        "name": "AK-47 | AUTOEXEC",
+        "rarity": "COVERT",
+        "weight": 150,
+        "valueMinor": 140000,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiNQu6WRabF5L_WLC2Svwu97v95lRi67gVN16mzSwtigdn2QPAElXpskQOQIthC8xIXiM-7k4gHfgoMWySyo2y4b8G81tI8PUinm"
+      },
+      {
+        "name": "★ Karambit | Doppler",
+        "rarity": "GOLD",
+        "weight": 50,
+        "valueMinor": 400000,
+        "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Q7uCvZaZkNM-SA1iSze91u_FsTju_qhAmoT-Jn4bjJC_4Ml93UtZuRLQPsBawkNfiMbnl5AKMiopCnin7iCJBv31j4rkBBKEg-6zUjV3GY6p9v8dpLWT3Fg"
+      }
+    ]
+  }
+]
