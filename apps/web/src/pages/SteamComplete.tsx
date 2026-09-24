@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { api, ApiError, setTokens } from "../lib/api";
 
@@ -14,6 +15,7 @@ interface AuthTokens {
  * so this step collects it before the account actually gets created.
  */
 export function SteamCompletePage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
@@ -27,11 +29,11 @@ export function SteamCompletePage() {
     e.preventDefault();
     setError(null);
     if (!ageConfirmed) {
-      setError("You must confirm you are of legal gambling age to continue.");
+      setError(t("steamComplete.ageRequired"));
       return;
     }
     if (!pendingToken) {
-      setError("Steam sign-up session expired, please log in again.");
+      setError(t("steamComplete.expired"));
       return;
     }
     setSubmitting(true);
@@ -45,7 +47,7 @@ export function SteamCompletePage() {
       await refreshUser();
       navigate("/");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Steam sign-up failed");
+      setError(err instanceof ApiError ? err.message : t("steamComplete.failed"));
     } finally {
       setSubmitting(false);
     }
@@ -53,11 +55,11 @@ export function SteamCompletePage() {
 
   return (
     <div className="auth-page">
-      <h1>One last step</h1>
-      <p className="hint">Steam verified your identity — confirm the rest to finish creating your account.</p>
+      <h1>{t("steamComplete.title")}</h1>
+      <p className="hint">{t("steamComplete.hint")}</p>
       <form onSubmit={onSubmit} className="auth-form">
         <label>
-          Referral code (optional)
+          {t("steamComplete.referralCode")}
           <input value={referralCode} onChange={(e) => setReferralCode(e.target.value)} />
         </label>
         <label className="checkbox-row">
@@ -66,15 +68,15 @@ export function SteamCompletePage() {
             checked={ageConfirmed}
             onChange={(e) => setAgeConfirmed(e.target.checked)}
           />
-          I confirm I am of legal age to gamble in my jurisdiction and I accept the Terms of Service.
+          {t("steamComplete.ageConfirm")}
         </label>
         {error && <p className="form-error">{error}</p>}
         <button type="submit" disabled={submitting}>
-          {submitting ? "Finishing up…" : "Continue"}
+          {submitting ? t("steamComplete.finishing") : t("steamComplete.continue")}
         </button>
       </form>
       <p>
-        <Link to="/">Cancel</Link>
+        <Link to="/">{t("steamComplete.cancel")}</Link>
       </p>
     </div>
   );

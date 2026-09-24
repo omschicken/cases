@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 
 function IconCases() {
@@ -67,23 +68,24 @@ function IconAdmin() {
 }
 
 const mainNavItems = [
-  { to: "/", label: "Cases", icon: IconCases, end: true },
-  { to: "/battles", label: "Battles", icon: IconBattles },
-  { to: "/contracts", label: "Contracts", icon: IconContracts },
-  { to: "/upgrader", label: "Upgrade", icon: IconUpgrader },
-  { to: "/cards", label: "Cards", icon: IconCards },
-];
+  { to: "/", key: "cases", icon: IconCases, end: true },
+  { to: "/battles", key: "battles", icon: IconBattles, end: false },
+  { to: "/contracts", key: "contracts", icon: IconContracts, end: false },
+  { to: "/upgrader", key: "upgrade", icon: IconUpgrader, end: false },
+  { to: "/cards", key: "cards", icon: IconCards, end: false },
+] as const;
 
 export function Sidebar() {
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   return (
     <aside className="sidebar">
       <nav className="sidebar-nav">
-        {mainNavItems.map(({ to, label, icon: Icon, end }) => (
+        {mainNavItems.map(({ to, key, icon: Icon, end }) => (
           <NavLink key={to} to={to} end={end} className="sidebar-link">
             <Icon />
-            <span>{label}</span>
+            <span>{t(`nav.sidebar.${key}`)}</span>
           </NavLink>
         ))}
       </nav>
@@ -94,12 +96,12 @@ export function Sidebar() {
           <nav className="sidebar-nav">
             <NavLink to="/inventory" className="sidebar-link">
               <IconInventory />
-              <span>Inventory</span>
+              <span>{t("nav.sidebar.inventory")}</span>
             </NavLink>
             {user.role === "ADMIN" && (
               <NavLink to="/admin" className="sidebar-link">
                 <IconAdmin />
-                <span>Admin</span>
+                <span>{t("nav.sidebar.admin")}</span>
               </NavLink>
             )}
           </nav>

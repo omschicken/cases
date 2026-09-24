@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { HeroBanner } from "../components/HeroBanner";
@@ -8,6 +9,7 @@ import { RecentDrops } from "../components/RecentDrops";
 import type { CaseDto } from "../lib/types";
 
 export function CaseListPage() {
+  const { t } = useTranslation();
   const [cases, setCases] = useState<CaseDto[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,8 +17,8 @@ export function CaseListPage() {
     api
       .get<CaseDto[]>("/cases")
       .then(setCases)
-      .catch(() => setError("Could not load cases"));
-  }, []);
+      .catch(() => setError(t("home.couldNotLoadCases")));
+  }, [t]);
 
   return (
     <div>
@@ -24,7 +26,7 @@ export function CaseListPage() {
       <StatsBar />
       <RecentDrops />
 
-      <h1 className="section-heading">Cases</h1>
+      <h1 className="section-heading">{t("home.casesHeading")}</h1>
       {error && <p className="form-error">{error}</p>}
       <div className="case-grid">
         {cases.map((c) => (
@@ -34,7 +36,7 @@ export function CaseListPage() {
             <p className="price">{formatMinor(c.priceMinor, c.currency)}</p>
           </Link>
         ))}
-        {cases.length === 0 && !error && <p>No cases available yet.</p>}
+        {cases.length === 0 && !error && <p>{t("home.noCasesYet")}</p>}
       </div>
     </div>
   );

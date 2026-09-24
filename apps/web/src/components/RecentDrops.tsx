@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { rarityColor } from "../lib/rarity";
@@ -8,6 +9,7 @@ import type { RecentDropDto } from "../lib/types";
 const REFRESH_MS = 15000;
 
 export function RecentDrops() {
+  const { t } = useTranslation();
   const [drops, setDrops] = useState<RecentDropDto[]>([]);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export function RecentDrops() {
 
   return (
     <div className="drops-section">
-      <h3 className="drops-heading">Recent drops</h3>
+      <h3 className="drops-heading">{t("home.recentDrops")}</h3>
       <div className="drops-marquee">
         <div className="drops-track">
           {looped.map((drop, i) => (

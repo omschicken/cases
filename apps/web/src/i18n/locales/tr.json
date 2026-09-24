@@ -1,0 +1,341 @@
+{
+  "common": {
+    "loading": "Yükleniyor…",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "yes": "Evet",
+    "no": "Hayır"
+  },
+  "nav": {
+    "profile": "Profil",
+    "logOut": "Çıkış yap",
+    "logInSteam": "Steam ile giriş yap",
+    "sidebar": {
+      "cases": "Kasalar",
+      "battles": "Savaşlar",
+      "contracts": "Sözleşmeler",
+      "upgrade": "Yükselt",
+      "cards": "Kartlar",
+      "inventory": "Envanter",
+      "admin": "Yönetici"
+    },
+    "pagesBar": {
+      "referral": "Referans",
+      "prizes": "Ödüller",
+      "bonuses": "Bonuslar",
+      "faq": "SSS"
+    },
+    "footer": "GunDone.case — yalnızca 18+. Kumar bağımlılık yapabilir, sorumlu oynayın. Kanıtlanabilir adil RNG: her kasa sonucu bağımsız olarak doğrulanabilir. Lisanslı operatör; lisans durumu üretimde burada gösterilecektir."
+  },
+  "dropsTicker": {
+    "label": "Canlı düşenler",
+    "unboxed": "açtı"
+  },
+  "home": {
+    "hero": {
+      "slide1": {
+        "eyebrow": "Hoş geldin bonusu",
+        "title": "İlk yatırımında %10 ekstra kazan",
+        "subtitle": "Cüzdanını doldur ve bugün ilk kasanı aç.",
+        "cta": "Şimdi yatır"
+      },
+      "slide2": {
+        "eyebrow": "Yeni eklendi",
+        "title": "Kasaya yeni kasa eklendi",
+        "subtitle": "Yeni oranlar, yeni skinler — içinde ne var bir bak.",
+        "cta": "Kasalara göz at"
+      },
+      "slide3": {
+        "eyebrow": "Davet et & kazan",
+        "title": "Arkadaşlarını davet et, yaptıkları her yatırımdan kazan",
+        "subtitle": "Linkini paylaş ve komisyon biriktirmeye başla.",
+        "cta": "Linkimi al"
+      },
+      "slideLabel": "Slayt {{n}}"
+    },
+    "stats": {
+      "casesOpened": "Açılan kasa",
+      "totalWon": "Toplam kazanç",
+      "players": "Oyuncu"
+    },
+    "recentDrops": "Son düşenler",
+    "casesHeading": "Kasalar",
+    "couldNotLoadCases": "Kasalar yüklenemedi",
+    "noCasesYet": "Henüz kasa yok."
+  },
+  "caseDetail": {
+    "caseNotFound": "Kasa bulunamadı",
+    "couldNotOpenCase": "Kasa açılamadı",
+    "rolling": "Çekiliyor…",
+    "spinning": "Dönüyor…",
+    "openFor": "{{price}} karşılığında aç",
+    "logInPrefix": "",
+    "logIn": "Giriş yap",
+    "logInSuffix": ", bu kasayı açmak için.",
+    "provablyFair": "Kanıtlanabilir adillik",
+    "serverSeedCommitment": "Sunucu seed hash'i (bu çekilişten önce yayımlandı):",
+    "yourClientSeed": "Client seed'in:",
+    "rotateHintPrefix": "Sunucu seed'ini görmek ve geçmiş açılışları doğrulamak için seed'ini",
+    "profileLink": "Profil",
+    "rotateHintSuffix": "sayfasından değiştir.",
+    "youGot": "Kazandığın: {{name}}",
+    "roundDetails": "Tur detayları",
+    "roll": "Çekiliş: {{roll}}",
+    "nonce": "Nonce: {{nonce}}",
+    "serverSeedHash": "Sunucu seed hash'i: {{hash}}",
+    "clientSeed": "Client seed: {{seed}}",
+    "verifyThisResult": "Bu sonucu doğrula"
+  },
+  "verify": {
+    "title": "Turu doğrula",
+    "couldNotLoad": "Bu tur yüklenemedi",
+    "publishedHash": "Yayımlanan sunucu seed hash'i:",
+    "verified": "✅ Doğrulandı — bu sonuç gerçek.",
+    "verificationFailed": "❌ Doğrulama başarısız.",
+    "hashMatches": "Sunucu seed hash'i eşleşiyor: {{value}}",
+    "itemMatches": "Eşya yeniden hesaplanan çekilişle eşleşiyor: {{value}}",
+    "roll": "Çekiliş: {{roll}}"
+  },
+  "inventory": {
+    "title": "Envanter",
+    "couldNotLoad": "Envanter yüklenemedi",
+    "couldNotSell": "Eşya satılamadı",
+    "selling": "Satılıyor…",
+    "sellForBalance": "Bakiyeye sat",
+    "noItemsYet": "Henüz eşya yok — bir şey kazanmak için kasa aç."
+  },
+  "wallet": {
+    "title": "Cüzdan",
+    "deposit": "Para yatırma",
+    "withdraw": "Para çekme",
+    "method": "Yöntem",
+    "amount": "Tutar",
+    "currency": "Para birimi",
+    "destination": "Hedef (IBAN / cüzdan adresi / Steam trade URL'si)",
+    "card": "Kart",
+    "crypto": "Kripto",
+    "cardBank": "Kart / banka",
+    "steamSkin": "Steam skini",
+    "depositButton": "Yatır",
+    "withdrawButton": "Çekim talep et",
+    "kycHint": "Kimlik doğrulaması (KYC) gerekir — Profil sayfasına bak.",
+    "depositConfirmed": "Yatırım onaylandı.",
+    "depositFailed": "Yatırım başarısız",
+    "withdrawalRequested": "Çekim talebi gönderildi — yönetici incelemesi bekleniyor.",
+    "withdrawalFailed": "Çekim başarısız",
+    "recentActivity": "Son işlemler",
+    "date": "Tarih",
+    "reason": "Sebep",
+    "amountCol": "Tutar",
+    "balanceAfter": "Sonraki bakiye"
+  },
+  "profile": {
+    "title": "Profil",
+    "kyc": {
+      "heading": "Kimlik doğrulama (KYC)",
+      "status": "Durum:",
+      "reason": "Sebep: {{reason}}",
+      "fullName": "Yasal tam ad",
+      "dob": "Doğum tarihi",
+      "docFront": "Belge fotoğrafı URL'si (ön yüz)",
+      "selfie": "Selfie URL'si",
+      "uploadHint": "Belge yükleme henüz depolamaya bağlanmadı — şimdilik bir URL yapıştır (README'ye bak).",
+      "submit": "İncelemeye gönder",
+      "submitted": "Doğrulama gönderildi — bir yönetici yakında inceleyecek.",
+      "submitFailed": "Gönderim başarısız"
+    },
+    "seed": {
+      "heading": "Kanıtlanabilir adil seed",
+      "serverSeedHash": "Sunucu seed hash'i: {{hash}}",
+      "clientSeed": "Client seed: {{seed}}",
+      "roundsPlayed": "Bu seed'de oynanan tur sayısı: {{n}}",
+      "newClientSeed": "Yeni client seed (isteğe bağlı)",
+      "rotateButton": "Seed'i değiştir ve öncekini ortaya çıkar",
+      "rotated": "Seed değiştirildi — önceki sunucu seed'in artık ortaya çıktı ve doğrulanabilir.",
+      "rotateFailed": "Seed değiştirilemedi"
+    }
+  },
+  "referral": {
+    "title": "Referans programı",
+    "description": "Linkini paylaş — davet ettiğin biri para yatırdığında komisyon kazanırsın.",
+    "referrals": "Referanslar: {{n}}",
+    "totalEarned": "Toplam kazanç: {{amount}}"
+  },
+  "faq": {
+    "title": "SSS",
+    "items": {
+      "provablyFair": {
+        "q": "Kanıtlanabilir adillik nedir?",
+        "a": "Her kasa açılışı bir commit-reveal şeması kullanır: bir kasa açmadan önce sunucumuz gizli bir sunucu seed'i üretir ve sana yalnızca hash'ini gösterir. Sonucun bu sunucu seed'i, kontrol ettiğin bir client seed ve bir nonce'dan hesaplanır. İstediğin zaman seed çiftini değiştirerek geçmiş açılışlarında kullanılan sunucu seed'ini ortaya çıkarabilir ve her sonucu Doğrulama sayfasında bağımsız olarak kontrol edebilirsin — sonuç olaydan sonra seçilmiş olamaz."
+      },
+      "deposits": {
+        "q": "Para yatırma nasıl çalışır?",
+        "a": "Kart ödemelerini, kriptoyu ve CS2 skin yatırımlarını destekliyoruz. Cüzdan sayfasında bir yöntem seç — ödeme sağlayıcısı işlemi onayladığında bakiyene aktarılır. Kripto yatırımları genellikle birkaç ağ onayı gerektirir."
+      },
+      "kyc": {
+        "q": "Neden kimliğimi doğrulamam gerekiyor (KYC)?",
+        "a": "Lisanslı bir gerçek para operatörü olarak, kara para aklamayla mücadele düzenlemeleri gereği çekimlerden önce oyuncu kimliğini doğrulamak zorundayız. Belgelerini Profil sayfasından gönder — doğrulamaların çoğu dakikalar içinde tamamlanır."
+      },
+      "withdrawals": {
+        "q": "Para çekme nasıl çalışır?",
+        "a": "Hesabın KYC ile doğrulandıktan sonra, Cüzdan sayfasından kart, kripto veya CS2 skinleriyle çekim talep et. Çekimler uygunluk açısından incelenir ve genellikle 24 saat içinde işlenir."
+      },
+      "steam": {
+        "q": "Steam ile giriş yapabilir miyim?",
+        "a": "Evet — \"Steam ile giriş yap\"a tıkla ve isteği Steam'de onayla. Hesabını oluşturmak için yalnızca herkese açık SteamID'ni ve profil bilgilerini okuruz; Steam şifreni asla görmeyiz ya da saklamayız."
+      }
+    }
+  },
+  "login": {
+    "title": "Giriş yap",
+    "email": "E-posta",
+    "password": "Şifre",
+    "loggingIn": "Giriş yapılıyor…",
+    "submit": "Giriş yap",
+    "failed": "Giriş başarısız",
+    "noAccount": "Hesabın yok mu?",
+    "signUp": "Kayıt ol"
+  },
+  "register": {
+    "title": "Hesap oluştur",
+    "email": "E-posta",
+    "password": "Şifre",
+    "referralCode": "Referans kodu (isteğe bağlı)",
+    "ageConfirm": "Bulunduğum yargı bölgesinde kumar oynamak için yasal yaşta olduğumu onaylıyorum ve Hizmet Şartları'nı kabul ediyorum.",
+    "ageRequired": "Devam etmek için kumar oynamak için yasal yaşta olduğunu onaylaman gerekiyor.",
+    "creating": "Hesap oluşturuluyor…",
+    "submit": "Kayıt ol",
+    "failed": "Kayıt başarısız",
+    "alreadyHave": "Zaten hesabın var mı?",
+    "logIn": "Giriş yap"
+  },
+  "steamComplete": {
+    "title": "Son bir adım",
+    "hint": "Steam kimliğini doğruladı — hesabını oluşturmayı tamamlamak için geri kalanını onayla.",
+    "referralCode": "Referans kodu (isteğe bağlı)",
+    "ageConfirm": "Bulunduğum yargı bölgesinde kumar oynamak için yasal yaşta olduğumu onaylıyorum ve Hizmet Şartları'nı kabul ediyorum.",
+    "ageRequired": "Devam etmek için kumar oynamak için yasal yaşta olduğunu onaylaman gerekiyor.",
+    "expired": "Steam kayıt oturumunun süresi doldu, lütfen tekrar giriş yap.",
+    "finishing": "Tamamlanıyor…",
+    "continue": "Devam et",
+    "failed": "Steam kaydı başarısız",
+    "cancel": "İptal"
+  },
+  "steamCallback": {
+    "signingIn": "Steam ile giriş yapılıyor…"
+  },
+  "comingSoon": {
+    "browseCases": "Bunun yerine kasalara göz at",
+    "battles": {
+      "title": "Kasa savaşları",
+      "description": "Diğer oyunculara karşı birebir kasa aç — kazanan tüm ganimeti alır. Yakında."
+    },
+    "upgrader": {
+      "title": "Yükselt",
+      "description": "Daha nadir bir şey kazanma şansı için bir eşyayı (veya bakiyeni) riske at, oranlar önceden gösterilir. Yakında."
+    },
+    "contracts": {
+      "title": "Sözleşmeler",
+      "description": "Daha üst seviye bir eşya kazanma şansı için düşük değerli eşya yığınını takas et. Yakında."
+    },
+    "cards": {
+      "title": "Kartlar",
+      "description": "Nadirliğe göre ağırlıklandırılmış ödüllerle hızlı tempolu bir kart seçme oyunu. Yakında."
+    },
+    "prizes": {
+      "title": "Ödüller",
+      "description": "Gerçek ödül havuzlarıyla sıralama yarışları ve çekilişler. Yakında."
+    },
+    "bonuses": {
+      "title": "Bonuslar",
+      "description": "Yatırım bonusları, ücretsiz kasa düşüşleri ve günlük ödüller. Yakında."
+    }
+  },
+  "admin": {
+    "title": "Yönetici",
+    "nav": {
+      "kyc": "KYC kuyruğu",
+      "withdrawals": "Çekimler",
+      "cases": "Kasalar",
+      "users": "Kullanıcılar"
+    },
+    "kycQueue": {
+      "heading": "Bekleyen kimlik doğrulamaları",
+      "couldNotLoad": "KYC kuyruğu yüklenemedi",
+      "reviewFailed": "İnceleme başarısız",
+      "rejectionPrompt": "Ret sebebi?",
+      "rejected": "Reddedildi",
+      "user": "Kullanıcı",
+      "fullName": "Tam ad",
+      "dob": "Doğum tarihi",
+      "document": "Belge",
+      "selfie": "Selfie",
+      "actions": "İşlemler",
+      "view": "görüntüle",
+      "approve": "Onayla",
+      "reject": "Reddet",
+      "noneP": "Bekleyen başvuru yok."
+    },
+    "withdrawals": {
+      "heading": "Bekleyen çekimler",
+      "couldNotLoad": "Çekimler yüklenemedi",
+      "reviewFailed": "İnceleme başarısız",
+      "rejectionPrompt": "Ret sebebi?",
+      "rejected": "Reddedildi",
+      "user": "Kullanıcı",
+      "rail": "Yöntem",
+      "amount": "Tutar",
+      "destination": "Hedef",
+      "requested": "Talep edildi",
+      "actions": "İşlemler",
+      "approvePay": "Onayla ve öde",
+      "reject": "Reddet",
+      "none": "Bekleyen çekim yok."
+    },
+    "users": {
+      "heading": "Kullanıcılar",
+      "email": "E-posta",
+      "role": "Rol",
+      "kyc": "KYC",
+      "balance": "Bakiye",
+      "joined": "Katılım"
+    },
+    "cases": {
+      "heading": "Kasalar",
+      "createHeading": "Kasa oluştur",
+      "name": "Ad",
+      "price": "Fiyat",
+      "items": "Eşyalar",
+      "active": "Aktif",
+      "yes": "Evet",
+      "no": "Hayır",
+      "disable": "Devre dışı bırak",
+      "enable": "Etkinleştir",
+      "slug": "Slug",
+      "nameField": "Ad",
+      "priceField": "Fiyat (alt birim, örn. cent)",
+      "currency": "Para birimi",
+      "imageUrl": "Görsel URL'si",
+      "itemsHeading": "Eşyalar",
+      "itemName": "Ad",
+      "itemImageUrl": "Görsel URL'si",
+      "weight": "Ağırlık",
+      "value": "Değer (alt birim)",
+      "itemCurrency": "Para birimi",
+      "addItem": "+ Eşya ekle",
+      "createCase": "Kasa oluştur",
+      "created": "Kasa oluşturuldu.",
+      "couldNotLoad": "Kasalar yüklenemedi",
+      "couldNotCreate": "Kasa oluşturulamadı"
+    }
+  },
+  "languages": {
+    "ru": "Rusça",
+    "en": "İngilizce",
+    "es": "İspanyolca",
+    "pt": "Portekizce",
+    "de": "Almanca",
+    "tr": "Türkçe",
+    "uk": "Ukraynaca"
+  }
+}

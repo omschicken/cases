@@ -1,10 +1,12 @@
+import { useTranslation } from "react-i18next";
 import { ComingSoon } from "../components/ComingSoon";
 
 export function BonusesPage() {
+  const { t } = useTranslation();
   return (
     <ComingSoon
-      title="Bonuses"
-      description="Deposit bonuses, free case drops, and daily rewards. Coming soon."
+      title={t("comingSoon.bonuses.title")}
+      description={t("comingSoon.bonuses.description")}
       icon={
         <svg width="56" height="56" viewBox="0 0 20 20" fill="none">
           <rect x="2.5" y="8" width="15" height="9" rx="1.2" stroke="currentColor" strokeWidth="1.4" />

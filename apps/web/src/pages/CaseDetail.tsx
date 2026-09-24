@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { rarityColor } from "../lib/rarity";
@@ -9,6 +10,7 @@ import { CaseOpeningReel } from "../components/CaseOpeningReel";
 import type { CaseDto, OpenCaseResult } from "../lib/types";
 
 export function CaseDetailPage() {
+  const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
   const [theCase, setTheCase] = useState<CaseDto | null>(null);
@@ -25,8 +27,8 @@ export function CaseDetailPage() {
     api
       .get<CaseDto>(`/cases/${slug}`)
       .then(setTheCase)
-      .catch(() => setError("Case not found"));
-  }, [slug]);
+      .catch(() => setError(t("caseDetail.caseNotFound")));
+  }, [slug, t]);
 
   useEffect(() => {
     if (!user) return;
@@ -52,14 +54,14 @@ export function CaseDetailPage() {
       setResult(res);
       setSpinKey((k) => k + 1);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Could not open case");
+      setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotOpenCase"));
     } finally {
       setOpening(false);
     }
   }
 
   if (error && !theCase) return <p className="form-error">{error}</p>;
-  if (!theCase) return <p>Loading…</p>;
+  if (!theCase) return <p>{t("common.loading")}</p>;
 
   const spinning = result !== null && !revealed;
 
@@ -93,11 +95,15 @@ export function CaseDetailPage() {
 
       {user ? (
         <button onClick={openCase} disabled={opening || spinning} className="open-button">
-          {opening ? "Rolling…" : spinning ? "Spinning…" : `Open for ${formatMinor(theCase.priceMinor, theCase.currency)}`}
+          {opening
+            ? t("caseDetail.rolling")
+            : spinning
+              ? t("caseDetail.spinning")
+              : t("caseDetail.openFor", { price: formatMinor(theCase.priceMinor, theCase.currency) })}
         </button>
       ) : (
         <p>
-          <Link to="/login">Log in</Link> to open this case.
+          <Link to="/login">{t("caseDetail.logIn")}</Link> {t("caseDetail.logInSuffix")}
         </p>
       )}
 
@@ -105,36 +111,36 @@ export function CaseDetailPage() {
 
       {seedHash && (
         <div className="fairness-panel">
-          <h3>Provably fair</h3>
+          <h3>{t("caseDetail.provablyFair")}</h3>
           <p>
-            Server seed commitment (published before this roll):
+            {t("caseDetail.serverSeedCommitment")}
             <br />
             <code>{seedHash}</code>
           </p>
           <p>
-            Your client seed: <code>{clientSeed}</code>
+            {t("caseDetail.yourClientSeed")} <code>{clientSeed}</code>
           </p>
           <p>
-            Rotate your seed on the <Link to="/profile">Profile</Link> page to reveal the server seed and
-            verify any past opening.
+            {t("caseDetail.rotateHintPrefix")} <Link to="/profile">{t("caseDetail.profileLink")}</Link>{" "}
+            {t("caseDetail.rotateHintSuffix")}
           </p>
         </div>
       )}
 
       {result && revealed && (
         <div className="result-panel" style={{ "--rarity-color": rarityColor(result.item.rarity) } as CSSProperties}>
-          <h2>You got: {result.item.name}</h2>
+          <h2>{t("caseDetail.youGot", { name: result.item.name })}</h2>
           <img src={result.item.imageUrl} alt={result.item.name} className="result-image" />
           <p className="value">{formatMinor(result.item.valueMinor, result.item.currency)}</p>
           <details>
-            <summary>Round details</summary>
+            <summary>{t("caseDetail.roundDetails")}</summary>
             <ul>
-              <li>Roll: {result.roll.toFixed(8)}</li>
-              <li>Nonce: {result.nonce}</li>
-              <li>Server seed hash: {result.serverSeedHash}</li>
-              <li>Client seed: {result.clientSeed}</li>
+              <li>{t("caseDetail.roll", { roll: result.roll.toFixed(8) })}</li>
+              <li>{t("caseDetail.nonce", { nonce: result.nonce })}</li>
+              <li>{t("caseDetail.serverSeedHash", { hash: result.serverSeedHash })}</li>
+              <li>{t("caseDetail.clientSeed", { seed: result.clientSeed })}</li>
               <li>
-                <Link to={`/verify/${result.openEventId}`}>Verify this result</Link>
+                <Link to={`/verify/${result.openEventId}`}>{t("caseDetail.verifyThisResult")}</Link>
               </li>
             </ul>
           </details>

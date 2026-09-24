@@ -1,0 +1,341 @@
+{
+  "common": {
+    "loading": "Lädt…",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "nav": {
+    "profile": "Profil",
+    "logOut": "Abmelden",
+    "logInSteam": "Mit Steam anmelden",
+    "sidebar": {
+      "cases": "Cases",
+      "battles": "Battles",
+      "contracts": "Verträge",
+      "upgrade": "Upgrade",
+      "cards": "Karten",
+      "inventory": "Inventar",
+      "admin": "Admin"
+    },
+    "pagesBar": {
+      "referral": "Empfehlungen",
+      "prizes": "Preise",
+      "bonuses": "Boni",
+      "faq": "FAQ"
+    },
+    "footer": "GunDone.case — nur für Personen ab 18 Jahren. Glücksspiel kann süchtig machen, spiele verantwortungsbewusst. Provably-fair RNG: Jedes Case-Ergebnis kann unabhängig überprüft werden. Lizenzierter Betreiber; der Lizenzstatus wird hier im Produktivbetrieb angezeigt."
+  },
+  "dropsTicker": {
+    "label": "Live-Drops",
+    "unboxed": "hat geöffnet"
+  },
+  "home": {
+    "hero": {
+      "slide1": {
+        "eyebrow": "Willkommensbonus",
+        "title": "Erhalte 10% extra auf deine erste Einzahlung",
+        "subtitle": "Lade dein Wallet auf und öffne noch heute deine erste Case.",
+        "cta": "Jetzt einzahlen"
+      },
+      "slide2": {
+        "eyebrow": "Gerade erschienen",
+        "title": "Neue Case im Tresor",
+        "subtitle": "Neue Chancen, neue Skins — sieh dir an, was drin ist.",
+        "cta": "Cases ansehen"
+      },
+      "slide3": {
+        "eyebrow": "Empfehlen & verdienen",
+        "title": "Lade Freunde ein und verdiene an jeder ihrer Einzahlungen",
+        "subtitle": "Teile deinen Link und sammle Provision.",
+        "cta": "Mein Link"
+      },
+      "slideLabel": "Folie {{n}}"
+    },
+    "stats": {
+      "casesOpened": "Geöffnete Cases",
+      "totalWon": "Gesamt gewonnen",
+      "players": "Spieler"
+    },
+    "recentDrops": "Letzte Drops",
+    "casesHeading": "Cases",
+    "couldNotLoadCases": "Cases konnten nicht geladen werden",
+    "noCasesYet": "Noch keine Cases verfügbar."
+  },
+  "caseDetail": {
+    "caseNotFound": "Case nicht gefunden",
+    "couldNotOpenCase": "Case konnte nicht geöffnet werden",
+    "rolling": "Wird ausgewertet…",
+    "spinning": "Dreht sich…",
+    "openFor": "Öffnen für {{price}}",
+    "logInPrefix": "",
+    "logIn": "Melde dich an",
+    "logInSuffix": ", um diese Case zu öffnen.",
+    "provablyFair": "Provably fair",
+    "serverSeedCommitment": "Hash des Server-Seeds (veröffentlicht vor diesem Wurf):",
+    "yourClientSeed": "Dein Client-Seed:",
+    "rotateHintPrefix": "Wechsle deinen Seed auf der Seite",
+    "profileLink": "Profil",
+    "rotateHintSuffix": ", um den Server-Seed offenzulegen und jede frühere Öffnung zu überprüfen.",
+    "youGot": "Du hast erhalten: {{name}}",
+    "roundDetails": "Rundendetails",
+    "roll": "Wurf: {{roll}}",
+    "nonce": "Nonce: {{nonce}}",
+    "serverSeedHash": "Server-Seed-Hash: {{hash}}",
+    "clientSeed": "Client-Seed: {{seed}}",
+    "verifyThisResult": "Dieses Ergebnis überprüfen"
+  },
+  "verify": {
+    "title": "Runde überprüfen",
+    "couldNotLoad": "Diese Runde konnte nicht geladen werden",
+    "publishedHash": "Veröffentlichter Server-Seed-Hash:",
+    "verified": "✅ Verifiziert — dieses Ergebnis ist echt.",
+    "verificationFailed": "❌ Überprüfung fehlgeschlagen.",
+    "hashMatches": "Server-Seed-Hash stimmt überein: {{value}}",
+    "itemMatches": "Gegenstand stimmt mit neu berechnetem Wurf überein: {{value}}",
+    "roll": "Wurf: {{roll}}"
+  },
+  "inventory": {
+    "title": "Inventar",
+    "couldNotLoad": "Inventar konnte nicht geladen werden",
+    "couldNotSell": "Gegenstand konnte nicht verkauft werden",
+    "selling": "Wird verkauft…",
+    "sellForBalance": "Für Guthaben verkaufen",
+    "noItemsYet": "Noch keine Gegenstände — öffne eine Case, um etwas zu gewinnen."
+  },
+  "wallet": {
+    "title": "Wallet",
+    "deposit": "Einzahlung",
+    "withdraw": "Auszahlung",
+    "method": "Methode",
+    "amount": "Betrag",
+    "currency": "Währung",
+    "destination": "Ziel (IBAN / Wallet-Adresse / Steam-Trade-URL)",
+    "card": "Karte",
+    "crypto": "Krypto",
+    "cardBank": "Karte / Bank",
+    "steamSkin": "Steam-Skin",
+    "depositButton": "Einzahlen",
+    "withdrawButton": "Auszahlung anfordern",
+    "kycHint": "Erfordert Identitätsprüfung (KYC) — siehe Profil.",
+    "depositConfirmed": "Einzahlung bestätigt.",
+    "depositFailed": "Einzahlung fehlgeschlagen",
+    "withdrawalRequested": "Auszahlung angefordert — wartet auf Prüfung durch einen Admin.",
+    "withdrawalFailed": "Auszahlung fehlgeschlagen",
+    "recentActivity": "Letzte Aktivität",
+    "date": "Datum",
+    "reason": "Grund",
+    "amountCol": "Betrag",
+    "balanceAfter": "Guthaben danach"
+  },
+  "profile": {
+    "title": "Profil",
+    "kyc": {
+      "heading": "Identitätsprüfung (KYC)",
+      "status": "Status:",
+      "reason": "Grund: {{reason}}",
+      "fullName": "Vollständiger rechtlicher Name",
+      "dob": "Geburtsdatum",
+      "docFront": "URL zum Dokumentfoto (Vorderseite)",
+      "selfie": "URL zum Selfie",
+      "uploadHint": "Der Dokument-Upload ist noch nicht mit Speicher verbunden — füge vorerst eine URL ein (siehe README).",
+      "submit": "Zur Prüfung einreichen",
+      "submitted": "Verifizierung eingereicht — ein Admin wird sie in Kürze prüfen.",
+      "submitFailed": "Einreichung fehlgeschlagen"
+    },
+    "seed": {
+      "heading": "Provably-fair-Seed",
+      "serverSeedHash": "Server-Seed-Hash: {{hash}}",
+      "clientSeed": "Client-Seed: {{seed}}",
+      "roundsPlayed": "Mit diesem Seed gespielte Runden: {{n}}",
+      "newClientSeed": "Neuer Client-Seed (optional)",
+      "rotateButton": "Seed wechseln & vorherigen offenlegen",
+      "rotated": "Seed gewechselt — dein vorheriger Server-Seed ist nun offengelegt und überprüfbar.",
+      "rotateFailed": "Seed konnte nicht gewechselt werden"
+    }
+  },
+  "referral": {
+    "title": "Empfehlungsprogramm",
+    "description": "Teile deinen Link — du verdienst eine Provision, sobald jemand, den du geworben hast, eine Einzahlung tätigt.",
+    "referrals": "Empfehlungen: {{n}}",
+    "totalEarned": "Gesamt verdient: {{amount}}"
+  },
+  "faq": {
+    "title": "FAQ",
+    "items": {
+      "provablyFair": {
+        "q": "Was ist provably fair?",
+        "a": "Jede Case-Öffnung verwendet ein Commit-Reveal-Verfahren: Bevor du eine Case öffnest, erzeugt unser Server einen geheimen Server-Seed und zeigt dir nur dessen Hash. Dein Ergebnis wird aus diesem Server-Seed, einem von dir kontrollierten Client-Seed und einer Nonce berechnet. Wechsle dein Seed-Paar jederzeit, um den Server-Seed für deine vergangenen Öffnungen offenzulegen und jedes Ergebnis unabhängig auf der Verifizierungsseite zu überprüfen — das Ergebnis konnte nicht im Nachhinein ausgewählt werden."
+      },
+      "deposits": {
+        "q": "Wie funktionieren Einzahlungen?",
+        "a": "Wir unterstützen Kartenzahlungen, Krypto und CS2-Skin-Einzahlungen. Wähle eine Methode auf der Wallet-Seite — das Guthaben wird gutgeschrieben, sobald der Zahlungsanbieter die Transaktion bestätigt. Krypto-Einzahlungen benötigen in der Regel einige Netzwerkbestätigungen."
+      },
+      "kyc": {
+        "q": "Warum muss ich meine Identität verifizieren (KYC)?",
+        "a": "Als lizenzierter Echtgeld-Betreiber sind wir verpflichtet, die Identität von Spielern vor Auszahlungen zu überprüfen, gemäß den Vorschriften zur Geldwäschebekämpfung. Reiche deine Dokumente über die Profilseite ein — die meisten Verifizierungen sind innerhalb von Minuten abgeschlossen."
+      },
+      "withdrawals": {
+        "q": "Wie funktionieren Auszahlungen?",
+        "a": "Sobald dein Konto KYC-verifiziert ist, beantrage eine Auszahlung auf der Wallet-Seite per Karte, Krypto oder CS2-Skins. Auszahlungen werden auf Compliance geprüft und in der Regel innerhalb von 24 Stunden bearbeitet."
+      },
+      "steam": {
+        "q": "Kann ich mich mit Steam anmelden?",
+        "a": "Ja — klicke auf „Mit Steam anmelden“ und bestätige die Anfrage bei Steam. Wir lesen nur deine öffentliche SteamID und Profilinformationen, um dein Konto zu erstellen; dein Steam-Passwort sehen oder speichern wir nie."
+      }
+    }
+  },
+  "login": {
+    "title": "Anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "loggingIn": "Anmeldung läuft…",
+    "submit": "Anmelden",
+    "failed": "Anmeldung fehlgeschlagen",
+    "noAccount": "Noch kein Konto?",
+    "signUp": "Registrieren"
+  },
+  "register": {
+    "title": "Konto erstellen",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "referralCode": "Empfehlungscode (optional)",
+    "ageConfirm": "Ich bestätige, dass ich das gesetzliche Mindestalter für Glücksspiel in meiner Jurisdiktion erreicht habe, und akzeptiere die Nutzungsbedingungen.",
+    "ageRequired": "Du musst bestätigen, dass du das gesetzliche Mindestalter für Glücksspiel erreicht hast, um fortzufahren.",
+    "creating": "Konto wird erstellt…",
+    "submit": "Registrieren",
+    "failed": "Registrierung fehlgeschlagen",
+    "alreadyHave": "Schon ein Konto?",
+    "logIn": "Anmelden"
+  },
+  "steamComplete": {
+    "title": "Ein letzter Schritt",
+    "hint": "Steam hat deine Identität bestätigt — bestätige den Rest, um dein Konto fertig zu erstellen.",
+    "referralCode": "Empfehlungscode (optional)",
+    "ageConfirm": "Ich bestätige, dass ich das gesetzliche Mindestalter für Glücksspiel in meiner Jurisdiktion erreicht habe, und akzeptiere die Nutzungsbedingungen.",
+    "ageRequired": "Du musst bestätigen, dass du das gesetzliche Mindestalter für Glücksspiel erreicht hast, um fortzufahren.",
+    "expired": "Die Steam-Registrierungssitzung ist abgelaufen, bitte melde dich erneut an.",
+    "finishing": "Wird abgeschlossen…",
+    "continue": "Weiter",
+    "failed": "Steam-Registrierung fehlgeschlagen",
+    "cancel": "Abbrechen"
+  },
+  "steamCallback": {
+    "signingIn": "Anmeldung mit Steam läuft…"
+  },
+  "comingSoon": {
+    "browseCases": "Stattdessen Cases ansehen",
+    "battles": {
+      "title": "Case Battles",
+      "description": "Öffne Cases im direkten Duell gegen andere Spieler — der Gewinner nimmt die gesamte Beute. Demnächst."
+    },
+    "upgrader": {
+      "title": "Upgrade",
+      "description": "Riskiere einen Gegenstand (oder dein Guthaben) für die Chance auf etwas Selteneres, mit vorab angezeigten Quoten. Demnächst."
+    },
+    "contracts": {
+      "title": "Verträge",
+      "description": "Tausche einen Stapel weniger wertvoller Gegenstände gegen die Chance auf einen höherwertigen Gegenstand. Demnächst."
+    },
+    "cards": {
+      "title": "Karten",
+      "description": "Ein schnelles Karten-Auswahlspiel mit nach Seltenheit gewichteten Preisen. Demnächst."
+    },
+    "prizes": {
+      "title": "Preise",
+      "description": "Ranglisten-Rennen und Gewinnspiele mit echten Preispools. Demnächst."
+    },
+    "bonuses": {
+      "title": "Boni",
+      "description": "Einzahlungsboni, kostenlose Case-Drops und tägliche Belohnungen. Demnächst."
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "nav": {
+      "kyc": "KYC-Warteschlange",
+      "withdrawals": "Auszahlungen",
+      "cases": "Cases",
+      "users": "Benutzer"
+    },
+    "kycQueue": {
+      "heading": "Ausstehende Identitätsprüfungen",
+      "couldNotLoad": "KYC-Warteschlange konnte nicht geladen werden",
+      "reviewFailed": "Prüfung fehlgeschlagen",
+      "rejectionPrompt": "Ablehnungsgrund?",
+      "rejected": "Abgelehnt",
+      "user": "Benutzer",
+      "fullName": "Vollständiger Name",
+      "dob": "Geburtsdatum",
+      "document": "Dokument",
+      "selfie": "Selfie",
+      "actions": "Aktionen",
+      "view": "ansehen",
+      "approve": "Genehmigen",
+      "reject": "Ablehnen",
+      "noneP": "Keine ausstehenden Einreichungen."
+    },
+    "withdrawals": {
+      "heading": "Ausstehende Auszahlungen",
+      "couldNotLoad": "Auszahlungen konnten nicht geladen werden",
+      "reviewFailed": "Prüfung fehlgeschlagen",
+      "rejectionPrompt": "Ablehnungsgrund?",
+      "rejected": "Abgelehnt",
+      "user": "Benutzer",
+      "rail": "Methode",
+      "amount": "Betrag",
+      "destination": "Ziel",
+      "requested": "Angefragt",
+      "actions": "Aktionen",
+      "approvePay": "Genehmigen & auszahlen",
+      "reject": "Ablehnen",
+      "none": "Keine ausstehenden Auszahlungen."
+    },
+    "users": {
+      "heading": "Benutzer",
+      "email": "E-Mail",
+      "role": "Rolle",
+      "kyc": "KYC",
+      "balance": "Guthaben",
+      "joined": "Beigetreten"
+    },
+    "cases": {
+      "heading": "Cases",
+      "createHeading": "Case erstellen",
+      "name": "Name",
+      "price": "Preis",
+      "items": "Gegenstände",
+      "active": "Aktiv",
+      "yes": "Ja",
+      "no": "Nein",
+      "disable": "Deaktivieren",
+      "enable": "Aktivieren",
+      "slug": "Slug",
+      "nameField": "Name",
+      "priceField": "Preis (kleinste Einheit, z. B. Cent)",
+      "currency": "Währung",
+      "imageUrl": "Bild-URL",
+      "itemsHeading": "Gegenstände",
+      "itemName": "Name",
+      "itemImageUrl": "Bild-URL",
+      "weight": "Gewicht",
+      "value": "Wert (kleinste Einheit)",
+      "itemCurrency": "Währung",
+      "addItem": "+ Gegenstand hinzufügen",
+      "createCase": "Case erstellen",
+      "created": "Case erstellt.",
+      "couldNotLoad": "Cases konnten nicht geladen werden",
+      "couldNotCreate": "Case konnte nicht erstellt werden"
+    }
+  },
+  "languages": {
+    "ru": "Russisch",
+    "en": "Englisch",
+    "es": "Spanisch",
+    "pt": "Portugiesisch",
+    "de": "Deutsch",
+    "tr": "Türkisch",
+    "uk": "Ukrainisch"
+  }
+}

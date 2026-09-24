@@ -1,9 +1,11 @@
 import { FormEvent, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { ApiError } from "../lib/api";
 
 export function LoginPage() {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -19,7 +21,7 @@ export function LoginPage() {
       await login(email, password);
       navigate("/");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Login failed");
+      setError(err instanceof ApiError ? err.message : t("login.failed"));
     } finally {
       setSubmitting(false);
     }
@@ -27,14 +29,14 @@ export function LoginPage() {
 
   return (
     <div className="auth-page">
-      <h1>Log in</h1>
+      <h1>{t("login.title")}</h1>
       <form onSubmit={onSubmit} className="auth-form">
         <label>
-          Email
+          {t("login.email")}
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
         <label>
-          Password
+          {t("login.password")}
           <input
             type="password"
             value={password}
@@ -44,11 +46,11 @@ export function LoginPage() {
         </label>
         {error && <p className="form-error">{error}</p>}
         <button type="submit" disabled={submitting}>
-          {submitting ? "Logging in…" : "Log in"}
+          {submitting ? t("login.loggingIn") : t("login.submit")}
         </button>
       </form>
       <p>
-        No account? <Link to="/register">Sign up</Link>
+        {t("login.noAccount")} <Link to="/register">{t("login.signUp")}</Link>
       </p>
     </div>
   );

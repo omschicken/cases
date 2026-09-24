@@ -1,0 +1,341 @@
+{
+  "common": {
+    "loading": "Carregando…",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "yes": "Sim",
+    "no": "Não"
+  },
+  "nav": {
+    "profile": "Perfil",
+    "logOut": "Sair",
+    "logInSteam": "Entrar com Steam",
+    "sidebar": {
+      "cases": "Caixas",
+      "battles": "Batalhas",
+      "contracts": "Contratos",
+      "upgrade": "Upgrade",
+      "cards": "Cartas",
+      "inventory": "Inventário",
+      "admin": "Admin"
+    },
+    "pagesBar": {
+      "referral": "Indicações",
+      "prizes": "Prêmios",
+      "bonuses": "Bônus",
+      "faq": "FAQ"
+    },
+    "footer": "GunDone.case — apenas para maiores de 18 anos. Jogos de azar podem viciar, jogue com responsabilidade. RNG verificável: todo resultado de caixa pode ser verificado de forma independente. Operador licenciado; o status da licença será exibido aqui em produção."
+  },
+  "dropsTicker": {
+    "label": "Drops ao vivo",
+    "unboxed": "abriu"
+  },
+  "home": {
+    "hero": {
+      "slide1": {
+        "eyebrow": "Bônus de boas-vindas",
+        "title": "Ganhe 10% extra no seu primeiro depósito",
+        "subtitle": "Carregue sua carteira e abra sua primeira caixa hoje.",
+        "cta": "Depositar agora"
+      },
+      "slide2": {
+        "eyebrow": "Acabou de sair",
+        "title": "Nova caixa adicionada ao cofre",
+        "subtitle": "Novas probabilidades, novos skins — veja o que tem dentro.",
+        "cta": "Ver caixas"
+      },
+      "slide3": {
+        "eyebrow": "Indique e ganhe",
+        "title": "Convide amigos, ganhe a cada depósito que eles fizerem",
+        "subtitle": "Compartilhe seu link e comece a acumular comissão.",
+        "cta": "Meu link"
+      },
+      "slideLabel": "Slide {{n}}"
+    },
+    "stats": {
+      "casesOpened": "Caixas abertas",
+      "totalWon": "Total ganho",
+      "players": "Jogadores"
+    },
+    "recentDrops": "Drops recentes",
+    "casesHeading": "Caixas",
+    "couldNotLoadCases": "Não foi possível carregar as caixas",
+    "noCasesYet": "Ainda não há caixas disponíveis."
+  },
+  "caseDetail": {
+    "caseNotFound": "Caixa não encontrada",
+    "couldNotOpenCase": "Não foi possível abrir a caixa",
+    "rolling": "Girando…",
+    "spinning": "Girando…",
+    "openFor": "Abrir por {{price}}",
+    "logInPrefix": "",
+    "logIn": "Entre",
+    "logInSuffix": "para abrir esta caixa.",
+    "provablyFair": "Provably fair",
+    "serverSeedCommitment": "Hash da semente do servidor (publicado antes desta rodada):",
+    "yourClientSeed": "Sua semente de cliente:",
+    "rotateHintPrefix": "Troque sua semente na página",
+    "profileLink": "Perfil",
+    "rotateHintSuffix": "para revelar a semente do servidor e verificar qualquer abertura anterior.",
+    "youGot": "Você ganhou: {{name}}",
+    "roundDetails": "Detalhes da rodada",
+    "roll": "Rolagem: {{roll}}",
+    "nonce": "Nonce: {{nonce}}",
+    "serverSeedHash": "Hash da semente do servidor: {{hash}}",
+    "clientSeed": "Semente de cliente: {{seed}}",
+    "verifyThisResult": "Verificar este resultado"
+  },
+  "verify": {
+    "title": "Verificar rodada",
+    "couldNotLoad": "Não foi possível carregar esta rodada",
+    "publishedHash": "Hash publicado da semente do servidor:",
+    "verified": "✅ Verificado — este resultado é genuíno.",
+    "verificationFailed": "❌ Falha na verificação.",
+    "hashMatches": "O hash da semente do servidor confere: {{value}}",
+    "itemMatches": "O item corresponde à rolagem recalculada: {{value}}",
+    "roll": "Rolagem: {{roll}}"
+  },
+  "inventory": {
+    "title": "Inventário",
+    "couldNotLoad": "Não foi possível carregar o inventário",
+    "couldNotSell": "Não foi possível vender o item",
+    "selling": "Vendendo…",
+    "sellForBalance": "Vender por saldo",
+    "noItemsYet": "Ainda sem itens — abra uma caixa para ganhar algo."
+  },
+  "wallet": {
+    "title": "Carteira",
+    "deposit": "Depósito",
+    "withdraw": "Saque",
+    "method": "Método",
+    "amount": "Valor",
+    "currency": "Moeda",
+    "destination": "Destino (IBAN / endereço da wallet / URL de troca da Steam)",
+    "card": "Cartão",
+    "crypto": "Cripto",
+    "cardBank": "Cartão / banco",
+    "steamSkin": "Skin da Steam",
+    "depositButton": "Depositar",
+    "withdrawButton": "Solicitar saque",
+    "kycHint": "Requer verificação de identidade (KYC) — veja o Perfil.",
+    "depositConfirmed": "Depósito confirmado.",
+    "depositFailed": "Falha no depósito",
+    "withdrawalRequested": "Saque solicitado — aguardando revisão do administrador.",
+    "withdrawalFailed": "Falha no saque",
+    "recentActivity": "Atividade recente",
+    "date": "Data",
+    "reason": "Motivo",
+    "amountCol": "Valor",
+    "balanceAfter": "Saldo depois"
+  },
+  "profile": {
+    "title": "Perfil",
+    "kyc": {
+      "heading": "Verificação de identidade (KYC)",
+      "status": "Status:",
+      "reason": "Motivo: {{reason}}",
+      "fullName": "Nome legal completo",
+      "dob": "Data de nascimento",
+      "docFront": "URL da foto do documento (frente)",
+      "selfie": "URL da selfie",
+      "uploadHint": "O envio de documentos ainda não está conectado ao armazenamento — por enquanto, cole uma URL (veja o README).",
+      "submit": "Enviar para revisão",
+      "submitted": "Verificação enviada — um administrador vai revisá-la em breve.",
+      "submitFailed": "Falha no envio"
+    },
+    "seed": {
+      "heading": "Semente provably fair",
+      "serverSeedHash": "Hash da semente do servidor: {{hash}}",
+      "clientSeed": "Semente de cliente: {{seed}}",
+      "roundsPlayed": "Rodadas jogadas nesta semente: {{n}}",
+      "newClientSeed": "Nova semente de cliente (opcional)",
+      "rotateButton": "Trocar semente e revelar a anterior",
+      "rotated": "Semente trocada — sua semente de servidor anterior agora está revelada e verificável.",
+      "rotateFailed": "Não foi possível trocar a semente"
+    }
+  },
+  "referral": {
+    "title": "Programa de indicações",
+    "description": "Compartilhe seu link — você ganha comissão sempre que alguém indicado por você depositar.",
+    "referrals": "Indicações: {{n}}",
+    "totalEarned": "Total ganho: {{amount}}"
+  },
+  "faq": {
+    "title": "Perguntas frequentes",
+    "items": {
+      "provablyFair": {
+        "q": "O que é provably fair?",
+        "a": "Toda abertura de caixa usa um esquema commit-reveal: antes de abrir uma caixa, nosso servidor gera uma semente secreta e mostra apenas o hash dela. Seu resultado é calculado a partir dessa semente do servidor, de uma semente de cliente que você controla, e de um nonce. Troque seu par de sementes a qualquer momento para revelar a semente usada em suas aberturas anteriores e verificar cada resultado de forma independente na página de verificação — o resultado não poderia ter sido escolhido depois do fato."
+      },
+      "deposits": {
+        "q": "Como funcionam os depósitos?",
+        "a": "Aceitamos pagamentos com cartão, cripto e depósitos de skins de CS2. Escolha um método na página Carteira — os fundos são creditados ao seu saldo assim que o provedor de pagamento confirmar a transação. Depósitos em cripto geralmente exigem algumas confirmações de rede."
+      },
+      "kyc": {
+        "q": "Por que preciso verificar minha identidade (KYC)?",
+        "a": "Como operador licenciado de dinheiro real, somos obrigados a verificar a identidade do jogador antes dos saques, em conformidade com regulamentos contra lavagem de dinheiro. Envie seus documentos pela página Perfil — a maioria das verificações é concluída em minutos."
+      },
+      "withdrawals": {
+        "q": "Como funcionam os saques?",
+        "a": "Depois que sua conta for verificada pelo KYC, solicite um saque na página Carteira via cartão, cripto ou skins de CS2. Os saques são revisados quanto à conformidade e geralmente processados em até 24 horas."
+      },
+      "steam": {
+        "q": "Posso entrar com a Steam?",
+        "a": "Sim — clique em «Entrar com Steam» e aprove a solicitação na Steam. Nós só lemos seu SteamID público e informações de perfil para criar sua conta; nunca vemos ou armazenamos sua senha da Steam."
+      }
+    }
+  },
+  "login": {
+    "title": "Entrar",
+    "email": "E-mail",
+    "password": "Senha",
+    "loggingIn": "Entrando…",
+    "submit": "Entrar",
+    "failed": "Falha ao entrar",
+    "noAccount": "Não tem conta?",
+    "signUp": "Cadastre-se"
+  },
+  "register": {
+    "title": "Criar uma conta",
+    "email": "E-mail",
+    "password": "Senha",
+    "referralCode": "Código de indicação (opcional)",
+    "ageConfirm": "Confirmo que tenho a idade legal para apostar na minha jurisdição e aceito os Termos de Serviço.",
+    "ageRequired": "Você precisa confirmar que tem a idade legal para apostar para continuar.",
+    "creating": "Criando conta…",
+    "submit": "Cadastrar",
+    "failed": "Falha no cadastro",
+    "alreadyHave": "Já tem uma conta?",
+    "logIn": "Entrar"
+  },
+  "steamComplete": {
+    "title": "Uma última etapa",
+    "hint": "A Steam verificou sua identidade — confirme o resto para terminar de criar sua conta.",
+    "referralCode": "Código de indicação (opcional)",
+    "ageConfirm": "Confirmo que tenho a idade legal para apostar na minha jurisdição e aceito os Termos de Serviço.",
+    "ageRequired": "Você precisa confirmar que tem a idade legal para apostar para continuar.",
+    "expired": "A sessão de cadastro via Steam expirou, entre novamente.",
+    "finishing": "Finalizando…",
+    "continue": "Continuar",
+    "failed": "Falha no cadastro via Steam",
+    "cancel": "Cancelar"
+  },
+  "steamCallback": {
+    "signingIn": "Entrando com a Steam…"
+  },
+  "comingSoon": {
+    "browseCases": "Ver caixas em vez disso",
+    "battles": {
+      "title": "Batalhas de caixas",
+      "description": "Abra caixas frente a frente contra outros jogadores — o vencedor leva todo o butim combinado. Em breve."
+    },
+    "upgrader": {
+      "title": "Upgrade",
+      "description": "Arrisque um item (ou seu saldo) por uma chance de conseguir algo mais raro, com as probabilidades mostradas antecipadamente. Em breve."
+    },
+    "contracts": {
+      "title": "Contratos",
+      "description": "Troque um lote de itens de menor valor por uma chance de conseguir um item de nível superior. Em breve."
+    },
+    "cards": {
+      "title": "Cartas",
+      "description": "Um jogo rápido de escolher carta com prêmios ponderados por raridade. Em breve."
+    },
+    "prizes": {
+      "title": "Prêmios",
+      "description": "Corridas no ranking e sorteios com prêmios reais. Em breve."
+    },
+    "bonuses": {
+      "title": "Bônus",
+      "description": "Bônus de depósito, caixas grátis e recompensas diárias. Em breve."
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "nav": {
+      "kyc": "Fila de KYC",
+      "withdrawals": "Saques",
+      "cases": "Caixas",
+      "users": "Usuários"
+    },
+    "kycQueue": {
+      "heading": "Verificações de identidade pendentes",
+      "couldNotLoad": "Não foi possível carregar a fila de KYC",
+      "reviewFailed": "Falha na revisão",
+      "rejectionPrompt": "Motivo da rejeição?",
+      "rejected": "Rejeitado",
+      "user": "Usuário",
+      "fullName": "Nome completo",
+      "dob": "Nascimento",
+      "document": "Documento",
+      "selfie": "Selfie",
+      "actions": "Ações",
+      "view": "ver",
+      "approve": "Aprovar",
+      "reject": "Rejeitar",
+      "noneP": "Nenhum envio pendente."
+    },
+    "withdrawals": {
+      "heading": "Saques pendentes",
+      "couldNotLoad": "Não foi possível carregar os saques",
+      "reviewFailed": "Falha na revisão",
+      "rejectionPrompt": "Motivo da rejeição?",
+      "rejected": "Rejeitado",
+      "user": "Usuário",
+      "rail": "Método",
+      "amount": "Valor",
+      "destination": "Destino",
+      "requested": "Solicitado",
+      "actions": "Ações",
+      "approvePay": "Aprovar e pagar",
+      "reject": "Rejeitar",
+      "none": "Nenhum saque pendente."
+    },
+    "users": {
+      "heading": "Usuários",
+      "email": "E-mail",
+      "role": "Função",
+      "kyc": "KYC",
+      "balance": "Saldo",
+      "joined": "Cadastrado em"
+    },
+    "cases": {
+      "heading": "Caixas",
+      "createHeading": "Criar caixa",
+      "name": "Nome",
+      "price": "Preço",
+      "items": "Itens",
+      "active": "Ativa",
+      "yes": "Sim",
+      "no": "Não",
+      "disable": "Desativar",
+      "enable": "Ativar",
+      "slug": "Slug",
+      "nameField": "Nome",
+      "priceField": "Preço (unidades menores, ex.: centavos)",
+      "currency": "Moeda",
+      "imageUrl": "URL da imagem",
+      "itemsHeading": "Itens",
+      "itemName": "Nome",
+      "itemImageUrl": "URL da imagem",
+      "weight": "Peso",
+      "value": "Valor (unidades menores)",
+      "itemCurrency": "Moeda",
+      "addItem": "+ Adicionar item",
+      "createCase": "Criar caixa",
+      "created": "Caixa criada.",
+      "couldNotLoad": "Não foi possível carregar as caixas",
+      "couldNotCreate": "Não foi possível criar a caixa"
+    }
+  },
+  "languages": {
+    "ru": "Russo",
+    "en": "Inglês",
+    "es": "Espanhol",
+    "pt": "Português",
+    "de": "Alemão",
+    "tr": "Turco",
+    "uk": "Ucraniano"
+  }
+}

@@ -1,25 +1,27 @@
 import { NavLink, Route, Routes } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { AdminKycQueue } from "./AdminKycQueue";
 import { AdminWithdrawals } from "./AdminWithdrawals";
 import { AdminCases } from "./AdminCases";
 import { AdminUsers } from "./AdminUsers";
 
 export function AdminDashboardPage() {
+  const { t } = useTranslation();
   return (
     <div className="admin-shell">
-      <h1>Admin</h1>
+      <h1>{t("admin.title")}</h1>
       <nav className="admin-nav">
         <NavLink to="/admin/kyc" end>
-          KYC queue
+          {t("admin.nav.kyc")}
         </NavLink>
         <NavLink to="/admin/withdrawals" end>
-          Withdrawals
+          {t("admin.nav.withdrawals")}
         </NavLink>
         <NavLink to="/admin/cases" end>
-          Cases
+          {t("admin.nav.cases")}
         </NavLink>
         <NavLink to="/admin/users" end>
-          Users
+          {t("admin.nav.users")}
         </NavLink>
       </nav>
       <Routes>

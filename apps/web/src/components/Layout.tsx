@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { api, API_URL } from "../lib/api";
 import { formatMinor } from "../lib/money";
@@ -8,8 +9,10 @@ import ak47 from "../assets/ak47.png";
 import { Sidebar } from "./Sidebar";
 import { DropsTicker } from "./DropsTicker";
 import { PagesBar } from "./PagesBar";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function Layout() {
+  const { t } = useTranslation();
   const { user, logout } = useAuth();
   const [balanceMinor, setBalanceMinor] = useState<string | null>(null);
 
@@ -35,7 +38,7 @@ export function Layout() {
           </span>
         </NavLink>
         <div className="nav-right">
-          {user && <NavLink to="/profile">Profile</NavLink>}
+          {user && <NavLink to="/profile">{t("nav.profile")}</NavLink>}
           {user ? (
             <>
               {balanceMinor !== null && (
@@ -44,13 +47,14 @@ export function Layout() {
                 </NavLink>
               )}
               <span className="user-email">{user.displayName ?? user.email}</span>
-              <button onClick={logout}>Log out</button>
+              <button onClick={logout}>{t("nav.logOut")}</button>
             </>
           ) : (
             <a href={`${API_URL}/auth/steam`} className="steam-login-button">
-              Log in via Steam
+              {t("nav.logInSteam")}
             </a>
           )}
+          <LanguageSwitcher />
         </div>
       </header>
       <PagesBar />
@@ -60,11 +64,7 @@ export function Layout() {
           <Outlet />
         </main>
       </div>
-      <footer className="site-footer">
-        GunDone.case — 18+ only. Gambling can be addictive, play responsibly.
-        Provably-fair RNG: every case result can be independently verified.
-        Licensed operator; licence status shown here in production.
-      </footer>
+      <footer className="site-footer">{t("nav.footer")}</footer>
     </div>
   );
 }

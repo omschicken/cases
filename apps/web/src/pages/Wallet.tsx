@@ -1,9 +1,11 @@
 import { FormEvent, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import type { LedgerEntryDto, PaymentRail, WalletDto } from "../lib/types";
 
 export function WalletPage() {
+  const { t } = useTranslation();
   const [wallet, setWallet] = useState<WalletDto | null>(null);
   const [ledger, setLedger] = useState<LedgerEntryDto[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -35,10 +37,10 @@ export function WalletPage() {
         amountMinor: Math.round(Number(depositAmount) * 100),
         currency: depositCurrency,
       });
-      setInfo("Deposit confirmed.");
+      setInfo(t("wallet.depositConfirmed"));
       load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Deposit failed");
+      setError(err instanceof ApiError ? err.message : t("wallet.depositFailed"));
     }
   }
 
@@ -53,16 +55,16 @@ export function WalletPage() {
         currency: withdrawCurrency,
         destination: withdrawDestination,
       });
-      setInfo("Withdrawal requested — pending admin review.");
+      setInfo(t("wallet.withdrawalRequested"));
       load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Withdrawal failed");
+      setError(err instanceof ApiError ? err.message : t("wallet.withdrawalFailed"));
     }
   }
 
   return (
     <div className="wallet-page">
-      <h1>Wallet</h1>
+      <h1>{t("wallet.title")}</h1>
       <p className="balance-display">{wallet ? formatMinor(wallet.balanceMinor) : "…"}</p>
 
       {error && <p className="form-error">{error}</p>}
@@ -70,65 +72,65 @@ export function WalletPage() {
 
       <div className="wallet-forms">
         <form onSubmit={onDeposit} className="auth-form">
-          <h3>Deposit</h3>
+          <h3>{t("wallet.deposit")}</h3>
           <label>
-            Method
+            {t("wallet.method")}
             <select value={depositRail} onChange={(e) => setDepositRail(e.target.value as PaymentRail)}>
-              <option value="CARD">Card</option>
-              <option value="CRYPTO">Crypto</option>
-              <option value="STEAM_SKIN">Steam skin</option>
+              <option value="CARD">{t("wallet.card")}</option>
+              <option value="CRYPTO">{t("wallet.crypto")}</option>
+              <option value="STEAM_SKIN">{t("wallet.steamSkin")}</option>
             </select>
           </label>
           <label>
-            Amount
+            {t("wallet.amount")}
             <input value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
           </label>
           <label>
-            Currency
+            {t("wallet.currency")}
             <input value={depositCurrency} onChange={(e) => setDepositCurrency(e.target.value)} />
           </label>
-          <button type="submit">Deposit</button>
+          <button type="submit">{t("wallet.depositButton")}</button>
         </form>
 
         <form onSubmit={onWithdraw} className="auth-form">
-          <h3>Withdraw</h3>
-          <p className="hint">Requires identity verification (KYC) — see Profile.</p>
+          <h3>{t("wallet.withdraw")}</h3>
+          <p className="hint">{t("wallet.kycHint")}</p>
           <label>
-            Method
+            {t("wallet.method")}
             <select value={withdrawRail} onChange={(e) => setWithdrawRail(e.target.value as PaymentRail)}>
-              <option value="CARD">Card / bank</option>
-              <option value="CRYPTO">Crypto</option>
-              <option value="STEAM_SKIN">Steam skin</option>
+              <option value="CARD">{t("wallet.cardBank")}</option>
+              <option value="CRYPTO">{t("wallet.crypto")}</option>
+              <option value="STEAM_SKIN">{t("wallet.steamSkin")}</option>
             </select>
           </label>
           <label>
-            Amount
+            {t("wallet.amount")}
             <input value={withdrawAmount} onChange={(e) => setWithdrawAmount(e.target.value)} />
           </label>
           <label>
-            Currency
+            {t("wallet.currency")}
             <input value={withdrawCurrency} onChange={(e) => setWithdrawCurrency(e.target.value)} />
           </label>
           <label>
-            Destination (IBAN / wallet address / Steam trade URL)
+            {t("wallet.destination")}
             <input
               value={withdrawDestination}
               onChange={(e) => setWithdrawDestination(e.target.value)}
               required
             />
           </label>
-          <button type="submit">Request withdrawal</button>
+          <button type="submit">{t("wallet.withdrawButton")}</button>
         </form>
       </div>
 
-      <h3>Recent activity</h3>
+      <h3>{t("wallet.recentActivity")}</h3>
       <table className="ledger-table">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Reason</th>
-            <th>Amount</th>
-            <th>Balance after</th>
+            <th>{t("wallet.date")}</th>
+            <th>{t("wallet.reason")}</th>
+            <th>{t("wallet.amountCol")}</th>
+            <th>{t("wallet.balanceAfter")}</th>
           </tr>
         </thead>
         <tbody>

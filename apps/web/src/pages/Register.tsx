@@ -1,9 +1,11 @@
 import { FormEvent, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { ApiError } from "../lib/api";
 
 export function RegisterPage() {
+  const { t } = useTranslation();
   const { register } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -18,7 +20,7 @@ export function RegisterPage() {
     e.preventDefault();
     setError(null);
     if (!ageConfirmed) {
-      setError("You must confirm you are of legal gambling age to continue.");
+      setError(t("register.ageRequired"));
       return;
     }
     setSubmitting(true);
@@ -31,7 +33,7 @@ export function RegisterPage() {
       });
       navigate("/");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Registration failed");
+      setError(err instanceof ApiError ? err.message : t("register.failed"));
     } finally {
       setSubmitting(false);
     }
@@ -39,14 +41,14 @@ export function RegisterPage() {
 
   return (
     <div className="auth-page">
-      <h1>Create an account</h1>
+      <h1>{t("register.title")}</h1>
       <form onSubmit={onSubmit} className="auth-form">
         <label>
-          Email
+          {t("register.email")}
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
         <label>
-          Password
+          {t("register.password")}
           <input
             type="password"
             minLength={10}
@@ -56,7 +58,7 @@ export function RegisterPage() {
           />
         </label>
         <label>
-          Referral code (optional)
+          {t("register.referralCode")}
           <input value={referralCode} onChange={(e) => setReferralCode(e.target.value)} />
         </label>
         <label className="checkbox-row">
@@ -65,15 +67,15 @@ export function RegisterPage() {
             checked={ageConfirmed}
             onChange={(e) => setAgeConfirmed(e.target.checked)}
           />
-          I confirm I am of legal age to gamble in my jurisdiction and I accept the Terms of Service.
+          {t("register.ageConfirm")}
         </label>
         {error && <p className="form-error">{error}</p>}
         <button type="submit" disabled={submitting}>
-          {submitting ? "Creating account…" : "Sign up"}
+          {submitting ? t("register.creating") : t("register.submit")}
         </button>
       </form>
       <p>
-        Already have an account? <Link to="/login">Log in</Link>
+        {t("register.alreadyHave")} <Link to="/login">{t("register.logIn")}</Link>
       </p>
     </div>
   );

@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { rarityColor } from "../lib/rarity";
@@ -9,6 +10,7 @@ const REFRESH_MS = 15000;
 
 /** Slim site-wide strip of live case-open results, shown above the header on every page. */
 export function DropsTicker() {
+  const { t } = useTranslation();
   const [drops, setDrops] = useState<RecentDropDto[]>([]);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export function DropsTicker() {
 
   return (
     <div className="drops-ticker-bar">
-      <span className="drops-ticker-label">Live drops</span>
+      <span className="drops-ticker-label">{t("dropsTicker.label")}</span>
       <div className="drops-ticker-marquee">
         <div className="drops-ticker-track">
           {looped.map((drop, i) => (
@@ -39,7 +41,7 @@ export function DropsTicker() {
               style={{ "--rarity-color": rarityColor(drop.item.rarity) } as CSSProperties}
             >
               <span className="drops-ticker-user">{drop.userLabel}</span>
-              <span className="drops-ticker-sep">unboxed</span>
+              <span className="drops-ticker-sep">{t("dropsTicker.unboxed")}</span>
               <span className="drops-ticker-item-name">{drop.item.name}</span>
               <span className="drops-ticker-value">{formatMinor(drop.item.valueMinor, drop.item.currency)}</span>
             </span>

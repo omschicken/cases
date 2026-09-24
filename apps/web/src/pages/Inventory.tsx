@@ -1,11 +1,13 @@
 import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { rarityColor } from "../lib/rarity";
 import type { InventoryItemDto } from "../lib/types";
 
 export function InventoryPage() {
+  const { t } = useTranslation();
   const [items, setItems] = useState<InventoryItemDto[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [sellingId, setSellingId] = useState<string | null>(null);
@@ -14,10 +16,10 @@ export function InventoryPage() {
     api
       .get<InventoryItemDto[]>("/cases/inventory/me")
       .then(setItems)
-      .catch(() => setError("Could not load inventory"));
+      .catch(() => setError(t("inventory.couldNotLoad")));
   }
 
-  useEffect(load, []);
+  useEffect(load, [t]);
 
   async function sell(id: string) {
     setSellingId(id);
@@ -26,7 +28,7 @@ export function InventoryPage() {
       await api.post(`/cases/inventory/${id}/sell`);
       load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Could not sell item");
+      setError(err instanceof ApiError ? err.message : t("inventory.couldNotSell"));
     } finally {
       setSellingId(null);
     }
@@ -34,7 +36,7 @@ export function InventoryPage() {
 
   return (
     <div>
-      <h1>Inventory</h1>
+      <h1>{t("inventory.title")}</h1>
       {error && <p className="form-error">{error}</p>}
       <div className="item-grid">
         {items.map((inv) => (
@@ -47,11 +49,11 @@ export function InventoryPage() {
             <p>{inv.caseItem.name}</p>
             <p className="value">{formatMinor(inv.caseItem.valueMinor, inv.caseItem.currency)}</p>
             <button onClick={() => sell(inv.id)} disabled={sellingId === inv.id}>
-              {sellingId === inv.id ? "Selling…" : "Sell for balance"}
+              {sellingId === inv.id ? t("inventory.selling") : t("inventory.sellForBalance")}
             </button>
           </div>
         ))}
-        {items.length === 0 && <p>No items yet — open a case to win something.</p>}
+        {items.length === 0 && <p>{t("inventory.noItemsYet")}</p>}
       </div>
     </div>
   );

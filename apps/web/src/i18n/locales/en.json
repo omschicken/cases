@@ -1,0 +1,341 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "nav": {
+    "profile": "Profile",
+    "logOut": "Log out",
+    "logInSteam": "Log in via Steam",
+    "sidebar": {
+      "cases": "Cases",
+      "battles": "Battles",
+      "contracts": "Contracts",
+      "upgrade": "Upgrade",
+      "cards": "Cards",
+      "inventory": "Inventory",
+      "admin": "Admin"
+    },
+    "pagesBar": {
+      "referral": "Referral",
+      "prizes": "Prizes",
+      "bonuses": "Bonuses",
+      "faq": "FAQ"
+    },
+    "footer": "GunDone.case — 18+ only. Gambling can be addictive, play responsibly. Provably-fair RNG: every case result can be independently verified. Licensed operator; licence status shown here in production."
+  },
+  "dropsTicker": {
+    "label": "Live drops",
+    "unboxed": "unboxed"
+  },
+  "home": {
+    "hero": {
+      "slide1": {
+        "eyebrow": "Welcome bonus",
+        "title": "Get 10% extra on your first deposit",
+        "subtitle": "Fund your wallet and open your first case today.",
+        "cta": "Deposit now"
+      },
+      "slide2": {
+        "eyebrow": "Just dropped",
+        "title": "New case added to the vault",
+        "subtitle": "Fresh odds, fresh skins — check what's inside.",
+        "cta": "Browse cases"
+      },
+      "slide3": {
+        "eyebrow": "Refer & earn",
+        "title": "Invite friends, earn on every deposit they make",
+        "subtitle": "Share your link and start stacking commission.",
+        "cta": "Get my link"
+      },
+      "slideLabel": "Slide {{n}}"
+    },
+    "stats": {
+      "casesOpened": "Cases opened",
+      "totalWon": "Total won",
+      "players": "Players"
+    },
+    "recentDrops": "Recent drops",
+    "casesHeading": "Cases",
+    "couldNotLoadCases": "Could not load cases",
+    "noCasesYet": "No cases available yet."
+  },
+  "caseDetail": {
+    "caseNotFound": "Case not found",
+    "couldNotOpenCase": "Could not open case",
+    "rolling": "Rolling…",
+    "spinning": "Spinning…",
+    "openFor": "Open for {{price}}",
+    "logInPrefix": "",
+    "logIn": "Log in",
+    "logInSuffix": "to open this case.",
+    "provablyFair": "Provably fair",
+    "serverSeedCommitment": "Server seed commitment (published before this roll):",
+    "yourClientSeed": "Your client seed:",
+    "rotateHintPrefix": "Rotate your seed on the",
+    "profileLink": "Profile",
+    "rotateHintSuffix": "page to reveal the server seed and verify any past opening.",
+    "youGot": "You got: {{name}}",
+    "roundDetails": "Round details",
+    "roll": "Roll: {{roll}}",
+    "nonce": "Nonce: {{nonce}}",
+    "serverSeedHash": "Server seed hash: {{hash}}",
+    "clientSeed": "Client seed: {{seed}}",
+    "verifyThisResult": "Verify this result"
+  },
+  "verify": {
+    "title": "Verify round",
+    "couldNotLoad": "Could not load this round",
+    "publishedHash": "Published server seed hash:",
+    "verified": "✅ Verified — this result is genuine.",
+    "verificationFailed": "❌ Verification failed.",
+    "hashMatches": "Server seed hash matches: {{value}}",
+    "itemMatches": "Item matches recomputed roll: {{value}}",
+    "roll": "Roll: {{roll}}"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "couldNotLoad": "Could not load inventory",
+    "couldNotSell": "Could not sell item",
+    "selling": "Selling…",
+    "sellForBalance": "Sell for balance",
+    "noItemsYet": "No items yet — open a case to win something."
+  },
+  "wallet": {
+    "title": "Wallet",
+    "deposit": "Deposit",
+    "withdraw": "Withdraw",
+    "method": "Method",
+    "amount": "Amount",
+    "currency": "Currency",
+    "destination": "Destination (IBAN / wallet address / Steam trade URL)",
+    "card": "Card",
+    "crypto": "Crypto",
+    "cardBank": "Card / bank",
+    "steamSkin": "Steam skin",
+    "depositButton": "Deposit",
+    "withdrawButton": "Request withdrawal",
+    "kycHint": "Requires identity verification (KYC) — see Profile.",
+    "depositConfirmed": "Deposit confirmed.",
+    "depositFailed": "Deposit failed",
+    "withdrawalRequested": "Withdrawal requested — pending admin review.",
+    "withdrawalFailed": "Withdrawal failed",
+    "recentActivity": "Recent activity",
+    "date": "Date",
+    "reason": "Reason",
+    "amountCol": "Amount",
+    "balanceAfter": "Balance after"
+  },
+  "profile": {
+    "title": "Profile",
+    "kyc": {
+      "heading": "Identity verification (KYC)",
+      "status": "Status:",
+      "reason": "Reason: {{reason}}",
+      "fullName": "Full legal name",
+      "dob": "Date of birth",
+      "docFront": "Document photo URL (front)",
+      "selfie": "Selfie URL",
+      "uploadHint": "Document upload isn't wired to storage yet — paste a URL for now (see README).",
+      "submit": "Submit for review",
+      "submitted": "Verification submitted — an admin will review it shortly.",
+      "submitFailed": "Submission failed"
+    },
+    "seed": {
+      "heading": "Provably fair seed",
+      "serverSeedHash": "Server seed hash: {{hash}}",
+      "clientSeed": "Client seed: {{seed}}",
+      "roundsPlayed": "Rounds played on this seed: {{n}}",
+      "newClientSeed": "New client seed (optional)",
+      "rotateButton": "Rotate seed & reveal previous",
+      "rotated": "Seed rotated — your previous server seed is now revealed and verifiable.",
+      "rotateFailed": "Could not rotate seed"
+    }
+  },
+  "referral": {
+    "title": "Referral program",
+    "description": "Share your link — you earn a commission whenever someone you refer deposits.",
+    "referrals": "Referrals: {{n}}",
+    "totalEarned": "Total earned: {{amount}}"
+  },
+  "faq": {
+    "title": "FAQ",
+    "items": {
+      "provablyFair": {
+        "q": "What is provably fair?",
+        "a": "Every case opening uses a commit-reveal scheme: before you open a case, our server generates a secret server seed and shows you only its hash. Your result is computed from that server seed, a client seed you control, and a nonce. Rotate your seed pair at any time to reveal the server seed used for your past opens and verify each result independently on the Verify page — the outcome could not have been chosen after the fact."
+      },
+      "deposits": {
+        "q": "How do deposits work?",
+        "a": "We support card payments, crypto, and CS2 skin deposits. Pick a method on the Wallet page — funds are credited to your balance once the payment provider confirms the transaction. Crypto deposits typically require a small number of network confirmations first."
+      },
+      "kyc": {
+        "q": "Why do I need to verify my identity (KYC)?",
+        "a": "As a licensed real-money operator we're required to verify player identity before withdrawals, in line with anti-money-laundering regulations. Submit your documents from the Profile page — most verifications complete within minutes."
+      },
+      "withdrawals": {
+        "q": "How do withdrawals work?",
+        "a": "Once your account is KYC-verified, request a withdrawal from the Wallet page via card, crypto, or CS2 skins. Withdrawals are reviewed for compliance and typically processed within 24 hours."
+      },
+      "steam": {
+        "q": "Can I log in with Steam?",
+        "a": "Yes — click \"Log in via Steam\" and approve the request on Steam. We only read your public SteamID and profile info to create your account; we never see or store your Steam password."
+      }
+    }
+  },
+  "login": {
+    "title": "Log in",
+    "email": "Email",
+    "password": "Password",
+    "loggingIn": "Logging in…",
+    "submit": "Log in",
+    "failed": "Login failed",
+    "noAccount": "No account?",
+    "signUp": "Sign up"
+  },
+  "register": {
+    "title": "Create an account",
+    "email": "Email",
+    "password": "Password",
+    "referralCode": "Referral code (optional)",
+    "ageConfirm": "I confirm I am of legal age to gamble in my jurisdiction and I accept the Terms of Service.",
+    "ageRequired": "You must confirm you are of legal gambling age to continue.",
+    "creating": "Creating account…",
+    "submit": "Sign up",
+    "failed": "Registration failed",
+    "alreadyHave": "Already have an account?",
+    "logIn": "Log in"
+  },
+  "steamComplete": {
+    "title": "One last step",
+    "hint": "Steam verified your identity — confirm the rest to finish creating your account.",
+    "referralCode": "Referral code (optional)",
+    "ageConfirm": "I confirm I am of legal age to gamble in my jurisdiction and I accept the Terms of Service.",
+    "ageRequired": "You must confirm you are of legal gambling age to continue.",
+    "expired": "Steam sign-up session expired, please log in again.",
+    "finishing": "Finishing up…",
+    "continue": "Continue",
+    "failed": "Steam sign-up failed",
+    "cancel": "Cancel"
+  },
+  "steamCallback": {
+    "signingIn": "Signing you in with Steam…"
+  },
+  "comingSoon": {
+    "browseCases": "Browse cases instead",
+    "battles": {
+      "title": "Case Battles",
+      "description": "Go head-to-head opening cases against other players — winner takes the combined loot. Coming soon."
+    },
+    "upgrader": {
+      "title": "Upgrader",
+      "description": "Risk an item (or your balance) for a chance at something rarer, with the odds shown up front. Coming soon."
+    },
+    "contracts": {
+      "title": "Contracts",
+      "description": "Trade in a stack of lower-value items for a shot at one higher-tier item. Coming soon."
+    },
+    "cards": {
+      "title": "Cards",
+      "description": "A fast-paced pick-a-card game with rarity-weighted prizes. Coming soon."
+    },
+    "prizes": {
+      "title": "Prizes",
+      "description": "Leaderboard races and giveaways with real prize pools. Coming soon."
+    },
+    "bonuses": {
+      "title": "Bonuses",
+      "description": "Deposit bonuses, free case drops, and daily rewards. Coming soon."
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "nav": {
+      "kyc": "KYC queue",
+      "withdrawals": "Withdrawals",
+      "cases": "Cases",
+      "users": "Users"
+    },
+    "kycQueue": {
+      "heading": "Pending identity verifications",
+      "couldNotLoad": "Could not load KYC queue",
+      "reviewFailed": "Review failed",
+      "rejectionPrompt": "Rejection reason?",
+      "rejected": "Rejected",
+      "user": "User",
+      "fullName": "Full name",
+      "dob": "DOB",
+      "document": "Document",
+      "selfie": "Selfie",
+      "actions": "Actions",
+      "view": "view",
+      "approve": "Approve",
+      "reject": "Reject",
+      "noneP": "No pending submissions."
+    },
+    "withdrawals": {
+      "heading": "Pending withdrawals",
+      "couldNotLoad": "Could not load withdrawals",
+      "reviewFailed": "Review failed",
+      "rejectionPrompt": "Rejection reason?",
+      "rejected": "Rejected",
+      "user": "User",
+      "rail": "Rail",
+      "amount": "Amount",
+      "destination": "Destination",
+      "requested": "Requested",
+      "actions": "Actions",
+      "approvePay": "Approve & pay",
+      "reject": "Reject",
+      "none": "No pending withdrawals."
+    },
+    "users": {
+      "heading": "Users",
+      "email": "Email",
+      "role": "Role",
+      "kyc": "KYC",
+      "balance": "Balance",
+      "joined": "Joined"
+    },
+    "cases": {
+      "heading": "Cases",
+      "createHeading": "Create case",
+      "name": "Name",
+      "price": "Price",
+      "items": "Items",
+      "active": "Active",
+      "yes": "Yes",
+      "no": "No",
+      "disable": "Disable",
+      "enable": "Enable",
+      "slug": "Slug",
+      "nameField": "Name",
+      "priceField": "Price (minor units, e.g. cents)",
+      "currency": "Currency",
+      "imageUrl": "Image URL",
+      "itemsHeading": "Items",
+      "itemName": "Name",
+      "itemImageUrl": "Image URL",
+      "weight": "Weight",
+      "value": "Value (minor units)",
+      "itemCurrency": "Currency",
+      "addItem": "+ Add item",
+      "createCase": "Create case",
+      "created": "Case created.",
+      "couldNotLoad": "Could not load cases",
+      "couldNotCreate": "Could not create case"
+    }
+  },
+  "languages": {
+    "ru": "Russian",
+    "en": "English",
+    "es": "Spanish",
+    "pt": "Portuguese",
+    "de": "German",
+    "tr": "Turkish",
+    "uk": "Ukrainian"
+  }
+}

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { setTokens } from "../lib/api";
 
@@ -10,6 +11,7 @@ import { setTokens } from "../lib/api";
  * other way).
  */
 export function SteamCallbackPage() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
@@ -30,5 +32,5 @@ export function SteamCallbackPage() {
     refreshUser().finally(() => navigate("/", { replace: true }));
   }, [searchParams, navigate, refreshUser]);
 
-  return <p className="page-loading">Signing you in with Steam…</p>;
+  return <p className="page-loading">{t("steamCallback.signingIn")}</p>;
 }

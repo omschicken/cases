@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { api } from "../lib/api";
 
 interface VerifyResult {
@@ -13,6 +14,7 @@ interface VerifyResult {
 }
 
 export function VerifyPage() {
+  const { t } = useTranslation();
   const { openEventId } = useParams<{ openEventId: string }>();
   const [result, setResult] = useState<VerifyResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -22,30 +24,30 @@ export function VerifyPage() {
     api
       .get<VerifyResult>(`/cases/open-events/${openEventId}/verify`)
       .then(setResult)
-      .catch(() => setError("Could not load this round"));
-  }, [openEventId]);
+      .catch(() => setError(t("verify.couldNotLoad")));
+  }, [openEventId, t]);
 
   return (
     <div className="verify-page">
-      <h1>Verify round</h1>
+      <h1>{t("verify.title")}</h1>
       {error && <p className="form-error">{error}</p>}
-      {!result && !error && <p>Loading…</p>}
+      {!result && !error && <p>{t("common.loading")}</p>}
       {result && !result.verifiable && (
         <p>
           {result.reason}
           <br />
-          Published server seed hash: <code>{result.serverSeedHash}</code>
+          {t("verify.publishedHash")} <code>{result.serverSeedHash}</code>
         </p>
       )}
       {result && result.verifiable && (
         <div>
           <p className={result.valid ? "verify-ok" : "verify-fail"}>
-            {result.valid ? "✅ Verified — this result is genuine." : "❌ Verification failed."}
+            {result.valid ? t("verify.verified") : t("verify.verificationFailed")}
           </p>
           <ul>
-            <li>Server seed hash matches: {String(result.hashMatches)}</li>
-            <li>Item matches recomputed roll: {String(result.itemMatches)}</li>
-            <li>Roll: {result.roll?.toFixed(8)}</li>
+            <li>{t("verify.hashMatches", { value: String(result.hashMatches) })}</li>
+            <li>{t("verify.itemMatches", { value: String(result.itemMatches) })}</li>
+            <li>{t("verify.roll", { roll: result.roll?.toFixed(8) })}</li>
           </ul>
         </div>
       )}

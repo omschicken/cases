@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../lib/api";
 import { formatMinor } from "../../lib/money";
 
@@ -12,6 +13,7 @@ interface AdminUserRow {
 }
 
 export function AdminUsers() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<AdminUserRow[]>([]);
 
   useEffect(() => {
@@ -20,15 +22,15 @@ export function AdminUsers() {
 
   return (
     <div>
-      <h2>Users</h2>
+      <h2>{t("admin.users.heading")}</h2>
       <table className="admin-table">
         <thead>
           <tr>
-            <th>Email</th>
-            <th>Role</th>
-            <th>KYC</th>
-            <th>Balance</th>
-            <th>Joined</th>
+            <th>{t("admin.users.email")}</th>
+            <th>{t("admin.users.role")}</th>
+            <th>{t("admin.users.kyc")}</th>
+            <th>{t("admin.users.balance")}</th>
+            <th>{t("admin.users.joined")}</th>
           </tr>
         </thead>
         <tbody>

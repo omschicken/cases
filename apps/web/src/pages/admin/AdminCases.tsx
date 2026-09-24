@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../../lib/api";
 import { formatMinor } from "../../lib/money";
 import { RARITY_LABELS } from "../../lib/rarity";
@@ -20,6 +21,7 @@ function emptyItem(): ItemForm {
 }
 
 export function AdminCases() {
+  const { t } = useTranslation();
   const [cases, setCases] = useState<CaseDto[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -35,10 +37,10 @@ export function AdminCases() {
     api
       .get<CaseDto[]>("/admin/cases")
       .then(setCases)
-      .catch(() => setError("Could not load cases"));
+      .catch(() => setError(t("admin.cases.couldNotLoad")));
   }
 
-  useEffect(load, []);
+  useEffect(load, [t]);
 
   function updateItem(index: number, patch: Partial<ItemForm>) {
     setItems((prev) => prev.map((it, i) => (i === index ? { ...it, ...patch } : it)));
@@ -64,14 +66,14 @@ export function AdminCases() {
           rarity: it.rarity,
         })),
       });
-      setInfo("Case created.");
+      setInfo(t("admin.cases.created"));
       setSlug("");
       setName("");
       setImageUrl("");
       setItems([emptyItem()]);
       load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Could not create case");
+      setError(err instanceof ApiError ? err.message : t("admin.cases.couldNotCreate"));
     }
   }
 
@@ -82,17 +84,17 @@ export function AdminCases() {
 
   return (
     <div>
-      <h2>Cases</h2>
+      <h2>{t("admin.cases.heading")}</h2>
       {error && <p className="form-error">{error}</p>}
       {info && <p className="form-info">{info}</p>}
 
       <table className="admin-table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Items</th>
-            <th>Active</th>
+            <th>{t("admin.cases.name")}</th>
+            <th>{t("admin.cases.price")}</th>
+            <th>{t("admin.cases.items")}</th>
+            <th>{t("admin.cases.active")}</th>
             <th></th>
           </tr>
         </thead>
@@ -102,10 +104,10 @@ export function AdminCases() {
               <td>{c.name}</td>
               <td>{formatMinor(c.priceMinor, c.currency)}</td>
               <td>{c.items.length}</td>
-              <td>{c.isActive ? "Yes" : "No"}</td>
+              <td>{c.isActive ? t("admin.cases.yes") : t("admin.cases.no")}</td>
               <td>
                 <button onClick={() => toggleActive(c.id, c.isActive)}>
-                  {c.isActive ? "Disable" : "Enable"}
+                  {c.isActive ? t("admin.cases.disable") : t("admin.cases.enable")}
                 </button>
               </td>
             </tr>
@@ -113,58 +115,58 @@ export function AdminCases() {
         </tbody>
       </table>
 
-      <h3>Create case</h3>
+      <h3>{t("admin.cases.createHeading")}</h3>
       <form onSubmit={createCase} className="auth-form">
         <label>
-          Slug
+          {t("admin.cases.slug")}
           <input value={slug} onChange={(e) => setSlug(e.target.value)} required />
         </label>
         <label>
-          Name
+          {t("admin.cases.nameField")}
           <input value={name} onChange={(e) => setName(e.target.value)} required />
         </label>
         <label>
-          Price (minor units, e.g. cents)
+          {t("admin.cases.priceField")}
           <input value={priceMinor} onChange={(e) => setPriceMinor(e.target.value)} required />
         </label>
         <label>
-          Currency
+          {t("admin.cases.currency")}
           <input value={currency} onChange={(e) => setCurrency(e.target.value)} required />
         </label>
         <label>
-          Image URL
+          {t("admin.cases.imageUrl")}
           <input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required />
         </label>
 
-        <h4>Items</h4>
+        <h4>{t("admin.cases.itemsHeading")}</h4>
         {items.map((item, i) => (
           <div key={i} className="item-form-row">
             <input
-              placeholder="Name"
+              placeholder={t("admin.cases.itemName")}
               value={item.name}
               onChange={(e) => updateItem(i, { name: e.target.value })}
               required
             />
             <input
-              placeholder="Image URL"
+              placeholder={t("admin.cases.itemImageUrl")}
               value={item.imageUrl}
               onChange={(e) => updateItem(i, { imageUrl: e.target.value })}
               required
             />
             <input
-              placeholder="Weight"
+              placeholder={t("admin.cases.weight")}
               value={item.weight}
               onChange={(e) => updateItem(i, { weight: e.target.value })}
               required
             />
             <input
-              placeholder="Value (minor units)"
+              placeholder={t("admin.cases.value")}
               value={item.valueMinor}
               onChange={(e) => updateItem(i, { valueMinor: e.target.value })}
               required
             />
             <input
-              placeholder="Currency"
+              placeholder={t("admin.cases.itemCurrency")}
               value={item.currency}
               onChange={(e) => updateItem(i, { currency: e.target.value })}
               required
@@ -182,9 +184,9 @@ export function AdminCases() {
           </div>
         ))}
         <button type="button" onClick={() => setItems((prev) => [...prev, emptyItem()])}>
-          + Add item
+          {t("admin.cases.addItem")}
         </button>
-        <button type="submit">Create case</button>
+        <button type="submit">{t("admin.cases.createCase")}</button>
       </form>
     </div>
   );

@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { api, ApiError } from "../lib/api";
 import type { KycStatus } from "../lib/types";
@@ -15,6 +16,7 @@ interface SeedInfo {
 }
 
 export function ProfilePage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [kyc, setKyc] = useState<KycMeResponse | null>(null);
   const [seed, setSeed] = useState<SeedInfo | null>(null);
@@ -47,10 +49,10 @@ export function ProfilePage() {
         documentFrontUrl,
         selfieUrl,
       });
-      setInfo("Verification submitted — an admin will review it shortly.");
+      setInfo(t("profile.kyc.submitted"));
       load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Submission failed");
+      setError(err instanceof ApiError ? err.message : t("profile.kyc.submitFailed"));
     }
   }
 
@@ -60,36 +62,38 @@ export function ProfilePage() {
     setInfo(null);
     try {
       await api.post("/cases/seed/rotate", { nextClientSeed: nextClientSeed || undefined });
-      setInfo("Seed rotated — your previous server seed is now revealed and verifiable.");
+      setInfo(t("profile.seed.rotated"));
       setNextClientSeed("");
       load();
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Could not rotate seed");
+      setError(err instanceof ApiError ? err.message : t("profile.seed.rotateFailed"));
     }
   }
 
   return (
     <div className="profile-page">
-      <h1>Profile</h1>
+      <h1>{t("profile.title")}</h1>
       <p>{user?.email}</p>
 
       {error && <p className="form-error">{error}</p>}
       {info && <p className="form-info">{info}</p>}
 
       <section>
-        <h2>Identity verification (KYC)</h2>
+        <h2>{t("profile.kyc.heading")}</h2>
         <p>
-          Status: <strong>{kyc?.status ?? "…"}</strong>
+          {t("profile.kyc.status")} <strong>{kyc?.status ?? "…"}</strong>
         </p>
-        {kyc?.latest?.rejectionReason && <p className="form-error">Reason: {kyc.latest.rejectionReason}</p>}
+        {kyc?.latest?.rejectionReason && (
+          <p className="form-error">{t("profile.kyc.reason", { reason: kyc.latest.rejectionReason })}</p>
+        )}
         {(kyc?.status === "UNVERIFIED" || kyc?.status === "REJECTED") && (
           <form onSubmit={submitKyc} className="auth-form">
             <label>
-              Full legal name
+              {t("profile.kyc.fullName")}
               <input value={fullName} onChange={(e) => setFullName(e.target.value)} required />
             </label>
             <label>
-              Date of birth
+              {t("profile.kyc.dob")}
               <input
                 type="date"
                 value={dateOfBirth}
@@ -98,7 +102,7 @@ export function ProfilePage() {
               />
             </label>
             <label>
-              Document photo URL (front)
+              {t("profile.kyc.docFront")}
               <input
                 type="url"
                 value={documentFrontUrl}
@@ -107,32 +111,30 @@ export function ProfilePage() {
               />
             </label>
             <label>
-              Selfie URL
+              {t("profile.kyc.selfie")}
               <input type="url" value={selfieUrl} onChange={(e) => setSelfieUrl(e.target.value)} required />
             </label>
-            <p className="hint">
-              Document upload isn't wired to storage yet — paste a URL for now (see README).
-            </p>
-            <button type="submit">Submit for review</button>
+            <p className="hint">{t("profile.kyc.uploadHint")}</p>
+            <button type="submit">{t("profile.kyc.submit")}</button>
           </form>
         )}
       </section>
 
       <section>
-        <h2>Provably fair seed</h2>
+        <h2>{t("profile.seed.heading")}</h2>
         {seed && (
           <ul>
-            <li>Server seed hash: {seed.serverSeedHash}</li>
-            <li>Client seed: {seed.clientSeed}</li>
-            <li>Rounds played on this seed: {seed.nonce}</li>
+            <li>{t("profile.seed.serverSeedHash", { hash: seed.serverSeedHash })}</li>
+            <li>{t("profile.seed.clientSeed", { seed: seed.clientSeed })}</li>
+            <li>{t("profile.seed.roundsPlayed", { n: seed.nonce })}</li>
           </ul>
         )}
         <form onSubmit={rotateSeed} className="auth-form">
           <label>
-            New client seed (optional)
+            {t("profile.seed.newClientSeed")}
             <input value={nextClientSeed} onChange={(e) => setNextClientSeed(e.target.value)} />
           </label>
-          <button type="submit">Rotate seed &amp; reveal previous</button>
+          <button type="submit">{t("profile.seed.rotateButton")}</button>
         </form>
       </section>
     </div>
