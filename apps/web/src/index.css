@@ -597,6 +597,20 @@ button:disabled {
   border-radius: 10px;
 }
 
+/* Visually distinct from the real (green, money-spending) open button. */
+.demo-button {
+  background: var(--accent);
+  color: #fff;
+}
+
+.demo-button:hover:not(:disabled) {
+  background: var(--accent-strong);
+}
+
+.demo-result {
+  opacity: 0.9;
+}
+
 .coming-soon {
   display: flex;
   flex-direction: column;

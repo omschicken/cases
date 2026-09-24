@@ -7,7 +7,18 @@ import { formatMinor } from "../lib/money";
 import { rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
 import { CaseOpeningReel } from "../components/CaseOpeningReel";
-import type { CaseDto, OpenCaseResult } from "../lib/types";
+import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
+
+/** Visual-only demo pick, weighted the same way the reel's filler items are. */
+function weightedSample(items: CaseItem[]): CaseItem {
+  const total = items.reduce((sum, i) => sum + i.weight, 0);
+  let roll = Math.random() * total;
+  for (const item of items) {
+    roll -= item.weight;
+    if (roll <= 0) return item;
+  }
+  return items[items.length - 1];
+}
 
 export function CaseDetailPage() {
   const { t } = useTranslation();
@@ -18,6 +29,7 @@ export function CaseDetailPage() {
   const [clientSeed, setClientSeed] = useState<string | null>(null);
   const [opening, setOpening] = useState(false);
   const [result, setResult] = useState<OpenCaseResult | null>(null);
+  const [demoItem, setDemoItem] = useState<CaseItem | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [spinKey, setSpinKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -60,21 +72,31 @@ export function CaseDetailPage() {
     }
   }
 
+  // No account, no money, no server call — just a client-side preview of the
+  // reel so visitors can see how it feels before logging in.
+  function demoSpin() {
+    if (!theCase) return;
+    setRevealed(false);
+    setDemoItem(weightedSample(theCase.items));
+    setSpinKey((k) => k + 1);
+  }
+
   if (error && !theCase) return <p className="form-error">{error}</p>;
   if (!theCase) return <p>{t("common.loading")}</p>;
 
-  const spinning = result !== null && !revealed;
+  const winningItem = result?.item ?? demoItem;
+  const spinning = winningItem !== null && !revealed;
 
   return (
     <div className="case-detail">
       <h1>{theCase.name}</h1>
       <p className="price">{formatMinor(theCase.priceMinor, theCase.currency)}</p>
 
-      {result && (
+      {winningItem && (
         <CaseOpeningReel
           key={spinKey}
           poolItems={theCase.items}
-          winningItem={result.item}
+          winningItem={winningItem}
           onFinished={() => setRevealed(true)}
         />
       )}
@@ -88,9 +110,14 @@ export function CaseDetailPage() {
               : t("caseDetail.openFor", { price: formatMinor(theCase.priceMinor, theCase.currency) })}
         </button>
       ) : (
-        <p>
-          <Link to="/login">{t("caseDetail.logIn")}</Link> {t("caseDetail.logInSuffix")}
-        </p>
+        <>
+          <button onClick={demoSpin} disabled={spinning} className="open-button demo-button">
+            {spinning ? t("caseDetail.spinning") : t("caseDetail.demoSpin")}
+          </button>
+          <p className="hint">
+            {t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link>
+          </p>
+        </>
       )}
 
       {error && <p className="form-error">{error}</p>}
@@ -112,6 +139,17 @@ export function CaseDetailPage() {
               </li>
             </ul>
           </details>
+        </div>
+      )}
+
+      {!result && demoItem && revealed && (
+        <div className="result-panel demo-result" style={{ "--rarity-color": rarityColor(demoItem.rarity) } as CSSProperties}>
+          <h2>{t("caseDetail.demoYouGot", { name: demoItem.name })}</h2>
+          <img src={demoItem.imageUrl} alt={demoItem.name} className="result-image" />
+          <p className="value">{formatMinor(demoItem.valueMinor, demoItem.currency)}</p>
+          <p className="hint">
+            {t("caseDetail.demoResultHint")} <Link to="/login">{t("caseDetail.logIn")}</Link>
+          </p>
         </div>
       )}
 
