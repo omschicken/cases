@@ -2,6 +2,11 @@
 # on packages/shared). Railway config: see railway.json at the repo root.
 
 FROM node:20-slim AS builder
+# node:20-slim is Debian 12 (bookworm, OpenSSL 3.x) but ships without the
+# `openssl` package itself, so Prisma's engines can't detect the OpenSSL
+# version to link against and silently pick the wrong one — install it
+# explicitly, as Prisma's own warning recommends.
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
 WORKDIR /repo
 
@@ -21,6 +26,9 @@ RUN pnpm --filter @cs2-cases/api run prisma:generate
 RUN pnpm --filter @cs2-cases/api build
 
 FROM node:20-slim AS runtime
+# Same reason as the builder stage: `prisma migrate deploy` runs here at
+# container startup and needs a detectable OpenSSL to load its schema engine.
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
 ENV NODE_ENV=production
 WORKDIR /repo
