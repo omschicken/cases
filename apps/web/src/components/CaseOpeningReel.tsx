@@ -51,15 +51,20 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished }: CaseOpen
   }, []);
 
   useLayoutEffect(() => {
-    const viewportWidth = viewportRef.current?.clientWidth ?? 600;
-    const jitter = (Math.random() - 0.5) * ITEM_WIDTH * 0.5;
-    const targetCenter = TARGET_INDEX * ITEM_STEP + ITEM_WIDTH / 2 + jitter;
-    const offset = targetCenter - viewportWidth / 2;
-
     setTransform(0);
+    // Measuring clientWidth is deferred to the first animation frame rather
+    // than read synchronously here — on some mobile browsers the viewport's
+    // layout isn't reliably settled yet at this exact point right after a
+    // client-side route change, and a stale/zero width would fling the
+    // track to a huge, blank offset instead of landing on the target item.
     let raf2 = 0;
     const raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => {
+        const viewportWidth = viewportRef.current?.clientWidth || 600;
+        const jitter = (Math.random() - 0.5) * ITEM_WIDTH * 0.5;
+        const targetCenter = TARGET_INDEX * ITEM_STEP + ITEM_WIDTH / 2 + jitter;
+        const offset = targetCenter - viewportWidth / 2;
+
         setSpinning(true);
         setTransform(-offset);
       });
