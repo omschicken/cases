@@ -65,6 +65,8 @@ interface CaseSeed {
   name: string;
   priceMinor: number;
   caseImageUrl?: string;
+  /** Lower sorts first on the public list. Omitted = 100 (stock reissues). */
+  displayOrder?: number;
   items: ItemSeed[];
 }
 
@@ -245,6 +247,7 @@ async function main() {
         data: {
           name: c.name,
           priceMinor: c.priceMinor,
+          displayOrder: c.displayOrder ?? 100,
           imageUrl: c.caseImageUrl ?? caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
           items: {
             create: c.items.map((item) => ({
@@ -268,6 +271,7 @@ async function main() {
         name: c.name,
         priceMinor: c.priceMinor,
         currency: "USD",
+        displayOrder: c.displayOrder ?? 100,
         imageUrl: c.caseImageUrl ?? caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
         items: {
           create: c.items.map((item) => ({

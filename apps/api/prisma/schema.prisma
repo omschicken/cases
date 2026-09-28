@@ -167,6 +167,10 @@ model Case {
   currency  String     @default("USD")
   imageUrl  String
   isActive  Boolean    @default(true)
+  /// Lower sorts first on the public case list. Curated cross-collection
+  /// cases use small numbers; the stock single-collection reissues default
+  /// high so they sit at the bottom without needing per-row upkeep.
+  displayOrder Int     @default(100)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 

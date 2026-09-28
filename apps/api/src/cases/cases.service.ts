@@ -23,7 +23,7 @@ export class CasesService {
     return this.prisma.case.findMany({
       where: { isActive: true },
       include: { items: true },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
     });
   }
 
@@ -280,6 +280,9 @@ export class CasesService {
   }
 
   listAllForAdmin() {
-    return this.prisma.case.findMany({ include: { items: true }, orderBy: { createdAt: "desc" } });
+    return this.prisma.case.findMany({
+      include: { items: true },
+      orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+    });
   }
 }
