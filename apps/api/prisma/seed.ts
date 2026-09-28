@@ -58,6 +58,7 @@ interface ItemSeed {
   weight: number;
   valueMinor: number;
   imageUrl: string;
+  currency?: string;
 }
 
 interface CaseSeed {
@@ -67,6 +68,7 @@ interface CaseSeed {
   caseImageUrl?: string;
   /** Lower sorts first on the public list. Omitted = 100 (stock reissues). */
   displayOrder?: number;
+  currency?: string;
   items: ItemSeed[];
 }
 
@@ -247,6 +249,7 @@ async function main() {
         data: {
           name: c.name,
           priceMinor: c.priceMinor,
+          currency: c.currency ?? "USD",
           displayOrder: c.displayOrder ?? 100,
           imageUrl: c.caseImageUrl ?? caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
           items: {
@@ -255,7 +258,7 @@ async function main() {
               rarity: item.rarity,
               weight: item.weight,
               valueMinor: item.valueMinor,
-              currency: "USD",
+              currency: item.currency ?? c.currency ?? "USD",
               imageUrl: item.imageUrl,
             })),
           },
@@ -270,7 +273,7 @@ async function main() {
         slug: c.slug,
         name: c.name,
         priceMinor: c.priceMinor,
-        currency: "USD",
+        currency: c.currency ?? "USD",
         displayOrder: c.displayOrder ?? 100,
         imageUrl: c.caseImageUrl ?? caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
         items: {
@@ -279,7 +282,7 @@ async function main() {
             rarity: item.rarity,
             weight: item.weight,
             valueMinor: item.valueMinor,
-            currency: "USD",
+            currency: item.currency ?? c.currency ?? "USD",
             imageUrl: item.imageUrl,
           })),
         },

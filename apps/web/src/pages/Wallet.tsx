@@ -12,12 +12,12 @@ export function WalletPage() {
   const [info, setInfo] = useState<string | null>(null);
 
   const [depositRail, setDepositRail] = useState<PaymentRail>("CARD");
-  const [depositAmount, setDepositAmount] = useState("50.00");
-  const [depositCurrency, setDepositCurrency] = useState("USD");
+  const [depositAmount, setDepositAmount] = useState("5000.00");
+  const [depositCurrency, setDepositCurrency] = useState("RUB");
 
   const [withdrawRail, setWithdrawRail] = useState<PaymentRail>("CARD");
-  const [withdrawAmount, setWithdrawAmount] = useState("10.00");
-  const [withdrawCurrency, setWithdrawCurrency] = useState("USD");
+  const [withdrawAmount, setWithdrawAmount] = useState("1000.00");
+  const [withdrawCurrency, setWithdrawCurrency] = useState("RUB");
   const [withdrawDestination, setWithdrawDestination] = useState("");
 
   function load() {
