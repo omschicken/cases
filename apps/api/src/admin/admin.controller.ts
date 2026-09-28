@@ -82,4 +82,14 @@ export class AdminController {
   auditLog(@Query("take") take?: string) {
     return this.adminService.listAuditLog(take ? Number(take) : undefined);
   }
+
+  @Get("prices/status")
+  priceSyncStatus() {
+    return this.adminService.getPriceSyncStatus();
+  }
+
+  @Post("prices/sync")
+  triggerPriceSync(@CurrentUser() admin: AuthenticatedUser) {
+    return this.adminService.triggerPriceSync(admin.id);
+  }
 }

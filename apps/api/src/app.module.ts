@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { ScheduleModule } from "@nestjs/schedule";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import { APP_GUARD } from "@nestjs/core";
 import { PrismaModule } from "./prisma/prisma.module";
@@ -10,10 +11,12 @@ import { PaymentsModule } from "./payments/payments.module";
 import { CasesModule } from "./cases/cases.module";
 import { ReferralModule } from "./referral/referral.module";
 import { AdminModule } from "./admin/admin.module";
+import { PricesModule } from "./prices/prices.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot({ throttlers: [{ ttl: 60_000, limit: 100 }] }),
     PrismaModule,
     AuthModule,
@@ -23,6 +26,7 @@ import { AdminModule } from "./admin/admin.module";
     CasesModule,
     ReferralModule,
     AdminModule,
+    PricesModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

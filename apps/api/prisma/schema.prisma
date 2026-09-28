@@ -178,6 +178,21 @@ model Case {
   openEvents    CaseOpenEvent[]
 }
 
+/// One row per unique skin name, holding the last price a sync job fetched
+/// from an external market. A skin can appear in many CaseItem rows across
+/// many cases (each case keeps its own row for its own drop weight/currency),
+/// so a sync pushes this value out to every CaseItem sharing that name
+/// instead of normalizing CaseItem into a foreign-key relation — much less
+/// invasive than a schema rewrite, same end result: one skin, one live price.
+model SkinPrice {
+  name          String    @id
+  usdValueMinor BigInt
+  source        String    @default("steam")
+  lastSyncedAt  DateTime?
+  syncFailCount Int       @default(0)
+  updatedAt     DateTime  @updatedAt
+}
+
 model CaseItem {
   id          String   @id @default(uuid())
   caseId      String

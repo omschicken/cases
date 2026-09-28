@@ -3,6 +3,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { KycService } from "../kyc/kyc.service";
 import { PaymentsService } from "../payments/payments.service";
 import { CasesService } from "../cases/cases.service";
+import { PricesService } from "../prices/prices.service";
 import { ReviewKycDto } from "./dto/review-kyc.dto";
 import { ReviewWithdrawalDto } from "../payments/dto/review-withdrawal.dto";
 import { CreateCaseDto } from "../cases/dto/admin-case.dto";
@@ -14,6 +15,7 @@ export class AdminService {
     private readonly kyc: KycService,
     private readonly payments: PaymentsService,
     private readonly cases: CasesService,
+    private readonly prices: PricesService,
   ) {}
 
   private audit(adminUserId: string, action: string, targetType: string, targetId: string, metadata?: object) {
@@ -95,6 +97,16 @@ export class AdminService {
     const updated = await this.cases.setCaseActive(caseId, isActive);
     await this.audit(adminUserId, isActive ? "CASE_ENABLE" : "CASE_DISABLE", "Case", caseId);
     return updated;
+  }
+
+  getPriceSyncStatus() {
+    return this.prices.getStatus();
+  }
+
+  triggerPriceSync(adminUserId: string) {
+    const summary = this.prices.triggerSync();
+    void this.audit(adminUserId, "PRICE_SYNC_TRIGGER", "SkinPrice", "all");
+    return summary;
   }
 
   listAuditLog(take = 100) {
