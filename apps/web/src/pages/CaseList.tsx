@@ -7,7 +7,7 @@ import { formatMinor } from "../lib/money";
 import { HeroBanner } from "../components/HeroBanner";
 import { StatsBar } from "../components/StatsBar";
 import { RecentDrops } from "../components/RecentDrops";
-import { rarityColor, RARITY_RANK } from "../lib/rarity";
+import { rarityColor, highestRarity, RARITY_RANK } from "../lib/rarity";
 import type { CaseDto } from "../lib/types";
 
 type SortMode = "default" | "priceAsc" | "priceDesc";
@@ -61,22 +61,31 @@ export function CaseListPage() {
 
       {error && <p className="form-error">{error}</p>}
       <div className="case-grid">
-        {sortedCases.map((c) => (
-          <Link to={`/cases/${c.slug}`} key={c.id} className="case-card">
-            <img src={c.imageUrl} alt={c.name} />
-            <h3>{c.name}</h3>
-            <div className="case-rarity-dots">
-              {rarityTiers(c).map((tier) => (
-                <span
-                  key={tier}
-                  className="case-rarity-dot"
-                  style={{ "--rarity-color": rarityColor(tier as CaseDto["items"][number]["rarity"]) } as CSSProperties}
-                />
-              ))}
-            </div>
-            <p className="price">{formatMinor(c.priceMinor, c.currency)}</p>
-          </Link>
-        ))}
+        {sortedCases.map((c, i) => {
+          const tiers = rarityTiers(c);
+          const chase = highestRarity(tiers as CaseDto["items"][number]["rarity"][]);
+          return (
+            <Link
+              to={`/cases/${c.slug}`}
+              key={c.id}
+              className="case-card"
+              style={{ "--index": i, "--rarity-color": chase ? rarityColor(chase) : undefined } as CSSProperties}
+            >
+              <img src={c.imageUrl} alt={c.name} />
+              <h3>{c.name}</h3>
+              <div className="case-rarity-dots">
+                {tiers.map((tier) => (
+                  <span
+                    key={tier}
+                    className="case-rarity-dot"
+                    style={{ "--rarity-color": rarityColor(tier as CaseDto["items"][number]["rarity"]) } as CSSProperties}
+                  />
+                ))}
+              </div>
+              <p className="price">{formatMinor(c.priceMinor, c.currency)}</p>
+            </Link>
+          );
+        })}
         {sortedCases.length === 0 && !error && <p>{t("home.noCasesYet")}</p>}
       </div>
 

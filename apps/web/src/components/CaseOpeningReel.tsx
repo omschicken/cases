@@ -109,7 +109,7 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = fa
         >
           {reel.map((item, i) => (
             <div
-              className="reel-item"
+              className={`reel-item ${landed && chase && i === TARGET_INDEX ? "reel-item-chase-landed" : ""}`}
               key={i}
               style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}
             >
@@ -120,13 +120,13 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = fa
         </div>
         <div className="case-reel-indicator" />
         {/* Reserved for the top rarity tiers only — a burst on every open
-            would dull it, so this only fires for Classified and above. */}
+            would dull it, so this only fires for Classified and above.
+            Echoes CS2's own crate-unlock beat: a screen flash plus a ray burst. */}
         {landed && chase && (
-          <div className="reel-burst" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties}>
-            {Array.from({ length: 10 }).map((_, i) => (
-              <span key={i} className="reel-burst-spark" style={{ "--i": i } as CSSProperties} />
-            ))}
-          </div>
+          <>
+            <div className="reel-flash" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
+            <div className="reel-burst" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
+          </>
         )}
       </div>
     </div>

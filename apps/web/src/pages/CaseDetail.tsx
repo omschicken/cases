@@ -211,11 +211,11 @@ export function CaseDetailPage() {
 
       <h2 className="section-heading">{t("caseDetail.itemsHeading")}</h2>
       <div className="item-grid">
-        {theCase.items.map((item) => (
+        {theCase.items.map((item, i) => (
           <div
             className="item-card"
             key={item.id}
-            style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}
+            style={{ "--rarity-color": rarityColor(item.rarity), "--index": i } as CSSProperties}
           >
             <span className="item-chance-badge">{dropChancePercent(item, theCase.items)}%</span>
             <img src={item.imageUrl} alt={item.name} />

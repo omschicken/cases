@@ -2,46 +2,53 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-interface Slide {
-  key: string;
-  ctaTo: string;
-  gradient: string;
-}
-
-// Placeholder marketing copy — swap for real promo content/art whenever.
-// The carousel mechanics (autoplay, dots) don't need to change.
-const SLIDES: Slide[] = [
-  { key: "slide1", ctaTo: "/wallet", gradient: "linear-gradient(120deg, #241a4a, #120e24)" },
-  { key: "slide2", ctaTo: "/", gradient: "linear-gradient(120deg, #1a3a33, #0e1f1c)" },
-  { key: "slide3", ctaTo: "/referral", gradient: "linear-gradient(120deg, #3a1a3a, #1f0e1f)" },
-];
+const SLIDE_KEYS = ["slide1", "slide2", "slide3"] as const;
+const SLIDE_TARGETS: Record<(typeof SLIDE_KEYS)[number], string> = {
+  slide1: "/wallet",
+  slide2: "/",
+  slide3: "/referral",
+};
 
 const AUTOPLAY_MS = 5000;
+
+/** Decorative reticle — a nod to CS2's own crosshair, not an interactive control. */
+function Crosshair() {
+  return (
+    <svg className="hero-crosshair" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+      <circle cx="50" cy="50" r="30" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="50" cy="50" r="3" fill="currentColor" />
+      <line x1="50" y1="2" x2="50" y2="22" stroke="currentColor" strokeWidth="2" />
+      <line x1="50" y1="78" x2="50" y2="98" stroke="currentColor" strokeWidth="2" />
+      <line x1="2" y1="50" x2="22" y2="50" stroke="currentColor" strokeWidth="2" />
+      <line x1="78" y1="50" x2="98" y2="50" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
 
 export function HeroBanner() {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => setIndex((i) => (i + 1) % SLIDES.length), AUTOPLAY_MS);
+    const timer = setInterval(() => setIndex((i) => (i + 1) % SLIDE_KEYS.length), AUTOPLAY_MS);
     return () => clearInterval(timer);
   }, []);
 
-  const slide = SLIDES[index];
+  const key = SLIDE_KEYS[index];
 
-  // A slim single-row strip, not a big carousel — the case grid below is
-  // the actual hero of this page, this is just a rotating promo line.
   return (
-    <div className="hero-banner" style={{ background: slide.gradient }}>
-      <div className="hero-banner-text">
-        <span className="hero-eyebrow">{t(`home.hero.${slide.key}.eyebrow`)}</span>
-        <span className="hero-title-line">{t(`home.hero.${slide.key}.title`)}</span>
+    <div className="hero-banner">
+      <Crosshair />
+      <div className="hero-banner-content">
+        <span className="hero-eyebrow">{t(`home.hero.${key}.eyebrow`)}</span>
+        <h2>{t(`home.hero.${key}.title`)}</h2>
+        <p>{t(`home.hero.${key}.subtitle`)}</p>
+        <Link to={SLIDE_TARGETS[key]} className="hero-cta-button">
+          {t(`home.hero.${key}.cta`)}
+        </Link>
       </div>
-      <Link to={slide.ctaTo} className="hero-cta-button">
-        {t(`home.hero.${slide.key}.cta`)}
-      </Link>
       <div className="hero-dots">
-        {SLIDES.map((_, i) => (
+        {SLIDE_KEYS.map((_, i) => (
           <button
             key={i}
             className={`hero-dot ${i === index ? "active" : ""}`}
