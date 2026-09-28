@@ -358,49 +358,54 @@ button:disabled {
   margin-top: 2rem;
 }
 
-/* --- Hero banner --- */
+/* --- Hero promo strip ---
+   Deliberately slim: on case-opening sites the grid IS the hero, this is
+   just a rotating one-line promo, not a competing marketing banner. */
 .hero-banner {
   position: relative;
-  border-radius: 16px;
-  padding: 2.5rem 2rem 2rem;
+  border-radius: 12px;
+  padding: 0.7rem 4.5rem 0.7rem 1.1rem;
   overflow: hidden;
   border: 1px solid var(--border);
-  min-height: 200px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  gap: 1rem;
+  min-height: 0;
 }
 
-.hero-banner-content {
-  max-width: 520px;
+.hero-banner-text {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .hero-eyebrow {
-  display: inline-block;
+  flex-shrink: 0;
   color: var(--accent-strong);
   font-weight: 700;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  margin-bottom: 0.5rem;
 }
 
-.hero-banner h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.9rem;
-  line-height: 1.15;
-}
-
-.hero-banner p {
-  margin: 0 0 1.25rem;
-  color: var(--text-dim);
+.hero-title-line {
+  font-weight: 700;
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .hero-cta-button {
+  flex-shrink: 0;
   display: inline-block;
   background: var(--cta);
   color: #04140d;
   font-weight: 700;
-  padding: 0.6rem 1.4rem;
+  font-size: 0.85rem;
+  padding: 0.4rem 1rem;
   border-radius: 8px;
 }
 
@@ -410,10 +415,11 @@ button:disabled {
 
 .hero-dots {
   position: absolute;
-  top: 1.25rem;
-  right: 1.5rem;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
   display: flex;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
 .hero-dot {
@@ -534,6 +540,57 @@ button:disabled {
   color: var(--text-dim);
 }
 
+/* --- Cases toolbar (heading + sort) --- */
+.cases-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cases-toolbar-heading {
+  margin: 0;
+}
+
+.sort-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.sort-select-wrap select {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+}
+
+.sort-select-wrap select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.case-rarity-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+  margin: 0.35rem 0;
+}
+
+.case-rarity-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rarity-color, var(--border));
+}
+
 .case-grid,
 .item-grid {
   display: grid;
@@ -550,6 +607,7 @@ button:disabled {
   padding: 1rem;
   text-align: center;
   color: var(--text);
+  overflow: hidden;
   transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
@@ -560,8 +618,22 @@ button:disabled {
 
 /* Rarity-colored item cards: consumers pass --rarity-color inline. */
 .item-card {
+  position: relative;
   border-top: 3px solid var(--rarity-color, var(--border));
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.item-chance-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(10, 10, 15, 0.72);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
 }
 
 .item-card:hover {
@@ -774,6 +846,73 @@ button:disabled {
   border-bottom: 9px solid var(--accent);
 }
 
+/* Reveal burst — Classified+ drops only, so it stays meaningful. */
+.reel-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.reel-burst-spark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--rarity-color);
+  box-shadow: 0 0 8px 1px var(--rarity-color);
+  opacity: 0;
+  animation: reel-burst-fly 750ms ease-out forwards;
+  animation-delay: calc(var(--i) * 14ms);
+}
+
+@keyframes reel-burst-fly {
+  0% {
+    opacity: 1;
+    transform: rotate(calc(var(--i) * 36deg)) translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(calc(var(--i) * 36deg)) translateX(78px) scale(0.4);
+  }
+}
+
+.spin-mode-toggle {
+  display: inline-flex;
+  margin-top: 0.75rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem;
+  gap: 0.2rem;
+}
+
+.spin-mode-toggle button {
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+}
+
+.spin-mode-toggle button:hover:not(:disabled) {
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+.spin-mode-toggle button.active {
+  background: var(--accent-soft);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
 .auth-page {
   max-width: 420px;
   margin: 2rem auto;
@@ -969,6 +1108,11 @@ button:disabled {
   overflow-x: auto;
 }
 
+/* --- Bottom tab bar (mobile only) --- */
+.bottom-nav {
+  display: none;
+}
+
 /* =====================================================================
    Mobile / tablet breakpoints
    ===================================================================== */
@@ -1007,6 +1151,50 @@ button:disabled {
 
   .page-content {
     padding: 1.1rem;
+    padding-bottom: calc(1.1rem + 60px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .site-footer {
+    margin-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 41;
+    background: rgba(20, 21, 29, 0.96);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
+    padding: 0.35rem 0.25rem calc(0.35rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .bottom-nav-link {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.3rem 0.1rem;
+    border-radius: 10px;
+    color: var(--text-dim);
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .bottom-nav-link span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  .bottom-nav-link.active {
+    color: var(--text);
+    background: var(--accent-soft);
   }
 }
 
@@ -1074,21 +1262,25 @@ button:disabled {
   }
 
   .hero-banner {
-    padding: 1.5rem 1.25rem 1.25rem;
-    min-height: unset;
+    padding: 0.65rem 0.85rem;
+    gap: 0.6rem;
   }
 
-  .hero-banner h2 {
-    font-size: 1.4rem;
+  .hero-eyebrow {
+    display: none;
   }
 
-  .hero-banner-content {
-    max-width: 100%;
+  .hero-title-line {
+    font-size: 0.82rem;
+  }
+
+  .hero-cta-button {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.78rem;
   }
 
   .hero-dots {
-    top: 0.85rem;
-    right: 0.85rem;
+    display: none;
   }
 
   .stats-bar {

@@ -7,6 +7,7 @@ import { formatMinor } from "../lib/money";
 import type { WalletDto } from "../lib/types";
 import ak47 from "../assets/ak47.png";
 import { Sidebar } from "./Sidebar";
+import { BottomNav } from "./BottomNav";
 import { DropsTicker } from "./DropsTicker";
 import { PagesBar } from "./PagesBar";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -87,6 +88,7 @@ export function Layout() {
         </main>
       </div>
       <footer className="site-footer">{t("nav.footer")}</footer>
+      <BottomNav />
     </div>
   );
 }

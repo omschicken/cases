@@ -29,16 +29,17 @@ export function HeroBanner() {
 
   const slide = SLIDES[index];
 
+  // A slim single-row strip, not a big carousel — the case grid below is
+  // the actual hero of this page, this is just a rotating promo line.
   return (
     <div className="hero-banner" style={{ background: slide.gradient }}>
-      <div className="hero-banner-content">
+      <div className="hero-banner-text">
         <span className="hero-eyebrow">{t(`home.hero.${slide.key}.eyebrow`)}</span>
-        <h2>{t(`home.hero.${slide.key}.title`)}</h2>
-        <p>{t(`home.hero.${slide.key}.subtitle`)}</p>
-        <Link to={slide.ctaTo} className="hero-cta-button">
-          {t(`home.hero.${slide.key}.cta`)}
-        </Link>
+        <span className="hero-title-line">{t(`home.hero.${slide.key}.title`)}</span>
       </div>
+      <Link to={slide.ctaTo} className="hero-cta-button">
+        {t(`home.hero.${slide.key}.cta`)}
+      </Link>
       <div className="hero-dots">
         {SLIDES.map((_, i) => (
           <button

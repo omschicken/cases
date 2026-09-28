@@ -25,3 +25,27 @@ export const RARITY_LABELS: Record<ItemRarity, string> = {
 export function rarityColor(rarity: ItemRarity): string {
   return RARITY_COLORS[rarity] ?? RARITY_COLORS.MIL_SPEC;
 }
+
+// Highest tier first — used to rank a case's contents at a glance and to
+// decide which drops earn the big reveal treatment.
+export const RARITY_RANK: ItemRarity[] = [
+  "GOLD",
+  "COVERT",
+  "CLASSIFIED",
+  "RESTRICTED",
+  "MIL_SPEC",
+  "INDUSTRIAL",
+  "CONSUMER",
+];
+
+export function highestRarity(rarities: ItemRarity[]): ItemRarity | null {
+  for (const tier of RARITY_RANK) {
+    if (rarities.includes(tier)) return tier;
+  }
+  return null;
+}
+
+/** Top-tier drops (Classified and above) earn the big celebratory reveal. */
+export function isChaseRarity(rarity: ItemRarity): boolean {
+  return rarity === "CLASSIFIED" || rarity === "COVERT" || rarity === "GOLD";
+}

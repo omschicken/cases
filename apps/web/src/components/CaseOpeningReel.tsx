@@ -1,14 +1,17 @@
 import type { CSSProperties } from "react";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CaseItem } from "../lib/types";
-import { rarityColor } from "../lib/rarity";
+import { isChaseRarity, rarityColor } from "../lib/rarity";
 
 const ITEM_WIDTH = 148;
 const GAP = 12;
 const ITEM_STEP = ITEM_WIDTH + GAP;
-const REEL_LENGTH = 50;
-const TARGET_INDEX = 44;
-const SPIN_DURATION_MS = 6000;
+
+// Two spin configs: the full theatrical reel for a first-time/occasional
+// open, and a short one for grinders who just want the result. Distance
+// scales down with duration so "quick" still reads as a scroll, not a jump-cut.
+const FULL_SPIN = { length: 50, targetIndex: 44, durationMs: 6000 };
+const QUICK_SPIN = { length: 14, targetIndex: 10, durationMs: 1100 };
 
 /** Visual-only filler for the spinning reel — the real result already came
  * from the server before this component mounts. Sampling by the same
@@ -27,6 +30,8 @@ interface CaseOpeningReelProps {
   poolItems: CaseItem[];
   winningItem: CaseItem;
   onFinished: () => void;
+  /** Short, low-ceremony spin for repeat openers — skips most of the reel. */
+  quick?: boolean;
 }
 
 /**
@@ -35,10 +40,15 @@ interface CaseOpeningReelProps {
  * plausible-looking filler strip around it and animates the strip so the
  * indicator lands on that item.
  */
-export function CaseOpeningReel({ poolItems, winningItem, onFinished }: CaseOpeningReelProps) {
+export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = false }: CaseOpeningReelProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState(0);
   const [spinning, setSpinning] = useState(false);
+  const [landed, setLanded] = useState(false);
+
+  const { length: REEL_LENGTH, targetIndex: TARGET_INDEX, durationMs: SPIN_DURATION_MS } = quick
+    ? QUICK_SPIN
+    : FULL_SPIN;
 
   const reel = useMemo(() => {
     const items: CaseItem[] = [];
@@ -52,6 +62,7 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished }: CaseOpen
 
   useLayoutEffect(() => {
     setTransform(0);
+    setLanded(false);
     // Measuring clientWidth is deferred to the first animation frame rather
     // than read synchronously here — on some mobile browsers the viewport's
     // layout isn't reliably settled yet at this exact point right after a
@@ -74,7 +85,9 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished }: CaseOpen
       cancelAnimationFrame(raf2);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [quick]);
+
+  const chase = isChaseRarity(winningItem.rarity);
 
   return (
     <div className="case-reel-wrap">
@@ -88,7 +101,10 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished }: CaseOpen
               : "none",
           }}
           onTransitionEnd={(e) => {
-            if (e.propertyName === "transform") onFinished();
+            if (e.propertyName === "transform") {
+              setLanded(true);
+              onFinished();
+            }
           }}
         >
           {reel.map((item, i) => (
@@ -103,6 +119,15 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished }: CaseOpen
           ))}
         </div>
         <div className="case-reel-indicator" />
+        {/* Reserved for the top rarity tiers only — a burst on every open
+            would dull it, so this only fires for Classified and above. */}
+        {landed && chase && (
+          <div className="reel-burst" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties}>
+            {Array.from({ length: 10 }).map((_, i) => (
+              <span key={i} className="reel-burst-spark" style={{ "--i": i } as CSSProperties} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -20,6 +20,8 @@ function weightedSample(items: CaseItem[]): CaseItem {
   return items[items.length - 1];
 }
 
+const QUICK_SPIN_KEY = "gundone.quickSpin";
+
 export function CaseDetailPage() {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
@@ -33,6 +35,22 @@ export function CaseDetailPage() {
   const [revealed, setRevealed] = useState(false);
   const [spinKey, setSpinKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [quickSpin, setQuickSpin] = useState(() => {
+    try {
+      return localStorage.getItem(QUICK_SPIN_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  function toggleQuickSpin(next: boolean) {
+    setQuickSpin(next);
+    try {
+      localStorage.setItem(QUICK_SPIN_KEY, next ? "1" : "0");
+    } catch {
+      // Private-browsing/blocked storage — the toggle still works for this visit.
+    }
+  }
 
   useEffect(() => {
     if (!slug) return;
@@ -98,8 +116,28 @@ export function CaseDetailPage() {
           poolItems={theCase.items}
           winningItem={winningItem}
           onFinished={() => setRevealed(true)}
+          quick={quickSpin}
         />
       )}
+
+      <div className="spin-mode-toggle" role="group">
+        <button
+          type="button"
+          className={!quickSpin ? "active" : ""}
+          onClick={() => toggleQuickSpin(false)}
+          disabled={spinning}
+        >
+          {t("caseDetail.spinFull")}
+        </button>
+        <button
+          type="button"
+          className={quickSpin ? "active" : ""}
+          onClick={() => toggleQuickSpin(true)}
+          disabled={spinning}
+        >
+          {t("caseDetail.spinQuick")}
+        </button>
+      </div>
 
       {user ? (
         <button onClick={openCase} disabled={opening || spinning} className="open-button">
@@ -179,6 +217,7 @@ export function CaseDetailPage() {
             key={item.id}
             style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}
           >
+            <span className="item-chance-badge">{dropChancePercent(item, theCase.items)}%</span>
             <img src={item.imageUrl} alt={item.name} />
             <p>{item.name}</p>
             <p className="value">{formatMinor(item.valueMinor, item.currency)}</p>
@@ -187,4 +226,14 @@ export function CaseDetailPage() {
       </div>
     </div>
   );
+}
+
+/** Real odds, computed from the same weights the server rolls against —
+ * shown up front so buyers can see exactly what they're paying for. */
+function dropChancePercent(item: CaseItem, pool: CaseItem[]): string {
+  const total = pool.reduce((sum, i) => sum + i.weight, 0);
+  if (total <= 0) return "0";
+  const pct = (item.weight / total) * 100;
+  const decimals = pct < 1 ? 2 : 1;
+  return pct.toFixed(decimals).replace(/\.?0+$/, "");
 }
