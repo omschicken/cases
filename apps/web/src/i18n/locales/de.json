@@ -268,7 +268,8 @@
       "kyc": "KYC-Warteschlange",
       "withdrawals": "Auszahlungen",
       "cases": "Cases",
-      "users": "Benutzer"
+      "users": "Benutzer",
+      "prices": "Preise"
     },
     "kycQueue": {
       "heading": "Ausstehende Identitätsprüfungen",
@@ -338,6 +339,24 @@
       "created": "Case erstellt.",
       "couldNotLoad": "Cases konnten nicht geladen werden",
       "couldNotCreate": "Case konnte nicht erstellt werden"
+    },
+    "prices": {
+      "heading": "Preissynchronisation",
+      "description": "Ruft aktuelle Skin-Preise von Skinport ab (Steam Market als Fallback) und aktualisiert sie in allen Cases, die dieses Item enthalten.",
+      "syncNow": "Sync jetzt starten",
+      "running": "Läuft…",
+      "couldNotLoad": "Status konnte nicht geladen werden",
+      "couldNotTrigger": "Sync konnte nicht gestartet werden",
+      "started": "Gestartet",
+      "finished": "Beendet",
+      "inProgress": "läuft…",
+      "total": "Skins gesamt",
+      "updated": "Aktualisiert",
+      "viaSkinport": "{{n}} Skinport",
+      "viaSteam": "{{n}} Steam",
+      "skipped": "Übersprungen (kein Angebot)",
+      "failed": "Fehlgeschlagen",
+      "neverRun": "Die Synchronisation wurde noch nie ausgeführt."
     }
   },
   "languages": {

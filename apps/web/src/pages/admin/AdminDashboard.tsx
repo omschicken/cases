@@ -4,6 +4,7 @@ import { AdminKycQueue } from "./AdminKycQueue";
 import { AdminWithdrawals } from "./AdminWithdrawals";
 import { AdminCases } from "./AdminCases";
 import { AdminUsers } from "./AdminUsers";
+import { AdminPrices } from "./AdminPrices";
 
 export function AdminDashboardPage() {
   const { t } = useTranslation();
@@ -23,6 +24,9 @@ export function AdminDashboardPage() {
         <NavLink to="/admin/users" end>
           {t("admin.nav.users")}
         </NavLink>
+        <NavLink to="/admin/prices" end>
+          {t("admin.nav.prices")}
+        </NavLink>
       </nav>
       <Routes>
         <Route index element={<AdminKycQueue />} />
@@ -30,6 +34,7 @@ export function AdminDashboardPage() {
         <Route path="withdrawals" element={<AdminWithdrawals />} />
         <Route path="cases" element={<AdminCases />} />
         <Route path="users" element={<AdminUsers />} />
+        <Route path="prices" element={<AdminPrices />} />
       </Routes>
     </div>
   );

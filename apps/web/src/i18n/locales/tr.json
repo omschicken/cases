@@ -268,7 +268,8 @@
       "kyc": "KYC kuyruğu",
       "withdrawals": "Çekimler",
       "cases": "Kasalar",
-      "users": "Kullanıcılar"
+      "users": "Kullanıcılar",
+      "prices": "Fiyatlar"
     },
     "kycQueue": {
       "heading": "Bekleyen kimlik doğrulamaları",
@@ -338,6 +339,24 @@
       "created": "Kasa oluşturuldu.",
       "couldNotLoad": "Kasalar yüklenemedi",
       "couldNotCreate": "Kasa oluşturulamadı"
+    },
+    "prices": {
+      "heading": "Fiyat senkronizasyonu",
+      "description": "Skinport'tan (yedek olarak Steam Market) güncel skin fiyatlarını çeker ve bu eşyayı içeren tüm kasalarda günceller.",
+      "syncNow": "Şimdi senkronize et",
+      "running": "Çalışıyor…",
+      "couldNotLoad": "Durum yüklenemedi",
+      "couldNotTrigger": "Senkronizasyon başlatılamadı",
+      "started": "Başlangıç",
+      "finished": "Bitiş",
+      "inProgress": "devam ediyor…",
+      "total": "Toplam skin",
+      "updated": "Güncellendi",
+      "viaSkinport": "{{n}} Skinport",
+      "viaSteam": "{{n}} Steam",
+      "skipped": "Atlandı (ilan yok)",
+      "failed": "Başarısız",
+      "neverRun": "Senkronizasyon henüz hiç çalıştırılmadı."
     }
   },
   "languages": {

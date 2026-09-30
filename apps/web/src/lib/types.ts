@@ -89,3 +89,18 @@ export interface PublicStatsDto {
   totalValueMinor: string;
   playerCount: number;
 }
+
+export interface PriceSyncSummaryDto {
+  startedAt: string;
+  finishedAt: string | null;
+  totalNames: number;
+  updated: number;
+  failed: number;
+  skipped: number;
+  bySource: { skinport: number; steam: number };
+}
+
+export interface PriceSyncStatusDto {
+  running: boolean;
+  lastSummary: PriceSyncSummaryDto | null;
+}

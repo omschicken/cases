@@ -268,7 +268,8 @@
       "kyc": "KYC queue",
       "withdrawals": "Withdrawals",
       "cases": "Cases",
-      "users": "Users"
+      "users": "Users",
+      "prices": "Prices"
     },
     "kycQueue": {
       "heading": "Pending identity verifications",
@@ -338,6 +339,24 @@
       "created": "Case created.",
       "couldNotLoad": "Could not load cases",
       "couldNotCreate": "Could not create case"
+    },
+    "prices": {
+      "heading": "Price sync",
+      "description": "Pulls current skin prices from Skinport (Steam Market as fallback) and updates them across every case that carries that item.",
+      "syncNow": "Run sync now",
+      "running": "Running…",
+      "couldNotLoad": "Could not load sync status",
+      "couldNotTrigger": "Could not start sync",
+      "started": "Started",
+      "finished": "Finished",
+      "inProgress": "in progress…",
+      "total": "Total skins",
+      "updated": "Updated",
+      "viaSkinport": "{{n}} Skinport",
+      "viaSteam": "{{n}} Steam",
+      "skipped": "Skipped (no listing)",
+      "failed": "Failed",
+      "neverRun": "Sync has never been run yet."
     }
   },
   "languages": {

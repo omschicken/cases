@@ -268,7 +268,8 @@
       "kyc": "Fila de KYC",
       "withdrawals": "Saques",
       "cases": "Caixas",
-      "users": "Usuários"
+      "users": "Usuários",
+      "prices": "Preços"
     },
     "kycQueue": {
       "heading": "Verificações de identidade pendentes",
@@ -338,6 +339,24 @@
       "created": "Caixa criada.",
       "couldNotLoad": "Não foi possível carregar as caixas",
       "couldNotCreate": "Não foi possível criar a caixa"
+    },
+    "prices": {
+      "heading": "Sincronização de preços",
+      "description": "Busca os preços atuais dos skins no Skinport (Steam Market como alternativa) e os atualiza em todas as caixas que contêm esse item.",
+      "syncNow": "Executar sincronização",
+      "running": "Em execução…",
+      "couldNotLoad": "Não foi possível carregar o status",
+      "couldNotTrigger": "Não foi possível iniciar a sincronização",
+      "started": "Início",
+      "finished": "Fim",
+      "inProgress": "em andamento…",
+      "total": "Total de skins",
+      "updated": "Atualizados",
+      "viaSkinport": "{{n}} Skinport",
+      "viaSteam": "{{n}} Steam",
+      "skipped": "Ignorados (sem listagem)",
+      "failed": "Falhas",
+      "neverRun": "A sincronização ainda não foi executada."
     }
   },
   "languages": {
