@@ -22,14 +22,17 @@ function rarityTiers(c: CaseDto): string[] {
 export function CaseListPage() {
   const { t } = useTranslation();
   const [cases, setCases] = useState<CaseDto[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sort, setSort] = useState<SortMode>("default");
 
   useEffect(() => {
+    setLoading(true);
     api
       .get<CaseDto[]>("/cases")
       .then(setCases)
-      .catch(() => setError(t("home.couldNotLoadCases")));
+      .catch(() => setError(t("home.couldNotLoadCases")))
+      .finally(() => setLoading(false));
   }, [t]);
 
   const sortedCases = useMemo(() => {
@@ -60,8 +63,11 @@ export function CaseListPage() {
       </div>
 
       {error && <p className="form-error">{error}</p>}
-      <div className="case-grid">
-        {sortedCases.map((c, i) => {
+      <div className="case-grid" aria-busy={loading}>
+        {loading && Array.from({ length: 5 }, (_, i) => (
+          <div className="case-card case-card-skeleton" key={i} aria-hidden="true" />
+        ))}
+        {!loading && sortedCases.map((c, i) => {
           const tiers = rarityTiers(c);
           const chase = highestRarity(tiers as CaseDto["items"][number]["rarity"][]);
           return (
@@ -86,7 +92,7 @@ export function CaseListPage() {
             </Link>
           );
         })}
-        {sortedCases.length === 0 && !error && <p>{t("home.noCasesYet")}</p>}
+        {!loading && sortedCases.length === 0 && !error && <p>{t("home.noCasesYet")}</p>}
       </div>
 
       <RecentDrops />
