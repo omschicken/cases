@@ -56,7 +56,7 @@ export function Layout() {
         <NavLink to="/" className="brand">
           <img src={ak47} alt="" className="brand-mark" aria-hidden="true" />
           <span className="brand-word">
-            DONE<span className="brand-suffix">.CASE</span>
+            DROP<span className="brand-suffix">ZONE</span>
           </span>
         </NavLink>
         <div className="nav-right">
