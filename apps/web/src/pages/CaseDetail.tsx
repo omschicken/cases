@@ -75,9 +75,13 @@ export function CaseDetailPage() {
     if (!slug) return;
     api
       .get<CaseDto>(`/cases/${slug}`)
-      .then(setTheCase)
+      .then((data) => {
+        setTheCase(data);
+        setIsPreview(false);
+      })
       .catch(() => {
         setTheCase(previewCase(slug));
+        setIsPreview(true);
       });
   }, [slug, t]);
 
