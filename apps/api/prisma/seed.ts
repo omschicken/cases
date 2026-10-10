@@ -29,6 +29,14 @@ const BOT_NAMES = [
   "CoreBreak",
 ];
 const BOT_STARTING_BALANCE_MINOR = 100_000; // 1 000 ₽ — enough to open any seeded case
+const RUB_PER_USD = 95;
+const DEFAULT_SOURCE_CURRENCY = "USD";
+
+function toRubMinor(minor: number, sourceCurrency?: string): number {
+  return (sourceCurrency ?? DEFAULT_SOURCE_CURRENCY) === "USD"
+    ? Math.round(minor * RUB_PER_USD)
+    : minor;
+}
 
 // CS2-authentic rarity colors, matching apps/web/src/lib/rarity.ts
 const RARITY_COLOR: Record<ItemRarity, string> = {
@@ -144,7 +152,7 @@ async function seedBotDrops() {
     for (let i = 0; i < opens; i++) {
       const theCase = CASES[Math.floor(Math.random() * CASES.length)];
       const caseItems = items.filter((it) => it.case.slug === theCase.slug);
-      const price = BigInt(theCase.priceMinor);
+      const price = BigInt(toRubMinor(theCase.priceMinor, theCase.currency));
       if (balance < price) continue;
 
       const roll = computeRoll(serverSeed, seed.clientSeed, nonce);
