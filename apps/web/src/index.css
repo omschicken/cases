@@ -2115,3 +2115,16 @@ button:disabled {
 .loading-line-button { width: 15rem; height: 3rem; }
 @media (max-width: 680px) { .loading-reel { height: 9rem; } .loading-line-title { height: 1.9rem; } }
 @media (prefers-reduced-motion: reduce) { .loading-line, .loading-reel { animation: none; } }
+
+
+.catalog-notice {
+  margin: 0 auto 1.25rem;
+  max-width: 1180px;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 184, 92, 0.42);
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(255, 166, 76, 0.12), rgba(121, 79, 191, 0.12));
+  color: #ffd9a3;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
