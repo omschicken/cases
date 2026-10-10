@@ -13,6 +13,6 @@ export function formatMinor(minor: string | number, currency = "RUB", decimals =
     }).format(value);
   } catch {
     // Unknown/malformed currency code — fall back to a plain numeric label.
-    return `${value.toFixed(decimals)} ${currency}`;
+    return `${value.toFixed(decimals)} ${displayCurrency}`;
   }
 }
