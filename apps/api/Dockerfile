@@ -45,6 +45,7 @@ COPY --from=builder /repo/apps/api ./apps/api
 WORKDIR /repo/apps/api
 EXPOSE 4000
 
-# Apply pending migrations, then start the API. DATABASE_URL and the JWT
+# Apply pending migrations and refresh deterministic seed data before starting the API.
+# Currency migrations are intentionally applied before seed so all writes use RUB. DATABASE_URL and the JWT
 # secrets are supplied as Railway environment variables, not baked in here.
 CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy --schema=./prisma/schema.prisma && pnpm prisma:seed && node dist/main.js"]
