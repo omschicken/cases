@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 const SLIDE_KEYS = ["slide1", "slide2", "slide3"] as const;
 const SLIDE_TARGETS: Record<(typeof SLIDE_KEYS)[number], string> = {
-  slide1: "/wallet",
+  slide1: "/#collections",
   slide2: "/",
   slide3: "/referral",
 };
