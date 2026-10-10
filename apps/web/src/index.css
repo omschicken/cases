@@ -1930,3 +1930,54 @@ button:disabled {
     margin-right: .35rem;
   }
 }
+
+
+/* Opening state chrome */
+.case-reel-wrap::before {
+  content: "DROP SEQUENCE";
+  position: absolute;
+  top: .7rem;
+  left: 1rem;
+  z-index: 4;
+  color: var(--text-dim);
+  font-family: var(--font-display);
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  opacity: .72;
+}
+.case-reel-wrap::after {
+  content: "READY";
+  position: absolute;
+  top: .7rem;
+  right: 1rem;
+  z-index: 4;
+  color: var(--info-strong);
+  font-family: var(--font-display);
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+.case-reel-spinning::after {
+  content: "SCANNING";
+  color: var(--accent-strong);
+  animation: reel-status-blink 900ms ease-in-out infinite;
+}
+.case-reel-landed::after {
+  content: "LOCKED";
+  color: var(--cta);
+}
+.case-reel-landed {
+  border-color: color-mix(in srgb, var(--cta) 38%, var(--border-strong));
+}
+@keyframes reel-status-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .38; }
+}
+@media (max-width: 560px) {
+  .case-reel-wrap::before, .case-reel-wrap::after { font-size: .54rem; }
+  .case-reel-viewport { padding-top: .35rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-reel-spinning::after { animation: none; }
+}
