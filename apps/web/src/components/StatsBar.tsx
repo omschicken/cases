@@ -6,7 +6,7 @@ import type { PublicStatsDto } from "../lib/types";
 
 export function StatsBar() {
   const { t } = useTranslation();
-  const [stats, setStats] = useState<PublicStatsDto | null>(null);
+  const [stats, setStats] = useState<PublicStatsDto>({ totalOpens: "0", totalValueMinor: "0", playerCount: 0 });
 
   useEffect(() => {
     api
