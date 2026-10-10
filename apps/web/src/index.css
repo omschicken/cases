@@ -1904,3 +1904,29 @@ button:disabled {
 .result-panel details ul { margin: .75rem 0 0; padding-left: 1.1rem; color: var(--text-dim); font-size: .82rem; line-height: 1.65; }
 @media (max-width: 560px) { .result-panel { padding: 1.35rem 1rem; } .result-panel details { font-size: .8rem; } }
 @media (prefers-reduced-motion: reduce) { .result-panel { animation: none; } }
+
+
+/* Aurora navigation polish */
+.pages-bar {
+  background: linear-gradient(90deg, rgba(16,18,26,.96), rgba(22,25,38,.88));
+  box-shadow: inset 0 -1px 0 rgba(124,92,255,.12);
+}
+.pages-bar-link {
+  transition: color .2s ease, transform .2s ease;
+}
+.pages-bar-link:hover { transform: translateY(-1px); }
+.top-nav {
+  box-shadow: 0 10px 30px rgba(0,0,0,.16);
+}
+.brand-mark { filter: drop-shadow(0 0 10px rgba(124,92,255,.48)); }
+.bottom-nav {
+  box-shadow: 0 -10px 28px rgba(0,0,0,.22);
+}
+@media (max-width: 680px) {
+  .pages-bar-link { font-size: .72rem; letter-spacing: .06em; }
+  .pages-bar-link:first-child::before {
+    content: "◈";
+    color: var(--accent-strong);
+    margin-right: .35rem;
+  }
+}
