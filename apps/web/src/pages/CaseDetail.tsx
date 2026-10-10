@@ -163,7 +163,11 @@ export function CaseDetailPage() {
         />
       )}
 
-      <div className="spin-mode-toggle" role="group">
+      <div
+        className="spin-mode-toggle"
+        role="group"
+        aria-label={t("caseDetail.spinMode", { defaultValue: "Режим открытия" })}
+      >
         <button
           type="button"
           className={!quickSpin ? "active" : ""}
