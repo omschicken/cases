@@ -13,10 +13,15 @@ import { ReferralModule } from "./referral/referral.module";
 import { AdminModule } from "./admin/admin.module";
 import { PricesModule } from "./prices/prices.module";
 
+// Vercel Functions are request-driven and may create multiple instances.
+// Do not start a process-local cron timer there; its execution would be
+// unreliable and could run more than once. Price sync needs a durable job.
+const scheduleImports = process.env.VERCEL ? [] : [ScheduleModule.forRoot()];
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    ScheduleModule.forRoot(),
+    ...scheduleImports,
     ThrottlerModule.forRoot({ throttlers: [{ ttl: 60_000, limit: 100 }] }),
     PrismaModule,
     AuthModule,
