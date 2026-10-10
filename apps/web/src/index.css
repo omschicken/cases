@@ -1868,3 +1868,20 @@ button:disabled {
 .case-detail > h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 0.35rem; background: linear-gradient(100deg, var(--text), var(--accent-strong)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .case-detail > .price { color: var(--info-strong); font-weight: 800; letter-spacing: 0.04em; }
 .case-detail .fairness-panel { border-color: color-mix(in srgb, var(--info) 35%, var(--border)); background: linear-gradient(135deg, rgba(35,211,190,.08), rgba(124,92,255,.06)); }
+
+
+/* Result landing: make the server-selected item feel deliberate and readable. */
+.reel-item-landed {
+  border-color: color-mix(in srgb, var(--rarity-color) 65%, var(--border));
+  box-shadow: 0 0 22px -8px var(--rarity-color);
+  animation: reel-landed 520ms cubic-bezier(.2,.8,.2,1);
+}
+.reel-item-landed img { filter: drop-shadow(0 0 14px color-mix(in srgb, var(--rarity-color) 65%, transparent)); }
+@keyframes reel-landed {
+  0% { transform: translateY(8px) scale(.94); opacity: .45; }
+  55% { transform: translateY(-3px) scale(1.045); opacity: 1; }
+  100% { transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-reel-viewport::before, .case-reel-indicator, .reel-item-landed, .reel-item-chase-landed, .reel-flash, .reel-burst { animation: none !important; }
+}
