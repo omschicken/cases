@@ -100,7 +100,14 @@ export function CaseDetailPage() {
   }
 
   if (error && !theCase) return <p className="form-error">{error}</p>;
-  if (!theCase) return <p>{t("common.loading")}</p>;
+  if (!theCase) return (
+    <div className="case-detail-loading" aria-busy="true" aria-live="polite">
+      <span className="loading-line loading-line-title" />
+      <span className="loading-line loading-line-price" />
+      <div className="loading-reel" />
+      <span className="loading-line loading-line-button" />
+    </div>
+  );
 
   const winningItem = result?.item ?? demoItem;
   const spinning = winningItem !== null && !revealed;
