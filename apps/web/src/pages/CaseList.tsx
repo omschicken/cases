@@ -43,15 +43,24 @@ export function CaseListPage() {
   const { t } = useTranslation();
   const [cases, setCases] = useState<CaseDto[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);\n  const [usingFallback, setUsingFallback] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [usingFallback, setUsingFallback] = useState(false);
   const [sort, setSort] = useState<SortMode>("default");
 
   useEffect(() => {
     setLoading(true);
     api
       .get<CaseDto[]>("/cases")
-      .then(setCases)
-      .catch(() => {\n        // Keep the catalog useful while the API is restarting; opening remains demo-only until login.\n        setCases(FALLBACK_CASES);\n        setUsingFallback(true);\n        setError(null);\n      })
+      .then((data) => {
+        setCases(data);
+        setUsingFallback(false);
+      })
+      .catch(() => {
+        // Keep the catalog useful while the API is restarting; opening remains demo-only until login.
+        setCases(FALLBACK_CASES);
+        setUsingFallback(true);
+        setError(null);
+      })
       .finally(() => setLoading(false));
   }, [t]);
 
@@ -70,7 +79,13 @@ export function CaseListPage() {
       <HeroBanner />
       <StatsBar />
 
-      {usingFallback && (\n        <div className="catalog-notice" role="status">\n          Каталог работает в демо-режиме: сервис предметов временно обновляется. Реальные открытия и списания сейчас недоступны.\n        </div>\n      )}\n\n      <div id="collections" className="cases-toolbar">
+      {usingFallback && (
+        <div className="catalog-notice" role="status">
+          Каталог работает в демо-режиме: сервис предметов временно обновляется. Реальные открытия и списания сейчас недоступны.
+        </div>
+      )}
+
+      <div id="collections" className="cases-toolbar">
         <div className="cases-heading-group"><span className="section-kicker">DROPZONE / COLLECTIONS</span><h1 className="section-heading cases-toolbar-heading">{t("home.casesHeading")}</h1><p className="section-intro">{t("home.casesIntro")}</p></div>
         <label className="sort-select-wrap">
           {t("home.sortLabel")}
