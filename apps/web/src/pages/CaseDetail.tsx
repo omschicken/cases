@@ -173,7 +173,7 @@ export function CaseDetailPage() {
         </button>
       </div>
 
-      {user ? (
+      {user && !isPreview ? (
         <button onClick={openCase} disabled={opening || spinning} className="open-button">
           {opening
             ? t("caseDetail.rolling")
