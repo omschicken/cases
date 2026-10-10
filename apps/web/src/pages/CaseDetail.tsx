@@ -45,6 +45,7 @@ export function CaseDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
   const [theCase, setTheCase] = useState<CaseDto | null>(null);
+  const [isPreview, setIsPreview] = useState(false);
   const [seedHash, setSeedHash] = useState<string | null>(null);
   const [clientSeed, setClientSeed] = useState<string | null>(null);
   const [opening, setOpening] = useState(false);
