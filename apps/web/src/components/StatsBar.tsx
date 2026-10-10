@@ -15,8 +15,6 @@ export function StatsBar() {
       .catch(() => undefined);
   }, []);
 
-  if (!stats) return null;
-
   return (
     <div className="stats-bar">
       <div className="stat-tile">
