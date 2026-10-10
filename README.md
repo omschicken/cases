@@ -238,3 +238,14 @@ has a query console), create a case, and open it.
   and payment flows, secrets management for `.env` values, HTTPS/CORS
   locked to the real domain, rate limiting tuned for production traffic
   (a basic global throttle is enabled via `@nestjs/throttler`).
+
+
+## Валюта production
+
+Платформа использует рубли как расчётную валюту. Для синхронизации внешних цен API поддерживает переменную Railway:
+
+- `USD_TO_RUB_RATE` — курс конвертации USD в RUB для обновления цен предметов;
+- если переменная не задана, используется резервное значение `95` только для тестовой среды;
+- перед запуском реальных платежей значение должно быть задано явно и подтверждено оператором.
+
+При старте API контейнер выполняет `prisma migrate deploy`, затем seed. Миграция `20261010120000_normalize_platform_currency` переводит legacy USD-значения базы в RUB.
