@@ -1856,3 +1856,9 @@ button:disabled {
     animation: none !important;
   }
 }
+
+
+/* Dropzone collection framing */
+.cases-heading-group { display: grid; gap: 0.35rem; }
+.section-kicker { color: var(--info-strong); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
+.section-intro { max-width: 42rem; margin: 0; color: var(--text-dim); font-size: 0.95rem; line-height: 1.55; }
