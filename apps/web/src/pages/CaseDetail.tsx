@@ -120,6 +120,7 @@ export function CaseDetailPage() {
   function demoSpin() {
     if (!theCase) return;
     setError(null);
+    setResult(null);
     setRevealed(false);
     setDemoItem(weightedSample(theCase.items));
     setSpinKey((k) => k + 1);
