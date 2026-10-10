@@ -1,8 +1,8 @@
 :root {
   color-scheme: dark;
-  --bg: #07080c;
-  --bg-elevated: radial-gradient(ellipse 1100px 520px at 10% -12%, rgba(255, 122, 26, 0.12), transparent 60%),
-    radial-gradient(ellipse 900px 520px at 92% -6%, rgba(46, 166, 255, 0.1), transparent 60%);
+  --bg: #080a12;
+  --bg-elevated: radial-gradient(ellipse 1100px 520px at 10% -12%, rgba(124, 92, 255, 0.16), transparent 60%),
+    radial-gradient(ellipse 900px 520px at 92% -6%, rgba(35, 211, 190, 0.12), transparent 60%);
   --panel: #10121a;
   --panel-2: #171a24;
   --panel-3: #1f2330;
@@ -12,14 +12,14 @@
   --text-dim: #8b90a3;
 
   /* Brand/action accent — "case burst" ember orange */
-  --accent: #ff7a1a;
-  --accent-strong: #ffa24d;
-  --accent-soft: rgba(255, 122, 26, 0.16);
+  --accent: #7c5cff;
+  --accent-strong: #a996ff;
+  --accent-soft: rgba(124, 92, 255, 0.16);
 
   /* Tactical secondary accent — CT blue, info / demo / links */
-  --info: #2ea6ff;
-  --info-strong: #6cc4ff;
-  --info-soft: rgba(46, 166, 255, 0.14);
+  --info: #23d3be;
+  --info-strong: #7de8d8;
+  --info-soft: rgba(35, 211, 190, 0.14);
 
   /* Money accent — the universal "positive value" green */
   --cta: #2fd480;
@@ -28,7 +28,7 @@
   --danger: #ff4757;
   --gold: #e9b64a;
 
-  --font-display: "Rajdhani", "Inter", sans-serif;
+  --font-display: "Space Grotesk", "Inter", sans-serif;
   --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 
   font-family: var(--font-body);
