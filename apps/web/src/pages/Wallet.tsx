@@ -13,11 +13,11 @@ export function WalletPage() {
 
   const [depositRail, setDepositRail] = useState<PaymentRail>("CARD");
   const [depositAmount, setDepositAmount] = useState("5000.00");
-  const [depositCurrency, setDepositCurrency] = useState("RUB");
+  const depositCurrency = "RUB";
 
   const [withdrawRail, setWithdrawRail] = useState<PaymentRail>("CARD");
   const [withdrawAmount, setWithdrawAmount] = useState("1000.00");
-  const [withdrawCurrency, setWithdrawCurrency] = useState("RUB");
+  const withdrawCurrency = "RUB";
   const [withdrawDestination, setWithdrawDestination] = useState("");
 
   function load() {
