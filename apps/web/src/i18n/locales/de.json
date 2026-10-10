@@ -65,7 +65,8 @@
     "sortPriceAsc": "Preis: aufsteigend",
     "sortPriceDesc": "Preis: absteigend",
     "couldNotLoadCases": "Cases konnten nicht geladen werden",
-    "noCasesYet": "Noch keine Cases verfügbar."
+    "noCasesYet": "Noch keine Cases verfügbar.",
+    "casesIntro": "Stelle deine Sammlung zusammen, prüfe die Chancen und öffne den nächsten Drop in deinem Tempo."
   },
   "caseDetail": {
     "caseNotFound": "Case nicht gefunden",
