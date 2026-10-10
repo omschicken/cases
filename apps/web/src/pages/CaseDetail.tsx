@@ -111,6 +111,12 @@ export function CaseDetailPage() {
       <p className="price">{formatMinor(theCase.priceMinor, theCase.currency)}</p>
 
       {winningItem && (
+        <p className="opening-status" aria-live="polite">
+          {spinning ? t("caseDetail.spinning", { defaultValue: "Определяем предмет…" }) : t("caseDetail.resultKicker", { defaultValue: "Предмет готов" })}
+        </p>
+      )}
+
+      {winningItem && (
         <CaseOpeningReel
           key={spinKey}
           poolItems={theCase.items}
@@ -161,7 +167,7 @@ export function CaseDetailPage() {
       {error && <p className="form-error">{error}</p>}
 
       {result && revealed && (
-        <div className="result-panel" style={{ "--rarity-color": rarityColor(result.item.rarity) } as CSSProperties}>
+        <div className="result-panel" role="status" aria-live="polite" style={{ "--rarity-color": rarityColor(result.item.rarity) } as CSSProperties}>
           <p className="result-kicker">{t("caseDetail.resultKicker", { defaultValue: "ПРЕДМЕТ ПОЛУЧЕН" })}</p>
           <h2>{t("caseDetail.youGot", { name: result.item.name })}</h2>
           <span className="result-rarity" style={{ color: rarityColor(result.item.rarity) }}>{t("caseDetail.rarity", { defaultValue: result.item.rarity })}</span>
