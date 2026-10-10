@@ -109,7 +109,7 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = fa
         >
           {reel.map((item, i) => (
             <div
-              className={`reel-item ${landed && chase && i === TARGET_INDEX ? "reel-item-chase-landed" : ""}`}
+              className={`reel-item ${landed && i === TARGET_INDEX ? "reel-item-landed" : ""} ${landed && chase && i === TARGET_INDEX ? "reel-item-chase-landed" : ""}`}
               key={i}
               style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}
             >
