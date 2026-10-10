@@ -238,7 +238,12 @@ export function CaseDetailPage() {
       )}
 
       {!result && demoItem && revealed && (
-        <div className="result-panel demo-result" style={{ "--rarity-color": rarityColor(demoItem.rarity) } as CSSProperties}>
+        <div
+          className="result-panel demo-result"
+          role="status"
+          aria-live="polite"
+          style={{ "--rarity-color": rarityColor(demoItem.rarity) } as CSSProperties}
+        >
           <p className="result-kicker">ДЕМО-РЕЗУЛЬТАТ</p>
           <h2>{t("caseDetail.demoYouGot", { name: demoItem.name })}</h2>
           <img src={demoItem.imageUrl} alt={demoItem.name} className="result-image" />
