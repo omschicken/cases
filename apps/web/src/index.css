@@ -2087,3 +2087,19 @@ button:disabled {
 }
 @media (max-width: 680px) { .case-card-skeleton { min-height: 155px; } }
 @media (prefers-reduced-motion: reduce) { .case-card-skeleton { animation: none; } }
+
+
+/* Opening status cue */
+.opening-status {
+  margin: 1rem 0 .35rem;
+  color: var(--info-strong);
+  font-family: var(--font-display);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-align: center;
+  text-transform: uppercase;
+  animation: opening-status-pulse 1.2s ease-in-out infinite;
+}
+@keyframes opening-status-pulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .opening-status { animation: none; } }
