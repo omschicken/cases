@@ -2103,3 +2103,15 @@ button:disabled {
 }
 @keyframes opening-status-pulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .opening-status { animation: none; } }
+
+
+/* Case detail loading state */
+.case-detail-loading { display: grid; justify-items: center; gap: .85rem; padding: 2rem 0; }
+.loading-line, .loading-reel { display: block; background: linear-gradient(110deg, var(--panel) 25%, var(--panel-2) 45%, var(--panel) 65%); background-size: 220% 100%; animation: catalog-shimmer 1.4s ease-in-out infinite; }
+.loading-line { height: 1.2rem; border-radius: 3px; }
+.loading-line-title { width: min(28rem, 72%); height: 2.4rem; }
+.loading-line-price { width: 8rem; }
+.loading-reel { width: min(42rem, 100%); height: 12rem; border: 1px solid var(--border); clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+.loading-line-button { width: 15rem; height: 3rem; }
+@media (max-width: 680px) { .loading-reel { height: 9rem; } .loading-line-title { height: 1.9rem; } }
+@media (prefers-reduced-motion: reduce) { .loading-line, .loading-reel { animation: none; } }
