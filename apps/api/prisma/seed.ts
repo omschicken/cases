@@ -28,7 +28,7 @@ const BOT_NAMES = [
   "NovaSkins",
   "CoreBreak",
 ];
-const BOT_STARTING_BALANCE_MINOR = 100_000; // $1,000 — enough to open any seeded case
+const BOT_STARTING_BALANCE_MINOR = 100_000; // 1 000 ₽ — enough to open any seeded case
 
 // CS2-authentic rarity colors, matching apps/web/src/lib/rarity.ts
 const RARITY_COLOR: Record<ItemRarity, string> = {
