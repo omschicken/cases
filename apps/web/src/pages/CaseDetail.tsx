@@ -119,6 +119,7 @@ export function CaseDetailPage() {
   // reel so visitors can see how it feels before logging in.
   function demoSpin() {
     if (!theCase) return;
+    setError(null);
     setRevealed(false);
     setDemoItem(weightedSample(theCase.items));
     setSpinKey((k) => k + 1);
