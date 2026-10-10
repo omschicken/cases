@@ -113,7 +113,7 @@ model Wallet {
   userId        String   @unique
   user          User     @relation(fields: [userId], references: [id])
   balanceMinor  BigInt   @default(0)
-  currency      String   @default("USD")
+  currency      String   @default("RUB")
   version       Int      @default(0) // optimistic-lock guard alongside row-level FOR UPDATE
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -164,7 +164,7 @@ model Case {
   slug      String     @unique
   name      String
   priceMinor BigInt
-  currency  String     @default("USD")
+  currency      String   @default("RUB")
   imageUrl  String
   isActive  Boolean    @default(true)
   /// Lower sorts first on the public case list. Curated cross-collection
@@ -201,7 +201,7 @@ model CaseItem {
   imageUrl    String
   weight      Float    // relative drop weight within the case
   valueMinor  BigInt   // resale / withdrawal value
-  currency    String   @default("USD")
+  currency      String   @default("RUB")
   rarity      ItemRarity @default(MIL_SPEC)
   createdAt   DateTime @default(now())
 
@@ -309,7 +309,7 @@ model ReferralEarning {
   referredUserId   String
   referred         User     @relation("ReferredEarnings", fields: [referredUserId], references: [id])
   amountMinor      BigInt
-  currency         String   @default("USD")
+  currency      String   @default("RUB")
   sourceType       String   // e.g. "DEPOSIT_COMMISSION"
   sourceReferenceId String
   createdAt        DateTime @default(now())
