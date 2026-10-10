@@ -47,4 +47,4 @@ EXPOSE 4000
 
 # Apply pending migrations, then start the API. DATABASE_URL and the JWT
 # secrets are supplied as Railway environment variables, not baked in here.
-CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy --schema=./prisma/schema.prisma && node dist/main.js"]
+CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy --schema=./prisma/schema.prisma && pnpm prisma:seed && node dist/main.js"]
