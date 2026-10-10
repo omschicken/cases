@@ -65,7 +65,8 @@
     "sortPriceAsc": "Price: low to high",
     "sortPriceDesc": "Price: high to low",
     "couldNotLoadCases": "Could not load cases",
-    "noCasesYet": "No cases available yet."
+    "noCasesYet": "No cases available yet.",
+    "casesIntro": "Build your collection, study the odds, and open the next drop at your own pace."
   },
   "caseDetail": {
     "caseNotFound": "Case not found",
