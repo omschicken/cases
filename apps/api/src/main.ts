@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
-import { ValidationPipe } from "@nestjs/common";
+import { ValidationPipe, INestApplication } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { AppModule } from "./app.module";
 
@@ -11,7 +11,7 @@ import { AppModule } from "./app.module";
   return this.toString();
 };
 
-async function bootstrap() {
+export async function createApplication(): Promise<INestApplication> {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
 
@@ -28,10 +28,19 @@ async function bootstrap() {
     }),
   );
 
+  await app.init();
+  return app;
+}
+
+async function bootstrap() {
+  const app = await createApplication();
+  const config = app.get(ConfigService);
   const port = config.get<number>("PORT", 4000);
   await app.listen(port);
   // eslint-disable-next-line no-console
   console.log(`API listening on :${port}`);
 }
 
-bootstrap();
+if (require.main === module) {
+  void bootstrap();
+}
