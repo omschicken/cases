@@ -139,6 +139,11 @@ export function CaseDetailPage() {
 
   return (
     <div className="case-detail">
+      {isPreview && (
+        <div className="catalog-notice" role="status" aria-live="polite">
+          Демо-режим: сервис предметов временно обновляется. Реальные открытия и списания пока недоступны.
+        </div>
+      )}
       <h1>{theCase.name}</h1>
       <p className="price">{formatMinor(theCase.priceMinor, theCase.currency)}</p>
 
