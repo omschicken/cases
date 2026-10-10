@@ -187,7 +187,9 @@ export function CaseDetailPage() {
             {spinning ? t("caseDetail.spinning") : t("caseDetail.demoSpin")}
           </button>
           <p className="hint">
-            {t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link>
+            {isPreview
+              ? "Демо-каталог: реальные открытия станут доступны после восстановления сервиса."
+              : <>{t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link></>}
           </p>
         </>
       )}
