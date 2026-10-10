@@ -50,7 +50,7 @@ export function CaseListPage() {
       <HeroBanner />
       <StatsBar />
 
-      <div className="cases-toolbar">
+      <div id="collections" className="cases-toolbar">
         <div className="cases-heading-group"><span className="section-kicker">DROPZONE / COLLECTIONS</span><h1 className="section-heading cases-toolbar-heading">{t("home.casesHeading")}</h1><p className="section-intro">{t("home.casesIntro")}</p></div>
         <label className="sort-select-wrap">
           {t("home.sortLabel")}
