@@ -12,6 +12,26 @@ import type { CaseDto } from "../lib/types";
 
 type SortMode = "default" | "priceAsc" | "priceDesc";
 
+const FALLBACK_ART = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 420'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop stop-color='%23151b2d'/%3E%3Cstop offset='1' stop-color='%23462a79'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='420' fill='url(%23g)'/%3E%3Cpath d='M80 300 220 100l140 200 90-120 110 120' fill='none' stroke='%23b86bff' stroke-width='10' opacity='.75'/%3E%3C/svg%3E";
+
+const FALLBACK_CASES: CaseDto[] = [
+  { id: "preview-ignition", slug: "ignition-case", name: "Ignition Case", priceMinor: "14900", currency: "RUB", imageUrl: FALLBACK_ART, isActive: true, items: [
+    { id: "preview-usp", name: "USP-S | Printstream", imageUrl: FALLBACK_ART, weight: 55, valueMinor: "9900", currency: "RUB", rarity: "RESTRICTED" },
+    { id: "preview-ak", name: "AK-47 | Slate", imageUrl: FALLBACK_ART, weight: 35, valueMinor: "19900", currency: "RUB", rarity: "CLASSIFIED" },
+    { id: "preview-knife", name: "★ Нож | Aurora", imageUrl: FALLBACK_ART, weight: 10, valueMinor: "129900", currency: "RUB", rarity: "GOLD" },
+  ] },
+  { id: "preview-static", slug: "static-case", name: "Static Case", priceMinor: "29900", currency: "RUB", imageUrl: FALLBACK_ART, isActive: true, items: [
+    { id: "preview-m4", name: "M4A1-S | Player Two", imageUrl: FALLBACK_ART, weight: 60, valueMinor: "24900", currency: "RUB", rarity: "RESTRICTED" },
+    { id: "preview-awp", name: "AWP | Neo-Noir", imageUrl: FALLBACK_ART, weight: 30, valueMinor: "69900", currency: "RUB", rarity: "CLASSIFIED" },
+    { id: "preview-gloves", name: "★ Перчатки | Fade", imageUrl: FALLBACK_ART, weight: 10, valueMinor: "249900", currency: "RUB", rarity: "GOLD" },
+  ] },
+  { id: "preview-overdrive", slug: "overdrive-case", name: "Overdrive Case", priceMinor: "59900", currency: "RUB", imageUrl: FALLBACK_ART, isActive: true, items: [
+    { id: "preview-deagle", name: "Desert Eagle | Ocean Drive", imageUrl: FALLBACK_ART, weight: 65, valueMinor: "49900", currency: "RUB", rarity: "CLASSIFIED" },
+    { id: "preview-bowie", name: "★ Bowie | Lore", imageUrl: FALLBACK_ART, weight: 25, valueMinor: "179900", currency: "RUB", rarity: "COVERT" },
+    { id: "preview-karambit", name: "★ Karambit | Doppler", imageUrl: FALLBACK_ART, weight: 10, valueMinor: "499900", currency: "RUB", rarity: "GOLD" },
+  ] },
+];
+
 /** Distinct rarity tiers present in a case, highest first — the at-a-glance
  * "what could I get" signal shown as a dot row on every case card. */
 function rarityTiers(c: CaseDto): string[] {
@@ -31,7 +51,7 @@ export function CaseListPage() {
     api
       .get<CaseDto[]>("/cases")
       .then(setCases)
-      .catch(() => setError(t("home.couldNotLoadCases")))
+      .catch(() => {\n        // Keep the catalog useful while the API is restarting; opening remains demo-only until login.\n        setCases(FALLBACK_CASES);\n        setError(null);\n      })
       .finally(() => setLoading(false));
   }, [t]);
 
