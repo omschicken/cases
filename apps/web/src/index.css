@@ -2071,3 +2071,19 @@ button:disabled {
   .inventory-controls label { flex: 1; }
   .inventory-controls select { width: 100%; min-width: 0; }
 }
+
+
+/* Loading state for the collection catalog */
+.case-card-skeleton {
+  min-height: 220px;
+  background: linear-gradient(110deg, var(--panel) 25%, var(--panel-2) 45%, var(--panel) 65%);
+  background-size: 220% 100%;
+  animation: catalog-shimmer 1.4s ease-in-out infinite;
+  border-color: var(--border);
+}
+@keyframes catalog-shimmer {
+  from { background-position: 220% 0; }
+  to { background-position: -20% 0; }
+}
+@media (max-width: 680px) { .case-card-skeleton { min-height: 155px; } }
+@media (prefers-reduced-motion: reduce) { .case-card-skeleton { animation: none; } }
