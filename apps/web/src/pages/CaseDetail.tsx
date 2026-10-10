@@ -140,7 +140,7 @@ export function CaseDetailPage() {
   return (
     <div className="case-detail">
       {isPreview && (
-        <div className="catalog-notice" role="status" aria-live="polite">
+        <div id="catalog-preview-notice" className="catalog-notice" role="status" aria-live="polite">
           Демо-режим: сервис предметов временно обновляется. Реальные открытия и списания пока недоступны.
         </div>
       )}
@@ -196,7 +196,7 @@ export function CaseDetailPage() {
         </button>
       ) : (
         <>
-          <button onClick={demoSpin} disabled={spinning} className="open-button demo-button">
+          <button onClick={demoSpin} disabled={spinning} className="open-button demo-button" aria-describedby={isPreview ? "catalog-preview-notice" : undefined}>
             {spinning ? t("caseDetail.spinning") : t("caseDetail.demoSpin")}
           </button>
           <p className="hint">
