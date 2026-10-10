@@ -17,8 +17,8 @@ export function InventoryPage() {
   const visibleItems = useMemo(() => {
     const filtered = rarityFilter === "all" ? items : items.filter((item) => item.caseItem.rarity === rarityFilter);
     return [...filtered].sort((a, b) => {
-      if (sort === "value-desc") return b.caseItem.valueMinor - a.caseItem.valueMinor;
-      if (sort === "value-asc") return a.caseItem.valueMinor - b.caseItem.valueMinor;
+      if (sort === "value-desc") return Number(BigInt(b.caseItem.valueMinor) - BigInt(a.caseItem.valueMinor));
+      if (sort === "value-asc") return Number(BigInt(a.caseItem.valueMinor) - BigInt(b.caseItem.valueMinor));
       return 0;
     });
   }, [items, rarityFilter, sort]);
