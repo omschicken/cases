@@ -9,7 +9,7 @@ export function BottomNav() {
   const { t } = useTranslation();
 
   return (
-    <nav className="bottom-nav">
+    <nav className="bottom-nav" aria-label="Основная навигация">
       {mainNavItems.map(({ to, key, icon: Icon, end }) => (
         <NavLink key={to} to={to} end={end} className="bottom-nav-link">
           <Icon />

@@ -65,7 +65,8 @@
     "sortPriceAsc": "Precio: menor a mayor",
     "sortPriceDesc": "Precio: mayor a menor",
     "couldNotLoadCases": "No se pudieron cargar las cajas",
-    "noCasesYet": "Aún no hay cajas disponibles."
+    "noCasesYet": "Aún no hay cajas disponibles.",
+    "casesIntro": "Construye tu colección, revisa las probabilidades y abre el próximo drop a tu ritmo."
   },
   "caseDetail": {
     "caseNotFound": "Caja no encontrada",

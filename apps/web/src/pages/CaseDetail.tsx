@@ -162,9 +162,15 @@ export function CaseDetailPage() {
 
       {result && revealed && (
         <div className="result-panel" style={{ "--rarity-color": rarityColor(result.item.rarity) } as CSSProperties}>
+          <p className="result-kicker">{t("caseDetail.resultKicker", { defaultValue: "ПРЕДМЕТ ПОЛУЧЕН" })}</p>
           <h2>{t("caseDetail.youGot", { name: result.item.name })}</h2>
+          <span className="result-rarity" style={{ color: rarityColor(result.item.rarity) }}>{t("caseDetail.rarity", { defaultValue: result.item.rarity })}</span>
           <img src={result.item.imageUrl} alt={result.item.name} className="result-image" />
           <p className="value">{formatMinor(result.item.valueMinor, result.item.currency)}</p>
+          <div className="result-actions">
+            <Link to="/inventory" className="result-action result-action-primary">{t("caseDetail.claim", { defaultValue: "Забрать в инвентарь" })}</Link>
+            <button type="button" className="result-action result-action-secondary" onClick={openCase} disabled={opening}>{t("caseDetail.openAgain", { defaultValue: "Открыть ещё" })}</button>
+          </div>
           <details>
             <summary>{t("caseDetail.roundDetails")}</summary>
             <ul>

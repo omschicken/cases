@@ -65,7 +65,8 @@
     "sortPriceAsc": "Fiyat: düşükten yükseğe",
     "sortPriceDesc": "Fiyat: yüksekten düşüğe",
     "couldNotLoadCases": "Kasalar yüklenemedi",
-    "noCasesYet": "Henüz kasa yok."
+    "noCasesYet": "Henüz kasa yok.",
+    "casesIntro": "Koleksiyonunu oluştur, olasılıkları incele ve sıradaki drop'u kendi ritminde aç."
   },
   "caseDetail": {
     "caseNotFound": "Kasa bulunamadı",

@@ -13,7 +13,7 @@ export function PagesBar() {
   const { t } = useTranslation();
 
   return (
-    <nav className="pages-bar">
+    <nav className="pages-bar" aria-label="Дополнительная навигация">
       {PAGES.map(({ to, key }) => (
         <NavLink key={to} to={to} className="pages-bar-link">
           {t(`nav.pagesBar.${key}`)}
