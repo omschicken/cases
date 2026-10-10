@@ -48,7 +48,7 @@ export function Layout() {
         <button
           className="menu-toggle"
           onClick={() => setMenuOpen((v) => !v)}
-          aria-label="Menu"
+          aria-label="Меню"
           aria-expanded={menuOpen}
         >
           <MenuIcon />
