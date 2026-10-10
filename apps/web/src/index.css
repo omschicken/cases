@@ -1885,3 +1885,11 @@ button:disabled {
 @media (prefers-reduced-motion: reduce) {
   .case-reel-viewport::before, .case-reel-indicator, .reel-item-landed, .reel-item-chase-landed, .reel-flash, .reel-burst { animation: none !important; }
 }
+
+
+/* Premium collection cards */
+.case-card { box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 12px 32px rgba(0,0,0,.18); }
+.case-card img { transition: transform .35s cubic-bezier(.2,.8,.2,1), filter .35s ease; filter: drop-shadow(0 12px 18px rgba(0,0,0,.32)); }
+.case-card:hover { transform: translateY(-6px); border-color: color-mix(in srgb, var(--accent) 72%, var(--border)); box-shadow: 0 18px 40px rgba(0,0,0,.28), 0 0 28px -14px var(--accent); }
+.case-card:hover img { transform: translateY(-5px) scale(1.045); filter: drop-shadow(0 16px 22px rgba(0,0,0,.42)) drop-shadow(0 0 14px color-mix(in srgb, var(--rarity-color) 45%, transparent)); }
+@media (prefers-reduced-motion: reduce) { .case-card, .case-card img { transition: none; } .case-card:hover { transform: none; } .case-card:hover img { transform: none; } }
