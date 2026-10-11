@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL ?? "https://cs2-casesapi-production.up.railway.app";
+export const API_URL = import.meta.env.VITE_API_URL ?? "/api";
 
 const ACCESS_TOKEN_KEY = "cs2cases.accessToken";
 const REFRESH_TOKEN_KEY = "cs2cases.refreshToken";
