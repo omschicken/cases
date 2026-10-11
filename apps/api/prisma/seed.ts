@@ -1,42 +1,7 @@
 import { PrismaClient, ItemRarity } from "@prisma/client";
-import * as argon2 from "argon2";
-import { randomUUID } from "node:crypto";
-import {
-  computeRoll,
-  generateClientSeed,
-  generateServerSeed,
-  hashServerSeed,
-  pickWeightedItem,
-} from "@cs2-cases/shared";
-import { generateReferralCode } from "../src/common/util/code";
 import cases from "./cs2-items.json";
 
 const prisma = new PrismaClient();
-
-// Marks accounts created purely to seed a non-empty "live drops" feed on a
-// fresh install — never real players. Recreated fresh on every seed run.
-const BOT_EMAIL_DOMAIN = "bots.internal";
-const BOT_NAMES = [
-  "ShadowFrost",
-  "VertexPlay",
-  "NoScopeKing",
-  "LunaDrops",
-  "GrimReaper94",
-  "PixelHunter",
-  "ZenithRoll",
-  "BlazeCase",
-  "NovaSkins",
-  "CoreBreak",
-];
-const BOT_STARTING_BALANCE_MINOR = 100_000; // 1 000 ₽ — enough to open any seeded case
-const RUB_PER_USD = 95;
-const DEFAULT_SOURCE_CURRENCY = "USD";
-
-function toRubMinor(minor: number, sourceCurrency?: string): number {
-  return (sourceCurrency ?? DEFAULT_SOURCE_CURRENCY) === "USD"
-    ? Math.round(minor * RUB_PER_USD)
-    : minor;
-}
 
 // CS2-authentic rarity colors, matching apps/web/src/lib/rarity.ts
 const RARITY_COLOR: Record<ItemRarity, string> = {
@@ -83,128 +48,6 @@ interface CaseSeed {
 const CASES = cases as CaseSeed[];
 
 /**
- * Bot-owned open events/inventory are purged and fully recreated on every
- * seed run (never persisted across runs) — that keeps them from being
- * mistaken for real history by the case-item replacement logic below, and
- * keeps their timestamps looking freshly "live" every time this runs.
- */
-async function purgeBotDrops() {
-  const bots = await prisma.user.findMany({
-    where: { email: { endsWith: `@${BOT_EMAIL_DOMAIN}` } },
-    select: { id: true },
-  });
-  if (bots.length === 0) return;
-  const botIds = bots.map((b) => b.id);
-
-  const wallets = await prisma.wallet.findMany({ where: { userId: { in: botIds } }, select: { id: true } });
-  await prisma.caseOpenEvent.deleteMany({ where: { userId: { in: botIds } } });
-  await prisma.inventoryItem.deleteMany({ where: { userId: { in: botIds } } });
-  await prisma.ledgerEntry.deleteMany({ where: { walletId: { in: wallets.map((w) => w.id) } } });
-  await prisma.provablyFairSeed.deleteMany({ where: { userId: { in: botIds } } });
-}
-
-async function seedBotDrops() {
-  const items = await prisma.caseItem.findMany({ include: { case: true } });
-  if (items.length === 0) return;
-
-  let ts = Date.now();
-
-  for (const name of BOT_NAMES) {
-    const email = `bot_${name.toLowerCase()}@${BOT_EMAIL_DOMAIN}`;
-    const passwordHash = await argon2.hash(randomUUID());
-
-    const bot = await prisma.user.upsert({
-      where: { email },
-      update: {},
-      create: {
-        email,
-        passwordHash,
-        displayName: name,
-        ageConfirmedAt: new Date(),
-        referralCode: generateReferralCode(),
-      },
-    });
-
-    const wallet = await prisma.wallet.upsert({
-      where: { userId: bot.id },
-      update: { balanceMinor: BOT_STARTING_BALANCE_MINOR },
-      create: { userId: bot.id, balanceMinor: BOT_STARTING_BALANCE_MINOR },
-    });
-
-    const serverSeed = generateServerSeed();
-    const seed = await prisma.provablyFairSeed.create({
-      data: {
-        userId: bot.id,
-        serverSeed,
-        serverSeedHash: hashServerSeed(serverSeed),
-        clientSeed: generateClientSeed(),
-        nonce: 0,
-        isActive: true,
-      },
-    });
-
-    // 2-4 opens per bot, each real weighted rolls against the item pool of
-    // a random seeded case — genuinely provably-fair, just bot-owned.
-    const opens = 2 + Math.floor(Math.random() * 3);
-    let balance = wallet.balanceMinor;
-    let nonce = 0;
-
-    for (let i = 0; i < opens; i++) {
-      const theCase = CASES[Math.floor(Math.random() * CASES.length)];
-      const caseItems = items.filter((it) => it.case.slug === theCase.slug);
-      const price = BigInt(toRubMinor(theCase.priceMinor, theCase.currency));
-      if (balance < price) continue;
-
-      const roll = computeRoll(serverSeed, seed.clientSeed, nonce);
-      const won = pickWeightedItem(
-        caseItems.map((it) => ({ id: it.id, weight: it.weight })),
-        roll,
-      );
-      const wonItem = caseItems.find((it) => it.id === won.id)!;
-
-      balance -= price;
-      // Spread drops out over the last ~90 minutes so the ticker reads as
-      // organic activity rather than a single burst.
-      ts -= 1000 * (30 + Math.floor(Math.random() * 300));
-
-      await prisma.ledgerEntry.create({
-        data: {
-          walletId: wallet.id,
-          amountMinor: -price,
-          balanceAfterMinor: balance,
-          reason: "CASE_OPEN",
-          referenceType: "Case",
-          referenceId: wonItem.caseId,
-          createdAt: new Date(ts),
-        },
-      });
-
-      const inventoryItem = await prisma.inventoryItem.create({
-        data: { userId: bot.id, caseItemId: wonItem.id, status: "IN_INVENTORY", acquiredAt: new Date(ts) },
-      });
-      await prisma.caseOpenEvent.create({
-        data: {
-          userId: bot.id,
-          caseId: wonItem.caseId,
-          resultCaseItemId: wonItem.id,
-          provablyFairSeedId: seed.id,
-          nonce,
-          roll,
-          inventoryItemId: inventoryItem.id,
-          createdAt: new Date(ts),
-        },
-      });
-      nonce += 1;
-    }
-
-    await prisma.wallet.update({ where: { id: wallet.id }, data: { balanceMinor: balance } });
-    await prisma.provablyFairSeed.update({ where: { id: seed.id }, data: { nonce } });
-  }
-
-  console.log(`seeded bot drops: ${BOT_NAMES.length} bots`);
-}
-
-/**
  * Removes cases that are no longer in cs2-items.json (e.g. the old 5
  * hand-picked demo cases, now superseded by the full real case catalog) —
  * but only when every one of their items is free of real inventory/open
@@ -232,7 +75,6 @@ async function pruneRetiredCases() {
 }
 
 async function main() {
-  await purgeBotDrops();
   await pruneRetiredCases();
 
   for (const c of CASES) {
@@ -298,8 +140,6 @@ async function main() {
     });
     console.log(`created: ${c.slug} (${c.items.length} real items)`);
   }
-
-  await seedBotDrops();
 }
 
 main()

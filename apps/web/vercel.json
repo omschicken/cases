@@ -7,5 +7,14 @@
       "maxDuration": 30
     }
   },
-  "rewrites": [{ "source": "/((?!api(?:/|$)).*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/api/:path((?!router(?:/|$)).*)",
+      "destination": "/api/router?__route=:path*"
+    },
+    {
+      "source": "/((?!api(?:/|$)).*)",
+      "destination": "/index.html"
+    }
+  ]
 }
