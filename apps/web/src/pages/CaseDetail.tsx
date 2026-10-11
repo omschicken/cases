@@ -21,12 +21,31 @@ function weightedSample(items: CaseItem[]): CaseItem {
 }
 
 const QUICK_SPIN_KEY = "gundone.quickSpin";
+const PREVIEW_ART = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 420'%3E%3Crect width='640' height='420' fill='%23151b2d'/%3E%3Cpath d='M80 300 220 100l140 200 90-120 110 120' fill='none' stroke='%23b86bff' stroke-width='10'/%3E%3C/svg%3E";
+
+function previewCase(slug: string): CaseDto {
+  const names: Record<string, [string, string]> = {
+    "ignition-case": ["Ignition Case", "14900"],
+    "static-case": ["Static Case", "29900"],
+    "overdrive-case": ["Overdrive Case", "59900"],
+  };
+  const [name, priceMinor] = names[slug] ?? ["Preview Case", "14900"];
+  return {
+    id: `preview-${slug}`, slug, name, priceMinor, currency: "RUB", imageUrl: PREVIEW_ART, isActive: true,
+    items: [
+      { id: `${slug}-common`, name: "USP-S | Printstream", imageUrl: PREVIEW_ART, weight: 60, valueMinor: "9900", currency: "RUB", rarity: "RESTRICTED" },
+      { id: `${slug}-rare`, name: "AK-47 | Slate", imageUrl: PREVIEW_ART, weight: 30, valueMinor: "29900", currency: "RUB", rarity: "CLASSIFIED" },
+      { id: `${slug}-gold`, name: "★ Нож | Aurora", imageUrl: PREVIEW_ART, weight: 10, valueMinor: "129900", currency: "RUB", rarity: "GOLD" },
+    ],
+  };
+}
 
 export function CaseDetailPage() {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
   const [theCase, setTheCase] = useState<CaseDto | null>(null);
+  const [isPreview, setIsPreview] = useState(false);
   const [seedHash, setSeedHash] = useState<string | null>(null);
   const [clientSeed, setClientSeed] = useState<string | null>(null);
   const [opening, setOpening] = useState(false);
@@ -56,8 +75,14 @@ export function CaseDetailPage() {
     if (!slug) return;
     api
       .get<CaseDto>(`/cases/${slug}`)
-      .then(setTheCase)
-      .catch(() => setError(t("caseDetail.caseNotFound")));
+      .then((data) => {
+        setTheCase(data);
+        setIsPreview(false);
+      })
+      .catch(() => {
+        setTheCase(previewCase(slug));
+        setIsPreview(true);
+      });
   }, [slug, t]);
 
   useEffect(() => {
@@ -94,6 +119,8 @@ export function CaseDetailPage() {
   // reel so visitors can see how it feels before logging in.
   function demoSpin() {
     if (!theCase) return;
+    setError(null);
+    setResult(null);
     setRevealed(false);
     setDemoItem(weightedSample(theCase.items));
     setSpinKey((k) => k + 1);
@@ -114,6 +141,11 @@ export function CaseDetailPage() {
 
   return (
     <div className="case-detail">
+      {isPreview && (
+        <div id="catalog-preview-notice" className="catalog-notice" role="status" aria-live="polite">
+          Демо-режим: сервис предметов временно обновляется. Реальные открытия и списания пока недоступны.
+        </div>
+      )}
       <h1>{theCase.name}</h1>
       <p className="price">{formatMinor(theCase.priceMinor, theCase.currency)}</p>
 
@@ -133,7 +165,11 @@ export function CaseDetailPage() {
         />
       )}
 
-      <div className="spin-mode-toggle" role="group">
+      <div
+        className="spin-mode-toggle"
+        role="group"
+        aria-label={t("caseDetail.spinMode", { defaultValue: "Режим открытия" })}
+      >
         <button
           type="button"
           className={!quickSpin ? "active" : ""}
@@ -152,7 +188,7 @@ export function CaseDetailPage() {
         </button>
       </div>
 
-      {user ? (
+      {user && !isPreview ? (
         <button onClick={openCase} disabled={opening || spinning} className="open-button">
           {opening
             ? t("caseDetail.rolling")
@@ -162,11 +198,13 @@ export function CaseDetailPage() {
         </button>
       ) : (
         <>
-          <button onClick={demoSpin} disabled={spinning} className="open-button demo-button">
+          <button onClick={demoSpin} disabled={spinning} className="open-button demo-button" aria-describedby={isPreview ? "catalog-preview-notice" : undefined}>
             {spinning ? t("caseDetail.spinning") : t("caseDetail.demoSpin")}
           </button>
           <p className="hint">
-            {t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link>
+            {isPreview
+              ? "Демо-каталог: реальные открытия станут доступны после восстановления сервиса."
+              : <>{t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link></>}
           </p>
         </>
       )}
@@ -200,7 +238,13 @@ export function CaseDetailPage() {
       )}
 
       {!result && demoItem && revealed && (
-        <div className="result-panel demo-result" style={{ "--rarity-color": rarityColor(demoItem.rarity) } as CSSProperties}>
+        <div
+          className="result-panel demo-result"
+          role="status"
+          aria-live="polite"
+          style={{ "--rarity-color": rarityColor(demoItem.rarity) } as CSSProperties}
+        >
+          <p className="result-kicker">ДЕМО-РЕЗУЛЬТАТ</p>
           <h2>{t("caseDetail.demoYouGot", { name: demoItem.name })}</h2>
           <img src={demoItem.imageUrl} alt={demoItem.name} className="result-image" />
           <p className="value">{formatMinor(demoItem.valueMinor, demoItem.currency)}</p>
