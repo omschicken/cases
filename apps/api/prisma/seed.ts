@@ -99,7 +99,7 @@ async function main() {
         data: {
           name: c.name,
           priceMinor: c.priceMinor,
-          currency: c.currency ?? "USD",
+          currency: c.currency ?? "RUB",
           displayOrder: c.displayOrder ?? 100,
           imageUrl: c.caseImageUrl ?? caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
           items: {
@@ -108,7 +108,7 @@ async function main() {
               rarity: item.rarity,
               weight: item.weight,
               valueMinor: item.valueMinor,
-              currency: item.currency ?? c.currency ?? "USD",
+              currency: item.currency ?? c.currency ?? "RUB",
               imageUrl: item.imageUrl,
             })),
           },
@@ -123,7 +123,7 @@ async function main() {
         slug: c.slug,
         name: c.name,
         priceMinor: c.priceMinor,
-        currency: c.currency ?? "USD",
+        currency: c.currency ?? "RUB",
         displayOrder: c.displayOrder ?? 100,
         imageUrl: c.caseImageUrl ?? caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
         items: {
@@ -132,7 +132,7 @@ async function main() {
             rarity: item.rarity,
             weight: item.weight,
             valueMinor: item.valueMinor,
-            currency: item.currency ?? c.currency ?? "USD",
+            currency: item.currency ?? c.currency ?? "RUB",
             imageUrl: item.imageUrl,
           })),
         },

@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, NotFoundException, ServiceUnavailableException } from "@nestjs/common";
 import { PaymentRail } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { WalletService } from "../wallet/wallet.service";
@@ -19,6 +19,16 @@ export class PaymentsService {
     @Inject(PAYMENT_PROVIDERS) private readonly providers: Map<PaymentRail, PaymentProvider>,
   ) {}
 
+  private assertPaymentsEnabled() {
+    if (process.env.PAYMENTS_ENABLED !== "true") {
+      throw new ServiceUnavailableException("Deposits and withdrawals are disabled until a real payment provider is configured.");
+    }
+  }
+
+  private assertRub(currency: string) {
+    if (currency !== "RUB") throw new BadRequestException("Only RUB payments are supported");
+  }
+
   private providerFor(rail: PaymentRail): PaymentProvider {
     const provider = this.providers.get(rail);
     if (!provider) throw new BadRequestException(`No payment provider configured for rail ${rail}`);
@@ -26,6 +36,8 @@ export class PaymentsService {
   }
 
   async deposit(userId: string, dto: DepositDto) {
+    this.assertPaymentsEnabled();
+    this.assertRub(dto.currency);
     const amountMinor = BigInt(dto.amountMinor);
     const provider = this.providerFor(dto.rail);
 
@@ -66,6 +78,8 @@ export class PaymentsService {
   }
 
   async requestWithdrawal(userId: string, dto: WithdrawalDto) {
+    this.assertPaymentsEnabled();
+    this.assertRub(dto.currency);
     await this.kyc.requireVerified(userId);
     const amountMinor = BigInt(dto.amountMinor);
 

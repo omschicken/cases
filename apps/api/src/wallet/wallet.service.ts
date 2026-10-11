@@ -60,11 +60,12 @@ export class WalletService {
     signedAmountMinor: bigint,
     ref: LedgerRef,
   ) {
-    const locked = await tx.$queryRaw<{ id: string; balanceMinor: bigint }[]>`
-      SELECT "id", "balanceMinor" FROM "Wallet" WHERE "userId" = ${userId} FOR UPDATE
+    const locked = await tx.$queryRaw<{ id: string; balanceMinor: bigint; currency: string }[]>`
+      SELECT "id", "balanceMinor", "currency" FROM "Wallet" WHERE "userId" = ${userId} FOR UPDATE
     `;
     const wallet = locked[0];
     if (!wallet) throw new NotFoundException("Wallet not found");
+    if (wallet.currency !== "RUB") throw new BadRequestException("Only RUB wallets are supported");
 
     const newBalance = wallet.balanceMinor + signedAmountMinor;
     if (newBalance < 0n) throw new BadRequestException("Insufficient funds");

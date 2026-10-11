@@ -85,6 +85,9 @@ export class CasesService {
     const theCase = await this.prisma.case.findUnique({ where: { id: caseId }, include: { items: true } });
     if (!theCase) throw new NotFoundException("Case not found");
     if (!theCase.isActive) throw new BadRequestException("This case is not available");
+    if (theCase.currency !== "RUB" || theCase.items.some((item) => item.currency !== "RUB")) {
+      throw new BadRequestException("This case is not configured in RUB");
+    }
     if (theCase.items.length === 0) throw new BadRequestException("This case has no items configured");
 
     const seed = await this.getOrCreateActiveSeed(userId, clientSeedIfFirstUse);
@@ -152,6 +155,7 @@ export class CasesService {
     });
     if (!item || item.userId !== userId) throw new NotFoundException("Inventory item not found");
     if (item.status !== "IN_INVENTORY") throw new BadRequestException("Item is not available to sell");
+    if (item.caseItem.currency !== "RUB") throw new BadRequestException("This item is not priced in RUB");
 
     return this.prisma.$transaction(async (tx) => {
       await this.wallet.creditInTx(tx, userId, item.caseItem.valueMinor, {

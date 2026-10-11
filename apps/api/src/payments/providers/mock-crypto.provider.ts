@@ -19,10 +19,10 @@ export class MockCryptoProvider implements PaymentProvider {
   readonly rail: PaymentRail = "CRYPTO";
 
   async initiateDeposit(_input: DepositInitInput): Promise<DepositInitResult> {
-    return { providerRef: `mock_crypto_${randomUUID()}`, status: "CONFIRMED" };
+    return { providerRef: `mock_crypto_${randomUUID()}`, status: "PENDING" };
   }
 
   async executeWithdrawal(_input: WithdrawalExecuteInput): Promise<WithdrawalExecuteResult> {
-    return { providerRef: `mock_crypto_${randomUUID()}`, status: "PAID" };
+    return { providerRef: `mock_crypto_${randomUUID()}`, status: "FAILED", failureReason: "Mock provider cannot execute real withdrawals" };
   }
 }
