@@ -1,7 +1,8 @@
-export const API_URL = import.meta.env.VITE_API_URL ?? "https://cs2-casesapi-production.up.railway.app";
+export const API_URL = import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_URL ?? "/api";
 
 const ACCESS_TOKEN_KEY = "cs2cases.accessToken";
 const REFRESH_TOKEN_KEY = "cs2cases.refreshToken";
+const REQUEST_TIMEOUT_MS = 8_000;
 
 export function getAccessToken() {
   return localStorage.getItem(ACCESS_TOKEN_KEY);
@@ -38,7 +39,21 @@ async function request<T>(path: string, options: RequestInit = {}, retry = true)
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_URL}${path}`, { ...options, headers });
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, { ...options, headers, signal: controller.signal });
+  } catch (error) {
+    const message =
+      error instanceof DOMException && error.name === "AbortError"
+        ? "Сервис отвечает слишком долго"
+        : "Сервис временно недоступен";
+    throw new ApiError(message, 0);
+  } finally {
+    window.clearTimeout(timeout);
+  }
 
   if (res.status === 401 && retry && getRefreshToken()) {
     const refreshed = await tryRefresh();
@@ -56,11 +71,15 @@ async function request<T>(path: string, options: RequestInit = {}, retry = true)
 
 async function tryRefresh(): Promise<boolean> {
   try {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     const res = await fetch(`${API_URL}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken: getRefreshToken() }),
+      signal: controller.signal,
     });
+    window.clearTimeout(timeout);
     if (!res.ok) {
       clearTokens();
       return false;
