@@ -1,3 +1,4 @@
+import { HealthController } from "./health/health.controller";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { ScheduleModule } from "@nestjs/schedule";
@@ -29,5 +30,7 @@ import { PricesModule } from "./prices/prices.module";
     PricesModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+})
+controllers: [HealthController],
 })
 export class AppModule {}
