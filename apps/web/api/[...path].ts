@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
-type CreateApp = typeof import("../../../apps/api/src/bootstrap").createApp;
+type CreateApp = typeof import("../../../apps/api/dist/bootstrap.js").createApp;
 let createApp: CreateApp | undefined;
 let appPromise: ReturnType<CreateApp> | undefined;
 
@@ -13,7 +13,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
 
-  createApp ??= (await import("../../../apps/api/src/bootstrap")).createApp;
+  createApp ??= (await import("../../../apps/api/dist/bootstrap.js")).createApp;
   appPromise ??= createApp();
   const app = await appPromise;
   const expressApp = app.getHttpAdapter().getInstance();
