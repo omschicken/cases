@@ -132,6 +132,8 @@
     "withdrawButton": "Request withdrawal",
     "kycHint": "Requires identity verification (KYC) — see Profile.",
     "depositConfirmed": "Deposit confirmed.",
+    "depositPending": "The deposit request is waiting for provider confirmation.",
+    "paymentsUnavailable": "Deposits and withdrawals are temporarily unavailable while a real payment provider is being configured.",
     "depositFailed": "Deposit failed",
     "withdrawalRequested": "Withdrawal requested — pending admin review.",
     "withdrawalFailed": "Withdrawal failed",

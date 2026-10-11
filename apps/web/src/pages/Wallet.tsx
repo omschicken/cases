@@ -18,6 +18,7 @@ export function WalletPage() {
   const [withdrawRail, setWithdrawRail] = useState<PaymentRail>("CARD");
   const [withdrawAmount, setWithdrawAmount] = useState("1000.00");
   const withdrawCurrency = "RUB";
+  const paymentsEnabled = import.meta.env.VITE_PAYMENTS_ENABLED === "true";
   const [withdrawDestination, setWithdrawDestination] = useState("");
 
   function load() {
@@ -32,12 +33,12 @@ export function WalletPage() {
     setError(null);
     setInfo(null);
     try {
-      await api.post("/payments/deposit", {
+      const result = await api.post<{ status?: string }>("/payments/deposit", {
         rail: depositRail,
         amountMinor: Math.round(Number(depositAmount) * 100),
         currency: depositCurrency,
       });
-      setInfo(t("wallet.depositConfirmed"));
+      setInfo(result.status === "CONFIRMED" ? t("wallet.depositConfirmed") : t("wallet.depositPending"));
       load();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t("wallet.depositFailed"));
@@ -70,6 +71,9 @@ export function WalletPage() {
       {error && <p className="form-error">{error}</p>}
       {info && <p className="form-info">{info}</p>}
 
+      {!paymentsEnabled ? (
+        <p className="hint">{t("wallet.paymentsUnavailable")}</p>
+      ) : (
       <div className="wallet-forms">
         <form onSubmit={onDeposit} className="auth-form">
           <h3>{t("wallet.deposit")}</h3>
@@ -122,6 +126,7 @@ export function WalletPage() {
           <button type="submit">{t("wallet.withdrawButton")}</button>
         </form>
       </div>
+      )}
 
       <h3>{t("wallet.recentActivity")}</h3>
       <div className="table-scroll">
