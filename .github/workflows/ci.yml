@@ -26,6 +26,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Build shared workspace package
+        run: pnpm --filter @cs2-cases/shared build
       - name: Generate Prisma client
         run: pnpm --filter @cs2-cases/api prisma:generate
       - name: Typecheck
