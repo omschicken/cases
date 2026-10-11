@@ -87,7 +87,7 @@ export function WalletPage() {
           </label>
           <label>
             {t("wallet.currency")}
-            <input value={depositCurrency} onChange={(e) => setDepositCurrency(e.target.value)} />
+            <input value={depositCurrency} readOnly aria-readonly="true" />
           </label>
           <button type="submit">{t("wallet.depositButton")}</button>
         </form>
@@ -109,7 +109,7 @@ export function WalletPage() {
           </label>
           <label>
             {t("wallet.currency")}
-            <input value={withdrawCurrency} onChange={(e) => setWithdrawCurrency(e.target.value)} />
+            <input value={withdrawCurrency} readOnly aria-readonly="true" />
           </label>
           <label>
             {t("wallet.destination")}
