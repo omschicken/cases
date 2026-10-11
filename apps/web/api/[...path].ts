@@ -1,7 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { createApp } from "../../../apps/api/src/bootstrap";
 
-let appPromise: ReturnType<typeof createApp> | undefined;
+type CreateApp = typeof import("../../../apps/api/src/bootstrap").createApp;
+let createApp: CreateApp | undefined;
+let appPromise: ReturnType<CreateApp> | undefined;
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   // Keep the platform health probe independent from database/Nest startup.
@@ -12,6 +13,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
 
+  createApp ??= (await import("../../../apps/api/src/bootstrap")).createApp;
   appPromise ??= createApp();
   const app = await appPromise;
   const expressApp = app.getHttpAdapter().getInstance();
