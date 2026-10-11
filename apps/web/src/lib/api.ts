@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL ?? "/api";
+export const API_URL = import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_URL ?? "/api";
 
 const ACCESS_TOKEN_KEY = "cs2cases.accessToken";
 const REFRESH_TOKEN_KEY = "cs2cases.refreshToken";
