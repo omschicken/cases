@@ -6,6 +6,7 @@
     "node": ">=20"
   },
   "scripts": {
+    "dev": "pnpm --parallel --filter @cs2-cases/api --filter @cs2-cases/web dev",
     "dev:api": "pnpm --filter @cs2-cases/api dev",
     "dev:web": "pnpm --filter @cs2-cases/web dev",
     "build": "pnpm -r build",

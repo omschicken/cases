@@ -8,6 +8,15 @@ interface SidebarProps {
   open?: boolean;
 }
 
+function IconHistory() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M3.5 12a8.5 8.5 0 1 0 2.49-6.01L3.5 8.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3.5 4.5v4h4M12 7.5V12l3 2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function Sidebar({ open = false }: SidebarProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -30,6 +39,10 @@ export function Sidebar({ open = false }: SidebarProps) {
             <NavLink to="/inventory" className="sidebar-link">
               <IconInventory />
               <span>{t("nav.sidebar.inventory")}</span>
+            </NavLink>
+            <NavLink to="/history" className="sidebar-link">
+              <IconHistory />
+              <span>{t("nav.sidebar.history")}</span>
             </NavLink>
             {user.role === "ADMIN" && (
               <NavLink to="/admin" className="sidebar-link">

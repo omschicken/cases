@@ -1,5 +1,5 @@
-import { FormEvent, useState } from "react";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { FormEvent, useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { api, ApiError, setTokens } from "../lib/api";
@@ -16,14 +16,19 @@ interface AuthTokens {
  */
 export function SteamCompletePage() {
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
-  const pendingToken = searchParams.get("token") ?? "";
+  const [pendingToken, setPendingToken] = useState("");
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [referralCode, setReferralCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    setPendingToken(params.get("token") ?? "");
+    window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
+  }, []);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();

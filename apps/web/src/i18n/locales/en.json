@@ -1,6 +1,10 @@
 {
   "common": {
     "loading": "Loading…",
+    "retry": "Try again",
+    "pageNotFound": "Page not found",
+    "pageNotFoundHint": "This address does not exist or may have moved.",
+    "backToCatalog": "Back to catalog",
     "save": "Save",
     "cancel": "Cancel",
     "yes": "Yes",
@@ -17,7 +21,8 @@
       "upgrade": "Upgrade",
       "cards": "Cards",
       "inventory": "Inventory",
-      "admin": "Admin"
+      "admin": "Admin",
+      "history": "History"
     },
     "pagesBar": {
       "referral": "Referral",
@@ -51,7 +56,14 @@
         "subtitle": "Share your link and start stacking commission.",
         "cta": "Get my link"
       },
-      "slideLabel": "Slide {{n}}"
+      "slideLabel": "Slide {{n}}",
+      "carouselLabel": "Featured collection",
+      "chooseSlide": "Choose featured panel",
+      "featured": "FEATURED DROP",
+      "catalogPendingBadge": "CATALOG / OFFLINE",
+      "fairness": "Verifiable odds · Server-side result",
+      "topDrop": "RAREST ITEM IN THIS CASE",
+      "loadingArt": "Catalog details will appear when the service is available."
     },
     "stats": {
       "casesOpened": "Cases opened",
@@ -60,15 +72,47 @@
     },
     "recentDrops": "Recent drops",
     "casesHeading": "Cases",
+    "discoveryHeading": "Choose your route",
+    "discoveryIntro": "Three ways into the catalog. From a first opening to rare finds, every case has its price tier.",
+    "collectionAll": "All cases",
+    "collectionCases": "Cases in tier:",
+    "collectionFrom": "from",
+    "collectionFilterLabel": "Case categories",
+    "collection": {
+      "entry": { "title": "Start", "subtitle": "Begin small" },
+      "core": { "title": "Momentum", "subtitle": "Find your rhythm" },
+      "apex": { "title": "Apex", "subtitle": "High stakes" }
+    },
     "sortLabel": "Sort:",
     "sortDefault": "Featured",
     "sortPriceAsc": "Price: low to high",
     "sortPriceDesc": "Price: high to low",
     "couldNotLoadCases": "Could not load cases",
     "noCasesYet": "No cases available yet.",
-    "casesIntro": "Build your collection, study the odds, and open the next drop at your own pace."
+    "casesIntro": "Build your collection, study the odds, and open the next drop at your own pace.",
+    "searchCases": "Search cases and items",
+    "searchPlaceholder": "Find a case or item",
+    "noSearchResults": "No matches for “{{query}}”.",
+    "itemCount": "{{count}} items",
+    "showMoreCases": "Show {{count}} more cases"
   },
   "caseDetail": {
+    "breadcrumbLabel": "Breadcrumb",
+    "allCases": "All cases",
+    "collectionLabel": "COLLECTION",
+    "heroDescription": "Explore every possible item and its exact chance before opening.",
+    "casePrice": "CASE PRICE",
+    "itemCount": "POSSIBLE ITEMS",
+    "featuredChance": "TOP ITEM CHANCE",
+    "goToOpening": "Go to opening",
+    "featuredItem": "FEATURED ITEM",
+    "openingStation": "Case opening",
+    "openingSequence": "OPENING STATION",
+    "demoOnly": "DEMO ONLY",
+    "previewNotice": "Demo mode: the item service is currently unavailable. Real openings and deductions are disabled.",
+    "previewHint": "Demo catalog: real openings will be available when the service is restored.",
+    "demoResultLabel": "DEMO RESULT",
+    "oddsDisclosure": "Chances are calculated from each item's published weight.",
     "caseNotFound": "Case not found",
     "itemsHeading": "What's inside",
     "couldNotOpenCase": "Could not open case",
@@ -110,6 +154,12 @@
   },
   "inventory": {
     "title": "Inventory",
+    "intro": "Items from your case openings. Filter by rarity and value.",
+    "emptyTitle": "Your collection starts here",
+    "exploreCases": "Explore cases",
+    "confirmSell": "Sell this item for {{price}}?",
+    "confirm": "Confirm sale",
+    "cancel": "Cancel",
     "couldNotLoad": "Could not load inventory",
     "couldNotSell": "Could not sell item",
     "selling": "Selling…",
@@ -145,6 +195,10 @@
   },
   "profile": {
     "title": "Profile",
+    "dashboard": "My overview",
+    "recentOpens": "Recent openings",
+    "allHistory": "Full history",
+    "overviewError": "Some profile data could not be loaded.",
     "kyc": {
       "heading": "Identity verification (KYC)",
       "status": "Status:",
@@ -370,5 +424,17 @@
     "de": "German",
     "tr": "Turkish",
     "uk": "Ukrainian"
+  },
+  "history": {
+    "kicker": "ACCOUNT / HISTORY",
+    "title": "Opening history",
+    "description": "Your latest 50 openings with links to independently verify each result.",
+    "inventoryLink": "View inventory",
+    "loadError": "Could not load your history.",
+    "emptyTitle": "No openings yet",
+    "emptyDescription": "Open a case and your results will appear here.",
+    "openCases": "Browse cases",
+    "verify": "Verify result",
+    "recentLimit": "Showing your latest 50 openings."
   }
 }

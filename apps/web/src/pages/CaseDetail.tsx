@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../lib/api";
@@ -7,6 +7,7 @@ import { formatMinor } from "../lib/money";
 import { rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
 import { CaseOpeningReel } from "../components/CaseOpeningReel";
+import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
 
 /** Visual-only demo pick, weighted the same way the reel's filler items are. */
@@ -54,6 +55,8 @@ export function CaseDetailPage() {
   const [revealed, setRevealed] = useState(false);
   const [spinKey, setSpinKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [requestId, setRequestId] = useState(0);
+  const openingLockRef = useRef(false);
   const [quickSpin, setQuickSpin] = useState(() => {
     try {
       return localStorage.getItem(QUICK_SPIN_KEY) === "1";
@@ -73,17 +76,39 @@ export function CaseDetailPage() {
 
   useEffect(() => {
     if (!slug) return;
+    let active = true;
+    setTheCase(null);
+    setError(null);
+    setIsPreview(false);
+    setResult(null);
+    setDemoItem(null);
+    setRevealed(false);
     api
       .get<CaseDto>(`/cases/${slug}`)
       .then((data) => {
+        if (!active) return;
         setTheCase(data);
         setIsPreview(false);
       })
-      .catch(() => {
-        setTheCase(previewCase(slug));
-        setIsPreview(true);
+      .catch((err: unknown) => {
+        if (!active) return;
+        if (err instanceof ApiError && err.status === 404) {
+          setError(t("caseDetail.caseNotFound"));
+          return;
+        }
+
+        // Only known demo slugs may use the explicitly labeled offline preview.
+        // An arbitrary URL must never become a plausible-looking case.
+        const knownPreviewSlugs = ["ignition-case", "static-case", "overdrive-case"];
+        if (knownPreviewSlugs.includes(slug)) {
+          setTheCase(previewCase(slug));
+          setIsPreview(true);
+        } else {
+          setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotLoadCase", { defaultValue: "Не удалось загрузить кейс" }));
+        }
       });
-  }, [slug, t]);
+    return () => { active = false; };
+  }, [slug, t, requestId]);
 
   useEffect(() => {
     if (!user) return;
@@ -97,7 +122,8 @@ export function CaseDetailPage() {
   }, [user]);
 
   async function openCase() {
-    if (!theCase) return;
+    if (!theCase || openingLockRef.current) return;
+    openingLockRef.current = true;
     setError(null);
     setOpening(true);
     setRevealed(false);
@@ -110,6 +136,7 @@ export function CaseDetailPage() {
       setSpinKey((k) => k + 1);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotOpenCase"));
+      openingLockRef.current = false;
     } finally {
       setOpening(false);
     }
@@ -118,7 +145,8 @@ export function CaseDetailPage() {
   // No account, no money, no server call — just a client-side preview of the
   // reel so visitors can see how it feels before logging in.
   function demoSpin() {
-    if (!theCase) return;
+    if (!theCase || openingLockRef.current) return;
+    openingLockRef.current = true;
     setError(null);
     setResult(null);
     setRevealed(false);
@@ -126,7 +154,13 @@ export function CaseDetailPage() {
     setSpinKey((k) => k + 1);
   }
 
-  if (error && !theCase) return <p className="form-error">{error}</p>;
+  if (error && !theCase) return (
+    <div className="case-load-error" role="alert">
+      <h1>{error}</h1>
+      <button type="button" className="open-button" onClick={() => setRequestId((id) => id + 1)}>{t("common.retry", { defaultValue: "Retry" })}</button>
+      <Link to="/" className="open-button">{t("caseDetail.backToCases", { defaultValue: "Вернуться к кейсам" })}</Link>
+    </div>
+  );
   if (!theCase) return (
     <div className="case-detail-loading" aria-busy="true" aria-live="polite">
       <span className="loading-line loading-line-title" />
@@ -138,16 +172,52 @@ export function CaseDetailPage() {
 
   const winningItem = result?.item ?? demoItem;
   const spinning = winningItem !== null && !revealed;
+  const featuredItem = theCase.items.reduce<CaseItem | null>((best, item) => {
+    if (!best) return item;
+    return BigInt(item.valueMinor) > BigInt(best.valueMinor) ? item : best;
+  }, null);
+  const totalWeight = theCase.items.reduce((total, item) => total + item.weight, 0);
+  const featuredChance = totalWeight > 0 && featuredItem ? dropChancePercent(featuredItem, theCase.items) : "0";
+  const previewItems = [...theCase.items]
+    .filter((item) => !item.imageUrl.startsWith("data:image"))
+    .sort((a, b) => Number(b.valueMinor) - Number(a.valueMinor))
+    .slice(0, 5);
 
   return (
     <div className="case-detail">
       {isPreview && (
         <div id="catalog-preview-notice" className="catalog-notice" role="status" aria-live="polite">
-          Демо-режим: сервис предметов временно обновляется. Реальные открытия и списания пока недоступны.
+          <span>{t("caseDetail.previewNotice", { defaultValue: "Demo mode: the item service is currently unavailable. Real openings and deductions are disabled." })}</span>
+          <button type="button" className="catalog-retry" onClick={() => setRequestId((id) => id + 1)}>{t("common.retry", { defaultValue: "Retry" })}</button>
         </div>
       )}
-      <h1>{theCase.name}</h1>
-      <p className="price">{formatMinor(theCase.priceMinor, theCase.currency)}</p>
+      <nav className="case-detail-breadcrumb" aria-label={t("caseDetail.breadcrumbLabel", { defaultValue: "Breadcrumb" })}>
+        <Link to="/#collections">{t("caseDetail.allCases", { defaultValue: "All cases" })}</Link>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{theCase.name}</span>
+      </nav>
+      <section className="case-detail-hero" style={{ "--case-hue": caseVisualIdentity(theCase.slug).hue } as CSSProperties}>
+        <div className="case-detail-hero-copy">
+          <span className="section-kicker">DROPZONE / {t("caseDetail.collectionLabel", { defaultValue: "COLLECTION" })}</span>
+          <h1>{theCase.name}</h1>
+          <p className="case-detail-lede">{t("caseDetail.heroDescription", { defaultValue: "Explore every possible item and its exact chance before opening." })}</p>
+          <div className="case-detail-stats">
+            <div><span>{t("caseDetail.casePrice", { defaultValue: "CASE PRICE" })}</span><strong>{formatMinor(theCase.priceMinor, theCase.currency)}</strong></div>
+            <div><span>{t("caseDetail.itemCount", { defaultValue: "POSSIBLE ITEMS" })}</span><strong>{theCase.items.length}</strong></div>
+            <div><span>{t("caseDetail.featuredChance", { defaultValue: "TOP ITEM CHANCE" })}</span><strong>{featuredChance}%</strong></div>
+          </div>
+          <a href="#opening-station" className="case-detail-jump">{t("caseDetail.goToOpening", { defaultValue: "Go to opening" })} <span aria-hidden="true">↓</span></a>
+        </div>
+        <div className="case-detail-hero-art">
+          <div className="case-detail-art-grid" aria-hidden="true" />
+          <div className="case-detail-art-ring" aria-hidden="true" />
+          <CaseChest className="case-chest-detail" caseName={theCase.name} caseSlug={theCase.slug} itemImageUrl={featuredItem?.imageUrl} />
+          <div className="case-detail-art-caption"><span>{t("caseDetail.featuredItem", { defaultValue: "FEATURED ITEM" })}</span><strong>{featuredItem?.name ?? theCase.name}</strong></div>
+        </div>
+      </section>
+
+      <section id="opening-station" className="case-opening-station" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
+        <div className="case-opening-heading"><span className="section-kicker">{t("caseDetail.openingSequence", { defaultValue: "OPENING SEQUENCE" })}</span><span>{isPreview ? t("caseDetail.demoOnly", { defaultValue: "DEMO ONLY" }) : t("caseDetail.provablyFair")}</span></div>
 
       {winningItem && (
         <p className="opening-status" aria-live="polite">
@@ -160,9 +230,22 @@ export function CaseDetailPage() {
           key={spinKey}
           poolItems={theCase.items}
           winningItem={winningItem}
-          onFinished={() => setRevealed(true)}
+          onFinished={() => { setRevealed(true); openingLockRef.current = false; }}
           quick={quickSpin}
         />
+      )}
+
+      {!winningItem && previewItems.length > 0 && (
+        <div className="case-opening-preview" aria-hidden="true">
+          <div className="case-opening-preview-track">
+            {previewItems.map((item) => (
+              <div className="case-opening-preview-item" key={item.id} style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}>
+                <img src={item.imageUrl} alt="" />
+              </div>
+            ))}
+          </div>
+          <span className="case-opening-preview-marker" />
+        </div>
       )}
 
       <div
@@ -203,13 +286,14 @@ export function CaseDetailPage() {
           </button>
           <p className="hint">
             {isPreview
-              ? "Демо-каталог: реальные открытия станут доступны после восстановления сервиса."
+              ? t("caseDetail.previewHint")
               : <>{t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link></>}
           </p>
         </>
       )}
 
       {error && <p className="form-error">{error}</p>}
+      </section>
 
       {result && revealed && (
         <div className="result-panel" role="status" aria-live="polite" style={{ "--rarity-color": rarityColor(result.item.rarity) } as CSSProperties}>
@@ -244,7 +328,7 @@ export function CaseDetailPage() {
           aria-live="polite"
           style={{ "--rarity-color": rarityColor(demoItem.rarity) } as CSSProperties}
         >
-          <p className="result-kicker">ДЕМО-РЕЗУЛЬТАТ</p>
+          <p className="result-kicker">{t("caseDetail.demoResultLabel")}</p>
           <h2>{t("caseDetail.demoYouGot", { name: demoItem.name })}</h2>
           <img src={demoItem.imageUrl} alt={demoItem.name} className="result-image" />
           <p className="value">{formatMinor(demoItem.valueMinor, demoItem.currency)}</p>
@@ -272,7 +356,7 @@ export function CaseDetailPage() {
         </div>
       )}
 
-      <h2 className="section-heading">{t("caseDetail.itemsHeading")}</h2>
+      <div className="case-contents-heading"><div><span className="section-kicker">DROP TABLE / {String(theCase.items.length).padStart(2, "0")}</span><h2 className="section-heading">{t("caseDetail.itemsHeading")}</h2></div><p>{t("caseDetail.oddsDisclosure", { defaultValue: "Each item's chance is calculated from the published weights." })}</p></div>
       <div className="item-grid">
         {theCase.items.map((item, i) => (
           <div

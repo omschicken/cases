@@ -1,6 +1,10 @@
 {
   "common": {
     "loading": "Carregando…",
+    "retry": "Tentar novamente",
+    "pageNotFound": "Página não encontrada",
+    "pageNotFoundHint": "Este endereço não existe ou foi movido.",
+    "backToCatalog": "Voltar ao catálogo",
     "save": "Salvar",
     "cancel": "Cancelar",
     "yes": "Sim",
@@ -17,7 +21,8 @@
       "upgrade": "Upgrade",
       "cards": "Cartas",
       "inventory": "Inventário",
-      "admin": "Admin"
+      "admin": "Admin",
+      "history": "Histórico"
     },
     "pagesBar": {
       "referral": "Indicações",
@@ -51,7 +56,14 @@
         "subtitle": "Compartilhe seu link e comece a acumular comissão.",
         "cta": "Meu link"
       },
-      "slideLabel": "Slide {{n}}"
+      "slideLabel": "Slide {{n}}",
+      "carouselLabel": "Coleção em destaque",
+      "chooseSlide": "Escolher painel em destaque",
+      "featured": "DROP EM DESTAQUE",
+      "catalogPendingBadge": "CATÁLOGO / OFFLINE",
+      "fairness": "Chances verificáveis · Resultado no servidor",
+      "topDrop": "ITEM MAIS RARO DESTA CAIXA",
+      "loadingArt": "O catálogo aparecerá quando o serviço estiver disponível."
     },
     "stats": {
       "casesOpened": "Caixas abertas",
@@ -66,9 +78,30 @@
     "sortPriceDesc": "Preço: maior para menor",
     "couldNotLoadCases": "Não foi possível carregar as caixas",
     "noCasesYet": "Ainda não há caixas disponíveis.",
-    "casesIntro": "Monte sua coleção, confira as chances e abra o próximo drop no seu ritmo."
+    "casesIntro": "Monte sua coleção, confira as chances e abra o próximo drop no seu ritmo.",
+    "searchCases": "Buscar caixas e itens",
+    "searchPlaceholder": "Buscar caixa ou item",
+    "noSearchResults": "Nenhum resultado para “{{query}}”.",
+    "itemCount": "{{count}} itens",
+    "showMoreCases": "Mostrar mais {{count}} caixas"
   },
   "caseDetail": {
+    "breadcrumbLabel": "Navegação",
+    "allCases": "Todas as caixas",
+    "collectionLabel": "COLEÇÃO",
+    "heroDescription": "Veja todos os itens possíveis e suas chances exatas antes de abrir.",
+    "casePrice": "PREÇO DA CAIXA",
+    "itemCount": "ITENS POSSÍVEIS",
+    "featuredChance": "CHANCE DO MELHOR ITEM",
+    "goToOpening": "Ir para a abertura",
+    "featuredItem": "ITEM EM DESTAQUE",
+    "openingStation": "Abertura de caixa",
+    "openingSequence": "ESTAÇÃO DE ABERTURA",
+    "demoOnly": "APENAS DEMO",
+    "previewNotice": "Modo demo: o serviço de itens está indisponível. Aberturas reais e cobranças estão desativadas.",
+    "previewHint": "Catálogo demo: aberturas reais estarão disponíveis quando o serviço voltar.",
+    "demoResultLabel": "RESULTADO DEMO",
+    "oddsDisclosure": "As chances são calculadas pelo peso publicado de cada item.",
     "caseNotFound": "Caixa não encontrada",
     "itemsHeading": "O que há dentro",
     "couldNotOpenCase": "Não foi possível abrir a caixa",
@@ -368,5 +401,17 @@
     "de": "Alemão",
     "tr": "Turco",
     "uk": "Ucraniano"
+  },
+  "history": {
+    "kicker": "CONTA / HISTÓRICO",
+    "title": "Histórico de aberturas",
+    "description": "As 50 aberturas mais recentes com links para verificar cada resultado.",
+    "inventoryLink": "Ver inventário",
+    "loadError": "Não foi possível carregar o histórico.",
+    "emptyTitle": "Ainda sem aberturas",
+    "emptyDescription": "Abra uma caixa para ver seus resultados aqui.",
+    "openCases": "Ver caixas",
+    "verify": "Verificar resultado",
+    "recentLimit": "Exibindo suas 50 aberturas mais recentes."
   }
 }

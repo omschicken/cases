@@ -140,6 +140,25 @@ export class CasesService {
     });
   }
 
+  async listMyOpenEvents(userId: string) {
+    return this.prisma.caseOpenEvent.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+      select: {
+        id: true,
+        createdAt: true,
+        nonce: true,
+        roll: true,
+        case: { select: { name: true, slug: true } },
+        resultCaseItem: {
+          select: { name: true, imageUrl: true, valueMinor: true, currency: true, rarity: true },
+        },
+        provablyFairSeed: { select: { serverSeedHash: true } },
+      },
+    });
+  }
+
   async listMyInventory(userId: string) {
     return this.prisma.inventoryItem.findMany({
       where: { userId, status: "IN_INVENTORY" },
@@ -158,15 +177,22 @@ export class CasesService {
     if (item.caseItem.currency !== "RUB") throw new BadRequestException("This item is not priced in RUB");
 
     return this.prisma.$transaction(async (tx) => {
+      // Claim the item with one conditional write before crediting the wallet.
+      // Two concurrent requests can both pass the read above, but only one
+      // can transition IN_INVENTORY → SOLD; the other transaction receives
+      // count=0 and exits without creating a second credit.
+      const claimed = await tx.inventoryItem.updateMany({
+        where: { id: item.id, userId, status: "IN_INVENTORY" },
+        data: { status: "SOLD", resolvedAt: new Date() },
+      });
+      if (claimed.count !== 1) throw new BadRequestException("Item is not available to sell");
+
       await this.wallet.creditInTx(tx, userId, item.caseItem.valueMinor, {
         reason: "ITEM_SELL",
         referenceType: "InventoryItem",
         referenceId: item.id,
       });
-      return tx.inventoryItem.update({
-        where: { id: item.id },
-        data: { status: "SOLD", resolvedAt: new Date() },
-      });
+      return tx.inventoryItem.findUniqueOrThrow({ where: { id: item.id } });
     });
   }
 

@@ -5,7 +5,6 @@ import { useAuth } from "../context/AuthContext";
 import { api, API_URL } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import type { WalletDto } from "../lib/types";
-import ak47 from "../assets/ak47.png";
 import { Sidebar } from "./Sidebar";
 import { BottomNav } from "./BottomNav";
 import { DropsTicker } from "./DropsTicker";
@@ -54,13 +53,12 @@ export function Layout() {
           <MenuIcon />
         </button>
         <NavLink to="/" className="brand">
-          <img src={ak47} alt="" className="brand-mark" aria-hidden="true" />
+          <span className="brand-sigil" aria-hidden="true"><span>D</span><i /></span>
           <span className="brand-word">
             DROP<span className="brand-suffix">ZONE</span>
           </span>
         </NavLink>
         <div className="nav-right">
-          {user && <NavLink to="/profile">{t("nav.profile")}</NavLink>}
           {user ? (
             <>
               {balanceMinor !== null && (
@@ -68,13 +66,29 @@ export function Layout() {
                   {formatMinor(balanceMinor)}
                 </NavLink>
               )}
-              <span className="user-email">{user.displayName ?? user.email}</span>
-              <button onClick={logout}>{t("nav.logOut")}</button>
+              <details className="account-menu" key={location.pathname}>
+                <summary aria-label={t("nav.profile")} title={t("nav.profile")}>
+                  {user.steamAvatarUrl ? <img src={user.steamAvatarUrl} alt="" /> : <span>{(user.displayName ?? user.email).slice(0, 1).toUpperCase()}</span>}
+                </summary>
+                <div className="account-menu-panel">
+                  <p className="account-menu-name">{user.displayName ?? user.email}</p>
+                  <NavLink to="/profile">{t("nav.profile")}</NavLink>
+                  <NavLink to="/inventory">{t("nav.sidebar.inventory")}</NavLink>
+                  <NavLink to="/history">{t("nav.sidebar.history")}</NavLink>
+                  <NavLink to="/wallet">{t("nav.pagesBar.wallet", { defaultValue: "Кошелёк" })}</NavLink>
+                  <button type="button" onClick={logout}>{t("nav.logOut")}</button>
+                </div>
+              </details>
             </>
           ) : (
-            <a href={`${API_URL}/auth/steam`} className="steam-login-button">
-              {t("nav.logInSteam")}
-            </a>
+            <>
+              <a href={`${API_URL}/auth/steam`} className="steam-login-button">
+                {t("nav.logInSteam")}
+              </a>
+              <NavLink to="/login" className="account-guest" aria-label={t("nav.profile")} title={t("nav.profile")}>
+                <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M4.8 20c.5-4.3 3-6.4 7.2-6.4s6.7 2.1 7.2 6.4"/></svg>
+              </NavLink>
+            </>
           )}
           <LanguageSwitcher />
         </div>

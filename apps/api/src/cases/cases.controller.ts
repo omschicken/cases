@@ -28,6 +28,12 @@ export class CasesController {
     return this.casesService.getPublicStats();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get("history/me")
+  myHistory(@CurrentUser() user: AuthenticatedUser) {
+    return this.casesService.listMyOpenEvents(user.id);
+  }
+
   @Get(":slug")
   getBySlug(@Param("slug") slug: string) {
     return this.casesService.getBySlug(slug);
