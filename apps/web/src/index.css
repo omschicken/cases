@@ -6163,7 +6163,9 @@ body::before { opacity: 0.018; }
   display: flex;
   align-items: stretch;
   height: 100%;
-  position: relative;
+  position: absolute !important;
+  top: 0;
+  left: 0;
   will-change: transform;
 }
 
@@ -15231,6 +15233,9 @@ button:not([disabled]):not(.menu-toggle):not(.account-menu-trigger):active,
   display: flex !important;
   align-items: center !important;
   height: 100% !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
   will-change: transform;
 }
 
