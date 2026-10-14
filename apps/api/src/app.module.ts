@@ -14,6 +14,7 @@ import { AdminModule } from "./admin/admin.module";
 import { PricesModule } from "./prices/prices.module";
 import { HealthController } from "./health/health.controller";
 import { GamesModule } from "./games/games.module";
+import { BonusesModule } from "./bonuses/bonuses.module";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { GamesModule } from "./games/games.module";
     AdminModule,
     PricesModule,
     GamesModule,
+    BonusesModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

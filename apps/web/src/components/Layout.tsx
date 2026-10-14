@@ -10,6 +10,7 @@ import { BottomNav } from "./BottomNav";
 import { DropsTicker } from "./DropsTicker";
 import { PagesBar } from "./PagesBar";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { OnboardingModal } from "./OnboardingModal";
 
 function MenuIcon() {
   return (
@@ -106,6 +107,7 @@ export function Layout() {
         <p>{t("nav.footer")}</p>
       </footer>
       <BottomNav />
+      <OnboardingModal />
     </div>
   );
 }

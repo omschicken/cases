@@ -7,17 +7,31 @@ import {
   pickWeightedItem,
   verifyRoll,
 } from "@cs2-cases/shared";
+import { Subject } from "rxjs";
 import { PrismaService } from "../prisma/prisma.service";
 import { WalletService } from "../wallet/wallet.service";
 import { CreateCaseDto } from "./dto/admin-case.dto";
 import { maskEmail } from "../common/util/mask";
 
+export interface DropEvent {
+  id: string;
+  userLabel: string;
+  caseName: string;
+  item: { name: string; imageUrl: string; valueMinor: string; currency: string; rarity: string };
+}
+
 @Injectable()
 export class CasesService {
+  readonly dropsFeed$ = new Subject<DropEvent>();
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly wallet: WalletService,
   ) {}
+
+  broadcastDrop(event: DropEvent) {
+    this.dropsFeed$.next(event);
+  }
 
   async listActive() {
     const cases = await this.prisma.case.findMany({
@@ -103,7 +117,7 @@ export class CasesService {
 
     const seed = await this.getOrCreateActiveSeed(userId, clientSeedIfFirstUse);
 
-    return this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       // Debiting first takes the row lock on the user's wallet, which also
       // serializes the nonce increment below against concurrent opens by
       // the same user (see WalletService for the FOR UPDATE lock).
@@ -149,6 +163,25 @@ export class CasesService {
         clientSeed: lockedSeed.clientSeed,
       };
     });
+
+    // Broadcast after commit so SSE subscribers see confirmed drops only.
+    const user = await this.prisma.user.findUnique({ where: { id: userId }, select: { email: true, displayName: true } });
+    if (user) {
+      this.broadcastDrop({
+        id: result.openEventId,
+        userLabel: user.displayName ?? maskEmail(user.email),
+        caseName: theCase.name,
+        item: {
+          name: result.item.name,
+          imageUrl: result.item.imageUrl,
+          valueMinor: result.item.valueMinor.toString(),
+          currency: result.item.currency,
+          rarity: result.item.rarity,
+        },
+      });
+    }
+
+    return result;
   }
 
   async listMyOpenEvents(userId: string) {

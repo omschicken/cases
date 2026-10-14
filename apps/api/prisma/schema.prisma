@@ -28,6 +28,8 @@ enum LedgerReason {
   REFERRAL_COMMISSION
   ADMIN_ADJUSTMENT
   GAME_BATTLE
+  DAILY_BONUS
+  PROMO_CODE
 }
 
 enum PaymentRail {
@@ -117,8 +119,10 @@ model User {
   withdrawals     Withdrawal[]
   referralEarningsAsReferrer ReferralEarning[] @relation("ReferrerEarnings")
   referralEarningsAsReferred ReferralEarning[] @relation("ReferredEarnings")
-  adminAuditLogs  AdminAuditLog[]
-  gameOperations  GameOperation[]
+  adminAuditLogs      AdminAuditLog[]
+  gameOperations      GameOperation[]
+  dailyBonusClaims    DailyBonusClaim[]
+  promoRedemptions    PromoCodeRedemption[]
 
   @@index([referredById])
 }
@@ -367,4 +371,45 @@ model AdminAuditLog {
 
   @@index([adminUserId, createdAt])
   @@index([targetType, targetId])
+}
+
+/// One row per (user, UTC date) — enforces the one-per-day rule without a
+/// unique constraint (which would block retries after a failed credit).
+model DailyBonusClaim {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  claimedDate String   // "YYYY-MM-DD" in UTC
+  amountMinor BigInt
+  streakDay   Int      @default(1) // 1-7, resets after a gap
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, claimedDate])
+  @@index([userId, createdAt])
+}
+
+model PromoCode {
+  id              String    @id @default(uuid())
+  code            String    @unique
+  amountMinor     BigInt
+  currency        String    @default("RUB")
+  maxRedemptions  Int       @default(1)
+  expiresAt       DateTime?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+
+  redemptions PromoCodeRedemption[]
+}
+
+model PromoCodeRedemption {
+  id          String    @id @default(uuid())
+  promoCodeId String
+  promoCode   PromoCode @relation(fields: [promoCodeId], references: [id])
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  amountMinor BigInt
+  createdAt   DateTime  @default(now())
+
+  @@unique([promoCodeId, userId])
+  @@index([userId, createdAt])
 }

@@ -1,17 +1,82 @@
-import { useTranslation } from "react-i18next";
-import { ComingSoon } from "../components/ComingSoon";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { api } from "../lib/api";
+import { formatMinor } from "../lib/money";
+import type { CaseDto } from "../lib/types";
+
+// Static prize tiers shown on the wheel visual
+const PRIZE_TIERS = [
+  { label: "×2", desc: "Множитель ставки" },
+  { label: "×5", desc: "Большой выигрыш" },
+  { label: "×10", desc: "Джекпот" },
+  { label: "×1.5", desc: "Малый бонус" },
+  { label: "×3", desc: "Стандартный приз" },
+  { label: "×7", desc: "Крупный выигрыш" },
+];
 
 export function PrizesPage() {
-  const { t } = useTranslation();
+  const [cases, setCases] = useState<CaseDto[]>([]);
+
+  useEffect(() => {
+    api.get<CaseDto[]>("/cases").then((all) => setCases(all.slice(0, 3))).catch(() => undefined);
+  }, []);
+
   return (
-    <ComingSoon
-      title={t("comingSoon.prizes.title")}
-      description={t("comingSoon.prizes.description")}
-      icon={
-        <svg width="56" height="56" viewBox="0 0 20 20" fill="none">
-          <path d="M10 2.5 L12.2 7 L17 7.7 L13.5 11 L14.4 15.8 L10 13.5 L5.6 15.8 L6.5 11 L3 7.7 L7.8 7 Z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-        </svg>
-      }
-    />
+    <div className="game-workspace prizes-workspace">
+      <header className="game-heading">
+        <div>
+          <span className="section-kicker">ПРИЗЫ / СКОРО</span>
+          <h1>ПРИЗЫ</h1>
+          <p>Колесо фортуны, ежедневные розыгрыши и ивентовые награды — скоро появятся на сайте.</p>
+        </div>
+      </header>
+
+      {/* Wheel visual */}
+      <section className="prizes-wheel-section">
+        <div className="prizes-wheel" aria-label="Колесо фортуны (скоро)">
+          <div className="prizes-wheel-inner">
+            {PRIZE_TIERS.map((tier, i) => (
+              <div
+                key={i}
+                className="prizes-wheel-segment"
+                style={{ "--segment-index": i, "--segment-count": PRIZE_TIERS.length } as React.CSSProperties}
+              >
+                <span>{tier.label}</span>
+              </div>
+            ))}
+            <div className="prizes-wheel-hub">
+              <span>SOON</span>
+            </div>
+          </div>
+          <div className="prizes-wheel-pointer" aria-hidden="true">▼</div>
+        </div>
+
+        <div className="prizes-upcoming">
+          <h2>Что планируется</h2>
+          <ul>
+            <li><strong>Колесо фортуны</strong> — трать очки активности за спины</li>
+            <li><strong>Ежедневные розыгрыши</strong> — бесплатные открытия для активных игроков</li>
+            <li><strong>Реферальные призы</strong> — награды за приглашённых друзей</li>
+            <li><strong>Ивентовые кейсы</strong> — ограниченные кейсы к праздникам</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* While waiting — open a real case */}
+      {cases.length > 0 && (
+        <section className="prizes-cases">
+          <div className="game-section-label"><span>ПОКА ЖДЁШь — ОТКРОЙ КЕЙС</span></div>
+          <div className="game-item-grid">
+            {cases.map((c) => (
+              <Link key={c.id} to={`/cases/${c.slug}`} className="game-item">
+                <img src={c.imageUrl} alt={c.name} />
+                <strong>{c.name}</strong>
+                <b>{formatMinor(c.priceMinor, c.currency)}</b>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
   );
 }

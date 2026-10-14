@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Res, Sse, UseGuards } from "@nestjs/common";
+import type { Response } from "express";
+import { map } from "rxjs/operators";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import type { AuthenticatedUser } from "../auth/jwt.strategy";
@@ -26,6 +28,18 @@ export class CasesController {
   @Get("stats")
   stats() {
     return this.casesService.getPublicStats();
+  }
+
+  // SSE stream — one event per confirmed case opening, broadcast to all
+  // connected clients. The browser reconnects automatically on disconnect.
+  @Sse("drops/stream")
+  dropsStream(@Res() res: Response) {
+    // Keep the connection alive every 25 s to prevent proxy timeouts.
+    const heartbeat = setInterval(() => res.write(": ping\n\n"), 25_000);
+    res.on("close", () => clearInterval(heartbeat));
+    return this.casesService.dropsFeed$.pipe(
+      map((drop) => ({ data: drop })),
+    );
   }
 
   @UseGuards(JwtAuthGuard)
