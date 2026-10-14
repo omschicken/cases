@@ -14800,3 +14800,78 @@ details[open] > :not(summary) {
   .open-button-row .open-button:first-child,
   .open-button-row .demo-button { width: 100%; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYER 13 — Reel Animation Bug Fixes
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Fix 1: pre-flash must end at opacity 0, not 0.4 — was flooding the screen with accent color */
+.reel-pre-flash,
+[class*="reel-pre-flash"] {
+  animation: reel-pre-flash-fixed 0.8s ease-out forwards !important;
+}
+@keyframes reel-pre-flash-fixed {
+  0%   { opacity: 0; }
+  30%  { opacity: 0.6; }
+  100% { opacity: 0; }
+}
+
+/* Fix 2: cursor-glow — remove screen blend, lower opacity so it doesn't yellow the reel */
+.cursor-glow {
+  mix-blend-mode: normal !important;
+  background: radial-gradient(circle,
+    color-mix(in srgb, var(--accent) 8%, transparent) 0%,
+    transparent 65%
+  ) !important;
+  opacity: 0.6 !important;
+  width: 120px !important;
+  height: 120px !important;
+  top: -60px !important;
+  left: -60px !important;
+}
+
+/* Fix 3: remove scanline from reel track — causes visual noise and performance hit */
+.case-reel-spinning .case-reel-track {
+  background-image: none !important;
+  animation: none !important;
+}
+
+/* Fix 4: app-shell::before scanline z-index must be below reel flash effects */
+.app-shell::before {
+  z-index: 10 !important;
+}
+
+/* Fix 5: reel-flash must be above everything */
+.reel-flash {
+  z-index: 9990 !important;
+}
+.reel-pre-flash {
+  z-index: 9989 !important;
+}
+
+/* Fix 6: reel-burst and particles — ensure they're inside viewport, not fixed */
+.reel-burst {
+  position: absolute !important;
+  z-index: 12 !important;
+}
+
+/* Fix 7: reel-item-landed inner — only one animation wins (Layer 7 has v3-item-arrive, keep it) */
+.reel-item-landed .reel-item-inner {
+  animation: v3-item-arrive 0.7s cubic-bezier(0.15, 0.85, 0.25, 1) both !important;
+}
+
+/* Fix 8: result-panel::before aura — make sure it doesn't interfere with content */
+.result-panel {
+  isolation: isolate;
+}
+.result-panel::before {
+  z-index: -1 !important;
+}
+
+/* Fix 9: near-end shudder must not fight with land-shake */
+.case-reel-near-end:not(.case-reel-landed) .case-reel-viewport {
+  animation: reel-near-shudder 0.15s ease-in-out 3 !important;
+}
+.case-reel-near-end.case-reel-landed .case-reel-viewport {
+  animation: reel-land-shake 0.6s cubic-bezier(0.3, 0.6, 0.2, 1) both !important;
+}
