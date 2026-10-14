@@ -13095,3 +13095,32 @@ details[open] > :not(summary) {
 }
 
 /* ═══════════════════════════════════════════════════════════════ */
+
+/* ── Fix: profile avatar ring must not block clicks ──────────── */
+[class*="profile-avatar"]::after,
+[class*="avatar-wrap"]::after {
+  pointer-events: none;
+}
+
+/* Fix: account-menu summary pseudo must not block clicks */
+.account-menu summary::after,
+.account-menu summary::before {
+  pointer-events: none;
+}
+
+/* Fix: ensure account-menu details/summary is fully clickable */
+.account-menu {
+  position: relative;
+  z-index: 40;
+}
+.account-menu summary {
+  position: relative;
+  z-index: 41;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* Remove the spinning ring from account-menu summary specifically */
+.account-menu summary::after {
+  display: none !important;
+}
