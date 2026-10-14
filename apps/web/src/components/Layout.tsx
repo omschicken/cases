@@ -26,6 +26,7 @@ export function Layout() {
   const location = useLocation();
   const [balanceMinor, setBalanceMinor] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -38,8 +39,8 @@ export function Layout() {
       .catch(() => setBalanceMinor(null));
   }, [user]);
 
-  // Close the mobile drawer whenever the route changes.
-  useEffect(() => setMenuOpen(false), [location.pathname]);
+  // Close drawers whenever the route changes.
+  useEffect(() => { setMenuOpen(false); setProfileOpen(false); }, [location.pathname]);
 
   return (
     <div className="app-shell">
@@ -67,19 +68,31 @@ export function Layout() {
                   {formatMinor(balanceMinor)}
                 </NavLink>
               )}
-              <details className="account-menu" key={location.pathname}>
-                <summary aria-label={t("nav.profile")} title={t("nav.profile")}>
+              <div className={`account-menu${profileOpen ? " account-menu--open" : ""}`}>
+                <button
+                  type="button"
+                  className="account-menu-trigger"
+                  aria-label={t("nav.profile")}
+                  title={t("nav.profile")}
+                  aria-expanded={profileOpen}
+                  onClick={() => setProfileOpen((v) => !v)}
+                >
                   {user.steamAvatarUrl ? <img src={user.steamAvatarUrl} alt="" /> : <span>{(user.displayName ?? user.email).slice(0, 1).toUpperCase()}</span>}
-                </summary>
-                <div className="account-menu-panel">
-                  <p className="account-menu-name">{user.displayName ?? user.email}</p>
-                  <NavLink to="/profile">{t("nav.profile")}</NavLink>
-                  <NavLink to="/inventory">{t("nav.sidebar.inventory")}</NavLink>
-                  <NavLink to="/history">{t("nav.sidebar.history")}</NavLink>
-                  <NavLink to="/wallet">{t("nav.pagesBar.wallet", { defaultValue: "Кошелёк" })}</NavLink>
-                  <button type="button" onClick={logout}>{t("nav.logOut")}</button>
-                </div>
-              </details>
+                </button>
+                {profileOpen && (
+                  <>
+                    <div className="account-menu-backdrop" onClick={() => setProfileOpen(false)} />
+                    <div className="account-menu-panel">
+                      <p className="account-menu-name">{user.displayName ?? user.email}</p>
+                      <NavLink to="/profile">{t("nav.profile")}</NavLink>
+                      <NavLink to="/inventory">{t("nav.sidebar.inventory")}</NavLink>
+                      <NavLink to="/history">{t("nav.sidebar.history")}</NavLink>
+                      <NavLink to="/wallet">{t("nav.pagesBar.wallet", { defaultValue: "Кошелёк" })}</NavLink>
+                      <button type="button" onClick={logout}>{t("nav.logOut")}</button>
+                    </div>
+                  </>
+                )}
+              </div>
             </>
           ) : (
             <>
