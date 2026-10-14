@@ -384,13 +384,18 @@ export function CaseDetailPage() {
       </div>
 
       {user && !isPreview ? (
-        <button onClick={openCase} disabled={opening || spinning} className="open-button">
-          {opening
-            ? t("caseDetail.rolling")
-            : spinning
-              ? t("caseDetail.spinning")
-              : t("caseDetail.openFor", { price: formatMinor(theCase.priceMinor, theCase.currency) })}
-        </button>
+        <div className="open-button-row">
+          <button onClick={openCase} disabled={opening || spinning} className="open-button">
+            {opening
+              ? t("caseDetail.rolling")
+              : spinning
+                ? t("caseDetail.spinning")
+                : t("caseDetail.openFor", { price: formatMinor(theCase.priceMinor, theCase.currency) })}
+          </button>
+          <button onClick={demoSpin} disabled={opening || spinning} className="open-button demo-button" title={t("caseDetail.demoSpin")}>
+            {t("caseDetail.demoSpin")}
+          </button>
+        </div>
       ) : (
         <>
           <button onClick={demoSpin} disabled={opening || spinning} className="open-button demo-button" aria-describedby={isPreview ? "catalog-preview-notice" : undefined}>

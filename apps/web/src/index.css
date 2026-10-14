@@ -14771,3 +14771,32 @@ details[open] > :not(summary) {
              card-pop-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: 0s, calc(var(--index, 0) * 45ms);
 }
+
+/* ── Open button row: real + demo side by side ── */
+.open-button-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.open-button-row .open-button:first-child {
+  flex: 1;
+}
+.open-button-row .demo-button {
+  flex-shrink: 0;
+  background: var(--panel-2) !important;
+  border: 1px solid var(--panel-3) !important;
+  color: var(--muted) !important;
+  font-size: 0.78rem !important;
+  padding: 10px 16px !important;
+  min-width: unset !important;
+}
+.open-button-row .demo-button:hover:not(:disabled) {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+@media (max-width: 480px) {
+  .open-button-row { flex-direction: column; }
+  .open-button-row .open-button:first-child,
+  .open-button-row .demo-button { width: 100%; }
+}
