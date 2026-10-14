@@ -13398,3 +13398,121 @@ details[open] > :not(summary) {
 @media (prefers-reduced-motion: reduce) {
   .item-grid .item-card { animation: none !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYER 9 — Visual Bug Fixes: Upgrade Arrow + Game Empty + Polish
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Upgrade arrow: reset ALL accumulated junk, render as simple indicator ── */
+.upgrade-arrow,
+.game-workspace--upgrade .upgrade-arrow {
+  all: unset !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 8px !important;
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel-2)) !important;
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent) !important;
+  color: var(--accent) !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  font-family: var(--font-display) !important;
+  animation: none !important;
+  box-shadow: none !important;
+  cursor: default !important;
+  flex-shrink: 0 !important;
+  align-self: center !important;
+  pointer-events: none !important;
+}
+
+/* No pseudo-element rings on the arrow */
+.upgrade-arrow::before,
+.upgrade-arrow::after { display: none !important; }
+
+/* Upgrade layout — reliable 3-col, arrow col exactly 52px */
+.upgrade-layout,
+.game-workspace--upgrade .upgrade-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 52px minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 12px !important;
+  margin-top: 1rem !important;
+}
+
+@media (max-width: 860px) {
+  .upgrade-layout,
+  .game-workspace--upgrade .upgrade-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .upgrade-arrow,
+  .game-workspace--upgrade .upgrade-arrow {
+    transform: rotate(90deg) !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* ── GameEmptyState for upgrader: ghost item cards instead of circles ── */
+.game-empty--upgrade-source .game-empty-art span,
+.game-empty--upgrade-target .game-empty-art span {
+  width: 42% !important;
+  height: 58% !important;
+  border-radius: 8px !important;
+  border: 1px solid color-mix(in srgb, var(--border) 50%, transparent) !important;
+  background: var(--panel-2) !important;
+  top: 20% !important;
+}
+.game-empty--upgrade-source .game-empty-art span:nth-child(1),
+.game-empty--upgrade-target .game-empty-art span:nth-child(1) {
+  left: 8% !important; transform: rotate(-4deg) scale(0.88) !important; opacity: 0.45 !important;
+}
+.game-empty--upgrade-source .game-empty-art span:nth-child(2),
+.game-empty--upgrade-target .game-empty-art span:nth-child(2) {
+  left: 28% !important; transform: scale(0.94) !important; opacity: 0.65 !important; z-index: 1 !important;
+}
+.game-empty--upgrade-source .game-empty-art span:nth-child(3),
+.game-empty--upgrade-target .game-empty-art span:nth-child(3) {
+  left: 48% !important; transform: rotate(4deg) scale(0.88) !important; opacity: 0.45 !important;
+}
+
+/* ── Roulette spin: smoother deceleration ── */
+.roulette-track {
+  transition-timing-function: cubic-bezier(0.05, 0.85, 0.15, 1) !important;
+}
+
+/* ── Case hero: ensure price doesn't show ₽ twice ── */
+.hero-case-price::before { display: none !important; }
+
+/* ── Item rarity label: unify case across site ── */
+.rarity-label { text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* ── NavLink active: clean underline-only on desktop ── */
+@media (min-width: 769px) {
+  .top-nav .active { color: #fff; }
+}
+
+/* ── Wallet / balance pill: never show a second ₽ ── */
+.balance-pill::before,
+.balance-pill::after { display: none !important; }
+
+/* ── Page content min-height so footer doesn't float on short pages ── */
+.page-content { min-height: calc(100dvh - 12rem); }
+
+/* ── Scrollbar polish ── */
+* { scrollbar-width: thin; scrollbar-color: var(--panel-3) transparent; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-thumb { background: var(--panel-3); border-radius: 99px; }
+
+/* ── Upgrader chance bar label alignment ── */
+.upgrade-chance-bar { margin: 0.75rem 0; }
+.upgrade-chance-label {
+  display: flex; justify-content: space-between;
+  font-size: 0.75rem; color: var(--muted); margin-bottom: 4px;
+}
+
+/* ── Contract page: item slot height consistency ── */
+.contract-slot { min-height: 120px; }
+
+/* ── Auth pages: center card on short screens ── */
+.auth-page { min-height: calc(100dvh - 14rem); display: flex; align-items: center; justify-content: center; }
