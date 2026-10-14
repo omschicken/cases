@@ -8,8 +8,9 @@ import { formatMinor } from "../lib/money";
 import { HeroBanner } from "../components/HeroBanner";
 import { StatsBar } from "../components/StatsBar";
 import { RecentDrops } from "../components/RecentDrops";
-import { rarityColor, highestRarity, RARITY_RANK } from "../lib/rarity";
-import type { CaseDto } from "../lib/types";
+import { highestRarity, RARITY_RANK } from "../lib/rarity";
+import { CaseCard, CaseCardSkeleton } from "../components/dz/CaseCard";
+import type { CaseDto, ItemRarity } from "../lib/types";
 
 type SortMode = "default" | "priceAsc" | "priceDesc";
 type CollectionMode = "all" | "entry" | "core" | "apex";
@@ -175,61 +176,39 @@ export function CaseListPage() {
           </button>
         </div>
       )}
-      <div className={`case-grid${collection === "all" && !query ? " case-grid--featured" : ""}`} aria-busy={loading}>
-        {loading && Array.from({ length: 5 }, (_, i) => (
-          <div className="case-card case-card-skeleton" key={i} aria-hidden="true" />
-        ))}
+      <div className="dz-case-grid" aria-busy={loading}>
+        {loading && Array.from({ length: 10 }, (_, i) => <CaseCardSkeleton key={i} />)}
         {!loading && visibleCases.map((c, i) => {
-          const tiers = rarityTiers(c);
-          const chase = highestRarity(tiers as CaseDto["items"][number]["rarity"][]);
+          const tiers = rarityTiers(c) as ItemRarity[];
+          const chase = highestRarity(tiers);
           const highlight = featuredItem(c);
-          const tier = caseToTier.get(c.id);
+          // Only real artwork reaches the cell. The inline data: placeholders
+          // used by offline preview cases would read as a broken image.
+          const artUrl = highlight && !highlight.imageUrl.startsWith("data:image")
+            ? highlight.imageUrl
+            : undefined;
           return (
-            <Link
-              to={`/cases/${c.slug}`}
+            <CaseCard
               key={c.id}
-              className="case-card case-card-editorial"
-              style={{ "--index": i, "--rarity-color": chase ? rarityColor(chase) : undefined, "--case-hue": caseVisualIdentity(c.slug).hue } as CSSProperties}
-            >
-              <div className="case-card-topline">
-                <span>DROP / {String(i + 1).padStart(2, "0")}</span>
-                {tier && <span className={`case-tier-badge case-tier-badge--${tier}`}>{tier.toUpperCase()}</span>}
-                <span>{t("home.itemCount", { count: c.itemCount ?? c.items.length })}</span>
-              </div>
-              <div className="case-card-art-frame">
-                <CaseChest caseName={c.name} caseSlug={c.slug} itemImageUrl={highlight?.imageUrl} />
-                <span className="case-card-art-glow" aria-hidden="true" />
-              </div>
-              <div className="case-card-copy">
-                <div className="case-card-rarity" aria-label={t("home.highestRarity", { defaultValue: "Highest rarity in this case" })}>
-                  <span className="case-card-rarity-marker" />
-                  <span>{chase ? t(`rarity.${chase}`, { defaultValue: chase }) : t("home.caseCollection", { defaultValue: "COLLECTION" })}</span>
-                  <div className="case-rarity-dots" aria-hidden="true">
-                    {tiers.map((tier) => (
-                      <span
-                        key={tier}
-                        className="case-rarity-dot"
-                        style={{ "--rarity-color": rarityColor(tier as CaseDto["items"][number]["rarity"]) } as CSSProperties}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <h3>{c.name}</h3>
-              </div>
-              <div className="case-card-foot">
-                <span>{t("home.casePriceFrom", { defaultValue: "CASE PRICE" })}</span>
-                <p className="price">{formatMinor(c.priceMinor, c.currency)}</p>
-                <span className="case-card-arrow" aria-hidden="true">↗</span>
-              </div>
-            </Link>
+              caseDto={c}
+              index={i}
+              tiers={tiers}
+              chase={chase}
+              artUrl={artUrl}
+              tier={caseToTier.get(c.id)}
+              rarityLabel={chase
+                ? t(`rarity.${chase}`, { defaultValue: chase })
+                : t("home.caseCollection", { defaultValue: "COLLECTION" })}
+              priceLabel={t("home.casePriceFrom", { defaultValue: "CASE PRICE" })}
+            />
           );
         })}
-        {!loading && filteredCases.length === 0 && !error && (
-          <p className="case-grid-empty" role="status">
-            {query ? t("home.noSearchResults", { query }) : t("home.noCasesYet")}
-          </p>
-        )}
       </div>
+      {!loading && filteredCases.length === 0 && !error && (
+        <p className="case-grid-empty" role="status">
+          {query ? t("home.noSearchResults", { query }) : t("home.noCasesYet")}
+        </p>
+      )}
 
       {!loading && filteredCases.length > visibleCases.length && (
         <button className="case-load-more" type="button" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}>
