@@ -21,46 +21,122 @@ export function caseVisualIdentity(caseSlug: string) {
   return { seed, variant, hue, finish: Math.floor(seed / 7) % 4 };
 }
 
+/** Main glyph SVG per variant */
 function CaseGlyph({ variant }: { variant: number }) {
   const shapes = [
-    <path key="flame" d="M30 4c3 12-2 16-7 23-4 5-4 11 1 15-1-8 7-11 7-19 10 9 15 17 13 25-2 10-11 16-21 15C11 62 4 53 7 42c2-8 8-14 14-20-1 9 3 13 9 14-4-11 3-18 0-32Z" />,
-    <path key="bolt" d="M36 3 11 34h17l-5 27 30-36H35L36 3Z" />,
-    <g key="orbit"><circle cx="32" cy="32" r="24"/><circle cx="32" cy="32" r="15"/><circle cx="32" cy="32" r="5"/><path d="M32 1v11M32 52v11M1 32h11M52 32h11"/></g>,
-    <path key="shard" d="M32 3 8 22l9 28 15 11 15-11 9-28L32 3ZM8 22l24 7 24-7M32 3v26m0 32V29M17 50l15-21 15 21" />,
-    <g key="signal"><path d="M7 48h8V31H7v17Zm14 0h8V18h-8v30Zm14 0h8V25h-8v23Zm14 0h8V8h-8v40Z"/><path d="M5 56h54"/></g>,
-    <path key="crown" d="m5 18 13 14 14-23 14 23 13-14-6 34H11L5 18Zm7 42h40M19 43h26" />,
+    // 0 — flame
+    <path key="flame" d="M32 6c4 14-3 18-8 26-4 6-3 13 2 17-2-9 8-12 8-21 11 10 17 19 14 28-2 11-12 18-23 17C13 72 5 62 8 50c2-9 9-15 15-22-1 10 4 14 9 16-4-12 3-21 0-38Z" strokeWidth="2"/>,
+    // 1 — bolt
+    <path key="bolt" d="M38 4 12 36h18l-5 24 30-36H36L38 4Z" strokeWidth="2.5"/>,
+    // 2 — orbit rings
+    <g key="orbit"><circle cx="32" cy="32" r="22" strokeWidth="2"/><circle cx="32" cy="32" r="13" strokeWidth="1.5"/><circle cx="32" cy="32" r="4" fill="currentColor" strokeWidth="0"/><path d="M32 4v7M32 53v7M4 32h7M53 32h7" strokeWidth="1.5"/></g>,
+    // 3 — shard / diamond
+    <path key="shard" d="M32 5 10 24l8 24 14 11 14-11 8-24L32 5ZM10 24l22 8 22-8M32 5v27m0 33V32M19 52l13-20 13 20" strokeWidth="2"/>,
+    // 4 — signal bars
+    <g key="signal"><rect x="5" y="44" width="10" height="16" rx="1.5" strokeWidth="2"/><rect x="20" y="32" width="10" height="28" rx="1.5" strokeWidth="2"/><rect x="35" y="20" width="10" height="40" rx="1.5" strokeWidth="2"/><rect x="50" y="8" width="10" height="52" rx="1.5" strokeWidth="2"/></g>,
+    // 5 — crown
+    <path key="crown" d="M6 20 20 36l12-24 12 24 14-16-6 32H10L6 20Zm6 40h40M20 44h24" strokeWidth="2.5"/>,
   ];
-  return <svg className="case-chest-glyph" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" aria-hidden="true">{shapes[variant]}</svg>;
+  return (
+    <svg className="case-chest-glyph" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeLinejoin="round" aria-hidden="true">
+      {shapes[variant]}
+    </svg>
+  );
 }
 
-/** Decorative case preview. It never represents an opening or its result. */
+/** Orbit ring particles (pure CSS, decorative) */
+function OrbitRing({ radius, count, delay }: { radius: number; count: number; delay: number }) {
+  return (
+    <div className="case-orbit-ring" style={{ "--orbit-r": `${radius}px`, "--orbit-count": count, "--orbit-delay": `${delay}s` } as CSSProperties} aria-hidden="true">
+      {Array.from({ length: count }, (_, i) => (
+        <span key={i} className="case-orbit-dot" style={{ "--dot-i": i } as CSSProperties} />
+      ))}
+    </div>
+  );
+}
+
+/** Decorative case preview — never represents an opening result. */
 export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", opening = false }: CaseChestProps) {
   const { seed, variant, hue, finish } = caseVisualIdentity(caseSlug);
   const mark = caseName.replace(/\s*case$/i, "").slice(0, 3).toUpperCase();
-  const nameplate = caseName.replace(/\s*case$/i, "").toUpperCase();
-  const serial = String(seed % 1000).padStart(3, "0");
+  const serial = String(seed % 10000).padStart(4, "0");
+  const saturation = [65, 72, 58, 80, 55, 70][variant];
+  const lightness  = [52, 60, 48, 55, 58, 65][finish % 4];
 
   return (
-    <div className={`case-chest case-chest-v${variant} case-chest-f${finish} ${opening ? "case-chest-is-opening" : ""} ${className}`} style={{ "--chest-hue": hue } as CSSProperties} aria-hidden="true">
+    <div
+      className={`case-chest case-chest-v${variant} case-chest-f${finish} ${opening ? "case-chest-is-opening" : ""} ${className}`}
+      style={{
+        "--chest-hue": hue,
+        "--chest-sat": `${saturation}%`,
+        "--chest-lit": `${lightness}%`,
+      } as CSSProperties}
+      aria-hidden="true"
+    >
+      {/* Atmospheric glow */}
       <span className="case-chest-aura" />
-      {opening && <><span className="case-chest-flare" /><span className="case-chest-scan" /></>}
+      <span className="case-chest-atmosphere" />
+
+      {/* Orbit decoration */}
+      <OrbitRing radius={42} count={6} delay={0} />
+      <OrbitRing radius={58} count={4} delay={-1.2} />
+
+      {/* Opening effects */}
+      {opening && (
+        <>
+          <span className="case-chest-flare" />
+          <span className="case-chest-scan" />
+        </>
+      )}
+
+      {/* Revealed item floats above the chest */}
       {itemImageUrl && <img className="case-chest-reveal" src={itemImageUrl} alt="" />}
+
+      {/* The case body */}
       <div className="case-chest-assembly">
+        {/* Top lid */}
         <div className="case-chest-lid">
-          <span className="case-chest-lid-ridge" />
-          <span className="case-chest-lid-mark">{mark}</span>
+          <div className="case-chest-lid-inner">
+            <span className="case-chest-lid-stripe" />
+            <span className="case-chest-lid-mark">{mark}</span>
+            <span className="case-chest-lid-serial">#{serial}</span>
+          </div>
+          <span className="case-chest-lid-edge" />
         </div>
+
+        {/* Lock clasp */}
+        <div className="case-chest-lock">
+          <span className="case-chest-lock-body" />
+          <span className="case-chest-lock-shackle" />
+          <span className="case-chest-lock-gem" />
+        </div>
+
+        {/* Main body */}
         <div className="case-chest-body">
-          <span className="case-chest-finish" />
-          <span className="case-chest-corner case-chest-corner-left" />
-          <span className="case-chest-corner case-chest-corner-right" />
-          <span className="case-chest-lock"><span /></span>
-          <CaseGlyph variant={variant} />
-          <span className="case-chest-nameplate">{nameplate}</span>
-          <span className="case-chest-stripe case-chest-stripe-left" />
-          <span className="case-chest-stripe case-chest-stripe-right" />
-          <span className="case-chest-serial">DZ / {serial}</span>
+          <span className="case-chest-body-shine" />
+          <span className="case-chest-body-grid" />
+
+          {/* Corner accents */}
+          <span className="case-chest-corner case-chest-corner-tl" />
+          <span className="case-chest-corner case-chest-corner-tr" />
+          <span className="case-chest-corner case-chest-corner-bl" />
+          <span className="case-chest-corner case-chest-corner-br" />
+
+          {/* Center glyph */}
+          <div className="case-chest-glyph-wrap">
+            <span className="case-chest-glyph-bg" />
+            <CaseGlyph variant={variant} />
+          </div>
+
+          {/* Name band */}
+          <div className="case-chest-nameband">
+            <span className="case-chest-nameband-line" />
+            <span className="case-chest-nameband-text">{caseName.replace(/\s*case$/i, "").toUpperCase()}</span>
+            <span className="case-chest-nameband-line" />
+          </div>
         </div>
+
+        {/* Ground shadow */}
         <div className="case-chest-shadow" />
       </div>
     </div>
