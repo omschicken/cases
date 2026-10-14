@@ -27,6 +27,7 @@ enum LedgerReason {
   ITEM_SELL
   REFERRAL_COMMISSION
   ADMIN_ADJUSTMENT
+  GAME_BATTLE
 }
 
 enum PaymentRail {
@@ -66,6 +67,18 @@ enum InventoryItemStatus {
   IN_INVENTORY
   SOLD
   WITHDRAWN
+  CONSUMED
+}
+
+enum GameOperationType {
+  CONTRACT
+  UPGRADE
+  BATTLE
+}
+
+enum GameOperationStatus {
+  WON
+  LOST
 }
 
 enum DocumentType {
@@ -105,6 +118,7 @@ model User {
   referralEarningsAsReferrer ReferralEarning[] @relation("ReferrerEarnings")
   referralEarningsAsReferred ReferralEarning[] @relation("ReferredEarnings")
   adminAuditLogs  AdminAuditLog[]
+  gameOperations  GameOperation[]
 
   @@index([referredById])
 }
@@ -265,6 +279,29 @@ model InventoryItem {
   caseOpenEvent CaseOpenEvent?
 
   @@index([userId, status])
+}
+
+/// Immutable audit record for inventory-based game operations. Inputs are
+/// claimed atomically before a result is created, preventing double use.
+model GameOperation {
+  id                    String              @id @default(uuid())
+  userId                String
+  user                  User                @relation(fields: [userId], references: [id])
+  type                   GameOperationType
+  status                 GameOperationStatus
+  inputInventoryItemIds  Json
+  targetCaseItemId       String?
+  outputCaseItemId       String?
+  outputInventoryItemId  String?
+  roll                   Float
+  chance                 Float
+  serverSeedHash         String
+  clientSeed             String
+  nonce                  Int
+  metadata               Json                @default("{}")
+  createdAt              DateTime            @default(now())
+
+  @@index([userId, createdAt])
 }
 
 model Deposit {

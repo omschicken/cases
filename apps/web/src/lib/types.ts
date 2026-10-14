@@ -49,15 +49,37 @@ export interface OpenCaseResult {
   clientSeed: string;
 }
 
+export interface CaseOpenHistoryDto {
+  id: string;
+  createdAt: string;
+  nonce: number;
+  roll: number;
+  case: { name: string; slug: string };
+  resultCaseItem: Pick<CaseItem, "name" | "imageUrl" | "valueMinor" | "currency" | "rarity">;
+  provablyFairSeed: { serverSeedHash: string };
+}
+
 export interface InventoryItemDto {
   id: string;
-  status: "IN_INVENTORY" | "SOLD" | "WITHDRAWN";
+  status: "IN_INVENTORY" | "SOLD" | "WITHDRAWN" | "CONSUMED";
   acquiredAt: string;
   caseItem: CaseItem;
 }
 
 export interface WalletDto {
   balanceMinor: string;
+}
+
+export interface GameOperationDto {
+  id: string;
+  type: "CONTRACT" | "UPGRADE" | "BATTLE";
+  status: "WON" | "LOST";
+  roll: number;
+  chance: number;
+  nonce: number;
+  serverSeedHash: string;
+  createdAt: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface LedgerEntryDto {

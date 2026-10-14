@@ -29,6 +29,7 @@ export function LoginPage() {
 
   return (
     <div className="auth-page">
+      <span className="auth-kicker">DROPZONE / ACCESS</span>
       <h1>{t("login.title")}</h1>
       <form onSubmit={onSubmit} className="auth-form">
         <label>

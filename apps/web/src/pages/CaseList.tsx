@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
 import { useTranslation } from "react-i18next";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
@@ -11,26 +12,9 @@ import { rarityColor, highestRarity, RARITY_RANK } from "../lib/rarity";
 import type { CaseDto } from "../lib/types";
 
 type SortMode = "default" | "priceAsc" | "priceDesc";
-
-const FALLBACK_ART = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 420'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop stop-color='%23151b2d'/%3E%3Cstop offset='1' stop-color='%23462a79'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='640' height='420' fill='url(%23g)'/%3E%3Cpath d='M80 300 220 100l140 200 90-120 110 120' fill='none' stroke='%23b86bff' stroke-width='10' opacity='.75'/%3E%3C/svg%3E";
-
-const FALLBACK_CASES: CaseDto[] = [
-  { id: "preview-ignition", slug: "ignition-case", name: "Ignition Case", priceMinor: "14900", currency: "RUB", imageUrl: FALLBACK_ART, isActive: true, items: [
-    { id: "preview-usp", name: "USP-S | Printstream", imageUrl: FALLBACK_ART, weight: 55, valueMinor: "9900", currency: "RUB", rarity: "RESTRICTED" },
-    { id: "preview-ak", name: "AK-47 | Slate", imageUrl: FALLBACK_ART, weight: 35, valueMinor: "19900", currency: "RUB", rarity: "CLASSIFIED" },
-    { id: "preview-knife", name: "★ Нож | Aurora", imageUrl: FALLBACK_ART, weight: 10, valueMinor: "129900", currency: "RUB", rarity: "GOLD" },
-  ] },
-  { id: "preview-static", slug: "static-case", name: "Static Case", priceMinor: "29900", currency: "RUB", imageUrl: FALLBACK_ART, isActive: true, items: [
-    { id: "preview-m4", name: "M4A1-S | Player Two", imageUrl: FALLBACK_ART, weight: 60, valueMinor: "24900", currency: "RUB", rarity: "RESTRICTED" },
-    { id: "preview-awp", name: "AWP | Neo-Noir", imageUrl: FALLBACK_ART, weight: 30, valueMinor: "69900", currency: "RUB", rarity: "CLASSIFIED" },
-    { id: "preview-gloves", name: "★ Перчатки | Fade", imageUrl: FALLBACK_ART, weight: 10, valueMinor: "249900", currency: "RUB", rarity: "GOLD" },
-  ] },
-  { id: "preview-overdrive", slug: "overdrive-case", name: "Overdrive Case", priceMinor: "59900", currency: "RUB", imageUrl: FALLBACK_ART, isActive: true, items: [
-    { id: "preview-deagle", name: "Desert Eagle | Ocean Drive", imageUrl: FALLBACK_ART, weight: 65, valueMinor: "49900", currency: "RUB", rarity: "CLASSIFIED" },
-    { id: "preview-bowie", name: "★ Bowie | Lore", imageUrl: FALLBACK_ART, weight: 25, valueMinor: "179900", currency: "RUB", rarity: "COVERT" },
-    { id: "preview-karambit", name: "★ Karambit | Doppler", imageUrl: FALLBACK_ART, weight: 10, valueMinor: "499900", currency: "RUB", rarity: "GOLD" },
-  ] },
-];
+type CollectionMode = "all" | "entry" | "core" | "apex";
+const COLLECTIONS = ["entry", "core", "apex"] as const;
+const PAGE_SIZE = 16;
 
 /** Distinct rarity tiers present in a case, highest first — the at-a-glance
  * "what could I get" signal shown as a dot row on every case card. */
@@ -39,13 +23,26 @@ function rarityTiers(c: CaseDto): string[] {
   return RARITY_RANK.filter((tier) => present.has(tier));
 }
 
+function featuredItem(c: CaseDto): CaseDto["items"][number] | undefined {
+  return c.items.reduce<CaseDto["items"][number] | undefined>((best, item) => {
+    if (!best) return item;
+    const rarityDiff = RARITY_RANK.indexOf(item.rarity) - RARITY_RANK.indexOf(best.rarity);
+    return rarityDiff < 0 || (rarityDiff === 0 && BigInt(item.valueMinor) > BigInt(best.valueMinor)) ? item : best;
+  }, undefined);
+}
+
 export function CaseListPage() {
   const { t } = useTranslation();
   const [cases, setCases] = useState<CaseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [usingFallback, setUsingFallback] = useState(false);
+  const [requestId, setRequestId] = useState(0);
   const [sort, setSort] = useState<SortMode>("default");
+  const [query, setQuery] = useState("");
+  const [collection, setCollection] = useState<CollectionMode>("all");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  useEffect(() => setVisibleCount(PAGE_SIZE), [query, collection]);
 
   useEffect(() => {
     setLoading(true);
@@ -53,16 +50,14 @@ export function CaseListPage() {
       .get<CaseDto[]>("/cases")
       .then((data) => {
         setCases(data);
-        setUsingFallback(false);
-      })
-      .catch(() => {
-        // Keep the catalog useful while the API is restarting; opening remains demo-only until login.
-        setCases(FALLBACK_CASES);
-        setUsingFallback(true);
         setError(null);
       })
+      .catch(() => {
+        setCases([]);
+        setError(t("home.couldNotLoadCases"));
+      })
       .finally(() => setLoading(false));
-  }, [t]);
+  }, [t, requestId]);
 
   const sortedCases = useMemo(() => {
     if (sort === "default") return cases;
@@ -74,61 +69,164 @@ export function CaseListPage() {
     return sorted;
   }, [cases, sort]);
 
+  const collections = useMemo(() => {
+    const byPrice = [...cases].sort((a, b) => Number(a.priceMinor) - Number(b.priceMinor));
+    return COLLECTIONS.map((id, index) => {
+      const start = Math.floor((index * byPrice.length) / 3);
+      const end = Math.floor(((index + 1) * byPrice.length) / 3);
+      const members = byPrice.slice(start, end);
+      return { id, members, representative: members[Math.floor(members.length / 2)], minimum: members[0] };
+    });
+  }, [cases]);
+
+  const filteredCases = useMemo(() => {
+    const normalizedQuery = query.trim().toLocaleLowerCase();
+    const selectedIds = collection === "all" ? null : new Set(collections.find((group) => group.id === collection)?.members.map((item) => item.id));
+    return sortedCases.filter((item) =>
+      (!selectedIds || selectedIds.has(item.id)) &&
+      (!normalizedQuery || `${item.name} ${item.slug} ${item.items.map((caseItem) => caseItem.name).join(" ")}`
+        .toLocaleLowerCase()
+        .includes(normalizedQuery)),
+    );
+  }, [collection, collections, query, sortedCases]);
+  const visibleCases = filteredCases.slice(0, visibleCount);
+
   return (
-    <div>
-      <HeroBanner />
+    <div className="case-list-page">
+      <HeroBanner featuredCase={cases[0]} catalogStatus={loading ? "loading" : error ? "error" : "empty"} />
       <StatsBar />
 
-      {usingFallback && (
-        <div className="catalog-notice" role="status">
-          Каталог работает в демо-режиме: сервис предметов временно обновляется. Реальные открытия и списания сейчас недоступны.
+      {cases.length > 0 && <section className="collection-discovery" aria-labelledby="collection-discovery-heading">
+        <div className="collection-discovery-head">
+          <div>
+            <span className="section-kicker">DROPZONE / SELECT YOUR ROUTE</span>
+            <h2 id="collection-discovery-heading">{t("home.discoveryHeading")}</h2>
+          </div>
+          <p>{t("home.discoveryIntro")}</p>
         </div>
-      )}
+        <div className="collection-route-grid">
+          {collections.map((group, index) => {
+            const representative = group.representative;
+            const highlight = representative && featuredItem(representative);
+            return (
+              <button
+                key={group.id}
+                type="button"
+                className={`collection-route collection-route-${group.id}${collection === group.id ? " is-active" : ""}`}
+                onClick={() => { setCollection(group.id); document.getElementById("collections")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
+                aria-pressed={collection === group.id}
+                disabled={!group.members.length}
+              >
+                <span className="collection-route-index">0{index + 1} / 0{COLLECTIONS.length}</span>
+                {representative && <span className="collection-route-art"><CaseChest caseName={representative.name} caseSlug={representative.slug} itemImageUrl={highlight?.imageUrl} /></span>}
+                <span className="collection-route-bottom">
+                  <span><strong>{t(`home.collection.${group.id}.title`)}</strong><small>{t(`home.collection.${group.id}.subtitle`)}</small></span>
+                  <span className="collection-route-meta">{t("home.collectionCases")} <b>{group.members.length}</b><em>{group.minimum ? `${t("home.collectionFrom")} ${formatMinor(group.minimum.priceMinor, group.minimum.currency)}` : ""}</em></span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </section>}
 
       <div id="collections" className="cases-toolbar">
         <div className="cases-heading-group"><span className="section-kicker">DROPZONE / COLLECTIONS</span><h1 className="section-heading cases-toolbar-heading">{t("home.casesHeading")}</h1><p className="section-intro">{t("home.casesIntro")}</p></div>
-        <label className="sort-select-wrap">
-          {t("home.sortLabel")}
-          <select value={sort} onChange={(e) => setSort(e.target.value as SortMode)}>
-            <option value="default">{t("home.sortDefault")}</option>
-            <option value="priceAsc">{t("home.sortPriceAsc")}</option>
-            <option value="priceDesc">{t("home.sortPriceDesc")}</option>
-          </select>
-        </label>
+        <div className="cases-controls">
+          <label className="case-search-wrap">
+            <span className="sr-only">{t("home.searchCases")}</span>
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" strokeWidth="1.7"/><path d="m16 16 4.4 4.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t("home.searchPlaceholder")}
+              autoComplete="off"
+            />
+          </label>
+          <label className="sort-select-wrap">
+            <span>{t("home.sortLabel")}</span>
+            <select value={sort} onChange={(e) => setSort(e.target.value as SortMode)}>
+              <option value="default">{t("home.sortDefault")}</option>
+              <option value="priceAsc">{t("home.sortPriceAsc")}</option>
+              <option value="priceDesc">{t("home.sortPriceDesc")}</option>
+            </select>
+          </label>
+        </div>
       </div>
 
-      {error && <p className="form-error">{error}</p>}
-      <div className="case-grid" aria-busy={loading}>
+      {cases.length > 0 && <div className="collection-filters" role="group" aria-label={t("home.collectionFilterLabel")}>
+        <button type="button" className={collection === "all" ? "is-active" : ""} aria-pressed={collection === "all"} onClick={() => setCollection("all")}>{t("home.collectionAll")}<span>{cases.length}</span></button>
+        {collections.map((group) => <button type="button" key={group.id} className={collection === group.id ? "is-active" : ""} aria-pressed={collection === group.id} onClick={() => setCollection(group.id)}>{t(`home.collection.${group.id}.title`)}<span>{group.members.length}</span></button>)}
+      </div>}
+
+      {error && (
+        <div className="catalog-notice" role="alert">
+          <span>{error}</span>
+          <button type="button" className="catalog-retry" onClick={() => setRequestId((id) => id + 1)}>
+            {t("common.retry", { defaultValue: "Повторить" })}
+          </button>
+        </div>
+      )}
+      <div className={`case-grid${collection === "all" && !query ? " case-grid--featured" : ""}`} aria-busy={loading}>
         {loading && Array.from({ length: 5 }, (_, i) => (
           <div className="case-card case-card-skeleton" key={i} aria-hidden="true" />
         ))}
-        {!loading && sortedCases.map((c, i) => {
+        {!loading && visibleCases.map((c, i) => {
           const tiers = rarityTiers(c);
           const chase = highestRarity(tiers as CaseDto["items"][number]["rarity"][]);
+          const highlight = featuredItem(c);
           return (
             <Link
               to={`/cases/${c.slug}`}
               key={c.id}
-              className="case-card"
-              style={{ "--index": i, "--rarity-color": chase ? rarityColor(chase) : undefined } as CSSProperties}
+              className="case-card case-card-editorial"
+              style={{ "--index": i, "--rarity-color": chase ? rarityColor(chase) : undefined, "--case-hue": caseVisualIdentity(c.slug).hue } as CSSProperties}
             >
-              <img src={c.imageUrl} alt={c.name} />
-              <h3>{c.name}</h3>
-              <div className="case-rarity-dots">
-                {tiers.map((tier) => (
-                  <span
-                    key={tier}
-                    className="case-rarity-dot"
-                    style={{ "--rarity-color": rarityColor(tier as CaseDto["items"][number]["rarity"]) } as CSSProperties}
-                  />
-                ))}
+              <div className="case-card-topline">
+                <span>DROP / {String(i + 1).padStart(2, "0")}</span>
+                <span>{t("home.itemCount", { count: c.items.length })}</span>
               </div>
-              <p className="price">{formatMinor(c.priceMinor, c.currency)}</p>
+              <div className="case-card-art-frame">
+                <CaseChest caseName={c.name} caseSlug={c.slug} itemImageUrl={highlight?.imageUrl} />
+                <span className="case-card-art-glow" aria-hidden="true" />
+              </div>
+              <div className="case-card-copy">
+                <div className="case-card-rarity" aria-label={t("home.highestRarity", { defaultValue: "Highest rarity in this case" })}>
+                  <span className="case-card-rarity-marker" />
+                  <span>{chase ? t(`rarity.${chase}`, { defaultValue: chase }) : t("home.caseCollection", { defaultValue: "COLLECTION" })}</span>
+                  <div className="case-rarity-dots" aria-hidden="true">
+                    {tiers.map((tier) => (
+                      <span
+                        key={tier}
+                        className="case-rarity-dot"
+                        style={{ "--rarity-color": rarityColor(tier as CaseDto["items"][number]["rarity"]) } as CSSProperties}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <h3>{c.name}</h3>
+              </div>
+              <div className="case-card-foot">
+                <span>{t("home.casePriceFrom", { defaultValue: "CASE PRICE" })}</span>
+                <p className="price">{formatMinor(c.priceMinor, c.currency)}</p>
+                <span className="case-card-arrow" aria-hidden="true">↗</span>
+              </div>
             </Link>
           );
         })}
-        {!loading && sortedCases.length === 0 && !error && <p>{t("home.noCasesYet")}</p>}
+        {!loading && filteredCases.length === 0 && !error && (
+          <p className="case-grid-empty" role="status">
+            {query ? t("home.noSearchResults", { query }) : t("home.noCasesYet")}
+          </p>
+        )}
       </div>
+
+      {!loading && filteredCases.length > visibleCases.length && (
+        <button className="case-load-more" type="button" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}>
+          {t("home.showMoreCases", { count: Math.min(PAGE_SIZE, filteredCases.length - visibleCases.length) })}
+          <span aria-hidden="true">↓</span>
+        </button>
+      )}
 
       <RecentDrops />
     </div>

@@ -22,13 +22,15 @@ export function ReferralPage() {
   const link = `${window.location.origin}/register?ref=${stats.referralCode}`;
 
   return (
-    <div>
+    <div className="referral-page">
+      <span className="section-kicker">DROPZONE / REFERRAL</span>
       <h1>{t("referral.title")}</h1>
       <p>{t("referral.description")}</p>
-      <p>
+      <div className="referral-link-panel">
+        <span>LINK / SHARE</span>
         <code>{link}</code>
-      </p>
-      <ul>
+      </div>
+      <ul className="referral-stat-grid">
         <li>{t("referral.referrals", { n: stats.referralsCount })}</li>
         <li>{t("referral.totalEarned", { amount: formatMinor(stats.totalEarnedMinor) })}</li>
       </ul>

@@ -8,6 +8,7 @@ import { CaseListPage } from "./pages/CaseList";
 import { CaseDetailPage } from "./pages/CaseDetail";
 import { VerifyPage } from "./pages/Verify";
 import { InventoryPage } from "./pages/Inventory";
+import { HistoryPage } from "./pages/History";
 import { WalletPage } from "./pages/Wallet";
 import { ProfilePage } from "./pages/Profile";
 import { ReferralPage } from "./pages/Referral";
@@ -19,6 +20,7 @@ import { CardsPage } from "./pages/Cards";
 import { PrizesPage } from "./pages/Prizes";
 import { BonusesPage } from "./pages/Bonuses";
 import { FAQPage } from "./pages/FAQ";
+import { NotFoundPage } from "./pages/NotFound";
 import { SteamCallbackPage } from "./pages/SteamCallback";
 import { SteamCompletePage } from "./pages/SteamComplete";
 
@@ -43,9 +45,11 @@ export default function App() {
             <Route path="/prizes" element={<PrizesPage />} />
             <Route path="/bonuses" element={<BonusesPage />} />
             <Route path="/faq" element={<FAQPage />} />
+            <Route path="*" element={<NotFoundPage />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="/inventory" element={<InventoryPage />} />
+              <Route path="/history" element={<HistoryPage />} />
               <Route path="/wallet" element={<WalletPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/referral" element={<ReferralPage />} />

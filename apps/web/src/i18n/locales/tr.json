@@ -1,6 +1,10 @@
 {
   "common": {
     "loading": "Yükleniyor…",
+    "retry": "Tekrar dene",
+    "pageNotFound": "Sayfa bulunamadı",
+    "pageNotFoundHint": "Bu adres mevcut değil veya taşınmış olabilir.",
+    "backToCatalog": "Kataloğa dön",
     "save": "Kaydet",
     "cancel": "İptal",
     "yes": "Evet",
@@ -17,7 +21,8 @@
       "upgrade": "Yükselt",
       "cards": "Kartlar",
       "inventory": "Envanter",
-      "admin": "Yönetici"
+      "admin": "Yönetici",
+      "history": "Geçmiş"
     },
     "pagesBar": {
       "referral": "Referans",
@@ -25,7 +30,7 @@
       "bonuses": "Bonuslar",
       "faq": "SSS"
     },
-    "footer": "GunDone.case — yalnızca 18+. Kumar bağımlılık yapabilir, sorumlu oynayın. Kanıtlanabilir adil RNG: her kasa sonucu bağımsız olarak doğrulanabilir. Lisanslı operatör; lisans durumu üretimde burada gösterilecektir."
+    "footer": "DROPZONE — yalnızca 18 yaş ve üzeri. Kumar bağımlılık yapabilir. Sorumlu oynayın. Her kasa sonucu bağımsız olarak doğrulanabilir. Lisans durumu ve yasal belgeler gerçek ödemeler başlamadan önce yayımlanacaktır."
   },
   "dropsTicker": {
     "label": "Canlı düşenler",
@@ -51,7 +56,14 @@
         "subtitle": "Linkini paylaş ve komisyon biriktirmeye başla.",
         "cta": "Linkimi al"
       },
-      "slideLabel": "Slayt {{n}}"
+      "slideLabel": "Slayt {{n}}",
+      "carouselLabel": "Öne çıkan koleksiyon",
+      "chooseSlide": "Öne çıkan paneli seç",
+      "featured": "ÖNE ÇIKAN DROP",
+      "catalogPendingBadge": "KATALOG / ÇEVRİMDIŞI",
+      "fairness": "Doğrulanabilir olasılıklar · Sonuç sunucuda belirlenir",
+      "topDrop": "BU KASADAKİ EN NADİR ÖĞE",
+      "loadingArt": "Hizmet kullanılabilir olduğunda katalog burada görünecek."
     },
     "stats": {
       "casesOpened": "Açılan kasa",
@@ -66,9 +78,30 @@
     "sortPriceDesc": "Fiyat: yüksekten düşüğe",
     "couldNotLoadCases": "Kasalar yüklenemedi",
     "noCasesYet": "Henüz kasa yok.",
-    "casesIntro": "Koleksiyonunu oluştur, olasılıkları incele ve sıradaki drop'u kendi ritminde aç."
+    "casesIntro": "Koleksiyonunu oluştur, olasılıkları incele ve sıradaki drop'u kendi ritminde aç.",
+    "searchCases": "Kasaları ve öğeleri ara",
+    "searchPlaceholder": "Kasa veya öğe bul",
+    "noSearchResults": "“{{query}}” için sonuç bulunamadı.",
+    "itemCount": "{{count}} öğe",
+    "showMoreCases": "{{count}} kasa daha göster"
   },
   "caseDetail": {
+    "breadcrumbLabel": "Gezinti yolu",
+    "allCases": "Tüm kasalar",
+    "collectionLabel": "KOLEKSİYON",
+    "heroDescription": "Açmadan önce tüm olası eşyaları ve kesin olasılıklarını incele.",
+    "casePrice": "KASA FİYATI",
+    "itemCount": "OLASI EŞYALAR",
+    "featuredChance": "EN DEĞERLİ EŞYA ŞANSI",
+    "goToOpening": "Açılışa git",
+    "featuredItem": "ÖNE ÇIKAN EŞYA",
+    "openingStation": "Kasa açılışı",
+    "openingSequence": "AÇILIŞ ALANI",
+    "demoOnly": "SADECE DEMO",
+    "previewNotice": "Demo modu: eşya hizmeti şu anda kullanılamıyor. Gerçek açılışlar ve ücret kesintileri devre dışı.",
+    "previewHint": "Demo kataloğu: hizmet geri geldiğinde gerçek açılışlar kullanılabilir olacak.",
+    "demoResultLabel": "DEMO SONUCU",
+    "oddsDisclosure": "Olasılıklar her eşyanın yayımlanan ağırlığına göre hesaplanır.",
     "caseNotFound": "Kasa bulunamadı",
     "itemsHeading": "İçinde ne var",
     "couldNotOpenCase": "Kasa açılamadı",
@@ -368,5 +401,17 @@
     "de": "Almanca",
     "tr": "Türkçe",
     "uk": "Ukraynaca"
+  },
+  "history": {
+    "kicker": "HESAP / GEÇMİŞ",
+    "title": "Açılış geçmişi",
+    "description": "Son 50 açılışın ve her sonucu bağımsız doğrulama bağlantıları.",
+    "inventoryLink": "Envanteri görüntüle",
+    "loadError": "Geçmiş yüklenemedi.",
+    "emptyTitle": "Henüz açılış yok",
+    "emptyDescription": "Bir kasa açtığında sonuçların burada görünür.",
+    "openCases": "Kasaları görüntüle",
+    "verify": "Sonucu doğrula",
+    "recentLimit": "Son 50 açılış gösteriliyor."
   }
 }

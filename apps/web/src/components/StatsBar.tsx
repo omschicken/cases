@@ -15,7 +15,7 @@ export function StatsBar() {
       .catch(() => undefined);
   }, []);
 
-  if (Number(stats.totalOpens) === 0 && Number(stats.totalValueMinor) === 0 && stats.playerCount === 0) return null;
+  if (Number(stats.totalOpens) === 0) return null;
 
   return (
     <div className="stats-bar">

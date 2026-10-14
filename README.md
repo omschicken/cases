@@ -140,8 +140,7 @@ cd apps/api
 pnpm prisma:migrate   # applies migrations, generates the Prisma client
 
 cd ../..
-pnpm dev:api   # http://localhost:4000
-pnpm dev:web   # http://localhost:5173
+pnpm dev       # web: http://127.0.0.1:5173, API: http://127.0.0.1:4000
 ```
 
 The first user you register is a normal `USER`. To reach `/admin`, promote
@@ -164,65 +163,40 @@ pnpm --filter @cs2-cases/shared test   # provably-fair RNG unit tests
 pnpm --filter @cs2-cases/api test      # wallet ledger integration tests (needs Postgres)
 ```
 
-## Deploy: Railway (API + Postgres) + Vercel (web)
+## Deploy: Supabase (Postgres) + Vercel (web and API)
 
-The API needs a real, always-on process (Postgres connections, background
-work) so it goes on Railway; the web app is static and goes on Vercel.
-Config for both already lives in the repo (`apps/api/Dockerfile`,
-`railway.json`, `apps/web/vercel.json`) — this wasn't build-tested against
-the real services (no Docker daemon / no network egress to
-railway.app / vercel.com in the sandbox this was built in), so budget for
-one round of fixing build-log errors on the first deploy.
+The current deployment uses Supabase Postgres and one Vercel project with
+`apps/web` as its root directory. Vercel builds the React site and the Nest
+API into a single deployment; `apps/web/vercel.json` routes `/api/*` to the
+Function in `apps/web/api/router.ts`. Railway files remain in the repository
+for legacy deployments but are not part of this setup.
 
-### 1. Railway — API + Postgres
+1. Apply Prisma migrations to Supabase before using the API. The database
+   connection for migrations must be valid and have the required privileges.
+   The catalog seed is a separate, guarded GitHub Actions workflow named
+   **Seed production case catalog**. It uses the repository secret
+   `SUPABASE_DATABASE_URL` and requires `SEED_CATALOG` on the repository's
+   default branch. Do not run it for routine frontend changes.
+2. In Vercel project `cases-x18t` → **Settings → Environment Variables**, set
+   `DATABASE_URL` to a valid **complete** Supabase connection URI for the API,
+   and `DIRECT_URL` to a valid connection URI for Prisma migrations. Store
+   both as Secret values. The working GitHub Actions URI can be used for
+   `DATABASE_URL`; a database password alone is not a connection URI. Keep
+   `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` as separate Secret values.
+3. Set `WEB_ORIGIN` to the site's HTTPS origin and `API_PUBLIC_URL` to its
+   HTTPS `/api` base. Set `VITE_API_BASE_URL=/api` for the browser build.
+   The mock payment and KYC providers remain mock until real integrations
+   have been implemented and reviewed.
+4. After all environment values are correct, make one production deployment.
+   Environment changes are picked up by a **new** deployment; they do not
+   repair an already running deployment. Check `/api/health` and `/api/cases`:
+   the health route intentionally does not connect to Postgres, so its 200
+   response alone does not confirm the catalog works.
 
-1. [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo** → pick this repo.
-2. **New** → **Database** → **Add PostgreSQL** in the same project. Railway
-   exposes it to other services in the project as `DATABASE_URL` — reference
-   it as `${{Postgres.DATABASE_URL}}` rather than copy-pasting the value.
-3. On the API service (the one built from this repo), Railway should
-   auto-detect `railway.json` at the repo root and build
-   `apps/api/Dockerfile`. If it instead tries Nixpacks, open the service's
-   **Settings → Build** and set Builder = Dockerfile, Dockerfile path =
-   `apps/api/Dockerfile`.
-4. Set these variables on the API service (**Settings → Variables**):
-   - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`
-   - `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` — long random strings (e.g. `openssl rand -hex 32`)
-   - `JWT_ACCESS_TTL=15m`, `JWT_REFRESH_TTL=7d`
-   - `WEB_ORIGIN` = your Vercel URL once you have it (step 2 below) — this is what CORS checks against
-   - `PORT=4000` (Railway also sets its own `PORT`; the app reads `PORT` from env either way — see `main.ts`)
-   - `PAYMENTS_CARD_PROVIDER=mock`, `PAYMENTS_CRYPTO_PROVIDER=mock`, `PAYMENTS_STEAM_PROVIDER=mock`, `KYC_PROVIDER=mock` (until real providers are wired — see the pluggable-providers section above)
-5. Deploy. On first boot the container runs `prisma migrate deploy` before
-   starting the server (see the `Dockerfile` `CMD`), so the schema gets
-   applied automatically — watch the deploy logs for that step.
-6. Railway gives the service a public URL under **Settings → Networking →
-   Generate Domain** (or attach a custom domain there). That URL is the
-   backend's public base — it's what `VITE_API_URL` points at.
-
-### 2. Vercel — web app
-
-1. [vercel.com](https://vercel.com) → **Add New → Project** → import this repo.
-2. **Root Directory**: `apps/web` (Vercel's monorepo setting — set this
-   before the first deploy; it changes where `vercel.json`'s
-   `outputDirectory` is resolved from).
-3. Framework preset: Vite (should auto-detect). Build/Output are already
-   pinned by `apps/web/vercel.json`, so you shouldn't need to touch them.
-4. Environment variable: `VITE_API_URL` = the Railway API URL from step 6
-   above (e.g. `https://your-api.up.railway.app`), no trailing slash.
-5. Deploy. Vercel gives you a `*.vercel.app` URL (or attach a custom domain
-   under **Settings → Domains**).
-
-### 3. Close the loop
-
-Go back to Railway and set `WEB_ORIGIN` on the API service to the Vercel
-URL from step 2.5 (custom domain if you attached one), then redeploy the
-API so the new CORS origin takes effect. Without this, the browser will
-block every request from the deployed frontend with a CORS error.
-
-At that point: register a user on the Vercel URL, promote them to `ADMIN`
-via the Railway Postgres console (same SQL as in Local development above,
-but run it against the Railway database — **Postgres service → Data** tab
-has a query console), create a case, and open it.
+On 12 October 2026, the guarded seed workflow succeeded, but the current
+Vercel deployment's `/api/cases` returned an error. Vercel runtime logs showed
+Prisma `P1000` for the Supabase pooler: the Vercel `DATABASE_URL` credentials
+need to be synchronized with the working database URI before the next deploy.
 
 ## What's still missing before production
 
@@ -242,13 +216,13 @@ has a query console), create a case, and open it.
 
 ## Валюта production
 
-Платформа использует рубли как расчётную валюту. Для синхронизации внешних цен API поддерживает переменную Railway:
+Платформа использует рубли как расчётную валюту. Для синхронизации внешних цен API поддерживает переменную окружения `USD_TO_RUB_RATE` в текущем Vercel-проекте:
 
-- `USD_TO_RUB_RATE` — курс конвертации USD в RUB для обновления цен предметов;
+- значение задаёт курс конвертации USD в RUB для обновления цен предметов;
 - если переменная не задана, используется резервное значение `95` только для тестовой среды;
 - перед запуском реальных платежей значение должно быть задано явно и подтверждено оператором.
 
-При старте API контейнер выполняет `prisma migrate deploy`, затем seed. Миграция `20261010120000_normalize_platform_currency` переводит legacy USD-значения базы в RUB.
+В старом Railway-контейнере миграции и seed выполнялись при старте. В текущем Vercel-развёртывании миграции и защищённый production seed запускаются отдельно. Миграция `20261010120000_normalize_platform_currency` переводит legacy USD-значения базы в RUB.
 
 
 ## Релизы и лимиты Vercel

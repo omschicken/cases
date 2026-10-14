@@ -13,6 +13,7 @@ import { ReferralModule } from "./referral/referral.module";
 import { AdminModule } from "./admin/admin.module";
 import { PricesModule } from "./prices/prices.module";
 import { HealthController } from "./health/health.controller";
+import { GamesModule } from "./games/games.module";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { HealthController } from "./health/health.controller";
     ReferralModule,
     AdminModule,
     PricesModule,
+    GamesModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

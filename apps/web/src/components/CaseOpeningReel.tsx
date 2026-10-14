@@ -3,10 +3,6 @@ import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CaseItem } from "../lib/types";
 import { isChaseRarity, rarityColor } from "../lib/rarity";
 
-const ITEM_WIDTH = 148;
-const GAP = 12;
-const ITEM_STEP = ITEM_WIDTH + GAP;
-
 // Two spin configs: the full theatrical reel for a first-time/occasional
 // open, and a short one for grinders who just want the result. Distance
 // scales down with duration so "quick" still reads as a scroll, not a jump-cut.
@@ -42,6 +38,9 @@ interface CaseOpeningReelProps {
  */
 export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = false }: CaseOpeningReelProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const targetRef = useRef<HTMLDivElement>(null);
+  const finishedRef = useRef(false);
+  const onFinishedRef = useRef(onFinished);
   const [transform, setTransform] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const [landed, setLanded] = useState(false);
@@ -60,7 +59,17 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = fa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  onFinishedRef.current = onFinished;
+
+  function finish() {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    setLanded(true);
+    onFinishedRef.current();
+  }
+
   useLayoutEffect(() => {
+    finishedRef.current = false;
     setTransform(0);
     setLanded(false);
     // Measuring clientWidth is deferred to the first animation frame rather
@@ -69,23 +78,35 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = fa
     // client-side route change, and a stale/zero width would fling the
     // track to a huge, blank offset instead of landing on the target item.
     let raf2 = 0;
+    let finishTimer = 0;
     const raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => {
-        const viewportWidth = viewportRef.current?.clientWidth || 600;
-        const jitter = (Math.random() - 0.5) * ITEM_WIDTH * 0.5;
-        const targetCenter = TARGET_INDEX * ITEM_STEP + ITEM_WIDTH / 2 + jitter;
+        const viewportWidth = viewportRef.current?.clientWidth ?? 0;
+        const target = targetRef.current;
+        if (!viewportWidth || !target) return;
+        const targetCenter = target.offsetLeft + target.offsetWidth / 2;
         const offset = targetCenter - viewportWidth / 2;
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        setSpinning(true);
         setTransform(-offset);
+        if (reducedMotion) {
+          setSpinning(false);
+          requestAnimationFrame(finish);
+          return;
+        }
+        setSpinning(true);
+        // Background tabs and interrupted compositing can swallow
+        // transitionend. The idempotent fallback keeps the UI unlocked.
+        finishTimer = window.setTimeout(finish, SPIN_DURATION_MS + 250);
       });
     });
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
+      window.clearTimeout(finishTimer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [quick]);
+  }, []);
 
   const chase = isChaseRarity(winningItem.rarity);
 
@@ -101,16 +122,14 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = fa
               : "none",
           }}
           onTransitionEnd={(e) => {
-            if (e.propertyName === "transform") {
-              setLanded(true);
-              onFinished();
-            }
+            if (e.propertyName === "transform" && e.target === e.currentTarget) finish();
           }}
         >
           {reel.map((item, i) => (
             <div
               className={`reel-item ${landed && i === TARGET_INDEX ? "reel-item-landed" : ""} ${landed && chase && i === TARGET_INDEX ? "reel-item-chase-landed" : ""}`}
               key={i}
+              ref={i === TARGET_INDEX ? targetRef : undefined}
               style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}
             >
               <img src={item.imageUrl} alt={item.name} />

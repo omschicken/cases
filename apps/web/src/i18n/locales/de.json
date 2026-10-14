@@ -1,6 +1,10 @@
 {
   "common": {
     "loading": "Lädt…",
+    "retry": "Erneut versuchen",
+    "pageNotFound": "Seite nicht gefunden",
+    "pageNotFoundHint": "Diese Adresse gibt es nicht oder sie wurde verschoben.",
+    "backToCatalog": "Zum Katalog",
     "save": "Speichern",
     "cancel": "Abbrechen",
     "yes": "Ja",
@@ -17,7 +21,8 @@
       "upgrade": "Upgrade",
       "cards": "Karten",
       "inventory": "Inventar",
-      "admin": "Admin"
+      "admin": "Admin",
+      "history": "Verlauf"
     },
     "pagesBar": {
       "referral": "Empfehlungen",
@@ -25,7 +30,7 @@
       "bonuses": "Boni",
       "faq": "FAQ"
     },
-    "footer": "GunDone.case — nur für Personen ab 18 Jahren. Glücksspiel kann süchtig machen, spiele verantwortungsbewusst. Provably-fair RNG: Jedes Case-Ergebnis kann unabhängig überprüft werden. Lizenzierter Betreiber; der Lizenzstatus wird hier im Produktivbetrieb angezeigt."
+    "footer": "DROPZONE — nur für Personen ab 18 Jahren. Glücksspiel kann süchtig machen. Spiele verantwortungsbewusst. Jedes Case-Ergebnis kann unabhängig überprüft werden. Lizenzstatus und rechtliche Dokumente werden vor dem Start echter Zahlungen veröffentlicht."
   },
   "dropsTicker": {
     "label": "Live-Drops",
@@ -51,7 +56,14 @@
         "subtitle": "Teile deinen Link und sammle Provision.",
         "cta": "Mein Link"
       },
-      "slideLabel": "Folie {{n}}"
+      "slideLabel": "Folie {{n}}",
+      "carouselLabel": "Ausgewählte Sammlung",
+      "chooseSlide": "Werbefeld auswählen",
+      "featured": "AUSGEWÄHLTER DROP",
+      "catalogPendingBadge": "KATALOG / OFFLINE",
+      "fairness": "Prüfbare Chancen · Ergebnis auf dem Server",
+      "topDrop": "SELTENSTER GEGENSTAND IM CASE",
+      "loadingArt": "Der Katalog wird angezeigt, sobald der Dienst erreichbar ist."
     },
     "stats": {
       "casesOpened": "Geöffnete Cases",
@@ -66,9 +78,30 @@
     "sortPriceDesc": "Preis: absteigend",
     "couldNotLoadCases": "Cases konnten nicht geladen werden",
     "noCasesYet": "Noch keine Cases verfügbar.",
-    "casesIntro": "Stelle deine Sammlung zusammen, prüfe die Chancen und öffne den nächsten Drop in deinem Tempo."
+    "casesIntro": "Stelle deine Sammlung zusammen, prüfe die Chancen und öffne den nächsten Drop in deinem Tempo.",
+    "searchCases": "Fälle und Gegenstände suchen",
+    "searchPlaceholder": "Fall oder Gegenstand finden",
+    "noSearchResults": "Keine Treffer für „{{query}}“.",
+    "itemCount": "{{count}} Gegenstände",
+    "showMoreCases": "Weitere {{count}} Fälle anzeigen"
   },
   "caseDetail": {
+    "breadcrumbLabel": "Navigationspfad",
+    "allCases": "Alle Cases",
+    "collectionLabel": "KOLLEKTION",
+    "heroDescription": "Entdecke alle möglichen Items und ihre genauen Chancen vor dem Öffnen.",
+    "casePrice": "CASE-PREIS",
+    "itemCount": "MÖGLICHE ITEMS",
+    "featuredChance": "CHANCE AUF TOP-ITEM",
+    "goToOpening": "Zum Öffnen",
+    "featuredItem": "TOP-ITEM",
+    "openingStation": "Case öffnen",
+    "openingSequence": "ÖFFNUNGSSTATION",
+    "demoOnly": "NUR DEMO",
+    "previewNotice": "Demo-Modus: Der Item-Dienst ist derzeit nicht verfügbar. Echte Öffnungen und Abbuchungen sind deaktiviert.",
+    "previewHint": "Demo-Katalog: Echte Öffnungen sind nach Wiederherstellung des Dienstes verfügbar.",
+    "demoResultLabel": "DEMO-ERGEBNIS",
+    "oddsDisclosure": "Die Chancen werden aus dem veröffentlichten Gewicht jedes Items berechnet.",
     "caseNotFound": "Case nicht gefunden",
     "itemsHeading": "Inhalt der Case",
     "couldNotOpenCase": "Case konnte nicht geöffnet werden",
@@ -368,5 +401,17 @@
     "de": "Deutsch",
     "tr": "Türkisch",
     "uk": "Ukrainisch"
+  },
+  "history": {
+    "kicker": "KONTO / VERLAUF",
+    "title": "Öffnungsverlauf",
+    "description": "Deine letzten 50 Öffnungen und Links zur unabhängigen Ergebnisprüfung.",
+    "inventoryLink": "Zum Inventar",
+    "loadError": "Der Verlauf konnte nicht geladen werden.",
+    "emptyTitle": "Noch keine Öffnungen",
+    "emptyDescription": "Öffne einen Case, damit deine Ergebnisse hier erscheinen.",
+    "openCases": "Cases ansehen",
+    "verify": "Ergebnis prüfen",
+    "recentLimit": "Es werden die letzten 50 Öffnungen angezeigt."
   }
 }

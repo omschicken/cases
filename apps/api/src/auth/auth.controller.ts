@@ -61,7 +61,7 @@ export class AuthController {
     const tokens = await this.authService.loginWithSteamId(steamId);
     if (tokens) {
       return res.redirect(
-        `${webOrigin}/auth/steam/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
+        `${webOrigin}/auth/steam/callback#accessToken=${encodeURIComponent(tokens.accessToken)}&refreshToken=${encodeURIComponent(tokens.refreshToken)}`,
       );
     }
 
@@ -70,7 +70,7 @@ export class AuthController {
     // before an account (and wallet) gets created.
     const profile = await this.steamOpenId.fetchProfile(steamId);
     const pendingToken = await this.authService.issueSteamSignupToken(steamId, profile);
-    return res.redirect(`${webOrigin}/auth/steam/complete?token=${encodeURIComponent(pendingToken)}`);
+    return res.redirect(`${webOrigin}/auth/steam/complete#token=${encodeURIComponent(pendingToken)}`);
   }
 
   @Throttle({ default: { limit: 10, ttl: 60_000 } })
