@@ -329,7 +329,7 @@ button:disabled {
   height: 1.875rem;
   margin-right: 0.45rem;
   flex-shrink: 0;
-  filter: drop-shadow(0 0 8px rgba(255, 122, 26, 0.45));
+  filter: drop-shadow(0 0 8px rgba(124, 92, 255, 0.55));
 }
 
 .brand-word {
@@ -372,7 +372,7 @@ button:disabled {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  background: linear-gradient(120deg, var(--accent-soft), rgba(255, 122, 26, 0.04));
+  background: linear-gradient(120deg, var(--accent-soft), rgba(124, 92, 255, 0.04));
   border: 1px solid var(--accent);
   clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
   padding: 0.3rem 0.9rem;
@@ -518,7 +518,7 @@ button:disabled {
   padding: 1.75rem 2.25rem 2.1rem;
   overflow: hidden;
   border: 1px solid var(--border);
-  background: linear-gradient(120deg, #1a1006 0%, var(--panel) 45%, #071a26 130%);
+  background: linear-gradient(120deg, #100d1a 0%, var(--panel) 45%, #071420 130%);
   min-height: 172px;
   display: flex;
   align-items: flex-end;
@@ -595,8 +595,8 @@ button:disabled {
 
 .hero-cta-button {
   display: inline-block;
-  background: linear-gradient(120deg, var(--accent), #ffb057);
-  color: #200e00;
+  background: linear-gradient(120deg, var(--accent), #b39dff);
+  color: #fff;
   font-weight: 700;
   padding: 0.65rem 1.6rem;
   clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
@@ -928,8 +928,8 @@ button:disabled {
 
 .open-button {
   margin-top: 1.5rem;
-  background: linear-gradient(120deg, var(--accent), #ffb057);
-  color: #200e00;
+  background: linear-gradient(120deg, var(--accent), #b39dff);
+  color: #fff;
   font-size: 1.05rem;
   padding: 0.9rem 2.4rem;
   clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
@@ -937,7 +937,7 @@ button:disabled {
 }
 
 .open-button:hover:not(:disabled) {
-  background: linear-gradient(120deg, #ffb057, var(--accent));
+  background: linear-gradient(120deg, #b39dff, var(--accent));
   box-shadow: 0 0 26px -6px var(--accent);
 }
 
@@ -2400,7 +2400,7 @@ body::before { opacity: 0.025; }
 .hero-artwork { position: relative; display: grid; place-items: center; min-height: 12rem; overflow: hidden; }
 .hero-orbit { position: absolute; left: 50%; top: 50%; border: 1px solid rgba(117,214,255,.14); border-radius: 50%; transform: translate(-50%,-50%); }
 .hero-orbit-outer { width: min(22rem, 88%); aspect-ratio: 1; }
-.hero-orbit-inner { width: min(15rem, 62%); aspect-ratio: 1; border-style: dashed; border-color: rgba(255,113,71,.25); }
+.hero-orbit-inner { width: min(15rem, 62%); aspect-ratio: 1; border-style: dashed; border-color: rgba(124,92,255,.25); }
 .hero-case-art { position: absolute; z-index: 1; left: 4%; bottom: 3%; width: 34%; height: 43%; object-fit: contain; filter: drop-shadow(0 15px 20px rgba(0,0,0,.45)); }
 .hero-item-art { position: relative; z-index: 2; width: min(65%, 18rem); height: min(100%, 15rem); object-fit: contain; filter: drop-shadow(0 22px 28px rgba(0,0,0,.5)) drop-shadow(0 0 17px rgba(117,214,255,.17)); animation: hero-item-float 5s ease-in-out infinite; }
 .hero-art-coordinate { position: absolute; top: 14%; right: 4%; color: rgba(166,230,255,.48); font-family: var(--font-display); font-size: .7rem; font-weight: 700; letter-spacing: .24em; writing-mode: vertical-rl; }
