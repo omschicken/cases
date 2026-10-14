@@ -36,6 +36,7 @@ export interface CaseDto {
   currency: string;
   imageUrl: string;
   isActive: boolean;
+  itemCount?: number; // Full exterior count; list responses contain representative items.
   items: CaseItem[];
 }
 

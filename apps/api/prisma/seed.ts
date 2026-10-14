@@ -1,5 +1,6 @@
 import { PrismaClient, ItemRarity } from "@prisma/client";
 import cases from "./cs2-items.json";
+import { fetchMarketListings, pricedVariants } from "../src/prices/market-catalog";
 
 const prisma = new PrismaClient();
 
@@ -45,58 +46,52 @@ interface CaseSeed {
   items: ItemSeed[];
 }
 
-const CASES = cases as CaseSeed[];
+const BASE_CASES = cases as CaseSeed[];
 
-/**
- * Removes cases that are no longer in cs2-items.json (e.g. the old 5
- * hand-picked demo cases, now superseded by the full real case catalog) —
- * but only when every one of their items is free of real inventory/open
- * history, same safety rule as the per-case item replacement below.
- */
-async function pruneRetiredCases() {
-  const keepSlugs = new Set(CASES.map((c) => c.slug));
-  const existingCases = await prisma.case.findMany({ include: { items: true } });
-
-  for (const existing of existingCases) {
-    if (keepSlugs.has(existing.slug)) continue;
-
-    const untouched = await prisma.caseItem.count({
-      where: { caseId: existing.id, inventoryItems: { none: {} }, openEvents: { none: {} } },
-    });
-    if (untouched !== existing.items.length) {
-      console.log(`keep retired case (has real history): ${existing.slug}`);
-      continue;
-    }
-
-    await prisma.caseItem.deleteMany({ where: { caseId: existing.id } });
-    await prisma.case.delete({ where: { id: existing.id } });
-    console.log(`removed retired case: ${existing.slug}`);
-  }
+function expandPricedCases(prices: ReadonlyMap<string, number>): CaseSeed[] {
+  const missing = new Set<string>();
+  const expanded = BASE_CASES.map((c) => ({
+    ...c,
+    items: c.items.flatMap((item) => {
+      const variants = pricedVariants(item, prices);
+      if (variants.length === 0) {
+        missing.add(item.name);
+        return [];
+      }
+      return variants;
+    }),
+  }));
+  // A partial market response must never silently remove drops from a case.
+  if (missing.size) throw new Error(`No live RUB listing for ${missing.size} skins: ${[...missing].slice(0, 10).join(", ")}`);
+  return expanded;
 }
 
 async function main() {
-  await pruneRetiredCases();
-
+  // Read and validate the whole market snapshot before the first database write.
+  const marketPrices = await fetchMarketListings("RUB");
+  const CASES = expandPricedCases(marketPrices);
+  console.log(`market catalog: ${CASES.length} cases, ${CASES.reduce((count, c) => count + c.items.length, 0)} priced exterior variants`);
+  if (process.env.CATALOG_DRY_RUN === "1") return;
   for (const c of CASES) {
-    const existing = await prisma.case.findUnique({ where: { slug: c.slug }, include: { items: true } });
+    const created = await prisma.$transaction(async (tx) => {
+      const existing = await tx.case.findUnique({ where: { slug: c.slug }, include: { items: true } });
+      if (existing) {
+        const oldPool = new Map(existing.items.map((item) => [item.name, item.weight]));
+        const samePool = existing.items.length === c.items.length && c.items.every((item) =>
+          Math.abs((oldPool.get(item.name) ?? -1) - item.weight) < 0.000001,
+        );
+        if (samePool) return false;
 
-    if (existing) {
-      // Only replace items that have never actually dropped for a real
-      // player — anything with inventory/open-event history stays put so
-      // we never orphan a real result.
-      const untouched = await prisma.caseItem.findMany({
-        where: { caseId: existing.id, inventoryItems: { none: {} }, openEvents: { none: {} } },
-        select: { id: true },
-      });
-      if (untouched.length !== existing.items.length) {
-        console.log(`skip items (has real history): ${c.slug}`);
-        continue;
+        // Preserve the complete old pool for historical provably-fair checks.
+        await tx.case.update({
+          where: { id: existing.id },
+          data: { slug: `${c.slug}--archived-${existing.id}`, isActive: false },
+        });
       }
 
-      await prisma.caseItem.deleteMany({ where: { id: { in: untouched.map((i) => i.id) } } });
-      await prisma.case.update({
-        where: { id: existing.id },
+      await tx.case.create({
         data: {
+          slug: c.slug,
           name: c.name,
           priceMinor: c.priceMinor,
           currency: c.currency ?? "RUB",
@@ -114,31 +109,9 @@ async function main() {
           },
         },
       });
-      console.log(`updated: ${c.slug} (${c.items.length} real items)`);
-      continue;
-    }
-
-    await prisma.case.create({
-      data: {
-        slug: c.slug,
-        name: c.name,
-        priceMinor: c.priceMinor,
-        currency: c.currency ?? "RUB",
-        displayOrder: c.displayOrder ?? 100,
-        imageUrl: c.caseImageUrl ?? caseImage(RARITY_COLOR[c.items[c.items.length - 1].rarity], c.name),
-        items: {
-          create: c.items.map((item) => ({
-            name: item.name,
-            rarity: item.rarity,
-            weight: item.weight,
-            valueMinor: item.valueMinor,
-            currency: item.currency ?? c.currency ?? "RUB",
-            imageUrl: item.imageUrl,
-          })),
-        },
-      },
-    });
-    console.log(`created: ${c.slug} (${c.items.length} real items)`);
+      return true;
+    }, { timeout: 60_000 });
+    console.log(created ? `created: ${c.slug} (${c.items.length} market-priced variants)` : `already current: ${c.slug}`);
   }
 }
 

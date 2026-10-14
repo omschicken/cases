@@ -184,7 +184,7 @@ export function CaseListPage() {
             >
               <div className="case-card-topline">
                 <span>DROP / {String(i + 1).padStart(2, "0")}</span>
-                <span>{t("home.itemCount", { count: c.items.length })}</span>
+                <span>{t("home.itemCount", { count: c.itemCount ?? c.items.length })}</span>
               </div>
               <div className="case-card-art-frame">
                 <CaseChest caseName={c.name} caseSlug={c.slug} itemImageUrl={highlight?.imageUrl} />
