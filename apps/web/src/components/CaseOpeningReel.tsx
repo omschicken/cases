@@ -3,15 +3,9 @@ import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CaseItem } from "../lib/types";
 import { isChaseRarity, rarityColor } from "../lib/rarity";
 
-// Two spin configs: the full theatrical reel for a first-time/occasional
-// open, and a short one for grinders who just want the result. Distance
-// scales down with duration so "quick" still reads as a scroll, not a jump-cut.
-const FULL_SPIN = { length: 50, targetIndex: 44, durationMs: 6000 };
-const QUICK_SPIN = { length: 14, targetIndex: 10, durationMs: 1100 };
+const FULL_SPIN  = { length: 56, targetIndex: 48, durationMs: 6500 };
+const QUICK_SPIN = { length: 18, targetIndex: 14, durationMs: 1200 };
 
-/** Visual-only filler for the spinning reel — the real result already came
- * from the server before this component mounts. Sampling by the same
- * weights as the actual odds just makes the blur feel authentic. */
 function weightedSample(items: CaseItem[]): CaseItem {
   const total = items.reduce((sum, i) => sum + i.weight, 0);
   let roll = Math.random() * total;
@@ -26,36 +20,30 @@ interface CaseOpeningReelProps {
   poolItems: CaseItem[];
   winningItem: CaseItem;
   onFinished: () => void;
-  /** Short, low-ceremony spin for repeat openers — skips most of the reel. */
   quick?: boolean;
 }
 
-/**
- * Renders once per case-open (parent remounts it via a changing `key`).
- * The winning item is already fixed server-side — this just builds a
- * plausible-looking filler strip around it and animates the strip so the
- * indicator lands on that item.
- */
-export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = false }: CaseOpeningReelProps) {
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const targetRef = useRef<HTMLDivElement>(null);
-  const finishedRef = useRef(false);
+export function CaseOpeningReel({
+  poolItems, winningItem, onFinished, quick = false,
+}: CaseOpeningReelProps) {
+  const viewportRef  = useRef<HTMLDivElement>(null);
+  const targetRef    = useRef<HTMLDivElement>(null);
+  const finishedRef  = useRef(false);
   const onFinishedRef = useRef(onFinished);
-  const [transform, setTransform] = useState(0);
-  const [spinning, setSpinning] = useState(false);
-  const [landed, setLanded] = useState(false);
+  const [transform, setTransform]     = useState(0);
+  const [spinning,  setSpinning]      = useState(false);
+  const [landed,    setLanded]        = useState(false);
+  // brief "about to land" state for pre-land glow
+  const [nearEnd,   setNearEnd]       = useState(false);
 
-  const { length: REEL_LENGTH, targetIndex: TARGET_INDEX, durationMs: SPIN_DURATION_MS } = quick
-    ? QUICK_SPIN
-    : FULL_SPIN;
+  const { length: REEL_LENGTH, targetIndex: TARGET_INDEX, durationMs: SPIN_DURATION_MS } =
+    quick ? QUICK_SPIN : FULL_SPIN;
 
   const reel = useMemo(() => {
     const items: CaseItem[] = [];
-    for (let i = 0; i < REEL_LENGTH; i++) {
+    for (let i = 0; i < REEL_LENGTH; i++)
       items.push(i === TARGET_INDEX ? winningItem : weightedSample(poolItems));
-    }
     return items;
-    // Built once for this mount — a fresh spin gets a fresh component via `key`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -72,37 +60,31 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = fa
     finishedRef.current = false;
     setTransform(0);
     setLanded(false);
-    // Measuring clientWidth is deferred to the first animation frame rather
-    // than read synchronously here — on some mobile browsers the viewport's
-    // layout isn't reliably settled yet at this exact point right after a
-    // client-side route change, and a stale/zero width would fling the
-    // track to a huge, blank offset instead of landing on the target item.
-    let raf2 = 0;
-    let finishTimer = 0;
+    setNearEnd(false);
+
+    let raf2 = 0, nearEndTimer = 0, finishTimer = 0;
     const raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => {
         const viewportWidth = viewportRef.current?.clientWidth ?? 0;
-        const target = targetRef.current;
+        const target        = targetRef.current;
         if (!viewportWidth || !target) return;
-        const targetCenter = target.offsetLeft + target.offsetWidth / 2;
-        const offset = targetCenter - viewportWidth / 2;
+
+        const offset = target.offsetLeft + target.offsetWidth / 2 - viewportWidth / 2;
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
         setTransform(-offset);
-        if (reducedMotion) {
-          setSpinning(false);
-          requestAnimationFrame(finish);
-          return;
-        }
+        if (reducedMotion) { setSpinning(false); requestAnimationFrame(finish); return; }
+
         setSpinning(true);
-        // Background tabs and interrupted compositing can swallow
-        // transitionend. The idempotent fallback keeps the UI unlocked.
-        finishTimer = window.setTimeout(finish, SPIN_DURATION_MS + 250);
+        // Trigger pre-land glow ~600 ms before the end
+        nearEndTimer  = window.setTimeout(() => setNearEnd(true),  SPIN_DURATION_MS - 600);
+        finishTimer   = window.setTimeout(finish, SPIN_DURATION_MS + 260);
       });
     });
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
+      window.clearTimeout(nearEndTimer);
       window.clearTimeout(finishTimer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -111,14 +93,29 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = fa
   const chase = isChaseRarity(winningItem.rarity);
 
   return (
-    <div className={`case-reel-wrap ${spinning ? "case-reel-spinning" : ""} ${landed ? "case-reel-landed" : ""}`} aria-label={landed ? "Результат открытия" : "Открытие кейса"}>
+    <div
+      className={[
+        "case-reel-wrap",
+        spinning  ? "case-reel-spinning"  : "",
+        landed    ? "case-reel-landed"    : "",
+        nearEnd   ? "case-reel-near-end"  : "",
+        chase     ? "case-reel-chase"     : "",
+      ].join(" ")}
+      style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties}
+      aria-label={landed ? "Результат открытия" : "Открытие кейса"}
+    >
+      {/* Pre-reveal screen pulse layer */}
+      {nearEnd && !landed && (
+        <div className="reel-pre-flash" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
+      )}
+
       <div className="case-reel-viewport" ref={viewportRef}>
         <div
           className="case-reel-track"
           style={{
             transform: `translateX(${transform}px)`,
             transition: spinning
-              ? `transform ${SPIN_DURATION_MS}ms cubic-bezier(0.1, 0, 0.15, 1)`
+              ? `transform ${SPIN_DURATION_MS}ms cubic-bezier(0.05, 0, 0.12, 1)`
               : "none",
           }}
           onTransitionEnd={(e) => {
@@ -127,27 +124,57 @@ export function CaseOpeningReel({ poolItems, winningItem, onFinished, quick = fa
         >
           {reel.map((item, i) => (
             <div
-              className={`reel-item ${landed && i === TARGET_INDEX ? "reel-item-landed" : ""} ${landed && chase && i === TARGET_INDEX ? "reel-item-chase-landed" : ""}`}
+              className={[
+                "reel-item",
+                landed && i === TARGET_INDEX             ? "reel-item-landed"       : "",
+                landed && chase && i === TARGET_INDEX   ? "reel-item-chase-landed"  : "",
+              ].join(" ")}
               key={i}
               ref={i === TARGET_INDEX ? targetRef : undefined}
               style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}
             >
-              <img src={item.imageUrl} alt={item.name} />
-              <span className="reel-item-name">{item.name}</span>
+              <div className="reel-item-inner">
+                <img src={item.imageUrl} alt={item.name} />
+                <span className="reel-item-name">{item.name}</span>
+              </div>
             </div>
           ))}
         </div>
-        <div className="case-reel-indicator" aria-hidden="true" />
-        {/* Reserved for the top rarity tiers only — a burst on every open
-            would dull it, so this only fires for Classified and above.
-            Echoes CS2's own crate-unlock beat: a screen flash plus a ray burst. */}
-        {landed && chase && (
-          <>
-            <div className="reel-flash" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
-            <div className="reel-burst" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
-          </>
-        )}
+
+        {/* Center indicator */}
+        <div className="case-reel-indicator" aria-hidden="true">
+          <span className="reel-indicator-line" />
+          <span className="reel-indicator-top"  />
+          <span className="reel-indicator-bot"  />
+          {landed && <span className="reel-indicator-pulse" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />}
+        </div>
+
+        {/* Edge fades */}
+        <div className="reel-fade-left"  aria-hidden="true" />
+        <div className="reel-fade-right" aria-hidden="true" />
       </div>
+
+      {/* Post-land effects */}
+      {landed && chase && (
+        <>
+          <div className="reel-flash" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
+          <div className="reel-burst" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
+          <div className="reel-particles" aria-hidden="true">
+            {Array.from({ length: 20 }, (_, i) => (
+              <span
+                key={i}
+                className="reel-particle"
+                style={{
+                  "--p-i":     i,
+                  "--p-angle": `${(i / 20) * 360}deg`,
+                  "--p-dist":  `${60 + Math.random() * 80}px`,
+                  "--rarity-color": rarityColor(winningItem.rarity),
+                } as CSSProperties}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
