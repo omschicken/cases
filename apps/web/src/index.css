@@ -15227,6 +15227,22 @@ button:not([disabled]):not(.menu-toggle):not(.account-menu-trigger):active,
   height: 160px !important;
   overflow: hidden !important;
   position: relative !important;
+  /* The track is position:absolute, so it contributes nothing to its
+     parent's intrinsic width. Inside a flex/grid ancestor the viewport then
+     shrink-to-fits to ~2px and the reel vanishes entirely, so the width has
+     to be stated explicitly rather than inferred from content. */
+  width: 100% !important;
+  display: block !important;
+}
+
+/* The opening station is a column flex container with align-items:center, so
+   its children shrink-to-fit on the cross axis — which is why
+   .case-opening-heading already states width:100%. Since the track inside is
+   position:absolute, the wrap has no in-flow content to measure and collapsed
+   to 4px, taking the reel with it. */
+.case-reel-wrap {
+  width: 100% !important;
+  align-self: stretch !important;
 }
 
 .case-reel-track {
