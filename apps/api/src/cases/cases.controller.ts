@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Res, Sse, UseGuards } from "@nestjs/common";
 import type { Response } from "express";
 import { map } from "rxjs/operators";
+import { Throttle } from "@nestjs/throttler";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import type { AuthenticatedUser } from "../auth/jwt.strategy";
@@ -61,6 +62,7 @@ export class CasesController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @Post("open")
   open(@CurrentUser() user: AuthenticatedUser, @Body() dto: OpenCaseDto) {
     return this.casesService.openCase(user.id, dto.caseId, dto.clientSeed);
