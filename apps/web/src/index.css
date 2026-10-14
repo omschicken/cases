@@ -3497,3 +3497,445 @@ body::before { opacity: 0.025; }
 .onboarding-actions { display: flex; gap: .75rem; flex-wrap: wrap; justify-content: center; width: 100%; }
 .onboarding-actions .game-run { flex: 1; min-width: 9rem; }
 .onboarding-counter { font: 700 .68rem var(--font-display); letter-spacing: .1em; color: var(--text-muted); }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   VISUAL REFINEMENT PASS — gold / navy palette, premium feel
+   Overrides all residual green / orange tones from earlier theme passes.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Background & body ─────────────────────────────────────────────── */
+body::before { opacity: 0.018; }
+
+/* ── Top nav — pure dark glass ──────────────────────────────────────── */
+.top-nav {
+  background: rgba(7, 9, 13, .96);
+  border-bottom-color: rgba(245, 200, 66, .09);
+  box-shadow: 0 1px 0 rgba(245, 200, 66, .06), 0 8px 32px rgba(0,0,0,.22);
+}
+
+/* ── Pages bar ─────────────────────────────────────────────────────── */
+.pages-bar {
+  background: rgba(10, 12, 17, .97);
+  border-bottom: 1px solid rgba(255,255,255,.055);
+  box-shadow: none;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────  */
+.sidebar {
+  background: linear-gradient(180deg, var(--bg) 0%, rgba(10,12,18,1) 100%);
+  border-right-color: rgba(255,255,255,.055);
+}
+
+/* ── Hero banner — cinematic gold atmosphere, no green/orange ────────  */
+.hero-banner {
+  min-height: 26rem;
+  background:
+    radial-gradient(ellipse 36rem 24rem at 84% 50%, rgba(245,200,66,.13), transparent 66%),
+    radial-gradient(ellipse 20rem 14rem at 12% 80%, rgba(168,197,255,.06), transparent 60%),
+    linear-gradient(118deg, #0D1117 0%, #0A0D14 52%, #0F1118 100%);
+  border-color: rgba(245,200,66,.14);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 28px 72px rgba(0,0,0,.32);
+}
+.hero-banner::after { color: rgba(245,200,66,.028); }
+
+.hero-grid-mark {
+  opacity: .07;
+  background-image:
+    linear-gradient(rgba(245,200,66,.25) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,200,66,.25) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.hero-crosshair { color: var(--accent); opacity: .07; }
+
+/* ── Hero CTA — gold, no lime ───────────────────────────────────────── */
+.hero-cta-button {
+  background: var(--accent);
+  color: #0A0800;
+  box-shadow: 0 4px 24px rgba(245,200,66,.20);
+}
+.hero-cta-button:hover {
+  background: var(--accent-strong);
+  color: #0A0800;
+  box-shadow: 0 10px 32px rgba(245,200,66,.26);
+  transform: translateY(-2px);
+}
+
+.hero-proof { color: var(--text-dim); }
+
+/* Hero stage — dark glass panel, gold corners */
+.hero-stage {
+  border-color: rgba(245,200,66,.16);
+  background: linear-gradient(146deg, rgba(16,20,28,.94), rgba(8,10,15,.96));
+  box-shadow: 0 24px 60px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.045);
+  transform: perspective(900px) rotateY(-3deg) rotateX(1deg);
+}
+.hero-stage::before { border-top-color: var(--accent); border-left-color: var(--accent); }
+.hero-stage::after  { border-right-color: var(--accent); border-bottom-color: var(--accent); }
+.hero-stage-head { color: var(--text-dim); }
+.hero-stage-head span:last-child { color: var(--accent); }
+.hero-stage-foot { border-top-color: rgba(245,200,66,.12); }
+.hero-stage-value { color: var(--accent); }
+
+.hero-orbit-outer { border-color: rgba(168,197,255,.13); }
+.hero-orbit-inner { border-color: rgba(245,200,66,.14); }
+.hero-art-coordinate { color: rgba(245,200,66,.38); }
+
+.hero-dot { background: rgba(255,255,255,.18); }
+.hero-dot.active { background: var(--accent); box-shadow: 0 0 10px rgba(245,200,66,.30); }
+
+/* ── Stats bar — sleek flat tiles with accent top border ─────────────  */
+.stats-bar { gap: .75rem; }
+.stat-tile {
+  background: linear-gradient(150deg, rgba(18,22,32,.98), rgba(12,14,20,.99));
+  border-color: rgba(255,255,255,.07);
+  border-top: 2px solid var(--accent);
+  box-shadow: 0 12px 28px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stat-value { color: var(--accent); letter-spacing: -.01em; }
+.stat-label { letter-spacing: .07em; }
+
+/* ── Case cards — darker, crisper ───────────────────────────────────── */
+.case-card-editorial {
+  background:
+    radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--rarity-color) 10%, transparent), transparent 52%),
+    linear-gradient(158deg, rgba(16,20,26,.98), rgba(10,13,18,.99) 74%);
+  border-color: rgba(255,255,255,.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 14px 28px rgba(0,0,0,.16);
+}
+.case-card-editorial:hover {
+  background:
+    radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--rarity-color) 14%, transparent), transparent 52%),
+    linear-gradient(158deg, rgba(20,26,34,.99), rgba(12,15,22,.99) 74%);
+  border-color: color-mix(in srgb, var(--rarity-color) 55%, rgba(245,200,66,.2));
+  box-shadow: 0 18px 38px rgba(0,0,0,.28);
+}
+.case-card-foot { border-top-color: rgba(255,255,255,.08); }
+.case-card-foot > span:first-child { color: var(--text-dim); }
+.case-card-topline { color: var(--text-dim); }
+.case-card-topline span:last-child { color: rgba(255,255,255,.55); }
+.case-card-art-frame::before { border-color: rgba(255,255,255,.07); }
+.case-card-arrow { background: rgba(245,200,66,.08); color: var(--accent); }
+.case-card-editorial:hover .case-card-arrow { background: var(--accent); color: #0A0800; }
+
+/* Featured card */
+.case-grid--featured > .case-card-editorial:first-child {
+  background:
+    radial-gradient(ellipse at 50% 42%, color-mix(in srgb, var(--rarity-color) 16%, transparent), transparent 58%),
+    linear-gradient(158deg, rgba(18,22,30,.98), rgba(10,12,18,.99) 74%);
+}
+
+/* ── Toolbar / search ────────────────────────────────────────────────  */
+.cases-toolbar { border-top-color: rgba(255,255,255,.07); }
+.case-search-wrap {
+  background: rgba(12,15,20,.96);
+  border-color: rgba(255,255,255,.10);
+}
+.case-search-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(245,200,66,.08);
+}
+.sort-select-wrap select { background: rgba(12,15,20,.96); border-color: rgba(255,255,255,.10); }
+
+/* ── Open button — more impact ─────────────────────────────────────── */
+.open-button {
+  background: var(--accent);
+  color: #0A0800;
+  font-size: 1.1rem;
+  padding: 1rem 2.8rem;
+  border-radius: 8px;
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+  letter-spacing: .025em;
+}
+.open-button:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 8px 32px rgba(245,200,66,.28);
+}
+.case-opening-station .open-button,
+.case-opening-station .demo-button {
+  background: var(--accent);
+  color: #0A0800;
+  box-shadow: 0 8px 28px rgba(245,200,66,.16);
+}
+.case-opening-station .open-button:hover:not(:disabled),
+.case-opening-station .demo-button:hover:not(:disabled) {
+  background: var(--accent-strong);
+  color: #0A0800;
+}
+
+/* ── Case detail — gold atmosphere, no green ─────────────────────────  */
+.case-detail-hero {
+  border-color: rgba(245,200,66,.14);
+  background: linear-gradient(118deg, rgba(16,20,26,.98) 0%, rgba(10,12,18,.99) 66%);
+  box-shadow: 0 24px 70px rgba(0,0,0,.28);
+}
+.case-detail-hero-copy h1 { color: var(--text); }
+.case-detail-lede { color: var(--text-dim); }
+.case-detail-stats {
+  border-top-color: rgba(255,255,255,.08);
+  border-bottom-color: rgba(255,255,255,.08);
+}
+.case-detail-stats div + div { border-left-color: rgba(255,255,255,.08); }
+.case-detail-stats span { color: var(--text-dim); }
+.case-detail-stats strong { color: var(--text); }
+.case-detail-stats div:first-child strong { color: var(--accent); }
+.case-detail-jump { color: var(--accent); border-bottom-color: var(--accent); }
+
+.case-detail-hero-art {
+  background:
+    radial-gradient(ellipse at 52% 47%, rgba(245,200,66,.12), transparent 44%),
+    linear-gradient(145deg, rgba(14,18,26,.95), rgba(8,10,16,.98) 72%);
+  border-left-color: rgba(245,200,66,.10);
+}
+.case-detail-art-grid {
+  opacity: .06;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 36px, rgba(245,200,66,.5) 37px),
+    repeating-linear-gradient(90deg, transparent 0 36px, rgba(245,200,66,.5) 37px);
+}
+.case-detail-art-ring {
+  border-color: rgba(245,200,66,.22);
+  box-shadow: 0 0 0 36px rgba(245,200,66,.022), 0 0 0 72px rgba(245,200,66,.014);
+}
+.case-detail-featured-art {
+  filter: drop-shadow(0 40px 24px rgba(0,0,0,.58)) drop-shadow(0 0 20px rgba(245,200,66,.16));
+}
+.case-detail-art-caption { border-top-color: rgba(255,255,255,.18); }
+.case-detail-art-caption span { color: var(--accent); }
+.case-detail-art-caption strong { color: var(--text); }
+
+/* ── Case opening station ────────────────────────────────────────────  */
+.case-opening-station {
+  border-color: rgba(255,255,255,.07);
+  background: linear-gradient(155deg, rgba(14,18,26,.96), rgba(8,10,15,.98) 72%);
+}
+.case-opening-heading { color: var(--text-dim); }
+.case-opening-preview {
+  background: rgba(10,12,18,.96);
+  border-color: rgba(255,255,255,.08);
+}
+.case-opening-preview::before { background: linear-gradient(90deg, rgba(10,12,18,.96), transparent); }
+.case-opening-preview::after  { background: linear-gradient(270deg, rgba(10,12,18,.96), transparent); }
+.case-opening-preview-item {
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--rarity-color) 14%, transparent), transparent 64%), rgba(14,18,26,.96);
+  border-bottom-color: var(--rarity-color);
+}
+.case-opening-preview-marker { background: var(--accent); box-shadow: 0 0 18px var(--accent); }
+.case-opening-preview-marker::before { border-top-color: var(--accent); }
+.case-opening-chest-stage {
+  border-color: rgba(255,255,255,.08);
+  background:
+    radial-gradient(circle at 50% 55%, hsl(var(--case-hue, 48) 70% 50% / .14), transparent 45%),
+    linear-gradient(145deg, rgba(12,16,22,.97), rgba(7,9,14,.99));
+}
+.case-opening-chest-stage::before {
+  opacity: .08;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 48px, rgba(245,200,66,.4) 49px),
+    repeating-linear-gradient(0deg, transparent 0 48px, rgba(245,200,66,.4) 49px);
+}
+.case-opening-chest-stage p { color: var(--text-dim); }
+.case-opening-energy { border-color: var(--accent); }
+.case-opening-station .spin-mode-toggle {
+  background: rgba(10,12,18,.96);
+  border-color: rgba(255,255,255,.10);
+}
+.case-opening-station .spin-mode-toggle button { color: var(--text-dim); }
+.case-opening-station .spin-mode-toggle button.active {
+  background: rgba(245,200,66,.10);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.case-opening-station .hint { color: var(--text-dim); }
+.case-opening-station .hint a { color: var(--accent); }
+
+/* ── Item cards in case detail ──────────────────────────────────────── */
+.case-detail .item-card {
+  border-color: rgba(255,255,255,.07);
+  border-bottom-color: var(--rarity-color);
+  background:
+    radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--rarity-color) 14%, transparent), transparent 54%),
+    linear-gradient(155deg, rgba(14,18,26,.98), rgba(10,12,18,.99));
+}
+.case-detail .item-card:hover {
+  border-color: color-mix(in srgb, var(--rarity-color) 55%, rgba(255,255,255,.08));
+  box-shadow: 0 16px 30px rgba(0,0,0,.28), 0 0 24px color-mix(in srgb, var(--rarity-color) 10%, transparent);
+}
+.case-detail .item-card-index { color: var(--text-dim); }
+.case-detail .item-card-info { border-top-color: rgba(255,255,255,.10); }
+.case-detail .item-card .item-skin-name { color: var(--text); }
+.case-detail .item-card .value { color: var(--text); }
+.case-detail .item-chance-badge {
+  background: rgba(8,10,15,.88);
+  border-color: rgba(255,255,255,.12);
+  color: var(--text-dim);
+}
+.case-contents-heading { border-top-color: rgba(255,255,255,.07); }
+.case-contents-heading p { color: var(--text-dim); }
+
+.item-wear-list span {
+  background: rgba(10,12,18,.96);
+  border-color: rgba(255,255,255,.08);
+  color: var(--text-dim);
+  border-bottom-color: color-mix(in srgb, var(--rarity-color) 44%, rgba(255,255,255,.08));
+}
+
+/* ── Auth pages — clean glass, gold accent ─────────────────────────── */
+.auth-page {
+  background:
+    radial-gradient(circle at 96% 4%, rgba(245,200,66,.07), transparent 38%),
+    radial-gradient(circle at 4% 96%, rgba(168,197,255,.05), transparent 38%),
+    var(--panel);
+  border-color: rgba(255,255,255,.10);
+}
+.auth-page > p a { color: var(--accent); }
+.auth-kicker { color: var(--accent); }
+.auth-form label { color: var(--text-dim); }
+.auth-form input,
+.auth-form select {
+  background: rgba(7,9,13,.95);
+  border-color: rgba(255,255,255,.10);
+  border-radius: 6px;
+  color: var(--text);
+}
+.auth-form input:focus,
+.auth-form select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(245,200,66,.08);
+}
+.auth-form .form-error {
+  border-left-color: var(--danger);
+  background: rgba(255,71,87,.08);
+}
+
+/* ── Coming-soon pages — gold atmosphere, no orange ─────────────────  */
+.coming-soon {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(245,200,66,.09), transparent 38%),
+    repeating-linear-gradient(90deg, transparent 0 41px, rgba(245,200,66,.018) 42px),
+    var(--panel);
+  border-color: rgba(245,200,66,.14);
+  color: var(--text-dim);
+}
+.coming-soon::before {
+  border-color: rgba(245,200,66,.14);
+  box-shadow: 0 0 0 3rem rgba(245,200,66,.022), 0 0 0 6rem rgba(245,200,66,.012);
+}
+.coming-soon-kicker { color: var(--accent); }
+.coming-soon .open-button {
+  background: var(--accent);
+  color: #0A0800;
+}
+.coming-soon .open-button:hover { background: var(--accent-strong); box-shadow: 0 0 22px rgba(245,200,66,.22); }
+
+/* ── Referral page ─────────────────────────────────────────────────── */
+.referral-link-panel {
+  background:
+    radial-gradient(circle at 90% 0%, rgba(245,200,66,.07), transparent 45%),
+    var(--panel);
+  border-color: rgba(245,200,66,.14);
+}
+.referral-link-panel > span { color: var(--accent); }
+.referral-link-panel code { color: var(--text); }
+.referral-stat-grid li {
+  background: rgba(10,12,18,.96);
+  border-color: rgba(255,255,255,.07);
+}
+
+/* ── Battle / game chrome ─────────────────────────────────────────── */
+.battle-search {
+  background: rgba(10,12,18,.96);
+  border-color: rgba(255,255,255,.08);
+}
+.battle-search:focus-within { border-color: var(--accent); }
+.battle-search small { color: var(--accent); }
+.battle-no-results button { color: var(--accent); }
+
+.game-steps {
+  background: linear-gradient(135deg, rgba(14,18,26,.98), rgba(10,12,18,.99));
+  border-color: rgba(255,255,255,.07);
+}
+.game-steps-heading span:last-child { color: var(--text-dim); }
+.game-steps li + li { border-left-color: rgba(255,255,255,.07); }
+.game-steps li p { color: var(--text-dim); }
+
+/* ── Drops ticker bar — subtle dark ─────────────────────────────────  */
+.drops-ticker-bar {
+  background: rgba(8,10,15,.97);
+  border-bottom-color: rgba(255,255,255,.05);
+}
+
+/* ── Recent drops cards ──────────────────────────────────────────────  */
+.drop-card {
+  background: rgba(14,17,23,.97);
+  border-color: rgba(255,255,255,.07);
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────  */
+.site-footer {
+  background: rgba(7,9,13,.98);
+  border-top-color: rgba(255,255,255,.055);
+}
+.site-footer-heading strong { font-family: var(--font-display); font-size: 1rem; letter-spacing: .06em; }
+.site-footer-heading span { color: var(--accent); margin-left: .5rem; font-size: .72rem; }
+
+/* ── Profile page ────────────────────────────────────────────────────  */
+.profile-page .stat-tile,
+.profile-workspace .stat-tile {
+  border-top-color: var(--accent);
+}
+
+/* ── History rows ────────────────────────────────────────────────────  */
+.history-row {
+  background: rgba(12,14,20,.98);
+  border-color: rgba(255,255,255,.06);
+  border-left-color: var(--rarity-color, rgba(255,255,255,.12));
+}
+.history-row-result > strong { color: var(--accent); }
+.history-case-name { color: var(--text-dim); }
+
+/* ── Catalog notice ──────────────────────────────────────────────────  */
+.catalog-notice {
+  border-color: rgba(245,200,66,.28);
+  background: rgba(245,200,66,.07);
+  color: rgba(245,200,66,.9);
+}
+
+/* ── Admin tables ────────────────────────────────────────────────────  */
+.admin-nav a.active { color: var(--accent); }
+
+/* ── Mobile bottom nav ───────────────────────────────────────────────  */
+.bottom-nav {
+  background: rgba(8,10,15,.97);
+  border-top-color: rgba(255,255,255,.06);
+}
+
+/* ── Loading shimmer — slightly warmer ───────────────────────────────  */
+.case-card-skeleton,
+.loading-line,
+.loading-reel {
+  background: linear-gradient(110deg, rgba(14,17,23,1) 25%, rgba(20,24,32,1) 45%, rgba(14,17,23,1) 65%);
+  background-size: 220% 100%;
+}
+
+/* ── Case chest chest coloring (all variants use hue from CSS var) ───  */
+.case-chest {
+  --chest-metal: hsl(var(--chest-hue, 48) 18% 42%);
+  --chest-edge:  hsl(var(--chest-hue, 48) 28% 62%);
+}
+
+/* ── Hero dots — left aligned in mobile, right on desktop ───────────  */
+@media (min-width: 681px) {
+  .hero-stage { transform: perspective(900px) rotateY(-3deg) rotateX(1deg); }
+}
+@media (max-width: 680px) {
+  .hero-banner {
+    background:
+      radial-gradient(ellipse 24rem 16rem at 84% 30%, rgba(245,200,66,.10), transparent 66%),
+      linear-gradient(118deg, #0D1117 0%, #0A0D14 100%);
+    border-color: rgba(245,200,66,.12);
+  }
+  .hero-stage { transform: none; border-color: rgba(245,200,66,.12); }
+}
+
