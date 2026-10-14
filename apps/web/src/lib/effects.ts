@@ -63,10 +63,19 @@ export function initEffects(): () => void {
   document.addEventListener("mousemove", trackCursor, { passive: true });
   rafId = requestAnimationFrame(tick);
 
+  // ── Scroll progress bar ───────────────────────────────────────────────────
+  function updateScrollProgress() {
+    const doc = document.documentElement;
+    const progress = doc.scrollTop / (doc.scrollHeight - doc.clientHeight) || 0;
+    doc.style.setProperty("--scroll-progress", String(progress.toFixed(4)));
+  }
+  document.addEventListener("scroll", updateScrollProgress, { passive: true });
+
   return () => {
     document.removeEventListener("mousemove", onMove);
     document.removeEventListener("mouseleave", onLeave, true);
     document.removeEventListener("mousemove", trackCursor);
+    document.removeEventListener("scroll", updateScrollProgress);
     cancelAnimationFrame(rafId);
     glow.remove();
   };
