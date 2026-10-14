@@ -23,7 +23,14 @@ export function WalletPage() {
 
   function load() {
     api.get<WalletDto>("/wallet/me").then(setWallet).catch(() => undefined);
-    api.get<LedgerEntryDto[]>("/wallet/me/ledger").then(setLedger).catch(() => undefined);
+    api
+      .get<LedgerEntryDto[]>("/wallet/me/ledger")
+      // Only an actual array reaches state. A non-array body — an error
+      // envelope, or a paginated shape — would otherwise reach .map() during
+      // render and white-screen the wallet, which is the worst page in the
+      // product to lose to a malformed response.
+      .then((rows) => setLedger(Array.isArray(rows) ? rows : []))
+      .catch(() => undefined);
   }
 
   useEffect(load, []);

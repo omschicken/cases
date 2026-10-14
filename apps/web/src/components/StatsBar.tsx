@@ -4,14 +4,20 @@ import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import type { PublicStatsDto } from "../lib/types";
 
+const STATS_FALLBACK: PublicStatsDto = { totalOpens: "0", totalValueMinor: "0", playerCount: 0 };
+
 export function StatsBar() {
   const { t } = useTranslation();
-  const [stats, setStats] = useState<PublicStatsDto>({ totalOpens: "0", totalValueMinor: "0", playerCount: 0 });
+  const [stats, setStats] = useState<PublicStatsDto>(STATS_FALLBACK);
 
   useEffect(() => {
     api
       .get<PublicStatsDto>("/cases/stats")
-      .then(setStats)
+      // Merged over the defaults rather than replacing them: a payload
+      // missing a field would otherwise leave it undefined, and this renders
+      // inside the home page, so one undefined number took the whole page
+      // down with it.
+      .then((data) => setStats({ ...STATS_FALLBACK, ...data }))
       .catch(() => undefined);
   }, []);
 
