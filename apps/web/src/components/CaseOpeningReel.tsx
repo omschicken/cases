@@ -72,8 +72,8 @@ export function CaseOpeningReel({
         const offset = target.offsetLeft + target.offsetWidth / 2 - viewportWidth / 2;
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+        if (reducedMotion) { setTransform(-offset); setSpinning(false); requestAnimationFrame(finish); return; }
         setTransform(-offset);
-        if (reducedMotion) { setSpinning(false); requestAnimationFrame(finish); return; }
 
         setSpinning(true);
         // Trigger pre-land glow ~600 ms before the end
@@ -154,20 +154,20 @@ export function CaseOpeningReel({
         <div className="reel-fade-right" aria-hidden="true" />
       </div>
 
-      {/* Post-land effects */}
-      {landed && chase && (
+      {/* Post-land effects — shown for ALL rarities, intensity scales via CSS */}
+      {landed && (
         <>
-          <div className="reel-flash" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
+          <div className={`reel-flash${chase ? " reel-flash-chase" : ""}`} style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
           <div className="reel-burst" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
           <div className="reel-particles" aria-hidden="true">
-            {Array.from({ length: 20 }, (_, i) => (
+            {Array.from({ length: chase ? 20 : 8 }, (_, i) => (
               <span
                 key={i}
                 className="reel-particle"
                 style={{
                   "--p-i":     i,
-                  "--p-angle": `${(i / 20) * 360}deg`,
-                  "--p-dist":  `${60 + Math.random() * 80}px`,
+                  "--p-angle": `${(i / (chase ? 20 : 8)) * 360}deg`,
+                  "--p-dist":  `${(chase ? 60 : 30) + Math.random() * (chase ? 80 : 40)}px`,
                   "--rarity-color": rarityColor(winningItem.rarity),
                 } as CSSProperties}
               />

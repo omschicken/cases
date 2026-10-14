@@ -15189,21 +15189,7 @@ button:not([disabled]):not(.menu-toggle):not(.account-menu-trigger):active,
   color: var(--accent) !important;
 }
 
-/* ── Scroll progress indicator ───────────────────────────────────────────── */
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #f97316));
-  transform-origin: left;
-  transform: scaleX(var(--scroll-progress, 0));
-  z-index: 10000;
-  pointer-events: none;
-  transition: transform 0.05s linear;
-}
+/* scroll progress bar removed */
 
 /* ── Collection/Battle card shimmer ─────────────────────────────────────── */
 .collection-route,
@@ -15227,5 +15213,148 @@ body::after {
 @keyframes toast-slide-in {
   from { opacity: 0; transform: translateY(16px) scale(0.95); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LAYER 15 — REEL FIXES: effects for all rarities, viewport sizing, cleanup
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Ensure reel viewport is properly sized and visible ─────────────────── */
+.case-reel-viewport {
+  height: 160px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.case-reel-track {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  will-change: transform;
+}
+
+.reel-item {
+  flex: 0 0 130px !important;
+  width: 130px !important;
+  height: 100% !important;
+}
+
+.reel-item img {
+  width: 88px !important;
+  height: 72px !important;
+  object-fit: contain !important;
+}
+
+/* ── Non-chase flash: subtle but visible ────────────────────────────────── */
+.reel-flash {
+  position: absolute !important;
+  inset: -20px !important;
+  z-index: 20 !important;
+  pointer-events: none !important;
+}
+
+/* Chase: fullscreen (use fixed in a safe context) */
+.reel-flash.reel-flash-chase {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9990 !important;
+}
+
+/* Non-chase flash: subtle local glow */
+.reel-flash:not(.reel-flash-chase) {
+  background: radial-gradient(ellipse 80% 80% at 50% 50%,
+    color-mix(in srgb, var(--rarity-color) 25%, transparent) 0%,
+    transparent 70%
+  ) !important;
+  animation: reel-flash-soft 0.9s ease-out both !important;
+}
+
+@keyframes reel-flash-soft {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Chase flash: fullscreen dramatic */
+.reel-flash.reel-flash-chase {
+  background: radial-gradient(ellipse at 50% 40%,
+    color-mix(in srgb, var(--rarity-color) 55%, white) 0%,
+    color-mix(in srgb, var(--rarity-color) 28%, transparent) 35%,
+    transparent 70%
+  ) !important;
+  animation: reel-flash-out 1.2s ease-out both !important;
+}
+
+/* ── Burst: show for all rarities, scale for chase ──────────────────────── */
+.reel-burst {
+  position: absolute !important;
+  z-index: 12 !important;
+}
+
+/* ── Pre-flash: always ends at opacity 0 ───────────────────────────────── */
+.reel-pre-flash {
+  animation: reel-pre-flash-fixed 0.8s ease-out forwards !important;
+  z-index: 9989 !important;
+  position: fixed !important;
+  inset: 0 !important;
+}
+
+/* ── cursor-glow: no blend mode ─────────────────────────────────────────── */
+.cursor-glow {
+  mix-blend-mode: normal !important;
+  opacity: 0.5 !important;
+}
+
+/* ── app-shell::before scanline: keep below effects ─────────────────────── */
+.app-shell::before {
+  z-index: 10 !important;
+}
+
+/* ── Reel indicator pulse: show for all rarities ────────────────────────── */
+.reel-indicator-pulse {
+  position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 2px !important;
+  pointer-events: none !important;
+  animation: indicator-pulse-glow 1.2s ease-out both !important;
+  background: var(--rarity-color, var(--accent)) !important;
+  box-shadow: 0 0 20px 6px color-mix(in srgb, var(--rarity-color, var(--accent)) 60%, transparent) !important;
+  z-index: 15 !important;
+}
+
+@keyframes indicator-pulse-glow {
+  0%   { opacity: 0; box-shadow: 0 0 0 0 var(--rarity-color, var(--accent)); }
+  20%  { opacity: 1; box-shadow: 0 0 24px 8px color-mix(in srgb, var(--rarity-color, var(--accent)) 70%, transparent); }
+  100% { opacity: 0.7; box-shadow: 0 0 12px 3px color-mix(in srgb, var(--rarity-color, var(--accent)) 40%, transparent); }
+}
+
+/* ── Near-end shudder: no conflict ─────────────────────────────────────── */
+.case-reel-near-end:not(.case-reel-landed) .case-reel-viewport {
+  animation: reel-near-shudder 0.15s ease-in-out 3 !important;
+}
+.case-reel-near-end.case-reel-landed .case-reel-viewport {
+  animation: reel-land-shake 0.6s cubic-bezier(0.3, 0.6, 0.2, 1) both !important;
+}
+
+/* ── Landed item: single animation winner ──────────────────────────────── */
+.reel-item-landed .reel-item-inner {
+  animation: v3-item-arrive 0.7s cubic-bezier(0.15, 0.85, 0.25, 1) both !important;
+}
+
+/* ── Scanline off for track during spin ─────────────────────────────────── */
+.case-reel-spinning .case-reel-track {
+  background-image: none !important;
+  animation: none !important;
+}
+
+/* ── Result panel: isolation fix ───────────────────────────────────────── */
+.result-panel {
+  isolation: isolate;
+}
+.result-panel::before {
+  z-index: -1 !important;
 }
 
