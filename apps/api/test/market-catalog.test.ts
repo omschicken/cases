@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { listedVariants, pricedVariants } from "../src/prices/market-catalog";
+import { marketCasePrice } from "../src/prices/case-pricing";
 
 describe("market case variants", () => {
   const prices = new Map([
@@ -23,5 +24,11 @@ describe("market case variants", () => {
 
   it("does not invent an unlisted price", () => {
     expect(pricedVariants({ name: "Unknown", weight: 3, valueMinor: 1 }, prices)).toEqual([]);
+  });
+
+  it("keeps the old case price only when it covers its market-priced drops", () => {
+    const drops = [{ weight: 9, valueMinor: 1000 }, { weight: 1, valueMinor: 10000 }];
+    expect(marketCasePrice(drops, 500)).toBe(2112);
+    expect(marketCasePrice(drops, 2500)).toBe(2500);
   });
 });

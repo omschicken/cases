@@ -13,7 +13,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:seed": "tsx prisma/seed.ts",
-    "prisma:sync-prices": "tsx prisma/sync-prices.ts"
+    "prisma:sync-prices": "tsx prisma/sync-prices.ts",
+    "prisma:reprice-cases": "tsx prisma/reprice-cases.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

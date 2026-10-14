@@ -1,6 +1,7 @@
 import { PrismaClient, ItemRarity } from "@prisma/client";
 import cases from "./cs2-items.json";
 import { fetchMarketListings, pricedVariants } from "../src/prices/market-catalog";
+import { marketCasePrice } from "../src/prices/case-pricing";
 
 const prisma = new PrismaClient();
 
@@ -63,7 +64,7 @@ function expandPricedCases(prices: ReadonlyMap<string, number>): CaseSeed[] {
   }));
   // A partial market response must never silently remove drops from a case.
   if (missing.size) throw new Error(`No live RUB listing for ${missing.size} skins: ${[...missing].slice(0, 10).join(", ")}`);
-  return expanded;
+  return expanded.map((c) => ({ ...c, priceMinor: marketCasePrice(c.items, c.priceMinor) }));
 }
 
 async function main() {
@@ -80,7 +81,12 @@ async function main() {
         const samePool = existing.items.length === c.items.length && c.items.every((item) =>
           Math.abs((oldPool.get(item.name) ?? -1) - item.weight) < 0.000001,
         );
-        if (samePool) return false;
+        if (samePool) {
+          if (existing.priceMinor !== BigInt(c.priceMinor)) {
+            await tx.case.update({ where: { id: existing.id }, data: { priceMinor: c.priceMinor } });
+          }
+          return false;
+        }
 
         // Preserve the complete old pool for historical provably-fair checks.
         await tx.case.update({

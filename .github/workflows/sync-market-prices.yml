@@ -36,3 +36,5 @@ jobs:
         run: pnpm --filter @cs2-cases/api prisma:generate
       - name: Update listed prices
         run: pnpm --filter @cs2-cases/api prisma:sync-prices
+      - name: Reprice cases from listed drops
+        run: pnpm --filter @cs2-cases/api prisma:reprice-cases
