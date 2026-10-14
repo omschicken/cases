@@ -344,8 +344,15 @@
   .dz-chamber.is-cycling .dz-chamber__beam {
     animation: none;
   }
-  .dz-chamber__cell,
-  .dz-chamber__object {
+  .dz-chamber__cell {
     transform: none;
+  }
+  /* Drop the parallax and the depth, but KEEP the centring translate: the
+     object is placed at left/top 50% and relies on it. A blanket
+     transform:none here pushed it off by half its own size, so reduced
+     motion got a visibly broken cell. */
+  .dz-chamber__object,
+  .dz-chamber.is-armed .dz-chamber__object {
+    transform: translate(-50%, -50%);
   }
 }

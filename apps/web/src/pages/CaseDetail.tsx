@@ -7,6 +7,7 @@ import { formatMinor } from "../lib/money";
 import { isChaseRarity, RARITY_RANK, rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
 import { CaseOpeningReel } from "../components/CaseOpeningReel";
+import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol";
 import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
 
@@ -126,6 +127,9 @@ export function CaseDetailPage() {
   const [spinKey, setSpinKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [requestId, setRequestId] = useState(0);
+  // The staged opening scene is dismissible; the page below keeps the result
+  // panel, so closing it never hides the provably-fair record.
+  const [protocolDismissed, setProtocolDismissed] = useState(false);
   const openingLockRef = useRef(false);
   const [quickSpin, setQuickSpin] = useState(() => {
     try {
@@ -204,6 +208,7 @@ export function CaseDetailPage() {
     setRevealed(false);
     setResult(null);
     setDemoItem(null);
+    setProtocolDismissed(false);
     try {
       // The result is fully determined here — the reel below just animates
       // toward it, it never influences the outcome.
@@ -232,6 +237,7 @@ export function CaseDetailPage() {
     setDemoItem(null);
     setRevealed(false);
     setOpening(true);
+    setProtocolDismissed(false);
     await openingDelay();
     setDemoItem(weightedSample(theCase.items));
     setSpinKey((k) => k + 1);
@@ -256,6 +262,27 @@ export function CaseDetailPage() {
 
   const winningItem = result?.item ?? demoItem;
   const spinning = winningItem !== null && !revealed;
+
+  // Phase is derived, never stored, so it cannot drift from the opening
+  // state it describes. A failed request leaves opening false with no item,
+  // which resolves to null here and closes the scene on its own.
+  const protocolPhase: ProtocolPhase | null = protocolDismissed
+    ? null
+    : opening && !winningItem
+      ? "arming"
+      : winningItem && !revealed
+        ? "activation"
+        : winningItem && revealed
+          ? "reveal"
+          : null;
+
+  /** Ends the animation early. The outcome was decided by the server before
+   *  the first frame, so this reveals what already dropped — it never
+   *  re-rolls, and the reel is unmounted rather than hurried. */
+  function skipAnimation() {
+    setRevealed(true);
+    openingLockRef.current = false;
+  }
   const skinGroups = groupCaseItems(theCase.items);
   const featuredItem = theCase.items.reduce<CaseItem | null>((best, item) => {
     if (!best) return item;
@@ -271,6 +298,31 @@ export function CaseDetailPage() {
 
   return (
     <div className="case-detail">
+      {protocolPhase && (
+        <DropProtocol
+          phase={protocolPhase}
+          caseName={theCase.name}
+          item={winningItem}
+          result={result}
+          oddsPercent={winningItem ? dropChancePercent(winningItem, theCase.items) : undefined}
+          caseArtUrl={featuredItem && !featuredItem.imageUrl.startsWith("data:image")
+            ? featuredItem.imageUrl
+            : undefined}
+          reel={winningItem && (
+            <CaseOpeningReel
+              key={spinKey}
+              poolItems={theCase.items}
+              winningItem={winningItem}
+              onFinished={() => { setRevealed(true); openingLockRef.current = false; }}
+              quick={quickSpin}
+            />
+          )}
+          onSkip={skipAnimation}
+          onClose={() => setProtocolDismissed(true)}
+          onOpenAgain={openCase}
+          canOpenAgain={Boolean(user) && !isPreview}
+        />
+      )}
       {isPreview && (
         <div id="catalog-preview-notice" className="catalog-notice" role="status" aria-live="polite">
           <span>{t("caseDetail.previewNotice", { defaultValue: "Demo mode: the item service is currently unavailable. Real openings and deductions are disabled." })}</span>
@@ -322,30 +374,6 @@ export function CaseDetailPage() {
 
       <section id="opening-station" className="case-opening-station" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
         <div className="case-opening-heading"><span className="section-kicker">{t("caseDetail.openingSequence", { defaultValue: "OPENING SEQUENCE" })}</span><span>{isPreview ? t("caseDetail.demoOnly", { defaultValue: "DEMO ONLY" }) : t("caseDetail.provablyFair")}</span></div>
-
-      {winningItem && (
-        <p className="opening-status" aria-live="polite">
-          {spinning ? t("caseDetail.spinning", { defaultValue: "Определяем предмет…" }) : t("caseDetail.resultKicker", { defaultValue: "Предмет готов" })}
-        </p>
-      )}
-
-      {winningItem && (
-        <CaseOpeningReel
-          key={spinKey}
-          poolItems={theCase.items}
-          winningItem={winningItem}
-          onFinished={() => { setRevealed(true); openingLockRef.current = false; }}
-          quick={quickSpin}
-        />
-      )}
-
-      {opening && !winningItem && (
-        <div className="case-opening-chest-stage" role="status" aria-live="polite">
-          <span className="case-opening-energy" aria-hidden="true" />
-          <CaseChest className="case-chest-opening" caseName={theCase.name} caseSlug={theCase.slug} opening />
-          <p>{t("caseDetail.unlocking", { defaultValue: "Открываем замок…" })}</p>
-        </div>
-      )}
 
       {!opening && !winningItem && previewItems.length > 0 && (
         <div className="case-opening-preview" aria-hidden="true">
