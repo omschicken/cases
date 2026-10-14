@@ -114,6 +114,7 @@ export function CaseDetailPage() {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
+  const heroArtRef = useRef<HTMLDivElement>(null);
   const [theCase, setTheCase] = useState<CaseDto | null>(null);
   const [isPreview, setIsPreview] = useState(false);
   const [seedHash, setSeedHash] = useState<string | null>(null);
@@ -293,7 +294,25 @@ export function CaseDetailPage() {
           </div>
           <a href="#opening-station" className="case-detail-jump">{t("caseDetail.goToOpening", { defaultValue: "Go to opening" })} <span aria-hidden="true">↓</span></a>
         </div>
-        <div className="case-detail-hero-art">
+        <div
+          className="case-detail-hero-art"
+          ref={heroArtRef}
+          onMouseMove={(e) => {
+            const el = heroArtRef.current;
+            if (!el) return;
+            const rect = el.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+            const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+            el.style.setProperty("--tilt-x", `${(y * -8).toFixed(2)}deg`);
+            el.style.setProperty("--tilt-y", `${(x * 8).toFixed(2)}deg`);
+          }}
+          onMouseLeave={() => {
+            const el = heroArtRef.current;
+            if (!el) return;
+            el.style.setProperty("--tilt-x", "0deg");
+            el.style.setProperty("--tilt-y", "0deg");
+          }}
+        >
           <div className="case-detail-art-grid" aria-hidden="true" />
           <div className="case-detail-art-ring" aria-hidden="true" />
           <CaseChest className="case-chest-detail" caseName={theCase.name} caseSlug={theCase.slug} itemImageUrl={featuredItem?.imageUrl} />

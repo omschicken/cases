@@ -91,6 +91,14 @@ export function CaseListPage() {
   }, [collection, collections, query, sortedCases]);
   const visibleCases = filteredCases.slice(0, visibleCount);
 
+  const caseToTier = useMemo(() => {
+    const map = new Map<string, "entry" | "core" | "apex">();
+    for (const group of collections) {
+      for (const c of group.members) map.set(c.id, group.id as "entry" | "core" | "apex");
+    }
+    return map;
+  }, [collections]);
+
   return (
     <div className="case-list-page">
       <HeroBanner featuredCase={cases[0]} catalogStatus={loading ? "loading" : error ? "error" : "empty"} />
@@ -175,6 +183,7 @@ export function CaseListPage() {
           const tiers = rarityTiers(c);
           const chase = highestRarity(tiers as CaseDto["items"][number]["rarity"][]);
           const highlight = featuredItem(c);
+          const tier = caseToTier.get(c.id);
           return (
             <Link
               to={`/cases/${c.slug}`}
@@ -184,6 +193,7 @@ export function CaseListPage() {
             >
               <div className="case-card-topline">
                 <span>DROP / {String(i + 1).padStart(2, "0")}</span>
+                {tier && <span className={`case-tier-badge case-tier-badge--${tier}`}>{tier.toUpperCase()}</span>}
                 <span>{t("home.itemCount", { count: c.itemCount ?? c.items.length })}</span>
               </div>
               <div className="case-card-art-frame">
