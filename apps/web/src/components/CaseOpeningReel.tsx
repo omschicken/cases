@@ -67,7 +67,12 @@ export function CaseOpeningReel({
       raf2 = requestAnimationFrame(() => {
         const viewportWidth = viewportRef.current?.clientWidth ?? 0;
         const target        = targetRef.current;
-        if (!viewportWidth || !target) return;
+
+        // If layout not ready, still schedule finish so lock is always released
+        if (!viewportWidth || !target) {
+          finishTimer = window.setTimeout(finish, SPIN_DURATION_MS + 500);
+          return;
+        }
 
         const offset = target.offsetLeft + target.offsetWidth / 2 - viewportWidth / 2;
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
