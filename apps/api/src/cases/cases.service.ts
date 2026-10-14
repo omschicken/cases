@@ -19,11 +19,22 @@ export class CasesService {
     private readonly wallet: WalletService,
   ) {}
 
-  listActive() {
-    return this.prisma.case.findMany({
+  async listActive() {
+    const cases = await this.prisma.case.findMany({
       where: { isActive: true },
       include: { items: true },
       orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+    });
+    // The catalog only needs one representative image per skin design. The
+    // detail endpoint still returns every priced exterior and its exact odds.
+    return cases.map((itemCase) => {
+      const representative = new Map<string, typeof itemCase.items[number]>();
+      for (const item of itemCase.items) {
+        const baseName = item.name.replace(/ \((?:Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/, "");
+        const previous = representative.get(baseName);
+        if (!previous || item.valueMinor > previous.valueMinor) representative.set(baseName, item);
+      }
+      return { ...itemCase, itemCount: itemCase.items.length, items: [...representative.values()] };
     });
   }
 

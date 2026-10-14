@@ -364,10 +364,10 @@ export function CaseDetailPage() {
             key={item.id}
             style={{ "--rarity-color": rarityColor(item.rarity), "--index": i } as CSSProperties}
           >
+            <span className="item-card-index">DZ / {String(i + 1).padStart(2, "0")}</span>
             <span className="item-chance-badge">{dropChancePercent(item, theCase.items)}%</span>
             <img src={item.imageUrl} alt={item.name} />
-            <p>{item.name}</p>
-            <p className="value">{formatMinor(item.valueMinor, item.currency)}</p>
+            <div className="item-card-info"><span className="rarity-label">{t(`rarity.${item.rarity}`, { defaultValue: item.rarity.replace("_", " ") })}</span><p>{item.name}</p><p className="value">{formatMinor(item.valueMinor, item.currency)}</p></div>
           </div>
         ))}
       </div>
@@ -382,5 +382,5 @@ function dropChancePercent(item: CaseItem, pool: CaseItem[]): string {
   if (total <= 0) return "0";
   const pct = (item.weight / total) * 100;
   const decimals = pct < 1 ? 2 : 1;
-  return pct.toFixed(decimals).replace(/\.?0+$/, "");
+  return pct.toFixed(decimals).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
 }

@@ -6,7 +6,8 @@ export function FAQPage() {
   const { t } = useTranslation();
 
   return (
-    <div>
+    <div className="faq-page">
+      <span className="section-kicker">DROPZONE / KNOWLEDGE BASE</span>
       <h1>{t("faq.title")}</h1>
       <div className="faq-list">
         {FAQ_KEYS.map((key) => (

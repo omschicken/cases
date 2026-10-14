@@ -27,7 +27,7 @@ function featuredItem(c: CaseDto): CaseDto["items"][number] | undefined {
   return c.items.reduce<CaseDto["items"][number] | undefined>((best, item) => {
     if (!best) return item;
     const rarityDiff = RARITY_RANK.indexOf(item.rarity) - RARITY_RANK.indexOf(best.rarity);
-    return rarityDiff > 0 || (rarityDiff === 0 && Number(item.valueMinor) > Number(best.valueMinor)) ? item : best;
+    return rarityDiff < 0 || (rarityDiff === 0 && BigInt(item.valueMinor) > BigInt(best.valueMinor)) ? item : best;
   }, undefined);
 }
 
@@ -93,7 +93,7 @@ export function CaseListPage() {
 
   return (
     <div className="case-list-page">
-      <HeroBanner featuredCase={cases[0]} />
+      <HeroBanner featuredCase={cases[0]} catalogStatus={loading ? "loading" : error ? "error" : "empty"} />
       <StatsBar />
 
       {cases.length > 0 && <section className="collection-discovery" aria-labelledby="collection-discovery-heading">
@@ -184,7 +184,7 @@ export function CaseListPage() {
             >
               <div className="case-card-topline">
                 <span>DROP / {String(i + 1).padStart(2, "0")}</span>
-                <span>{t("home.itemCount", { count: c.items.length })}</span>
+                <span>{t("home.itemCount", { count: c.itemCount ?? c.items.length })}</span>
               </div>
               <div className="case-card-art-frame">
                 <CaseChest caseName={c.name} caseSlug={c.slug} itemImageUrl={highlight?.imageUrl} />

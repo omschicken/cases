@@ -101,7 +101,10 @@ export function Layout() {
           <Outlet />
         </main>
       </div>
-      <footer className="site-footer">{t("nav.footer")}</footer>
+      <footer className="site-footer">
+        <div className="site-footer-heading"><strong>DROP<span>ZONE</span></strong><span>18+</span></div>
+        <p>{t("nav.footer")}</p>
+      </footer>
       <BottomNav />
     </div>
   );

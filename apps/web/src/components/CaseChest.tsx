@@ -17,7 +17,7 @@ export function caseVisualIdentity(caseSlug: string) {
   const variant = firstCases[caseSlug] ?? seed % 6;
   const palette = [26, 271, 42, 9, 208, 217][variant];
   const hue = firstCases[caseSlug] === undefined ? seed % 360 : (palette + Math.floor(seed % 19) - 9 + 360) % 360;
-  return { seed, variant, hue };
+  return { seed, variant, hue, finish: Math.floor(seed / 7) % 4 };
 }
 
 function CaseGlyph({ variant }: { variant: number }) {
@@ -34,13 +34,13 @@ function CaseGlyph({ variant }: { variant: number }) {
 
 /** Decorative case preview. It never represents an opening or its result. */
 export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "" }: CaseChestProps) {
-  const { seed, variant, hue } = caseVisualIdentity(caseSlug);
+  const { seed, variant, hue, finish } = caseVisualIdentity(caseSlug);
   const mark = caseName.replace(/\s*case$/i, "").slice(0, 3).toUpperCase();
   const nameplate = caseName.replace(/\s*case$/i, "").toUpperCase();
   const serial = String(seed % 1000).padStart(3, "0");
 
   return (
-    <div className={`case-chest case-chest-v${variant} ${className}`} style={{ "--chest-hue": hue } as CSSProperties} aria-hidden="true">
+    <div className={`case-chest case-chest-v${variant} case-chest-f${finish} ${className}`} style={{ "--chest-hue": hue } as CSSProperties} aria-hidden="true">
       <span className="case-chest-aura" />
       {itemImageUrl && <img className="case-chest-reveal" src={itemImageUrl} alt="" />}
       <div className="case-chest-assembly">
@@ -49,6 +49,7 @@ export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "" }: 
           <span className="case-chest-lid-mark">{mark}</span>
         </div>
         <div className="case-chest-body">
+          <span className="case-chest-finish" />
           <span className="case-chest-corner case-chest-corner-left" />
           <span className="case-chest-corner case-chest-corner-right" />
           <span className="case-chest-lock"><span /></span>
