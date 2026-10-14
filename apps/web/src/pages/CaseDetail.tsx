@@ -4,10 +4,11 @@ import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
-import { isChaseRarity, RARITY_RANK, rarityColor } from "../lib/rarity";
+import { isChaseRarity, RARITY_LABELS, RARITY_RANK, rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
 import { CaseOpeningReel } from "../components/CaseOpeningReel";
 import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol";
+import { ItemCard } from "../components/dz/ItemCard";
 import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
 
@@ -508,29 +509,20 @@ export function CaseDetailPage() {
       )}
 
       <div className="case-contents-heading"><div><span className="section-kicker">DROP TABLE / {String(skinGroups.length).padStart(2, "0")} SKINS · {String(theCase.items.length).padStart(2, "0")} OUTCOMES</span><h2 className="section-heading">{t("caseDetail.itemsHeading")}</h2></div><p>{t("caseDetail.groupedOddsDisclosure", { defaultValue: "Each card combines all available wear conditions. The chance shown is the total chance for that skin design." })}</p></div>
-      <div className="item-grid">
-        {skinGroups.map((group, i) => (
-          <div
-            className="item-card"
+      <div className="dz-item-grid">
+        {skinGroups.map((group) => (
+          <ItemCard
             key={group.name}
-            style={{ "--rarity-color": rarityColor(group.rarity), "--index": i } as CSSProperties}
-          >
-            <span className="item-card-index">DZ / {String(i + 1).padStart(2, "0")}</span>
-            <span className="item-chance-badge">{groupChancePercent(group, totalWeight)}%</span>
-            <img src={group.imageUrl} alt={group.name} loading="lazy" />
-            <div className="item-card-info">
-              <span className="rarity-label">{t(`rarity.${group.rarity}`, { defaultValue: group.rarity.replace("_", " ") })}</span>
-              <p className="item-skin-name">{group.name}</p>
-              <div className="item-wear-list" aria-label={t("caseDetail.availableWear", { defaultValue: "Available wear conditions" })}>
-                {group.items.map((item) => <span key={item.id} title={item.name.match(EXTERIOR_PATTERN)?.[1] ?? item.name}>{exteriorLabel(item)}</span>)}
-              </div>
-              <p className="value">
-                {group.minValueMinor === group.maxValueMinor
-                  ? formatMinor(group.minValueMinor, group.currency)
-                  : `${formatMinor(group.minValueMinor, group.currency)} — ${formatMinor(group.maxValueMinor, group.currency)}`}
-              </p>
-            </div>
-          </div>
+            name={group.name}
+            imageUrl={group.imageUrl}
+            rarity={group.rarity}
+            rarityLabel={t(`rarity.${group.rarity}`, { defaultValue: RARITY_LABELS[group.rarity] })}
+            value={group.minValueMinor === group.maxValueMinor
+              ? formatMinor(group.minValueMinor, group.currency)
+              : `${formatMinor(group.minValueMinor, group.currency)} — ${formatMinor(group.maxValueMinor, group.currency)}`}
+            badge={`${groupChancePercent(group, totalWeight)}%`}
+            wear={group.items.map(exteriorLabel)}
+          />
         ))}
       </div>
     </div>

@@ -79,9 +79,18 @@
     "collectionFrom": "from",
     "collectionFilterLabel": "Case categories",
     "collection": {
-      "entry": { "title": "Start", "subtitle": "Begin small" },
-      "core": { "title": "Momentum", "subtitle": "Find your rhythm" },
-      "apex": { "title": "Apex", "subtitle": "High stakes" }
+      "entry": {
+        "title": "Start",
+        "subtitle": "Begin small"
+      },
+      "core": {
+        "title": "Momentum",
+        "subtitle": "Find your rhythm"
+      },
+      "apex": {
+        "title": "Apex",
+        "subtitle": "High stakes"
+      }
     },
     "sortLabel": "Sort:",
     "sortDefault": "Featured",
@@ -439,5 +448,14 @@
     "openCases": "Browse cases",
     "verify": "Verify result",
     "recentLimit": "Showing your latest 50 openings."
+  },
+  "rarity": {
+    "CONSUMER": "Consumer",
+    "INDUSTRIAL": "Industrial",
+    "MIL_SPEC": "Mil-Spec",
+    "RESTRICTED": "Restricted",
+    "CLASSIFIED": "Classified",
+    "COVERT": "Covert",
+    "GOLD": "Exceedingly Rare"
   }
 }

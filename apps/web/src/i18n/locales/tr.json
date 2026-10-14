@@ -413,5 +413,14 @@
     "openCases": "Kasaları görüntüle",
     "verify": "Sonucu doğrula",
     "recentLimit": "Son 50 açılış gösteriliyor."
+  },
+  "rarity": {
+    "CONSUMER": "Tüketici Sınıfı",
+    "INDUSTRIAL": "Endüstriyel Sınıf",
+    "MIL_SPEC": "Ordu Standardı",
+    "RESTRICTED": "Kısıtlı",
+    "CLASSIFIED": "Gizli",
+    "COVERT": "Çok Gizli",
+    "GOLD": "Son Derece Nadir"
   }
 }

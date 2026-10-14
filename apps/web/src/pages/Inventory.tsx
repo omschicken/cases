@@ -1,10 +1,10 @@
-import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
-import { RARITY_RANK, rarityColor } from "../lib/rarity";
+import { RARITY_LABELS, RARITY_RANK } from "../lib/rarity";
+import { ItemCard, ItemCardSkeleton } from "../components/dz/ItemCard";
 import type { InventoryItemDto, ItemRarity } from "../lib/types";
 
 type SortMode = "newest" | "value-desc" | "value-asc";
@@ -77,7 +77,7 @@ export function InventoryPage() {
         <div className="inventory-controls">
           <label><span>{t("inventory.filter", { defaultValue: "Rarity" })}</span><select value={rarityFilter} onChange={(event) => setRarityFilter(event.target.value as ItemRarity | "all")}>
             <option value="all">{t("inventory.all", { defaultValue: "All" })}</option>
-            {availableRarities.map((rarity) => <option key={rarity} value={rarity}>{t(`rarity.${rarity}`, { defaultValue: rarity })}</option>)}
+            {availableRarities.map((rarity) => <option key={rarity} value={rarity}>{t(`rarity.${rarity}`, { defaultValue: RARITY_LABELS[rarity] })}</option>)}
           </select></label>
           <label><span>{t("inventory.sort", { defaultValue: "Sort" })}</span><select value={sort} onChange={(event) => setSort(event.target.value as SortMode)}>
             <option value="newest">{t("inventory.newest", { defaultValue: "Newest" })}</option>
@@ -87,16 +87,46 @@ export function InventoryPage() {
         </div>
       </div>
       {error && <div className="catalog-notice" role="alert"><span>{error}</span><button className="catalog-retry" type="button" onClick={() => void load()}>{t("common.retry")}</button></div>}
-      {loading && <div className="item-grid" aria-busy="true">{Array.from({ length: 4 }, (_, index) => <div className="item-card case-card-skeleton" key={index} aria-hidden="true" />)}</div>}
-      {!loading && items.length === 0 && !error && <div className="inventory-empty"><span className="inventory-empty-icon" aria-hidden="true">◇</span><h2>{t("inventory.emptyTitle", { defaultValue: "Your collection starts here" })}</h2><p>{t("inventory.noItemsYet")}</p><Link to="/#collections" className="open-button">{t("inventory.exploreCases", { defaultValue: "Explore cases" })}</Link></div>}
+      {loading && <div className="dz-item-grid" aria-busy="true">{Array.from({ length: 8 }, (_, index) => <ItemCardSkeleton key={index} />)}</div>}
+      {!loading && items.length === 0 && !error && (
+        <div className="dz-empty">
+          <span className="dz-empty__mark" aria-hidden="true">◇</span>
+          <h2 className="dz-empty__title">{t("inventory.emptyTitle", { defaultValue: "Your collection starts here" })}</h2>
+          <p className="dz-empty__body">{t("inventory.noItemsYet")}</p>
+          <Link to="/#collections" className="dz-hero__cta">{t("inventory.exploreCases", { defaultValue: "Explore cases" })}</Link>
+        </div>
+      )}
       {!loading && items.length > 0 && visibleItems.length === 0 && <p className="hint">{t("inventory.noFilteredItems", { defaultValue: "No items match this filter." })}</p>}
-      {!loading && visibleItems.length > 0 && <div className="item-grid inventory-grid">{visibleItems.map((inv) => <article className="item-card inventory-card" key={inv.id} style={{ "--rarity-color": rarityColor(inv.caseItem.rarity) } as CSSProperties}>
-        <span className="inventory-card-rarity">{t(`rarity.${inv.caseItem.rarity}`, { defaultValue: inv.caseItem.rarity })}</span>
-        <img src={inv.caseItem.imageUrl} alt={inv.caseItem.name} loading="lazy" />
-        <h2>{inv.caseItem.name}</h2>
-        <p className="value">{formatMinor(inv.caseItem.valueMinor, inv.caseItem.currency)}</p>
-        {confirmId === inv.id ? <div className="inventory-sell-confirm"><p>{t("inventory.confirmSell", { price: formatMinor(inv.caseItem.valueMinor, inv.caseItem.currency), defaultValue: "Sell this item for {{price}}?" })}</p><div><button type="button" onClick={() => void sell(inv.id)} disabled={sellingId === inv.id}>{sellingId === inv.id ? t("inventory.selling") : t("inventory.confirm", { defaultValue: "Confirm sale" })}</button><button type="button" className="inventory-cancel" onClick={() => setConfirmId(null)} disabled={sellingId === inv.id}>{t("inventory.cancel", { defaultValue: "Cancel" })}</button></div></div> : <button type="button" onClick={() => setConfirmId(inv.id)} disabled={sellingId !== null}>{t("inventory.sellForBalance")}</button>}
-      </article>)}</div>}
+      {!loading && visibleItems.length > 0 && <div className="dz-item-grid">{visibleItems.map((inv) => {
+        const price = formatMinor(inv.caseItem.valueMinor, inv.caseItem.currency);
+        return (
+          <ItemCard
+            key={inv.id}
+            name={inv.caseItem.name}
+            imageUrl={inv.caseItem.imageUrl}
+            rarity={inv.caseItem.rarity}
+            rarityLabel={t(`rarity.${inv.caseItem.rarity}`, { defaultValue: RARITY_LABELS[inv.caseItem.rarity] })}
+            value={price}
+            actions={confirmId === inv.id ? (
+              <>
+                <p className="dz-item-card__confirm">
+                  {t("inventory.confirmSell", { price, defaultValue: "Sell this item for {{price}}?" })}
+                </p>
+                <button type="button" className="dz-danger" onClick={() => void sell(inv.id)} disabled={sellingId === inv.id}>
+                  {sellingId === inv.id ? t("inventory.selling") : t("inventory.confirm", { defaultValue: "Confirm sale" })}
+                </button>
+                <button type="button" onClick={() => setConfirmId(null)} disabled={sellingId === inv.id}>
+                  {t("inventory.cancel", { defaultValue: "Cancel" })}
+                </button>
+              </>
+            ) : (
+              <button type="button" onClick={() => setConfirmId(inv.id)} disabled={sellingId !== null}>
+                {t("inventory.sellForBalance")}
+              </button>
+            )}
+          />
+        );
+      })}</div>}
     </div>
   );
 }

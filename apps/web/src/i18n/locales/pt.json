@@ -413,5 +413,14 @@
     "openCases": "Ver caixas",
     "verify": "Verificar resultado",
     "recentLimit": "Exibindo suas 50 aberturas mais recentes."
+  },
+  "rarity": {
+    "CONSUMER": "Básico",
+    "INDUSTRIAL": "Industrial",
+    "MIL_SPEC": "Padrão militar",
+    "RESTRICTED": "Restrito",
+    "CLASSIFIED": "Confidencial",
+    "COVERT": "Secreto",
+    "GOLD": "Extremamente raro"
   }
 }

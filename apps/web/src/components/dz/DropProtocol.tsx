@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { formatMinor } from "../../lib/money";
-import { rarityColor } from "../../lib/rarity";
+import { RARITY_LABELS, rarityColor } from "../../lib/rarity";
 import type { CaseItem, OpenCaseResult } from "../../lib/types";
 import { DropChamber } from "./DropChamber";
 
@@ -160,7 +160,7 @@ export function DropProtocol({
               rarityColor={accent}
               depth={220}
               hudLeft={caseName}
-              hudRight={t(`rarity.${item.rarity}`, { defaultValue: item.rarity.replace("_", " ") })}
+              hudRight={t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}
             >
               <div className="dz-protocol__item-art">
                 <img src={item.imageUrl} alt={item.name} />
@@ -168,7 +168,7 @@ export function DropProtocol({
             </DropChamber>
             <div className="dz-protocol__item">
             <span className="dz-protocol__item-rarity">
-              {t(`rarity.${item.rarity}`, { defaultValue: item.rarity.replace("_", " ") })}
+              {t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}
             </span>
             <h2 className="dz-protocol__item-name">{item.name}</h2>
             <p className="dz-protocol__item-value">

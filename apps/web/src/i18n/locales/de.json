@@ -413,5 +413,14 @@
     "openCases": "Cases ansehen",
     "verify": "Ergebnis prüfen",
     "recentLimit": "Es werden die letzten 50 Öffnungen angezeigt."
+  },
+  "rarity": {
+    "CONSUMER": "Einsteigerklasse",
+    "INDUSTRIAL": "Industrieklasse",
+    "MIL_SPEC": "Militärqualität",
+    "RESTRICTED": "Verboten",
+    "CLASSIFIED": "Geheim",
+    "COVERT": "Verdeckt",
+    "GOLD": "Außerordentlich selten"
   }
 }

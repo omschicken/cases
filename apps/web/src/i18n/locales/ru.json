@@ -79,9 +79,18 @@
     "collectionFrom": "от",
     "collectionFilterLabel": "Категории кейсов",
     "collection": {
-      "entry": { "title": "Старт", "subtitle": "Начни с малого" },
-      "core": { "title": "Импульс", "subtitle": "Найди свой ритм" },
-      "apex": { "title": "Предел", "subtitle": "Высокие ставки" }
+      "entry": {
+        "title": "Старт",
+        "subtitle": "Начни с малого"
+      },
+      "core": {
+        "title": "Импульс",
+        "subtitle": "Найди свой ритм"
+      },
+      "apex": {
+        "title": "Предел",
+        "subtitle": "Высокие ставки"
+      }
     },
     "sortLabel": "Сортировка:",
     "sortDefault": "Популярные",
@@ -442,5 +451,14 @@
     "openCases": "Перейти к кейсам",
     "verify": "Проверить результат",
     "recentLimit": "Показаны последние 50 открытий."
+  },
+  "rarity": {
+    "CONSUMER": "Ширпотреб",
+    "INDUSTRIAL": "Промышленное",
+    "MIL_SPEC": "Армейское",
+    "RESTRICTED": "Запрещённое",
+    "CLASSIFIED": "Засекреченное",
+    "COVERT": "Тайное",
+    "GOLD": "Исключительное"
   }
 }

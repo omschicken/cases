@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
-import { rarityColor } from "../lib/rarity";
+import { RARITY_LABELS, rarityColor } from "../lib/rarity";
 import type { CaseOpenHistoryDto } from "../lib/types";
 
 export function HistoryPage() {
@@ -53,7 +53,7 @@ export function HistoryPage() {
               <time dateTime={event.createdAt}>{new Date(event.createdAt).toLocaleString()}</time>
             </div>
             <div className="history-row-result">
-              <span className="history-rarity">{t(`rarity.${event.resultCaseItem.rarity}`, { defaultValue: event.resultCaseItem.rarity })}</span>
+              <span className="history-rarity">{t(`rarity.${event.resultCaseItem.rarity}`, { defaultValue: RARITY_LABELS[event.resultCaseItem.rarity] })}</span>
               <strong>{formatMinor(event.resultCaseItem.valueMinor, event.resultCaseItem.currency)}</strong>
               <Link to={`/verify/${event.id}`}>{t("history.verify")}</Link>
             </div>

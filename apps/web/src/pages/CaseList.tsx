@@ -8,7 +8,7 @@ import { formatMinor } from "../lib/money";
 import { DropHero } from "../components/dz/DropHero";
 import { StatsBar } from "../components/StatsBar";
 import { RecentDrops } from "../components/RecentDrops";
-import { highestRarity, RARITY_RANK } from "../lib/rarity";
+import { highestRarity, RARITY_LABELS, RARITY_RANK } from "../lib/rarity";
 import { CaseCard, CaseCardSkeleton } from "../components/dz/CaseCard";
 import type { CaseDto, ItemRarity } from "../lib/types";
 
@@ -197,7 +197,7 @@ export function CaseListPage() {
               artUrl={artUrl}
               tier={caseToTier.get(c.id)}
               rarityLabel={chase
-                ? t(`rarity.${chase}`, { defaultValue: chase })
+                ? t(`rarity.${chase}`, { defaultValue: RARITY_LABELS[chase] })
                 : t("home.caseCollection", { defaultValue: "COLLECTION" })}
               priceLabel={t("home.casePriceFrom", { defaultValue: "CASE PRICE" })}
             />
