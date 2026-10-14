@@ -49,9 +49,36 @@ interface CaseSeed {
 
 const BASE_CASES = cases as CaseSeed[];
 
+const STARTER_CHASE_DROPS: Record<string, string[]> = {
+  "ignition-case": ["★ Ursus Knife | Tiger Tooth", "★ Talon Knife | Case Hardened", "★ Driver Gloves | Crimson Weave", "★ Hand Wraps | Slaughter"],
+  "static-case": ["★ Butterfly Knife | Bright Water", "★ Skeleton Knife | Doppler", "★ Sport Gloves | Superconductor", "★ Specialist Gloves | Crimson Kimono"],
+  "overdrive-case": ["★ M9 Bayonet | Night", "★ Classic Knife | Fade", "★ Moto Gloves | Spearmint", "★ Bloodhound Gloves | Snakebite"],
+};
+
+/** Adds a small, explicit chase tier to the three starter cases. Market names,
+ * images and prices still come from the existing catalog and live price feed. */
+function withStarterChaseDrops(sourceCases: CaseSeed[]): CaseSeed[] {
+  const itemCatalog = new Map(sourceCases.flatMap((entry) => entry.items.map((item) => [item.name, item] as const)));
+  return sourceCases.map((entry) => {
+    const chaseNames = STARTER_CHASE_DROPS[entry.slug];
+    if (!chaseNames) return entry;
+    const additions = chaseNames.map((name) => {
+      const source = itemCatalog.get(name);
+      if (!source) throw new Error(`Missing chase item in catalog: ${name}`);
+      return { ...source, rarity: ItemRarity.GOLD, weight: 0.125 };
+    });
+    const existingNames = new Set(entry.items.map((item) => item.name));
+    const newDrops = additions.filter((item) => !existingNames.has(item.name));
+    const reservedWeight = newDrops.reduce((sum, item) => sum + item.weight, 0);
+    const existingWeight = entry.items.reduce((sum, item) => sum + item.weight, 0);
+    const scale = (100 - reservedWeight) / existingWeight;
+    return { ...entry, items: [...entry.items.map((item) => ({ ...item, weight: item.weight * scale })), ...newDrops] };
+  });
+}
+
 function expandPricedCases(prices: ReadonlyMap<string, number>): CaseSeed[] {
   const missing = new Set<string>();
-  const expanded = BASE_CASES.map((c) => ({
+  const expanded = withStarterChaseDrops(BASE_CASES).map((c) => ({
     ...c,
     items: c.items.flatMap((item) => {
       const variants = pricedVariants(item, prices);

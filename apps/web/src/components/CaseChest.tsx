@@ -5,6 +5,7 @@ type CaseChestProps = {
   caseSlug: string;
   itemImageUrl?: string;
   className?: string;
+  opening?: boolean;
 };
 
 /** Stable visual identity: a case keeps the same treatment in every view. */
@@ -33,15 +34,16 @@ function CaseGlyph({ variant }: { variant: number }) {
 }
 
 /** Decorative case preview. It never represents an opening or its result. */
-export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "" }: CaseChestProps) {
+export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", opening = false }: CaseChestProps) {
   const { seed, variant, hue, finish } = caseVisualIdentity(caseSlug);
   const mark = caseName.replace(/\s*case$/i, "").slice(0, 3).toUpperCase();
   const nameplate = caseName.replace(/\s*case$/i, "").toUpperCase();
   const serial = String(seed % 1000).padStart(3, "0");
 
   return (
-    <div className={`case-chest case-chest-v${variant} case-chest-f${finish} ${className}`} style={{ "--chest-hue": hue } as CSSProperties} aria-hidden="true">
+    <div className={`case-chest case-chest-v${variant} case-chest-f${finish} ${opening ? "case-chest-is-opening" : ""} ${className}`} style={{ "--chest-hue": hue } as CSSProperties} aria-hidden="true">
       <span className="case-chest-aura" />
+      {opening && <><span className="case-chest-flare" /><span className="case-chest-scan" /></>}
       {itemImageUrl && <img className="case-chest-reveal" src={itemImageUrl} alt="" />}
       <div className="case-chest-assembly">
         <div className="case-chest-lid">
