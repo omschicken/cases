@@ -11747,3 +11747,555 @@ body::before { opacity: 0.018; }
     animation: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYER 7 — HeroBanner orbits, item cards v2, nav micro-fx,
+              global polish pass
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Hero orbit rings ─────────────────────────────────────────── */
+.hero-orbit {
+  position: absolute;
+  top: 50%; left: 50%;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  pointer-events: none;
+  transform-origin: center;
+}
+.hero-orbit-outer {
+  width: 340px; height: 340px;
+  margin-top: -170px; margin-left: -170px;
+  animation: orbit-spin 18s linear infinite;
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.hero-orbit-inner {
+  width: 220px; height: 220px;
+  margin-top: -110px; margin-left: -110px;
+  animation: orbit-spin 10s linear infinite reverse;
+  border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-orbit { animation: none !important; }
+}
+
+/* Orbit corner tick marks */
+.hero-orbit-outer::before,
+.hero-orbit-outer::after,
+.hero-orbit-inner::before,
+.hero-orbit-inner::after {
+  content: "";
+  position: absolute;
+  top: 50%; left: -3px;
+  width: 6px; height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+.hero-orbit-outer::after,
+.hero-orbit-inner::after {
+  top: auto; bottom: 50%;
+  left: auto; right: -3px;
+}
+
+/* ── HeroBanner crosshair spin ────────────────────────────────── */
+.hero-crosshair {
+  animation: hero-crosshair-spin 30s linear infinite;
+}
+@keyframes hero-crosshair-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-crosshair { animation: none !important; }
+}
+
+/* Hero content fade-in on slide change */
+.hero-banner-content h2 {
+  animation: hero-text-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero-banner-content p {
+  animation: hero-text-in 0.55s 0.07s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero-cta-button {
+  animation: hero-text-in 0.55s 0.14s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes hero-text-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero CTA button upgrade */
+.hero-cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #000;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.hero-cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 85%, #fff);
+}
+.hero-cta-button:active { transform: translateY(0); }
+
+/* ── Hero stage glow ──────────────────────────────────────────── */
+.hero-artwork::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 60%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Case card v2 enhancements ────────────────────────────────── */
+.case-card-editorial {
+  position: relative;
+  overflow: hidden;
+}
+/* Animated shimmer on hover */
+.case-card-editorial::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    color-mix(in srgb, #fff 6%, transparent) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%);
+  transition: transform 0s;
+  pointer-events: none;
+  z-index: 2;
+}
+.case-card-editorial:hover::before {
+  transform: translateX(100%);
+  transition: transform 0.5s ease;
+}
+
+/* Rarity glow bar at bottom */
+.case-card-editorial::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--rarity-color, var(--accent));
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.case-card-editorial:hover::after { opacity: 1; }
+
+/* Price pulse on hover */
+.case-card-foot .price {
+  transition: color 0.2s, text-shadow 0.2s;
+}
+.case-card-editorial:hover .case-card-foot .price {
+  color: var(--accent);
+  text-shadow: 0 0 16px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+/* Card arrow pop */
+.case-card-arrow {
+  display: inline-block;
+  transition: transform 0.2s;
+}
+.case-card-editorial:hover .case-card-arrow { transform: translate(2px, -2px); }
+
+/* ── Item card in CaseDetail v2 ───────────────────────────────── */
+.item-card {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+  cursor: default;
+}
+.item-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 32px -8px color-mix(in srgb, var(--rarity-color, var(--accent)) 30%, transparent);
+}
+/* Rarity top border */
+.item-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--rarity-color, var(--accent));
+  opacity: 0.7;
+  border-radius: 4px 4px 0 0;
+}
+.item-card { position: relative; }
+
+/* Item image zoom on hover */
+.item-card img {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.item-card:hover img { transform: scale(1.08); }
+
+/* ── Nav link hover micro-interactions ───────────────────────── */
+.pages-bar-link,
+.sidebar-link {
+  position: relative;
+  overflow: hidden;
+}
+.pages-bar-link::after,
+.sidebar-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 50%; right: 50%;
+  height: 2px;
+  background: var(--accent);
+  transition: left 0.2s, right 0.2s;
+  border-radius: 1px;
+}
+.pages-bar-link:hover::after,
+.sidebar-link:hover::after,
+.pages-bar-link.active::after,
+.sidebar-link.active::after {
+  left: 0; right: 0;
+}
+
+/* Bottom nav icon bounce on active */
+.bottom-nav-link svg {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.bottom-nav-link.active svg,
+.bottom-nav-link:hover svg {
+  transform: translateY(-3px) scale(1.15);
+}
+
+/* ── Balance pill pulse when balance changes ─────────────────── */
+@keyframes balance-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+.balance-pill[data-changed="true"] {
+  animation: balance-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Game result win animation ───────────────────────────────── */
+.game-result--won {
+  animation: result-emerge 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes result-emerge {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.game-result--won img {
+  animation: result-img-float 3s ease-in-out infinite 0.6s;
+}
+@keyframes result-img-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* ── Reel landed item extra glow ─────────────────────────────── */
+.reel-item-landed {
+  animation: item-land-glow 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes item-land-glow {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--rarity-color) 0%, transparent); }
+  40%  { box-shadow: 0 0 0 12px color-mix(in srgb, var(--rarity-color) 30%, transparent); }
+  100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--rarity-color) 15%, transparent); }
+}
+
+/* ── Chest stage hover tilt on open page ─────────────────────── */
+.case-opening-chest-stage {
+  perspective: 800px;
+}
+.case-opening-chest-stage .case-chest {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.case-opening-chest-stage:hover .case-chest {
+  transform: rotateY(-6deg) rotateX(3deg) scale(1.04);
+}
+
+/* ── Loading state skeleton shimmer v2 ───────────────────────── */
+@keyframes shimmer-v2 {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+.case-card-skeleton,
+[aria-busy="true"] .case-card-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--panel) 0%,
+    var(--panel-2) 40%,
+    var(--panel) 80%
+  );
+  background-size: 800px 100%;
+  animation: shimmer-v2 1.6s ease-in-out infinite;
+}
+
+/* ── Staggered card entrance ─────────────────────────────────── */
+.case-grid .case-card-editorial {
+  animation: card-enter 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--index, 0) * 35ms);
+}
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-grid .case-card-editorial { animation: none !important; }
+}
+
+/* ── Collection route card upgrades ──────────────────────────── */
+.collection-route {
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.22s,
+              border-color 0.22s;
+}
+.collection-route:hover:not(:disabled) {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 16px 48px -12px color-mix(in srgb, var(--route-accent, var(--accent)) 25%, transparent);
+  border-color: var(--route-accent, var(--accent));
+}
+.collection-route.is-active {
+  box-shadow: 0 0 0 2px var(--route-accent, var(--accent)),
+              0 8px 32px -8px color-mix(in srgb, var(--route-accent, var(--accent)) 30%, transparent);
+}
+
+/* ── Catalog notice ───────────────────────────────────────────── */
+.catalog-notice {
+  animation: notice-slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes notice-slide-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Game item grid hover ─────────────────────────────────────── */
+.game-item {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s,
+              border-color 0.15s;
+}
+.game-item:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 24px -6px color-mix(in srgb, var(--rarity-color, var(--accent)) 30%, transparent);
+}
+.game-item.selected {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 60%, transparent),
+              0 4px 16px -4px color-mix(in srgb, var(--accent) 25%, transparent);
+  animation: item-select-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes item-select-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* ── Run button pulse ─────────────────────────────────────────── */
+.game-run:not(:disabled) {
+  position: relative;
+  overflow: hidden;
+}
+.game-run:not(:disabled)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  transform: translateX(-100%);
+  animation: btn-sheen 2.5s ease-in-out infinite 1s;
+}
+@keyframes btn-sheen {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-run::after { animation: none !important; }
+}
+
+/* ── Drop card hover ──────────────────────────────────────────── */
+.drop-card {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s;
+}
+.drop-card:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 32px -8px color-mix(in srgb, var(--rarity-color, var(--accent)) 30%, transparent);
+}
+
+/* ── ScrollBar thin ───────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--panel-3) transparent;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--panel-3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--panel-2); }
+
+/* ── Focus ring upgrade ───────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ── Tooltip-style price badge on item cards ─────────────────── */
+.item-card .item-card-value,
+.item-card [class*="value"],
+.item-card b,
+.item-card strong:last-child {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+/* ── Upgrader arrow animated ─────────────────────────────────── */
+.upgrade-arrow {
+  font-size: 2rem;
+  color: var(--accent);
+  animation: arrow-pulse 1.2s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@keyframes arrow-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1) translateX(0); }
+  50%       { opacity: 1;   transform: scale(1.2) translateX(4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .upgrade-arrow { animation: none !important; opacity: 1; }
+}
+
+/* ── Upgrade chance bar glow ──────────────────────────────────── */
+.upgrade-chance {
+  position: relative;
+}
+.upgrade-chance::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 30%, transparent);
+  pointer-events: none;
+}
+
+/* ── Battle result dramatic entrance ─────────────────────────── */
+.battle-result {
+  animation: battle-result-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes battle-result-in {
+  from { opacity: 0; transform: scale(0.85) translateY(24px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Footer brand glow ────────────────────────────────────────── */
+.site-footer .brand-word,
+.site-footer .brand-sigil {
+  transition: color 0.2s, filter 0.2s;
+}
+.site-footer a:hover .brand-word,
+.site-footer a:hover .brand-sigil {
+  color: var(--accent);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent) 40%, transparent));
+}
+
+/* ── Top nav brand pulse on load ─────────────────────────────── */
+.brand {
+  animation: brand-appear 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes brand-appear {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── StatsBar counter entrance ───────────────────────────────── */
+.stats-bar,
+[class*="stats-bar"] {
+  animation: statsbar-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+@keyframes statsbar-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Fairness panel toggle animation ─────────────────────────── */
+.fairness-panel {
+  animation: panel-expand 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes panel-expand {
+  from { opacity: 0; transform: scaleY(0.92) translateY(-8px); transform-origin: top; }
+  to   { opacity: 1; transform: scaleY(1) translateY(0); }
+}
+
+/* ── "Live" kicker badge blink ────────────────────────────────── */
+.section-kicker:has(+ h1),
+.game-heading .section-kicker {
+  position: relative;
+}
+.section-kicker:has(+ h1)::before {
+  content: "";
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #3ddc84;
+  margin-right: 6px;
+  animation: live-blink 1.4s ease-in-out infinite;
+  vertical-align: middle;
+}
+@keyframes live-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .section-kicker::before { animation: none !important; opacity: 1; }
+}
+
+/* ── Confirm button shake on error ───────────────────────────── */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+.catalog-notice[role="alert"] {
+  animation: shake 0.4s ease, notice-slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Inventory item hover ─────────────────────────────────────── */
+.inventory-item,
+[class*="inventory-card"] {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s;
+}
+.inventory-item:hover,
+[class*="inventory-card"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px -4px color-mix(in srgb, var(--rarity-color, var(--accent)) 25%, transparent);
+}
+
+/* ── Case opening preview items entrance ─────────────────────── */
+.case-opening-preview .item-card,
+.case-opening-preview [class*="preview-item"] {
+  animation: preview-item-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+@keyframes preview-item-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
