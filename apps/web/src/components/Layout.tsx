@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { api, API_URL } from "../lib/api";
 import { formatMinor } from "../lib/money";
+import { initEffects } from "../lib/effects";
 import type { WalletDto } from "../lib/types";
 import { Sidebar } from "./Sidebar";
 import { BottomNav } from "./BottomNav";
@@ -41,6 +42,9 @@ export function Layout() {
 
   // Close drawers whenever the route changes.
   useEffect(() => { setMenuOpen(false); setProfileOpen(false); }, [location.pathname]);
+
+  // Global visual effects (3D tilt, cursor glow) — init once, cleaned up on unmount.
+  useEffect(() => initEffects(), []);
 
   return (
     <div className="app-shell">

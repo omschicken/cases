@@ -14337,3 +14337,437 @@ details[open] > :not(summary) {
   .bonus-streak-track { grid-template-columns: repeat(4, 1fr); }
   .referral-stat-grid { grid-template-columns: 1fr; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LAYER 12 — THE LIVING CASES: 3D Tilt · Holographic Shimmer · Epic Opening
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Cursor glow ── */
+.cursor-glow {
+  position: fixed;
+  top: -40px; left: -40px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: screen;
+  transition: opacity 0.3s;
+  will-change: transform;
+}
+@media (pointer: coarse) { .cursor-glow { display: none; } }
+
+/* ── 3D Perspective Tilt — applied via JS CSS vars ── */
+.case-card-editorial,
+.collection-route,
+.inventory-card,
+.battle-case {
+  transform-style: preserve-3d;
+  transform:
+    perspective(var(--tilt-p, 800px))
+    rotateX(var(--tilt-rx, 0deg))
+    rotateY(var(--tilt-ry, 0deg));
+  transition:
+    transform 0.12s ease-out,
+    border-color 0.25s,
+    box-shadow 0.25s;
+  will-change: transform;
+}
+
+/* ── Holographic shimmer on tilt ── */
+.case-card-editorial::after,
+.collection-route::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--tilt-px, 50%) var(--tilt-py, 50%),
+    rgba(255,255,255,0.07) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  transition: opacity 0.2s;
+  opacity: 0;
+  z-index: 2;
+}
+.case-card-editorial:hover::after,
+.collection-route:hover::after { opacity: 1; }
+
+/* ── CaseChest: MORE life ── */
+@keyframes chest-breathe {
+  0%, 100% { filter: drop-shadow(0 0 8px hsl(var(--chest-hue), var(--chest-sat), 40%)); }
+  50%       { filter: drop-shadow(0 0 22px hsl(var(--chest-hue), var(--chest-sat), 55%)); }
+}
+.case-chest {
+  animation: chest-breathe 3.5s ease-in-out infinite;
+}
+.case-card-editorial:hover .case-chest,
+.collection-route:hover .case-chest {
+  animation-duration: 1.2s;
+}
+
+/* Orbit rings: faster + bigger on hover */
+.case-card-editorial:hover .case-orbit-ring,
+.case-chest-is-opening .case-orbit-ring {
+  animation-duration: 2s !important;
+}
+
+/* Lock gem pulse */
+@keyframes gem-throb {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.3); }
+}
+.case-chest-lock-gem {
+  animation: gem-throb 2.2s ease-in-out infinite;
+}
+.case-card-editorial:hover .case-chest-lock-gem {
+  animation-duration: 0.8s;
+}
+
+/* ── Case card art frame: rarity light leak on hover ── */
+@keyframes light-leak {
+  0%   { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
+  20%  { opacity: 0.5; }
+  100% { transform: translateX(200%) skewX(-15deg); opacity: 0; }
+}
+.case-card-art-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--rarity-color, var(--accent)) 25%, white) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  pointer-events: none;
+  z-index: 3;
+  border-radius: inherit;
+}
+.case-card-editorial:hover .case-card-art-frame::before {
+  animation: light-leak 0.7s ease-out forwards;
+}
+
+/* ── Case card: floating item image ── */
+@keyframes float-item {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-6px) scale(1.04); }
+}
+.case-card-editorial:hover .case-chest-reveal {
+  animation: float-item 2s ease-in-out infinite;
+}
+
+/* ── Opening station: EPIC reel effects ── */
+
+/* Pre-flash: rarity color floods the viewport */
+.reel-pre-flash {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  background: radial-gradient(ellipse at center,
+    color-mix(in srgb, var(--rarity-color, var(--accent)) 22%, transparent) 0%,
+    transparent 70%
+  );
+  animation: pre-flash-pulse 0.5s ease-out both;
+}
+@keyframes pre-flash-pulse {
+  0%   { opacity: 0; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+/* Screen shake on chase land */
+@keyframes screen-shake {
+  0%   { transform: translate(0, 0) rotate(0); }
+  15%  { transform: translate(-4px, 2px) rotate(-0.4deg); }
+  30%  { transform: translate(4px, -2px) rotate(0.4deg); }
+  45%  { transform: translate(-3px, 1px) rotate(-0.2deg); }
+  60%  { transform: translate(3px, -1px) rotate(0.2deg); }
+  75%  { transform: translate(-1px, 1px) rotate(0); }
+  100% { transform: translate(0, 0) rotate(0); }
+}
+.case-reel-chase.case-reel-landed .case-reel-viewport {
+  animation: screen-shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* Reel flash: fullscreen rarity burst */
+.reel-flash {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%,
+    color-mix(in srgb, var(--rarity-color) 60%, white) 0%,
+    color-mix(in srgb, var(--rarity-color) 30%, transparent) 35%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 999;
+  animation: reel-flash-out 1.2s ease-out both;
+}
+@keyframes reel-flash-out {
+  0%   { opacity: 1; }
+  15%  { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+/* Reel burst: circular ring expanding from center */
+.reel-burst {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 80px; height: 80px;
+  margin: -40px 0 0 -40px;
+  border-radius: 50%;
+  border: 2px solid var(--rarity-color);
+  pointer-events: none;
+  z-index: 10;
+  animation: reel-burst-expand 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes reel-burst-expand {
+  0%   { transform: scale(0); opacity: 1; }
+  60%  { opacity: 0.6; }
+  100% { transform: scale(8); opacity: 0; }
+}
+
+/* Reel particles: 20 sparks exploding outward */
+.reel-particles {
+  position: absolute;
+  top: 50%; left: 50%;
+  pointer-events: none;
+  z-index: 11;
+}
+.reel-particle {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--rarity-color);
+  box-shadow: 0 0 6px var(--rarity-color);
+  animation: reel-particle-fly 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--p-i, 0) * 20ms);
+}
+@keyframes reel-particle-fly {
+  0%   { transform: translate(0,0) scale(1.2); opacity: 1; }
+  30%  { opacity: 0.9; }
+  100% {
+    transform:
+      rotate(var(--p-angle, 0deg))
+      translateX(var(--p-dist, 80px))
+      scale(0);
+    opacity: 0;
+  }
+}
+
+/* Landed item: scale in dramatically */
+@keyframes reel-item-pop {
+  0%   { transform: scale(0.7); opacity: 0; }
+  60%  { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.reel-item-landed .reel-item-inner {
+  animation: reel-item-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Landed indicator glow ring */
+@keyframes indicator-ring-pulse {
+  0%   { transform: scale(0.8); opacity: 0; }
+  50%  { opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+.reel-indicator-pulse {
+  position: absolute;
+  top: -30px; left: 50%;
+  transform: translateX(-50%);
+  width: 4px; height: calc(100% + 60px);
+  background: var(--rarity-color, var(--accent));
+  border-radius: 2px;
+  pointer-events: none;
+  animation: indicator-pulse-glow 2s ease-in-out infinite;
+  opacity: 0.7;
+  box-shadow: 0 0 16px 4px var(--rarity-color, var(--accent));
+}
+@keyframes indicator-pulse-glow {
+  0%, 100% { opacity: 0.5; box-shadow: 0 0 10px 2px var(--rarity-color, var(--accent)); }
+  50%       { opacity: 0.9; box-shadow: 0 0 24px 6px var(--rarity-color, var(--accent)); }
+}
+
+/* Reel track: during spin the whole strip has a scanline */
+@keyframes scanline-pass {
+  0%   { background-position: 0 -100%; }
+  100% { background-position: 0 100%; }
+}
+.case-reel-spinning .case-reel-track {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(255,255,255,0.012) 3px,
+    rgba(255,255,255,0.012) 4px
+  );
+  animation: scanline-pass 0.5s linear infinite;
+}
+
+/* ── Result panel: cinema entrance ── */
+@keyframes result-slam-in {
+  0%   { opacity: 0; transform: scale(0.88) translateY(24px); }
+  50%  { transform: scale(1.03) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.result-panel {
+  animation: result-slam-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Radial rarity light behind result panel */
+.result-panel::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(ellipse at 50% 60%,
+    color-mix(in srgb, var(--rarity-color, var(--accent)) 22%, transparent) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 0;
+  animation: result-aura-pulse 2s ease-in-out infinite;
+}
+@keyframes result-aura-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+/* Result image: float + subtle spin on chase */
+@keyframes result-image-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg) scale(1); }
+  50%       { transform: translateY(-10px) rotate(1deg) scale(1.04); }
+}
+.result-panel .result-image {
+  position: relative;
+  z-index: 1;
+  animation: result-image-float 3s ease-in-out infinite;
+  filter: drop-shadow(0 8px 24px color-mix(in srgb, var(--rarity-color, var(--accent)) 50%, transparent));
+}
+.result-panel-chase .result-image {
+  filter:
+    drop-shadow(0 0 24px var(--rarity-color))
+    drop-shadow(0 12px 32px color-mix(in srgb, var(--rarity-color) 60%, black));
+}
+
+/* Sparks: 12 lines shooting outward */
+.result-reveal-sparks i {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 2px; height: 40px;
+  border-radius: 1px;
+  background: linear-gradient(to top, var(--rarity-color, var(--accent)), transparent);
+  transform-origin: 50% 100%;
+  transform: rotate(calc(var(--spark-index, 0) * 30deg)) translateY(-60px);
+  animation: spark-shoot 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--spark-index, 0) * 30ms);
+  opacity: 0;
+}
+@keyframes spark-shoot {
+  0%   { opacity: 0; transform: rotate(calc(var(--spark-index, 0) * 30deg)) translateY(-20px) scaleY(0.2); }
+  30%  { opacity: 1; }
+  100% { opacity: 0; transform: rotate(calc(var(--spark-index, 0) * 30deg)) translateY(-100px) scaleY(1); }
+}
+
+/* Reveal ring: pulsing halo */
+@keyframes reveal-ring-pulse {
+  0%   { transform: translate(-50%,-50%) scale(0.5); opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(2.5); opacity: 0; }
+}
+.result-reveal-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 2px solid var(--rarity-color, var(--accent));
+  pointer-events: none;
+  animation: reveal-ring-pulse 1.2s ease-out both;
+}
+
+/* ── Opening chest stage: charge-up vortex ── */
+.case-opening-chest-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+}
+
+@keyframes energy-vortex {
+  0%   { transform: rotate(0deg) scale(1); opacity: 0.3; }
+  50%  { opacity: 0.7; transform: rotate(180deg) scale(1.15); }
+  100% { transform: rotate(360deg) scale(1); opacity: 0.3; }
+}
+.case-opening-energy {
+  position: absolute;
+  inset: -40px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 30%, transparent) 25%,
+    transparent 50%,
+    color-mix(in srgb, var(--accent) 20%, transparent) 75%,
+    transparent 100%
+  );
+  animation: energy-vortex 1.5s linear infinite;
+  pointer-events: none;
+}
+
+/* ── Global ambient: very subtle scanline overlay ── */
+.app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.04) 2px,
+    rgba(0,0,0,0.04) 4px
+  );
+  pointer-events: none;
+  z-index: 9998;
+  mix-blend-mode: multiply;
+}
+
+/* ── Case grid: staggered entrance on load ── */
+@keyframes card-pop-in {
+  0%   { opacity: 0; transform: perspective(600px) rotateX(8deg) translateY(20px); }
+  100% { opacity: 1; transform: perspective(600px) rotateX(0deg) translateY(0); }
+}
+.case-grid .case-card-editorial {
+  animation: card-pop-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--index, 0) * 45ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-grid .case-card-editorial { animation: none !important; }
+  .case-chest { animation: none !important; }
+  .reel-pre-flash, .reel-flash, .reel-burst, .reel-particle { display: none !important; }
+  .cursor-glow { display: none !important; }
+  .case-reel-chase.case-reel-landed .case-reel-viewport { animation: none !important; }
+}
+
+/* ── Near-end: viewport shudder ── */
+@keyframes reel-near-shudder {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-2px); }
+  75%       { transform: translateX(2px); }
+}
+.case-reel-near-end .case-reel-viewport {
+  animation: reel-near-shudder 0.15s ease-in-out 3;
+}
+
+/* ── Case card glow: ambient rarity pulse at rest ── */
+@keyframes card-ambient-glow {
+  0%, 100% { box-shadow: 0 2px 12px -4px color-mix(in srgb, var(--rarity-color, var(--accent)) 15%, transparent); }
+  50%       { box-shadow: 0 4px 22px -4px color-mix(in srgb, var(--rarity-color, var(--accent)) 28%, transparent); }
+}
+.case-card-editorial {
+  animation: card-ambient-glow 4s ease-in-out infinite,
+             card-pop-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0s, calc(var(--index, 0) * 45ms);
+}
