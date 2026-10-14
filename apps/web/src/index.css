@@ -13225,3 +13225,176 @@ details[open] > :not(summary) {
   color: #ef8468;
 }
 .account-menu-panel > button:hover { color: #ef8468; background: color-mix(in srgb, #ef8468 8%, var(--panel-3)); }
+
+/* ── Fix: balance-pill double ₽ symbol ────────────────────────── */
+.balance-pill::before {
+  display: none;
+}
+
+/* ── Item cards in case contents — full redesign ─────────────── */
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  padding: 0 0 40px;
+}
+
+.item-card {
+  background: var(--panel);
+  border: 1px solid color-mix(in srgb, var(--rarity-color, var(--border)) 20%, var(--border));
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s,
+              border-color 0.2s;
+}
+.item-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: color-mix(in srgb, var(--rarity-color, var(--accent)) 50%, transparent);
+  box-shadow: 0 12px 32px -8px color-mix(in srgb, var(--rarity-color, var(--accent)) 30%, transparent);
+}
+
+/* Rarity color top bar */
+.item-card::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--rarity-color, var(--accent));
+  border-radius: 10px 10px 0 0;
+  opacity: 0.85;
+}
+
+/* Item image area */
+.item-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  padding: 12px;
+  background: color-mix(in srgb, var(--rarity-color, var(--accent)) 5%, var(--panel-2));
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.item-card:hover img {
+  transform: scale(1.08);
+}
+
+/* Item index badge */
+.item-card-index {
+  position: absolute;
+  top: 8px; left: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  padding: 2px 5px;
+  border-radius: 3px;
+  z-index: 1;
+}
+
+/* Chance badge */
+.item-chance-badge {
+  position: absolute;
+  top: 8px; right: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--rarity-color, var(--accent));
+  background: color-mix(in srgb, var(--rarity-color, var(--accent)) 12%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--rarity-color, var(--accent)) 30%, transparent);
+  padding: 3px 7px;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+/* Info block */
+.item-card-info {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+/* Rarity label */
+.rarity-label {
+  font-size: 0.6rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  color: var(--rarity-color, var(--muted));
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+/* Skin name */
+.item-skin-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+  margin: 0;
+}
+
+/* Wear badges row */
+.item-wear-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+.item-wear-list span {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 2px 5px;
+  background: var(--panel-3);
+  border-radius: 3px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* Price — using .value class on the p */
+.item-card .value {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: auto 0 0;
+  padding-top: 6px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+/* Case contents heading */
+.case-contents-heading {
+  padding: 32px 0 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--panel-3);
+  margin-top: 32px;
+}
+.case-contents-heading p {
+  font-size: 0.8rem;
+  color: var(--muted);
+  max-width: 360px;
+  line-height: 1.5;
+  margin: 0;
+  align-self: flex-end;
+}
+@media (max-width: 600px) {
+  .item-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .case-contents-heading { flex-direction: column; gap: 8px; }
+}
+
+/* Staggered entrance for item cards */
+.item-grid .item-card {
+  animation: card-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--index, 0) * 30ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .item-grid .item-card { animation: none !important; }
+}
