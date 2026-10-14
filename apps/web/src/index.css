@@ -13516,3 +13516,423 @@ details[open] > :not(summary) {
 
 /* ── Auth pages: center card on short screens ── */
 .auth-page { min-height: calc(100dvh - 14rem); display: flex; align-items: center; justify-content: center; }
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYER 10 — Polish Pass: Case Grid, Inventory, Wallet, Profile
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Case card: rarity glow on hover via CSS var ── */
+.case-card-editorial {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+}
+.case-card-editorial:hover {
+  border-color: color-mix(in srgb, var(--rarity-color, var(--accent)) 35%, transparent);
+  box-shadow: 0 0 28px -6px color-mix(in srgb, var(--rarity-color, var(--accent)) 30%, transparent),
+              0 8px 24px -8px rgba(0,0,0,0.5);
+  transform: translateY(-2px);
+}
+
+/* Rarity color bar at card top */
+.case-card-editorial::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--rarity-color, var(--accent)) 40%,
+    var(--rarity-color, var(--accent)) 60%,
+    transparent
+  );
+  opacity: 0.6;
+  transition: opacity 0.25s;
+}
+.case-card-editorial:hover::before { opacity: 1; }
+
+/* Price pop on hover */
+.case-card-editorial:hover .case-card-foot .price {
+  color: var(--rarity-color, var(--accent));
+}
+
+/* Case grid: first card slightly bigger in featured mode */
+@media (min-width: 769px) {
+  .case-grid--featured .case-card-editorial:first-child {
+    grid-column: span 2;
+  }
+  .case-grid--featured .case-card-editorial:first-child .case-card-art-frame {
+    height: 220px;
+  }
+}
+
+/* ── Inventory page: modern card layout ── */
+.inventory-page {
+  max-width: 1200px;
+  padding: 0 1rem 4rem;
+  margin: 0 auto;
+}
+.inventory-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 2.5rem 0 2rem;
+  border-bottom: 1px solid var(--panel-3);
+  margin-bottom: 1.5rem;
+}
+.inventory-heading h1 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  margin: 0.25rem 0 0;
+  font-family: var(--font-display);
+}
+.inventory-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.inventory-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.inventory-controls select {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.inventory-controls select:focus { border-color: var(--accent); }
+
+/* Inventory card: rarity-coloured top stripe + hover lift */
+.inventory-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  border-radius: 10px;
+  background: var(--panel);
+  padding: 0.75rem;
+  gap: 0.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.18s;
+}
+.inventory-card::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--rarity-color, var(--accent));
+  border-radius: 10px 10px 0 0;
+}
+.inventory-card:hover {
+  border-color: color-mix(in srgb, var(--rarity-color, var(--accent)) 40%, transparent);
+  box-shadow: 0 4px 20px -6px color-mix(in srgb, var(--rarity-color, var(--accent)) 28%, transparent);
+  transform: translateY(-2px);
+}
+.inventory-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  margin-top: 0.5rem;
+}
+.inventory-card h2 {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0;
+  flex: 1;
+}
+.inventory-card .value {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+}
+.inventory-card-rarity {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--rarity-color, var(--muted));
+  font-weight: 700;
+}
+.inventory-card > button {
+  margin-top: auto;
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel-2));
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.inventory-card > button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 20%, var(--panel-2));
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+/* Inventory empty state: centered, with icon */
+.inventory-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 5rem 1rem;
+  text-align: center;
+}
+.inventory-empty-icon {
+  font-size: 3rem;
+  opacity: 0.2;
+  line-height: 1;
+}
+.inventory-empty h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+}
+.inventory-empty p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0;
+  max-width: 320px;
+}
+.inventory-empty .open-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0.5rem;
+  padding: 10px 22px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.inventory-empty .open-button:hover { opacity: 0.88; }
+
+/* ── Wallet page: hero balance display ── */
+.wallet-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 1rem 4rem;
+}
+.wallet-page h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  margin: 2rem 0 0.25rem;
+}
+.wallet-page .balance-display {
+  font-family: var(--font-mono);
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  margin: 0 0 2rem;
+  line-height: 1.1;
+}
+
+/* Wallet forms: side-by-side cards */
+.wallet-forms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+@media (max-width: 640px) { .wallet-forms { grid-template-columns: 1fr; } }
+
+.wallet-forms .auth-form {
+  background: var(--panel);
+  border: 1px solid var(--panel-3);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+.wallet-forms .auth-form h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 1.25rem;
+}
+
+/* Ledger table: cleaner look */
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.ledger-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--panel-3);
+}
+.ledger-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--panel-3) 50%, transparent);
+}
+.ledger-table tr:hover td { background: rgba(255,255,255,0.02); }
+.ledger-table td.positive { color: #4ade80; font-weight: 700; font-family: var(--font-mono); }
+.ledger-table td.negative { color: #f87171; font-weight: 700; font-family: var(--font-mono); }
+
+/* ── History page / profile: consistent heading ── */
+.history-page,
+.profile-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1rem 4rem;
+}
+.history-page h1,
+.profile-page h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  margin: 2rem 0 1.5rem;
+}
+
+/* ── FAQ page: accordion look ── */
+.faq-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1rem 5rem;
+}
+.faq-page h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 5vw, 2.5rem);
+  margin-bottom: 2rem;
+}
+.faq-page details {
+  border: 1px solid var(--panel-3);
+  border-radius: 10px;
+  padding: 0;
+  margin-bottom: 0.75rem;
+  background: var(--panel);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.faq-page details[open] { border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+.faq-page summary {
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.faq-page summary::-webkit-details-marker { display: none; }
+.faq-page summary::after {
+  content: "+";
+  font-size: 1.2rem;
+  color: var(--accent);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.faq-page details[open] summary::after { transform: rotate(45deg); }
+.faq-page details > *:not(summary) {
+  padding: 0 1.25rem 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+/* ── Collection route cards: subtle hover ── */
+.collection-route {
+  border: 1px solid var(--panel-3);
+  border-radius: 12px;
+  background: var(--panel);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.18s;
+  cursor: pointer;
+}
+.collection-route:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  box-shadow: 0 4px 20px -8px color-mix(in srgb, var(--accent) 20%, transparent);
+  transform: translateY(-2px);
+}
+.collection-route.is-active {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--panel));
+}
+
+/* ── Global: section kicker style uniformity ── */
+.section-kicker {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.75;
+  margin-bottom: 0.4rem;
+}
+
+/* ── Prizes / Bonuses pages: padding ── */
+.prizes-page,
+.bonuses-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem 4rem;
+}
+
+/* ── NotFound page: centered ── */
+.not-found-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 1rem;
+  text-align: center;
+  padding: 2rem;
+}
+.not-found-page h1 {
+  font-size: clamp(4rem, 15vw, 9rem);
+  font-family: var(--font-display);
+  font-weight: 900;
+  color: var(--accent);
+  opacity: 0.18;
+  line-height: 1;
+  margin: 0;
+}
+.not-found-page h2 { font-size: 1.2rem; margin: 0; }
+.not-found-page p { color: var(--muted); font-size: 0.85rem; margin: 0; }
+.not-found-page a {
+  margin-top: 0.5rem;
+  padding: 10px 22px;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.not-found-page a:hover { opacity: 0.88; }
+
+/* ── Responsive: inventory grid on mobile ── */
+@media (max-width: 600px) {
+  .inventory-heading { padding: 1.5rem 0 1rem; }
+  .item-grid.inventory-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+}
