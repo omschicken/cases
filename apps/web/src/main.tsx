@@ -6,6 +6,7 @@ import "./index.css";
 import "./styles/dz-tokens.css";
 import "./styles/dz-chamber.css";
 import "./styles/dz-card.css";
+import "./styles/dz-hero.css";
 import "./i18n";
 import App from "./App";
 

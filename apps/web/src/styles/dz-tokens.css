@@ -73,7 +73,10 @@
 
   /* Fluid display scale — clamps so 320px never overflows and 1920px never
      looks undersized, without a breakpoint per step. */
-  --dz-type-hero:  clamp(2.4rem, 1.1rem + 5.2vw, 5.5rem);
+  /* Capped at 4.2rem: long Russian compounds ("коллекции", "историю") in a
+     half-width hero column overflow past that, and a clipped headline costs
+     more than the extra scale buys. */
+  --dz-type-hero:  clamp(2.1rem, 0.95rem + 3.9vw, 4.2rem);
   --dz-type-xl:    clamp(1.8rem, 1.1rem + 2.6vw, 3.2rem);
   --dz-type-lg:    clamp(1.35rem, 1.05rem + 1.1vw, 1.9rem);
   --dz-type-md:    1.05rem;

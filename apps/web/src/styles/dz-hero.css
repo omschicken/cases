@@ -1,0 +1,256 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   DROP HERO — the chamber as the first thing you see.
+
+   One object, lit, in a cell. Replaces the auto-rotating carousel: a
+   carousel splits attention across three messages and dilutes exactly the
+   signature this page exists to establish, and auto-advancing copy is a
+   usability problem on top of that.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dz-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: var(--dz-s7);
+  padding: clamp(var(--dz-s5), 3vw, var(--dz-s8));
+  margin-bottom: var(--dz-s7);
+  /* The legacy page wrapper lays its children out as grid/flex items, whose
+     default min-width:auto refuses to shrink below min-content — at 320px
+     that pushed the hero 50px wider than its parent and clipped the copy. */
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-xl);
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 60% 70% at 88% 18%, var(--dz-light-bounce), transparent 70%),
+    linear-gradient(145deg, var(--dz-surface-1), var(--dz-surface-0) 55%, var(--dz-void));
+}
+
+/* Facility floor plan — a faint technical grid. Masked so it fades before
+   it reaches the copy and never competes with the headline. */
+.dz-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--dz-edge) 1px, transparent 1px),
+    linear-gradient(90deg, var(--dz-edge) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 80% at 85% 30%, #000, transparent 72%);
+  opacity: 0.6;
+}
+
+/* ── Copy ──────────────────────────────────────────────────────────────── */
+.dz-hero__copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--dz-s4);
+}
+
+.dz-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dz-s3);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  font-weight: 600;
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-amber);
+}
+
+.dz-hero__eyebrow::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+}
+
+.dz-hero__title {
+  margin: 0;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-hero);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-text-1);
+  text-wrap: balance;
+  /* Guard: a locale with a longer compound than Russian must wrap rather
+     than run under the stage. */
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.dz-hero__lede {
+  margin: 0;
+  max-width: 46ch;
+  font-size: var(--dz-type-md);
+  line-height: 1.6;
+  color: var(--dz-text-3);
+}
+
+.dz-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--dz-s4);
+  margin-top: var(--dz-s2);
+}
+
+/* Primary CTA. Solid amber on near-black clears contrast comfortably, which
+   an outline or ghost button at this size would not. */
+.dz-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dz-s3);
+  padding: var(--dz-s4) var(--dz-s6);
+  border: 0;
+  border-radius: var(--dz-r-md);
+  background: linear-gradient(180deg, var(--dz-amber-hot), var(--dz-amber));
+  color: var(--dz-void);
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-sm);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow:
+    var(--dz-shadow-near),
+    0 0 0 1px rgba(0, 0, 0, 0.3) inset;
+  transition:
+    transform var(--dz-d-micro) var(--dz-e-exit),
+    box-shadow var(--dz-d-micro) var(--dz-e-enter),
+    filter var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-hero__cta:hover,
+.dz-hero__cta:focus-visible {
+  transform: translate3d(0, -2px, 0);
+  filter: brightness(1.07);
+  box-shadow:
+    var(--dz-shadow-far),
+    0 0 28px color-mix(in srgb, var(--dz-amber) 42%, transparent);
+}
+
+.dz-hero__cta:active {
+  transform: translate3d(0, 0, 0);
+  transition-duration: var(--dz-d-instant);
+}
+
+.dz-hero__cta:focus-visible {
+  outline: 2px solid var(--dz-amber-hot);
+  outline-offset: 3px;
+}
+
+.dz-hero__proof {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: 0.1em;
+  color: var(--dz-text-4);
+}
+
+/* ── Stage ─────────────────────────────────────────────────────────────── */
+.dz-hero__stage {
+  position: relative;
+  z-index: 1;
+}
+
+.dz-hero__chamber {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+}
+
+/* The object inside the cell. */
+.dz-hero__art {
+  width: clamp(150px, 26vw, 300px);
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+}
+
+.dz-hero__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Read-out below the cell: what the object actually is. This is the one
+   place the featured item is named, in interface type, not HUD type. */
+.dz-hero__readout {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--dz-s4);
+  margin-top: var(--dz-s4);
+  padding-top: var(--dz-s3);
+  border-top: 1px solid var(--dz-edge);
+}
+
+.dz-hero__readout-label {
+  display: block;
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+  margin-bottom: 2px;
+}
+
+.dz-hero__readout-name {
+  display: block;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-md);
+  font-weight: 600;
+  color: var(--dz-text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 34ch;
+}
+
+.dz-hero__readout-value {
+  flex: 0 0 auto;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-lg);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--dz-rarity);
+  white-space: nowrap;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────
+   Below 900px the copy stacks above the stage. The chamber stays — it is
+   the brand, and dropping it on mobile would make the phone a lesser
+   product, which the brief explicitly rules out. */
+@media (max-width: 900px) {
+  .dz-hero {
+    grid-template-columns: 1fr;
+    gap: var(--dz-s5);
+  }
+  .dz-hero__title { line-height: 1.02; }
+  .dz-hero__chamber { aspect-ratio: 16 / 11; }
+}
+
+@media (max-width: 520px) {
+  .dz-hero {
+    padding: var(--dz-s4);
+    border-radius: var(--dz-r-lg);
+  }
+  .dz-hero__cta {
+    width: 100%;
+    justify-content: center;
+  }
+  .dz-hero__readout {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--dz-s2);
+  }
+  .dz-hero__readout-name { max-width: 100%; }
+}

@@ -5,7 +5,7 @@ import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
 import { useTranslation } from "react-i18next";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
-import { HeroBanner } from "../components/HeroBanner";
+import { DropHero } from "../components/dz/DropHero";
 import { StatsBar } from "../components/StatsBar";
 import { RecentDrops } from "../components/RecentDrops";
 import { highestRarity, RARITY_RANK } from "../lib/rarity";
@@ -102,7 +102,7 @@ export function CaseListPage() {
 
   return (
     <div className="case-list-page">
-      <HeroBanner featuredCase={cases[0]} catalogStatus={loading ? "loading" : error ? "error" : "empty"} />
+      <DropHero featuredCase={cases[0]} catalogStatus={loading ? "loading" : error ? "error" : "empty"} />
       <StatsBar />
 
       {cases.length > 0 && <section className="collection-discovery" aria-labelledby="collection-discovery-heading">
