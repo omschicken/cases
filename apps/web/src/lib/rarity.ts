@@ -9,7 +9,7 @@ export const RARITY_COLORS: Record<ItemRarity, string> = {
   RESTRICTED: "#8847FF",
   CLASSIFIED: "#D32CE6",
   COVERT: "#EB4B4B",
-  GOLD: "#E4AE39",
+  GOLD: "#F5C842",
 };
 
 export const RARITY_LABELS: Record<ItemRarity, string> = {
