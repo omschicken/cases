@@ -5,6 +5,7 @@ import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { RARITY_LABELS, RARITY_RANK } from "../lib/rarity";
 import { ItemCard, ItemCardSkeleton } from "../components/dz/ItemCard";
+import { PageHeader } from "../components/dz/PageHeader";
 import type { InventoryItemDto, ItemRarity } from "../lib/types";
 
 type SortMode = "newest" | "value-desc" | "value-asc";
@@ -68,24 +69,30 @@ export function InventoryPage() {
 
   return (
     <div className="inventory-page">
-      <div className="inventory-heading">
-        <div>
-          <p className="section-kicker">{t("inventory.kicker", { defaultValue: "YOUR LOADOUT" })}</p>
-          <h1>{t("inventory.title")}</h1>
-          <p className="section-intro">{t("inventory.intro", { defaultValue: "Your opened items. Choose a rarity or sort by value." })}</p>
-        </div>
-        <div className="inventory-controls">
-          <label><span>{t("inventory.filter", { defaultValue: "Rarity" })}</span><select value={rarityFilter} onChange={(event) => setRarityFilter(event.target.value as ItemRarity | "all")}>
-            <option value="all">{t("inventory.all", { defaultValue: "All" })}</option>
-            {availableRarities.map((rarity) => <option key={rarity} value={rarity}>{t(`rarity.${rarity}`, { defaultValue: RARITY_LABELS[rarity] })}</option>)}
-          </select></label>
-          <label><span>{t("inventory.sort", { defaultValue: "Sort" })}</span><select value={sort} onChange={(event) => setSort(event.target.value as SortMode)}>
-            <option value="newest">{t("inventory.newest", { defaultValue: "Newest" })}</option>
-            <option value="value-desc">{t("inventory.valueDesc", { defaultValue: "Highest value" })}</option>
-            <option value="value-asc">{t("inventory.valueAsc", { defaultValue: "Lowest value" })}</option>
-          </select></label>
-        </div>
-      </div>
+      <PageHeader
+        kicker={t("inventory.kicker", { defaultValue: "YOUR LOADOUT" })}
+        title={t("inventory.title")}
+        lede={t("inventory.intro", { defaultValue: "Your opened items. Choose a rarity or sort by value." })}
+        aside={
+          <div className="dz-toolbar">
+            <label className="dz-field">
+              <span>{t("inventory.filter", { defaultValue: "Rarity" })}</span>
+              <select value={rarityFilter} onChange={(event) => setRarityFilter(event.target.value as ItemRarity | "all")}>
+                <option value="all">{t("inventory.all", { defaultValue: "All" })}</option>
+                {availableRarities.map((rarity) => <option key={rarity} value={rarity}>{t(`rarity.${rarity}`, { defaultValue: RARITY_LABELS[rarity] })}</option>)}
+              </select>
+            </label>
+            <label className="dz-field">
+              <span>{t("inventory.sort", { defaultValue: "Sort" })}</span>
+              <select value={sort} onChange={(event) => setSort(event.target.value as SortMode)}>
+                <option value="newest">{t("inventory.newest", { defaultValue: "Newest" })}</option>
+                <option value="value-desc">{t("inventory.valueDesc", { defaultValue: "Highest value" })}</option>
+                <option value="value-asc">{t("inventory.valueAsc", { defaultValue: "Lowest value" })}</option>
+              </select>
+            </label>
+          </div>
+        }
+      />
       {error && <div className="catalog-notice" role="alert"><span>{error}</span><button className="catalog-retry" type="button" onClick={() => void load()}>{t("common.retry")}</button></div>}
       {loading && <div className="dz-item-grid" aria-busy="true">{Array.from({ length: 8 }, (_, index) => <ItemCardSkeleton key={index} />)}</div>}
       {!loading && items.length === 0 && !error && (

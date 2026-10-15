@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
+import { PageHeader } from "../components/dz/PageHeader";
 
 interface DailyStatus {
   claimedToday: boolean;
@@ -71,13 +72,7 @@ export function BonusesPage() {
 
   return (
     <div className="game-workspace bonuses-workspace">
-      <header className="game-heading">
-        <div>
-          <span className="section-kicker">БОНУСЫ / ЕЖЕДНЕВНО</span>
-          <h1>БОНУСЫ</h1>
-          <p>Заходи каждый день, чтобы увеличить стрик и получить максимальный бонус на 7-й день.</p>
-        </div>
-      </header>
+      <PageHeader kicker="БОНУСЫ / ЕЖЕДНЕВНО" title="БОНУСЫ" lede="Заходи каждый день, чтобы увеличить стрик и получить максимальный бонус на 7-й день." />
 
       {/* Daily bonus */}
       <section className="bonus-section">

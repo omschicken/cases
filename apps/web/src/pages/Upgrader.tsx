@@ -8,6 +8,7 @@ import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { rarityColor } from "../lib/rarity";
 import type { CaseItem, GameOperationDto, InventoryItemDto } from "../lib/types";
+import { PageHeader, Readout } from "../components/dz/PageHeader";
 
 type UpgradeResult = { operation: GameOperationDto; won: boolean; item: CaseItem | null; target: CaseItem; chance: number };
 
@@ -53,7 +54,7 @@ export function UpgraderPage() {
   if (!user) return <div className="game-workspace game-auth game-auth--upgrader"><span>DROPZONE / UPGRADER</span><h1>АПГРЕЙД</h1><p>Войди, чтобы выбрать предмет и цель.</p><Link to="/login" className="feature-primary">Войти <span aria-hidden="true">↗</span></Link></div>;
 
   return <div className="game-workspace game-workspace--upgrade">
-    <header className="game-heading"><div><span className="section-kicker">ЛАБОРАТОРИЯ / LIVE</span><h1>АПГРЕЙД</h1><p>Выбери свой предмет и более дорогую цель. Шанс рассчитывается до подтверждения и ограничен 75%.</p></div><div className="upgrade-chance"><span>ШАНС</span><strong>{(chance * 100).toFixed(1)}%</strong></div></header>
+    <PageHeader kicker="ЛАБОРАТОРИЯ / LIVE" title="АПГРЕЙД" lede="Выбери свой предмет и более дорогую цель. Шанс рассчитывается до подтверждения и ограничен 75%." aside={<Readout label="ШАНС" value={`${(chance * 100).toFixed(1)}%`} />} />
     {error && <div className="catalog-notice" role="alert">{error}</div>}
     {result && <section className={`game-result ${result.won ? "game-result--won" : "game-result--lost"}`}><span>{result.won ? "АПГРЕЙД УСПЕШЕН" : "ПОПЫТКА НЕ УДАЛАСЬ"}</span>{result.won && result.item && <img src={result.item.imageUrl} alt={result.item.name}/>}<div><h2>{result.won ? result.target.name : "Предмет использован"}</h2><strong>ROLL {result.operation.roll.toFixed(5)} / {(result.chance * 100).toFixed(1)}%</strong></div></section>}
     {loading ? <p>Загрузка…</p> : <div className="upgrade-layout">

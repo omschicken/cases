@@ -9,6 +9,7 @@ import "./styles/dz-card.css";
 import "./styles/dz-hero.css";
 import "./styles/dz-protocol.css";
 import "./styles/dz-item.css";
+import "./styles/dz-page.css";
 import "./i18n";
 import App from "./App";
 

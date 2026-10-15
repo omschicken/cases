@@ -7,6 +7,7 @@ import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { rarityColor } from "../lib/rarity";
 import type { CaseDto, CaseItem, GameOperationDto, WalletDto } from "../lib/types";
+import { PageHeader, Readout } from "../components/dz/PageHeader";
 
 type BattleResult = { operation: GameOperationDto; won: boolean; battleCase: { id: string; name: string }; playerItem: CaseItem; botItem: CaseItem; winnings: string[] };
 
@@ -46,7 +47,7 @@ export function BattlesPage() {
 
   if (!user) return <div className="game-workspace game-auth game-auth--battles"><span>DROPZONE / BATTLES</span><h1>СРАЖЕНИЯ</h1><p>Войди, чтобы выйти на арену против бота.</p><Link to="/login" className="feature-primary">Войти <span aria-hidden="true">↗</span></Link></div>;
   return <div className="game-workspace battle-workspace">
-    <header className="game-heading"><div><span className="section-kicker">АРЕНА / 1 VS 1</span><h1>СРАЖЕНИЯ</h1><p>Выбери кейс. Ты и бот получите по одному серверному roll. Победитель по стоимости забирает оба предмета.</p></div><div className="game-counter"><span>БАЛАНС</span><strong>{wallet ? formatMinor(wallet.balanceMinor) : "…"}</strong></div></header>
+    <PageHeader kicker="АРЕНА / 1 VS 1" title="СРАЖЕНИЯ" lede="Выбери кейс. Ты и бот получите по одному серверному roll. Победитель по стоимости забирает оба предмета." aside={<Readout label="БАЛАНС" value={wallet ? formatMinor(wallet.balanceMinor) : "…"} />} />
     {error && <div className="catalog-notice" role="alert">{error}</div>}
     {result && <section className={`battle-result ${result.won ? "is-won" : "is-lost"}`}><div className="battle-result-title"><span>{result.won ? "ПОБЕДА / ОБА ПРЕДМЕТА В ИНВЕНТАРЕ" : "ПОРАЖЕНИЕ / РЕВАНШ?"}</span><strong>{result.battleCase.name}</strong></div><BattleDrop label="ТЫ" item={result.playerItem}/><div className="battle-versus">{result.won ? "WIN" : "LOSE"}</div><BattleDrop label="БОТ" item={result.botItem}/></section>}
     <div className="battle-layout"><section><div className="game-section-label"><span>01 / ВЫБЕРИ КЕЙС</span><span>{cases.length} ДОСТУПНО</span></div>{cases.length > 8 && <label className="battle-search"><span>ПОИСК ПО КЕЙСАМ</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Название кейса…" aria-label="Поиск кейса"/><small>{visibleCases.length} / {cases.length}</small></label>}{loading ? <p>Загрузка…</p> : visibleCases.length === 0 ? <div className="battle-no-results"><strong>Кейсы не найдены</strong><p>Попробуй другое название.</p><button type="button" onClick={() => setQuery("")}>Сбросить поиск ↗</button></div> : <div className="battle-case-grid">{visibleCases.map((item) => <button type="button" key={item.id} disabled={submitting} className={`battle-case ${selectedId === item.id ? "selected" : ""}`} onClick={() => { setSelectedId(item.id); setResult(null); setConfirming(false); }}><span>{String(item.itemCount ?? item.items.length).padStart(2, "0")} DROPS</span><div className="battle-case-art"><CaseChest caseName={item.name} caseSlug={item.slug}/></div><strong>{item.name}</strong><b>{formatMinor(item.priceMinor, item.currency)}</b></button>)}</div>}</section>

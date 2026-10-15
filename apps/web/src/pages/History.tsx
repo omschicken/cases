@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { PageHeader } from "../components/dz/PageHeader";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { RARITY_LABELS, rarityColor } from "../lib/rarity";
@@ -24,39 +25,47 @@ export function HistoryPage() {
 
   return (
     <div className="history-page">
-      <header className="history-heading">
-        <div>
-          <p className="section-kicker">{t("history.kicker")}</p>
-          <h1>{t("history.title")}</h1>
-          <p className="section-intro">{t("history.description")}</p>
-        </div>
-        <Link to="/inventory" className="history-inventory-link">{t("history.inventoryLink")}</Link>
-      </header>
+      <PageHeader
+        kicker={t("history.kicker")}
+        title={t("history.title")}
+        lede={t("history.description")}
+        aside={<Link to="/inventory" className="dz-btn">{t("history.inventoryLink")}</Link>}
+      />
 
       {loading && <p>{t("common.loading")}</p>}
       {error && <p className="form-error" role="alert">{t("history.loadError")}</p>}
       {!loading && !error && events.length === 0 && (
-        <div className="history-empty" role="status">
-          <h2>{t("history.emptyTitle")}</h2>
-          <p>{t("history.emptyDescription")}</p>
-          <Link to="/" className="open-button">{t("history.openCases")}</Link>
+        <div className="dz-empty" role="status">
+          <span className="dz-empty__mark" aria-hidden="true">◷</span>
+          <h2 className="dz-empty__title">{t("history.emptyTitle")}</h2>
+          <p className="dz-empty__body">{t("history.emptyDescription")}</p>
+          <Link to="/" className="dz-hero__cta">{t("history.openCases")}</Link>
         </div>
       )}
 
-      <ol className="history-list">
+      <ol className="dz-log">
         {events.map((event) => (
-          <li key={event.id} className="history-row" style={{ "--rarity-color": rarityColor(event.resultCaseItem.rarity) } as CSSProperties}>
-            <img src={event.resultCaseItem.imageUrl} alt="" loading="lazy" />
-            <div className="history-row-main">
-              <Link to={`/cases/${event.case.slug}`} className="history-case-name">{event.case.name}</Link>
-              <strong>{event.resultCaseItem.name}</strong>
-              <time dateTime={event.createdAt}>{new Date(event.createdAt).toLocaleString()}</time>
+          <li
+            key={event.id}
+            className="dz-log__row"
+            style={{ "--dz-rarity": rarityColor(event.resultCaseItem.rarity) } as CSSProperties}
+          >
+            <img className="dz-log__art" src={event.resultCaseItem.imageUrl} alt="" loading="lazy" />
+            <div className="dz-log__main">
+              <p className="dz-log__name">{event.resultCaseItem.name}</p>
+              <span className="dz-log__meta">
+                {t(`rarity.${event.resultCaseItem.rarity}`, { defaultValue: RARITY_LABELS[event.resultCaseItem.rarity] })}
+                {" · "}
+                <Link to={`/cases/${event.case.slug}`}>{event.case.name}</Link>
+                {" · "}
+                <time dateTime={event.createdAt}>{new Date(event.createdAt).toLocaleString()}</time>
+                {" · "}
+                <Link to={`/verify/${event.id}`}>{t("history.verify")}</Link>
+              </span>
             </div>
-            <div className="history-row-result">
-              <span className="history-rarity">{t(`rarity.${event.resultCaseItem.rarity}`, { defaultValue: RARITY_LABELS[event.resultCaseItem.rarity] })}</span>
-              <strong>{formatMinor(event.resultCaseItem.valueMinor, event.resultCaseItem.currency)}</strong>
-              <Link to={`/verify/${event.id}`}>{t("history.verify")}</Link>
-            </div>
+            <span className="dz-log__value">
+              {formatMinor(event.resultCaseItem.valueMinor, event.resultCaseItem.currency)}
+            </span>
           </li>
         ))}
       </ol>

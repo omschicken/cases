@@ -8,6 +8,7 @@ import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { rarityColor } from "../lib/rarity";
 import type { GameOperationDto, InventoryItemDto, CaseItem } from "../lib/types";
+import { PageHeader, Readout } from "../components/dz/PageHeader";
 
 type ContractResult = { operation: GameOperationDto; item: CaseItem; inventoryItemId: string; inputValueMinor: string };
 
@@ -54,7 +55,7 @@ export function ContractsPage() {
   if (!user) return <div className="game-workspace game-auth game-auth--contracts"><span>DROPZONE / CONTRACTS</span><h1>КОНТРАКТЫ</h1><p>Войди в аккаунт, чтобы использовать предметы из своего инвентаря.</p><Link to="/login" className="feature-primary">Войти <span aria-hidden="true">↗</span></Link></div>;
 
   return <div className="game-workspace contract-workspace">
-    <header className="game-heading"><div><span className="section-kicker">МАСТЕРСКАЯ / LIVE</span><h1>КОНТРАКТЫ</h1><p>Выбери от 3 до 10 предметов. Они будут обменены на один новый предмет стоимостью 60–90% от общей суммы.</p></div><div className="game-counter"><span>ВЫБРАНО</span><strong>{selected.length} / 10</strong></div></header>
+    <PageHeader kicker="МАСТЕРСКАЯ / LIVE" title="КОНТРАКТЫ" lede="Выбери от 3 до 10 предметов. Они будут обменены на один новый предмет стоимостью 60–90% от общей суммы." aside={<Readout label="ВЫБРАНО" value={`${selected.length} / 10`} />} />
     {error && <div className="catalog-notice" role="alert">{error}</div>}
     {result && <section className="game-result game-result--won"><span>КОНТРАКТ ВЫПОЛНЕН</span><img src={result.item.imageUrl} alt={result.item.name}/><div><h2>{result.item.name}</h2><strong>{formatMinor(result.item.valueMinor, result.item.currency)}</strong></div><Link to="/inventory">Открыть инвентарь ↗</Link></section>}
     <div className="game-layout">

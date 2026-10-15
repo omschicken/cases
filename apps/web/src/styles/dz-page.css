@@ -1,0 +1,338 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   PAGE PRIMITIVES
+
+   Fourteen pages each hand-built the same header: a technical kicker, a
+   display title, a lede, and an optional read-out on the right. They drifted
+   apart in spacing, type scale and alignment, which is the main reason the
+   product read as a set of separate screens rather than one system.
+
+   One header, one panel, one toolbar. Everything else a page needs it
+   composes from these.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dz-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--dz-s4);
+  margin: 0 0 var(--dz-s6);
+  padding-bottom: var(--dz-s4);
+  border-bottom: 1px solid var(--dz-edge);
+}
+
+.dz-page-header__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s2);
+  /* Without this the flex item refuses to shrink below min-content and a
+     long title pushes the aside off the row. */
+  min-width: 0;
+  flex: 1 1 22rem;
+}
+
+.dz-page-header__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dz-s3);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  font-weight: 600;
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-amber);
+}
+
+.dz-page-header__kicker::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+  flex: 0 0 auto;
+}
+
+.dz-page-header__title {
+  margin: 0;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-xl);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-text-1);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.dz-page-header__lede {
+  margin: 0;
+  max-width: 62ch;
+  font-size: var(--dz-type-sm);
+  line-height: 1.6;
+  color: var(--dz-text-3);
+}
+
+/* Right-hand slot: a balance, an account id, a link back. */
+.dz-page-header__aside {
+  display: flex;
+  align-items: center;
+  gap: var(--dz-s3);
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* The profile avatar rides in the same slot, so it is sized here rather
+   than inheriting whatever the legacy profile header gave it. */
+.dz-page-header__aside .profile-avatar {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--dz-r-md);
+  border: 1px solid var(--dz-edge-strong);
+  background: var(--dz-surface-2);
+  font-family: var(--dz-font-display);
+  font-weight: 700;
+  color: var(--dz-text-2);
+}
+
+.dz-page-header__aside .profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* A labelled figure, the most common thing the slot holds. */
+.dz-readout {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--dz-s2) var(--dz-s4);
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-md);
+  background: var(--dz-surface-1);
+}
+
+.dz-readout__label {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+}
+
+.dz-readout__value {
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--dz-text-1);
+  white-space: nowrap;
+}
+
+/* Secondary action, sized to sit beside a read-out in the header. */
+.dz-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dz-s2);
+  min-height: 38px;
+  padding: 0 var(--dz-s4);
+  border: 1px solid var(--dz-edge-strong);
+  border-radius: var(--dz-r-md);
+  background: var(--dz-surface-2);
+  color: var(--dz-text-2);
+  font-family: var(--dz-font-interface);
+  font-size: var(--dz-type-xs);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background var(--dz-d-micro) var(--dz-e-enter),
+    border-color var(--dz-d-micro) var(--dz-e-enter),
+    color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-btn:hover,
+.dz-btn:focus-visible {
+  background: var(--dz-surface-3);
+  border-color: var(--dz-edge-lit);
+  color: var(--dz-text-1);
+}
+
+.dz-btn:focus-visible {
+  outline: 2px solid var(--dz-amber);
+  outline-offset: 2px;
+}
+
+@media (hover: none) {
+  .dz-btn { min-height: 44px; }
+}
+
+/* ── Panel ───────────────────────────────────────────────────────────────
+   The surface every section sits on. Deliberately flat — no blur, no
+   gradient border — so panels stack without the page turning into soup. */
+.dz-panel {
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-lg);
+  background: linear-gradient(180deg, var(--dz-surface-1), var(--dz-surface-0));
+  padding: clamp(var(--dz-s4), 2vw, var(--dz-s5));
+}
+
+.dz-panel + .dz-panel { margin-top: var(--dz-s4); }
+
+.dz-panel__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dz-s3);
+  margin-bottom: var(--dz-s4);
+  padding-bottom: var(--dz-s3);
+  border-bottom: 1px solid var(--dz-edge);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────
+   Filters and sorts. Native selects, kept native: a custom dropdown here
+   would cost keyboard and screen-reader behaviour the browser gives free. */
+.dz-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--dz-s3);
+}
+
+.dz-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s1);
+  min-width: 0;
+}
+
+.dz-field > span {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+}
+
+.dz-field select,
+.dz-field input {
+  min-height: 38px;
+  padding: 0 var(--dz-s3);
+  border: 1px solid var(--dz-edge-strong);
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-2);
+  color: var(--dz-text-1);
+  font-family: var(--dz-font-interface);
+  font-size: var(--dz-type-xs);
+  transition:
+    border-color var(--dz-d-micro) var(--dz-e-enter),
+    background var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-field select:hover,
+.dz-field input:hover {
+  border-color: var(--dz-edge-lit);
+}
+
+.dz-field select:focus-visible,
+.dz-field input:focus-visible {
+  outline: 2px solid var(--dz-amber);
+  outline-offset: 1px;
+  border-color: var(--dz-amber);
+}
+
+@media (hover: none) {
+  .dz-field select,
+  .dz-field input { min-height: 44px; }
+}
+
+/* ── Log rows ────────────────────────────────────────────────────────────
+   A history or ledger reads as a technical journal, but the figures stay in
+   interface type: a date and an amount are the reason the page exists, so
+   neither is sacrificed to the journal aesthetic. */
+.dz-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dz-log__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--dz-s3);
+  padding: var(--dz-s3);
+  border: 1px solid var(--dz-edge);
+  border-left: 2px solid var(--dz-rarity, var(--dz-edge-strong));
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-1);
+  transition: border-color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-log__row:hover {
+  border-color: var(--dz-edge-strong);
+  border-left-color: var(--dz-rarity, var(--dz-edge-strong));
+}
+
+.dz-log__art {
+  width: 56px;
+  height: 42px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-0);
+}
+
+.dz-log__main { min-width: 0; }
+
+.dz-log__name {
+  margin: 0;
+  font-family: var(--dz-font-interface);
+  font-size: var(--dz-type-sm);
+  font-weight: 600;
+  color: var(--dz-text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dz-log__meta {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  color: var(--dz-text-4);
+}
+
+.dz-log__value {
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--dz-text-1);
+  white-space: nowrap;
+  text-align: right;
+}
+
+@media (max-width: 520px) {
+  .dz-log__row {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: var(--dz-s2);
+  }
+  /* The amount moves under the name rather than squeezing it to nothing. */
+  .dz-log__value {
+    grid-column: 2;
+    text-align: left;
+  }
+  .dz-page-header { align-items: flex-start; }
+  .dz-page-header__aside { width: 100%; }
+}

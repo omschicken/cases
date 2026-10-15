@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import type { CaseDto } from "../lib/types";
+import { PageHeader } from "../components/dz/PageHeader";
 
 // Static prize tiers shown on the wheel visual
 const PRIZE_TIERS = [
@@ -23,13 +24,7 @@ export function PrizesPage() {
 
   return (
     <div className="game-workspace prizes-workspace">
-      <header className="game-heading">
-        <div>
-          <span className="section-kicker">ПРИЗЫ / СКОРО</span>
-          <h1>ПРИЗЫ</h1>
-          <p>Колесо фортуны, ежедневные розыгрыши и ивентовые награды — скоро появятся на сайте.</p>
-        </div>
-      </header>
+      <PageHeader kicker="ПРИЗЫ / СКОРО" title="ПРИЗЫ" lede="Колесо фортуны, ежедневные розыгрыши и ивентовые награды — скоро появятся на сайте." />
 
       {/* Wheel visual */}
       <section className="prizes-wheel-section">

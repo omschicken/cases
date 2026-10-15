@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import type { CaseOpenHistoryDto, InventoryItemDto, KycStatus, WalletDto } from "../lib/types";
+import { PageHeader, Readout } from "../components/dz/PageHeader";
 
 interface KycMeResponse {
   status: KycStatus;
@@ -102,11 +103,15 @@ export function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <header className="profile-identity">
-        <div className="profile-avatar">{user?.steamAvatarUrl ? <img src={user.steamAvatarUrl} alt="" /> : (user?.displayName ?? user?.email ?? "D").slice(0, 1).toUpperCase()}</div>
-        <div><span className="section-kicker">DROPZONE / ACCOUNT</span><h1>{user?.displayName ?? t("profile.title")}</h1><p>{user?.email}</p></div>
-        <span className="profile-account-id">ID / {user?.id.slice(0, 8).toUpperCase()}</span>
-      </header>
+      <PageHeader
+        kicker="DROPZONE / ACCOUNT"
+        title={user?.displayName ?? t("profile.title")}
+        lede={user?.email}
+        aside={<>
+          <div className="profile-avatar">{user?.steamAvatarUrl ? <img src={user.steamAvatarUrl} alt="" /> : (user?.displayName ?? user?.email ?? "D").slice(0, 1).toUpperCase()}</div>
+          {user && <Readout label="ID" value={user.id.slice(0, 8).toUpperCase()} />}
+        </>}
+      />
 
       <nav className="profile-shortcuts" aria-label={t("profile.title")}>
         <Link to="/inventory"><span>01</span>{t("nav.sidebar.inventory")} <i aria-hidden="true">↗</i></Link>
