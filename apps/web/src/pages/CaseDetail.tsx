@@ -370,9 +370,17 @@ export function CaseDetailPage() {
           }
         >
           <div className="dz-case-stage__art">
-            {featuredItem && !featuredItem.imageUrl.startsWith("data:image")
-              ? <img src={featuredItem.imageUrl} alt={featuredItem.name} />
-              : <CaseChest className="case-chest-detail" caseName={theCase.name} caseSlug={theCase.slug} />}
+            <CaseChest
+              className="case-chest-detail"
+              caseName={theCase.name}
+              caseSlug={theCase.slug}
+              opening={opening}
+              itemImageUrl={
+                revealed && winningItem && !winningItem.imageUrl.startsWith("data:image")
+                  ? winningItem.imageUrl
+                  : undefined
+              }
+            />
           </div>
         </DropChamber>
         <div className="dz-case-stage__foot">

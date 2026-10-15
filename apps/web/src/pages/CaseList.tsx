@@ -231,9 +231,9 @@ export function CaseListPage() {
           const tiers = rarityTiers(c) as ItemRarity[];
           const chase = highestRarity(tiers);
           const highlight = featuredItem(c);
-          const artUrl = highlight && !highlight.imageUrl.startsWith("data:image")
-            ? highlight.imageUrl
-            : undefined;
+          const artUrl = c.imageUrl && !c.imageUrl.startsWith("data:image")
+            ? c.imageUrl
+            : (highlight && !highlight.imageUrl.startsWith("data:image") ? highlight.imageUrl : undefined);
           return (
             <CaseCard
               key={c.id}
