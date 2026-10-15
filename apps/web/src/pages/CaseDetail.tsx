@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../lib/api";
+import { playChestOpen, playRevealChord } from "../lib/openingSound";
 import { formatMinor } from "../lib/money";
 import { isChaseRarity, RARITY_LABELS, RARITY_RANK, rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
@@ -202,10 +203,20 @@ export function CaseDetailPage() {
       .catch(() => undefined);
   }, [user]);
 
+  // Play reveal chord when the reel finishes and item appears.
+  useEffect(() => {
+    if (revealed && winningItem) {
+      playRevealChord(winningItem.rarity);
+    }
+  // winningItem identity is stable once set — rarity never changes mid-session
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revealed]);
+
   async function openCase() {
     if (!theCase || openingLockRef.current) return;
     openingLockRef.current = true;
     setError(null);
+    playChestOpen();
     setOpening(true);
     setRevealed(false);
     setResult(null);
@@ -238,6 +249,7 @@ export function CaseDetailPage() {
     setResult(null);
     setDemoItem(null);
     setRevealed(false);
+    playChestOpen();
     setOpening(true);
     setProtocolDismissed(false);
     await openingDelay();
@@ -311,6 +323,7 @@ export function CaseDetailPage() {
           result={result}
           oddsPercent={winningItem ? dropChancePercent(winningItem, theCase.items) : undefined}
           isOpening={opening}
+          itemRarity={winningItem?.rarity}
           caseChest={
             <CaseChest
               className="case-chest-detail"

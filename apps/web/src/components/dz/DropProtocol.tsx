@@ -27,6 +27,8 @@ interface DropProtocolProps {
   reel?: ReactNode;
   /** True while the chest's opening animation is running — adds screen-wide flash. */
   isOpening?: boolean;
+  /** Rarity of the dropped item — drives per-rarity reveal styling. */
+  itemRarity?: string;
   /** Ends the animation early. The outcome is already final, so this only
    *  stops the animation — it never re-rolls. */
   onSkip: () => void;
@@ -43,7 +45,7 @@ interface DropProtocolProps {
  */
 export function DropProtocol({
   phase, caseName, item, result, oddsPercent, caseChest, reel, isOpening = false,
-  onSkip, onClose, onOpenAgain, canOpenAgain = false,
+  itemRarity, onSkip, onClose, onOpenAgain, canOpenAgain = false,
 }: DropProtocolProps) {
   const { t } = useTranslation();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -105,6 +107,8 @@ export function DropProtocol({
 
   const accent = item ? rarityColor(item.rarity) : undefined;
   const phaseIndex = PHASE_ORDER.indexOf(phase);
+  const isApex = itemRarity === "COVERT" || itemRarity === "GOLD";
+  const isHighRarity = isApex || itemRarity === "CLASSIFIED";
 
   const phaseLabel = {
     arming:     t("caseDetail.unlocking", { defaultValue: "Открываем замок…" }),
@@ -121,10 +125,12 @@ export function DropProtocol({
   // becomes the containing block for position:fixed — which stretched this
   // overlay to the full 2082px page height on a 900px viewport and pushed
   // its footer, including the button that closes it, off-screen.
+  const rarityClass = itemRarity ? ` dz-protocol--rarity-${itemRarity}` : "";
+
   return createPortal(
     <div
       ref={rootRef}
-      className={`dz-protocol${isOpening ? " dz-protocol--opening" : ""}`}
+      className={`dz-protocol${isOpening ? " dz-protocol--opening" : ""}${rarityClass}`}
       role="dialog"
       aria-modal="true"
       aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}
@@ -148,49 +154,83 @@ export function DropProtocol({
         </span>
       </div>
 
+      {/* Apex darkness veil: covers the stage for COVERT/GOLD reveal, then fades */}
+      {isApex && phase === "reveal" && (
+        <div className="dz-protocol__veil" aria-hidden="true" />
+      )}
+
       <div className="dz-protocol__stage">
         {phase === "activation" && reel ? (
           <div className="dz-protocol__reel">{reel}</div>
         ) : phase === "reveal" && item ? (
-          // The item stays in the cell it came out of, and the cell floods
-          // with its rarity. Dropping the chamber here would throw away the
-          // continuity the whole sequence is built on.
-          <div className="dz-protocol__reveal">
-            <DropChamber
-              className="dz-protocol__chamber"
-              state="revealed"
-              rarityColor={accent}
-              depth={220}
-              hudLeft={caseName}
-              hudRight={t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}
-            >
-              <div className="dz-protocol__item-art">
+          isApex ? (
+            // Apex reveal: no chamber frame — item fills the stage freely
+            <div className="dz-protocol__reveal dz-protocol__reveal--apex">
+              <div className="dz-protocol__item-art dz-protocol__item-art--apex">
                 <img src={item.imageUrl} alt={item.name} />
               </div>
-            </DropChamber>
-            <div className="dz-protocol__item">
-            <span className="dz-protocol__item-rarity">
-              {t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}
-            </span>
-            <h2 className="dz-protocol__item-name">{item.name}</h2>
-            <p className="dz-protocol__item-value">
-              {formatMinor(item.valueMinor, item.currency)}
-            </p>
-            {oddsPercent && (
-              <p className="dz-protocol__item-odds">
-                {t("caseDetail.thisChance", {
-                  chance: oddsPercent,
-                  defaultValue: `Шанс этого предмета — ${oddsPercent}%`,
-                })}
-              </p>
-            )}
-            {isDemo && (
-              <p className="dz-protocol__item-odds">
-                {t("caseDetail.demoResultLabel", { defaultValue: "ДЕМО — предмет не зачислен" })}
-              </p>
-            )}
+              <div className="dz-protocol__item">
+                <span className="dz-protocol__item-rarity">
+                  {t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}
+                </span>
+                <h2 className="dz-protocol__item-name">{item.name}</h2>
+                <p className="dz-protocol__item-value">
+                  {formatMinor(item.valueMinor, item.currency)}
+                </p>
+                {oddsPercent && (
+                  <p className="dz-protocol__item-odds">
+                    {t("caseDetail.thisChance", {
+                      chance: oddsPercent,
+                      defaultValue: `Шанс этого предмета — ${oddsPercent}%`,
+                    })}
+                  </p>
+                )}
+                {isDemo && (
+                  <p className="dz-protocol__item-odds">
+                    {t("caseDetail.demoResultLabel", { defaultValue: "ДЕМО — предмет не зачислен" })}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
+          ) : (
+            // Standard reveal: item stays in the chamber it came from
+            <div className="dz-protocol__reveal">
+              <DropChamber
+                className="dz-protocol__chamber"
+                state="revealed"
+                rarityColor={accent}
+                depth={220}
+                hudLeft={caseName}
+                hudRight={t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}
+              >
+                <div className={`dz-protocol__item-art${isHighRarity ? " dz-protocol__item-art--high" : ""}`}>
+                  <img src={item.imageUrl} alt={item.name} />
+                </div>
+              </DropChamber>
+              <div className="dz-protocol__item">
+                <span className="dz-protocol__item-rarity">
+                  {t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}
+                </span>
+                <h2 className="dz-protocol__item-name">{item.name}</h2>
+                <p className="dz-protocol__item-value">
+                  {formatMinor(item.valueMinor, item.currency)}
+                </p>
+                {oddsPercent && (
+                  <p className="dz-protocol__item-odds">
+                    {t("caseDetail.thisChance", {
+                      chance: oddsPercent,
+                      defaultValue: `Шанс этого предмета — ${oddsPercent}%`,
+                    })}
+                  </p>
+                )}
+                {isDemo && (
+                  <p className="dz-protocol__item-odds">
+                    {t("caseDetail.demoResultLabel", { defaultValue: "ДЕМО — предмет не зачислен" })}
+                  </p>
+                )}
+              </div>
+            </div>
+          )
         ) : isOpening ? (
           // Opening burst: no chamber frame so the explosion fills the stage.
           <div className="dz-protocol__burst-stage">
