@@ -61,49 +61,81 @@ export function BonusesPage() {
 
   if (!user) {
     return (
-      <div className="game-workspace game-auth game-auth--bonuses">
-        <span>DROPZONE / БОНУСЫ</span>
-        <h1>БОНУСЫ</h1>
-        <p>Войди, чтобы получать ежедневные бонусы и активировать промокоды.</p>
-        <Link to="/login" className="feature-primary">Войти <span aria-hidden="true">↗</span></Link>
+      <div className="dz-workspace">
+        <PageHeader kicker="БОНУСЫ" title="БОНУСЫ" lede="Войди, чтобы получать ежедневные бонусы и активировать промокоды." />
+        <div style={{ marginTop: "var(--dz-s5)" }}>
+          <Link to="/login" className="dz-commit" style={{ textDecoration: "none", display: "inline-flex" }}>
+            Войти <span aria-hidden="true" style={{ marginLeft: "var(--dz-s2)" }}>↗</span>
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="game-workspace bonuses-workspace">
-      <PageHeader kicker="БОНУСЫ / ЕЖЕДНЕВНО" title="БОНУСЫ" lede="Заходи каждый день, чтобы увеличить стрик и получить максимальный бонус на 7-й день." />
+    <div className="dz-workspace">
+      <PageHeader
+        kicker="БОНУСЫ / ЕЖЕДНЕВНО"
+        title="БОНУСЫ"
+        lede="Заходи каждый день, чтобы увеличить стрик и получить максимальный бонус на 7-й день."
+      />
 
       {/* Daily bonus */}
-      <section className="bonus-section">
-        <div className="game-section-label"><span>01 / ЕЖЕДНЕВНЫЙ БОНУС</span></div>
-        {loading ? <p>Загрузка…</p> : daily && (
-          <div className="bonus-daily">
-            <div className="bonus-streak-track">
-              {STREAK_LABELS.map((label, i) => (
-                <div key={i} className={`bonus-streak-day ${daily.claimedToday && i === daily.streakDay - 1 ? "current" : i < daily.streakDay - (daily.claimedToday ? 1 : 0) ? "done" : ""}`}>
-                  <span>{label}</span>
-                </div>
-              ))}
+      <div className="dz-panel" style={{ marginTop: "var(--dz-s5)" }}>
+        <div className="dz-panel__label">
+          <span>01 / Ежедневный бонус</span>
+        </div>
+
+        {loading ? (
+          <p style={{ color: "var(--dz-text-4)", fontSize: "var(--dz-type-sm)" }}>Загрузка…</p>
+        ) : daily && (
+          <div>
+            {/* Streak track */}
+            <div className="dz-chips" style={{ marginBottom: "var(--dz-s4)" }}>
+              {STREAK_LABELS.map((label, i) => {
+                const isDone = i < daily.streakDay - (daily.claimedToday ? 1 : 0);
+                const isCurrent = daily.claimedToday && i === daily.streakDay - 1;
+                return (
+                  <span
+                    key={i}
+                    className="dz-chip"
+                    aria-pressed={isCurrent || undefined}
+                    style={isDone ? { borderColor: "var(--dz-success)", color: "var(--dz-success)" } : undefined}
+                  >
+                    {label}
+                    {isDone && <span aria-hidden="true" style={{ marginLeft: "4px" }}>✓</span>}
+                  </span>
+                );
+              })}
             </div>
-            {error && <div className="catalog-notice" role="alert">{error}</div>}
+
+            {error && (
+              <div role="alert" style={{ marginBottom: "var(--dz-s4)", padding: "var(--dz-s3) var(--dz-s4)", border: "1px solid var(--dz-danger)", borderRadius: "var(--dz-r-sm)", color: "var(--dz-danger)", fontSize: "var(--dz-type-sm)" }}>
+                {error}
+              </div>
+            )}
+
             {claimResult ? (
-              <div className="game-result game-result--won">
-                <span>БОНУС ПОЛУЧЕН</span>
+              <div className="dz-outcome dz-outcome--won">
+                <span className="dz-outcome__label">Бонус получен</span>
                 <div>
-                  <h2>+{formatMinor(claimResult.amountMinor)}</h2>
-                  <strong>СТРИК ДЕНЬ {claimResult.streakDay}</strong>
+                  <p className="dz-outcome__name">+{formatMinor(claimResult.amountMinor)}</p>
+                  <span className="dz-outcome__meta">Стрик день {claimResult.streakDay}</span>
                 </div>
               </div>
             ) : (
-              <div className="bonus-claim-row">
-                <div>
-                  <span>Сумма сегодня</span>
-                  <strong>{formatMinor(daily.amountMinor)}</strong>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--dz-s4)", flexWrap: "wrap" }}>
+                <div style={{ display: "grid", gap: "2px" }}>
+                  <span style={{ fontFamily: "var(--dz-font-technical)", fontSize: "var(--dz-type-tech)", letterSpacing: "var(--dz-tracking-tech)", textTransform: "uppercase", color: "var(--dz-text-4)" }}>
+                    Сумма сегодня
+                  </span>
+                  <strong style={{ fontFamily: "var(--dz-font-display)", fontSize: "var(--dz-type-lg)", color: "var(--dz-amber)" }}>
+                    {formatMinor(daily.amountMinor)}
+                  </strong>
                 </div>
                 <button
                   type="button"
-                  className="game-run"
+                  className="dz-commit"
                   disabled={daily.claimedToday || claiming}
                   onClick={() => void claimBonus()}
                 >
@@ -113,22 +145,40 @@ export function BonusesPage() {
             )}
           </div>
         )}
-      </section>
+      </div>
 
       {/* Promo code */}
-      <section className="bonus-section">
-        <div className="game-section-label"><span>02 / ПРОМОКОД</span></div>
-        <div className="bonus-promo">
-          <p>Введи промокод, чтобы получить бонус на баланс. Каждый код можно использовать один раз.</p>
-          {promoError && <div className="catalog-notice" role="alert">{promoError}</div>}
-          {promoResult ? (
-            <div className="game-result game-result--won">
-              <span>ПРОМОКОД АКТИВИРОВАН</span>
-              <div><h2>+{formatMinor(promoResult.amountMinor, promoResult.currency)}</h2></div>
-              <button type="button" className="feature-primary" onClick={() => setPromoResult(null)}>Ввести ещё один</button>
-            </div>
-          ) : (
-            <form className="bonus-promo-form" onSubmit={(e) => void redeemPromo(e)}>
+      <div className="dz-panel" style={{ marginTop: "var(--dz-s4)" }}>
+        <div className="dz-panel__label">
+          <span>02 / Промокод</span>
+        </div>
+
+        <p style={{ margin: "0 0 var(--dz-s4)", fontSize: "var(--dz-type-sm)", color: "var(--dz-text-3)" }}>
+          Введи промокод, чтобы получить бонус на баланс. Каждый код можно использовать один раз.
+        </p>
+
+        {promoError && (
+          <div role="alert" style={{ marginBottom: "var(--dz-s4)", padding: "var(--dz-s3) var(--dz-s4)", border: "1px solid var(--dz-danger)", borderRadius: "var(--dz-r-sm)", color: "var(--dz-danger)", fontSize: "var(--dz-type-sm)" }}>
+            {promoError}
+          </div>
+        )}
+
+        {promoResult ? (
+          <div className="dz-outcome dz-outcome--won">
+            <span className="dz-outcome__label">Промокод активирован</span>
+            <p className="dz-outcome__name">+{formatMinor(promoResult.amountMinor, promoResult.currency)}</p>
+            <button
+              type="button"
+              className="dz-btn"
+              onClick={() => setPromoResult(null)}
+            >
+              Ввести ещё один
+            </button>
+          </div>
+        ) : (
+          <form style={{ display: "flex", gap: "var(--dz-s3)", flexWrap: "wrap" }} onSubmit={(e) => void redeemPromo(e)}>
+            <label className="dz-field" style={{ flex: "1 1 200px" }}>
+              <span>Промокод</span>
               <input
                 type="text"
                 placeholder="DROPZONE2024"
@@ -136,15 +186,16 @@ export function BonusesPage() {
                 onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                 maxLength={32}
                 disabled={redeeming}
-                aria-label="Промокод"
               />
-              <button type="submit" className="game-run" disabled={!promoCode.trim() || redeeming}>
+            </label>
+            <div style={{ alignSelf: "flex-end" }}>
+              <button type="submit" className="dz-commit" disabled={!promoCode.trim() || redeeming}>
                 {redeeming ? "Активируем…" : "Активировать"}
               </button>
-            </form>
-          )}
-        </div>
-      </section>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
