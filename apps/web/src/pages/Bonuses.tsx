@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
@@ -11,9 +12,8 @@ interface DailyStatus {
   amountMinor: string;
 }
 
-const STREAK_LABELS = ["День 1", "День 2", "День 3", "День 4", "День 5", "День 6", "ДЖЕКПОТ"];
-
 export function BonusesPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [daily, setDaily] = useState<DailyStatus | null>(null);
   const [promoCode, setPromoCode] = useState("");
@@ -26,6 +26,9 @@ export function BonusesPage() {
   const [promoError, setPromoError] = useState<string | null>(null);
   const claimingRef = useRef(false);
   const redeemingRef = useRef(false);
+
+  // Streak labels from translations (array key)
+  const streakLabels: string[] = t("bonuses.streakLabels", { returnObjects: true }) as string[];
 
   useEffect(() => {
     if (!user) return;
@@ -41,7 +44,7 @@ export function BonusesPage() {
       setClaimResult(result);
       setDaily((d) => d ? { ...d, claimedToday: true } : d);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Не удалось получить бонус");
+      setError(err instanceof ApiError ? err.message : t("bonuses.claimError"));
     } finally { claimingRef.current = false; setClaiming(false); }
   }
 
@@ -55,17 +58,17 @@ export function BonusesPage() {
       setPromoResult(result);
       setPromoCode("");
     } catch (err) {
-      setPromoError(err instanceof ApiError ? err.message : "Промокод не активирован");
+      setPromoError(err instanceof ApiError ? err.message : t("bonuses.promoError"));
     } finally { redeemingRef.current = false; setRedeeming(false); }
   }
 
   if (!user) {
     return (
       <div className="dz-workspace">
-        <PageHeader kicker="БОНУСЫ" title="БОНУСЫ" lede="Войди, чтобы получать ежедневные бонусы и активировать промокоды." />
+        <PageHeader kicker={t("bonuses.kicker")} title={t("bonuses.title")} lede={t("bonuses.authLede")} />
         <div style={{ marginTop: "var(--dz-s5)" }}>
           <Link to="/login" className="dz-commit" style={{ textDecoration: "none", display: "inline-flex" }}>
-            Войти <span aria-hidden="true" style={{ marginLeft: "var(--dz-s2)" }}>↗</span>
+            {t("nav.signIn")} <span aria-hidden="true" style={{ marginLeft: "var(--dz-s2)" }}>↗</span>
           </Link>
         </div>
       </div>
@@ -75,24 +78,24 @@ export function BonusesPage() {
   return (
     <div className="dz-workspace">
       <PageHeader
-        kicker="БОНУСЫ / ЕЖЕДНЕВНО"
-        title="БОНУСЫ"
-        lede="Заходи каждый день, чтобы увеличить стрик и получить максимальный бонус на 7-й день."
+        kicker={t("bonuses.kicker")}
+        title={t("bonuses.title")}
+        lede={t("bonuses.lede")}
       />
 
       {/* Daily bonus */}
       <div className="dz-panel" style={{ marginTop: "var(--dz-s5)" }}>
         <div className="dz-panel__label">
-          <span>01 / Ежедневный бонус</span>
+          <span>{t("bonuses.step1")}</span>
         </div>
 
         {loading ? (
-          <p style={{ color: "var(--dz-text-4)", fontSize: "var(--dz-type-sm)" }}>Загрузка…</p>
+          <p style={{ color: "var(--dz-text-4)", fontSize: "var(--dz-type-sm)" }}>{t("common.loading")}</p>
         ) : daily && (
           <div>
             {/* Streak track */}
             <div className="dz-chips" style={{ marginBottom: "var(--dz-s4)" }}>
-              {STREAK_LABELS.map((label, i) => {
+              {streakLabels.map((label, i) => {
                 const isDone = i < daily.streakDay - (daily.claimedToday ? 1 : 0);
                 const isCurrent = daily.claimedToday && i === daily.streakDay - 1;
                 return (
@@ -103,7 +106,7 @@ export function BonusesPage() {
                     style={isDone ? { borderColor: "var(--dz-success)", color: "var(--dz-success)" } : undefined}
                   >
                     {label}
-                    {isDone && <span aria-hidden="true" style={{ marginLeft: "4px" }}>✓</span>}
+                    {isDone && <span aria-hidden="true" style={{ marginLeft: "4px" }}>{t("bonuses.streakDone")}</span>}
                   </span>
                 );
               })}
@@ -117,17 +120,17 @@ export function BonusesPage() {
 
             {claimResult ? (
               <div className="dz-outcome dz-outcome--won">
-                <span className="dz-outcome__label">Бонус получен</span>
+                <span className="dz-outcome__label">{t("bonuses.claimSuccess")}</span>
                 <div>
                   <p className="dz-outcome__name">+{formatMinor(claimResult.amountMinor)}</p>
-                  <span className="dz-outcome__meta">Стрик день {claimResult.streakDay}</span>
+                  <span className="dz-outcome__meta">{t("bonuses.streakLabel", { day: claimResult.streakDay })}</span>
                 </div>
               </div>
             ) : (
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--dz-s4)", flexWrap: "wrap" }}>
                 <div style={{ display: "grid", gap: "2px" }}>
                   <span style={{ fontFamily: "var(--dz-font-technical)", fontSize: "var(--dz-type-tech)", letterSpacing: "var(--dz-tracking-tech)", textTransform: "uppercase", color: "var(--dz-text-4)" }}>
-                    Сумма сегодня
+                    {t("bonuses.todayAmount")}
                   </span>
                   <strong style={{ fontFamily: "var(--dz-font-display)", fontSize: "var(--dz-type-lg)", color: "var(--dz-amber)" }}>
                     {formatMinor(daily.amountMinor)}
@@ -139,7 +142,7 @@ export function BonusesPage() {
                   disabled={daily.claimedToday || claiming}
                   onClick={() => void claimBonus()}
                 >
-                  {claiming ? "Получаем…" : daily.claimedToday ? "Получен сегодня ✓" : "Получить бонус"}
+                  {claiming ? t("bonuses.claiming") : daily.claimedToday ? t("bonuses.claimed") : t("bonuses.claim")}
                 </button>
               </div>
             )}
@@ -150,11 +153,11 @@ export function BonusesPage() {
       {/* Promo code */}
       <div className="dz-panel" style={{ marginTop: "var(--dz-s4)" }}>
         <div className="dz-panel__label">
-          <span>02 / Промокод</span>
+          <span>{t("bonuses.step2")}</span>
         </div>
 
         <p style={{ margin: "0 0 var(--dz-s4)", fontSize: "var(--dz-type-sm)", color: "var(--dz-text-3)" }}>
-          Введи промокод, чтобы получить бонус на баланс. Каждый код можно использовать один раз.
+          {t("bonuses.promoBody")}
         </p>
 
         {promoError && (
@@ -165,23 +168,23 @@ export function BonusesPage() {
 
         {promoResult ? (
           <div className="dz-outcome dz-outcome--won">
-            <span className="dz-outcome__label">Промокод активирован</span>
+            <span className="dz-outcome__label">{t("bonuses.promoActivated")}</span>
             <p className="dz-outcome__name">+{formatMinor(promoResult.amountMinor, promoResult.currency)}</p>
             <button
               type="button"
               className="dz-btn"
               onClick={() => setPromoResult(null)}
             >
-              Ввести ещё один
+              {t("bonuses.promoAnother")}
             </button>
           </div>
         ) : (
           <form style={{ display: "flex", gap: "var(--dz-s3)", flexWrap: "wrap" }} onSubmit={(e) => void redeemPromo(e)}>
             <label className="dz-field" style={{ flex: "1 1 200px" }}>
-              <span>Промокод</span>
+              <span>{t("bonuses.promoLabel")}</span>
               <input
                 type="text"
-                placeholder="DROPZONE2024"
+                placeholder={t("bonuses.promoPlaceholder")}
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                 maxLength={32}
@@ -190,7 +193,7 @@ export function BonusesPage() {
             </label>
             <div style={{ alignSelf: "flex-end" }}>
               <button type="submit" className="dz-commit" disabled={!promoCode.trim() || redeeming}>
-                {redeeming ? "Активируем…" : "Активировать"}
+                {redeeming ? t("bonuses.activating") : t("bonuses.activate")}
               </button>
             </div>
           </form>
