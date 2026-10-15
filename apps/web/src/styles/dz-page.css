@@ -254,6 +254,128 @@
   .dz-field input { min-height: 44px; }
 }
 
+/* ── Case stage ──────────────────────────────────────────────────────────
+   The case on its own detail page, in the same cell it appeared in on the
+   catalog card and will appear in when opened. That continuity is the point:
+   one object, followed from grid to reveal. */
+.dz-case-stage {
+  margin-bottom: var(--dz-s6);
+}
+
+.dz-case-stage__chamber {
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  max-height: 46vh;
+}
+
+@media (max-width: 760px) {
+  .dz-case-stage__chamber { aspect-ratio: 4 / 3; }
+}
+
+.dz-case-stage__art {
+  width: clamp(160px, 26vw, 320px);
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+}
+
+.dz-case-stage__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dz-case-stage__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--dz-s4);
+  margin-top: var(--dz-s4);
+  padding-top: var(--dz-s3);
+  border-top: 1px solid var(--dz-edge);
+}
+
+.dz-case-stage__name {
+  display: block;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-md);
+  font-weight: 600;
+  color: var(--dz-text-1);
+  text-transform: none;
+}
+
+/* ── Record card ─────────────────────────────────────────────────────────
+   What dropped, kept on the page after the opening scene is dismissed. It is
+   a record, not a second celebration: the drama belongs to DROP PROTOCOL, and
+   repeating it here would read as the site congratulating itself twice. What
+   this adds is the verification data, which must survive the scene closing. */
+.dz-record {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--dz-s4);
+  align-items: center;
+  padding: var(--dz-s4);
+  border: 1px solid color-mix(in srgb, var(--dz-rarity) 36%, var(--dz-edge));
+  border-left: 3px solid var(--dz-rarity);
+  border-radius: var(--dz-r-lg);
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--dz-rarity) 8%, var(--dz-surface-1)),
+    var(--dz-surface-0) 55%);
+  margin-bottom: var(--dz-s5);
+}
+
+.dz-record__art {
+  width: 110px;
+  height: 82px;
+  object-fit: contain;
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-0);
+}
+
+.dz-record__label {
+  display: block;
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-rarity);
+}
+
+.dz-record__name {
+  margin: 2px 0;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-lg);
+  font-weight: 700;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-text-1);
+  text-transform: none;
+  overflow-wrap: break-word;
+}
+
+.dz-record__value {
+  margin: 0;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--dz-text-1);
+}
+
+.dz-record__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dz-s2);
+  margin-top: var(--dz-s3);
+}
+
+@media (max-width: 600px) {
+  .dz-record {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+}
+
 /* ── Table ───────────────────────────────────────────────────────────────
    For data that genuinely has rows and columns, like a ledger. Kept as a real
    <table> rather than rebuilt from divs: the header associations are what let

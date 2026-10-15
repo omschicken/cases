@@ -11,6 +11,8 @@ import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol"
 import { ItemCard } from "../components/dz/ItemCard";
 import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
+import { PageHeader, Readout } from "../components/dz/PageHeader";
+import { DropChamber } from "../components/dz/DropChamber";
 
 const EXTERIOR_PATTERN = / \((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
 const EXTERIOR_SHORT: Record<string, string> = {
@@ -116,7 +118,6 @@ export function CaseDetailPage() {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
-  const heroArtRef = useRef<HTMLDivElement>(null);
   const [theCase, setTheCase] = useState<CaseDto | null>(null);
   const [isPreview, setIsPreview] = useState(false);
   const [seedHash, setSeedHash] = useState<string | null>(null);
@@ -248,8 +249,8 @@ export function CaseDetailPage() {
   if (error && !theCase) return (
     <div className="case-load-error" role="alert">
       <h1>{error}</h1>
-      <button type="button" className="open-button" onClick={() => setRequestId((id) => id + 1)}>{t("common.retry", { defaultValue: "Retry" })}</button>
-      <Link to="/" className="open-button">{t("caseDetail.backToCases", { defaultValue: "Вернуться к кейсам" })}</Link>
+      <button type="button" className="dz-commit" onClick={() => setRequestId((id) => id + 1)}>{t("common.retry", { defaultValue: "Retry" })}</button>
+      <Link to="/" className="dz-commit">{t("caseDetail.backToCases", { defaultValue: "Вернуться к кейсам" })}</Link>
     </div>
   );
   if (!theCase) return (
@@ -335,46 +336,45 @@ export function CaseDetailPage() {
         <span aria-hidden="true">/</span>
         <span aria-current="page">{theCase.name}</span>
       </nav>
-      <section className="case-detail-hero" style={{ "--case-hue": caseVisualIdentity(theCase.slug).hue } as CSSProperties}>
-        <div className="case-detail-hero-copy">
-          <span className="section-kicker">DROPZONE / {t("caseDetail.collectionLabel", { defaultValue: "COLLECTION" })}</span>
-          <h1>{theCase.name}</h1>
-          <p className="case-detail-lede">{t("caseDetail.heroDescription", { defaultValue: "Explore every possible item and its exact chance before opening." })}</p>
-          <div className="case-detail-stats">
-            <div><span>{t("caseDetail.casePrice", { defaultValue: "CASE PRICE" })}</span><strong>{formatMinor(theCase.priceMinor, theCase.currency)}</strong></div>
-            <div><span>{t("caseDetail.skinCount", { defaultValue: "SKIN DESIGNS" })}</span><strong>{skinGroups.length}</strong></div>
-            <div><span>{t("caseDetail.featuredChance", { defaultValue: "TOP ITEM CHANCE" })}</span><strong>{featuredChance}%</strong></div>
-          </div>
-          <a href="#opening-station" className="case-detail-jump">{t("caseDetail.goToOpening", { defaultValue: "Go to opening" })} <span aria-hidden="true">↓</span></a>
-        </div>
-        <div
-          className="case-detail-hero-art"
-          ref={heroArtRef}
-          onMouseMove={(e) => {
-            const el = heroArtRef.current;
-            if (!el) return;
-            const rect = el.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-            const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-            el.style.setProperty("--tilt-x", `${(y * -8).toFixed(2)}deg`);
-            el.style.setProperty("--tilt-y", `${(x * 8).toFixed(2)}deg`);
-          }}
-          onMouseLeave={() => {
-            const el = heroArtRef.current;
-            if (!el) return;
-            el.style.setProperty("--tilt-x", "0deg");
-            el.style.setProperty("--tilt-y", "0deg");
-          }}
+      <PageHeader
+        kicker={`DROPZONE / ${t("caseDetail.collectionLabel", { defaultValue: "COLLECTION" })}`}
+        title={theCase.name}
+        lede={t("caseDetail.heroDescription", { defaultValue: "Explore every possible item and its exact chance before opening." })}
+        aside={<>
+          <Readout label={t("caseDetail.casePrice", { defaultValue: "CASE PRICE" })} value={formatMinor(theCase.priceMinor, theCase.currency)} />
+          <Readout label={t("caseDetail.skinCount", { defaultValue: "SKIN DESIGNS" })} value={String(skinGroups.length)} />
+          <Readout label={t("caseDetail.featuredChance", { defaultValue: "TOP ITEM CHANCE" })} value={`${featuredChance}%`} />
+        </>}
+      />
+
+      <section className="dz-case-stage">
+        <DropChamber
+          className="dz-case-stage__chamber"
+          state="idle"
+          rarityColor={featuredItem ? rarityColor(featuredItem.rarity) : undefined}
+          depth={210}
+          hudLeft={theCase.slug.toUpperCase()}
+          hudRight={t("caseDetail.featuredItem", { defaultValue: "FEATURED ITEM" })}
         >
-          <div className="case-detail-art-grid" aria-hidden="true" />
-          <div className="case-detail-art-ring" aria-hidden="true" />
-          <CaseChest className="case-chest-detail" caseName={theCase.name} caseSlug={theCase.slug} itemImageUrl={featuredItem?.imageUrl} />
-          <div className="case-detail-art-caption"><span>{t("caseDetail.featuredItem", { defaultValue: "FEATURED ITEM" })}</span><strong>{featuredGroup?.name ?? theCase.name}</strong></div>
+          <div className="dz-case-stage__art">
+            {featuredItem && !featuredItem.imageUrl.startsWith("data:image")
+              ? <img src={featuredItem.imageUrl} alt={featuredItem.name} />
+              : <CaseChest className="case-chest-detail" caseName={theCase.name} caseSlug={theCase.slug} />}
+          </div>
+        </DropChamber>
+        <div className="dz-case-stage__foot">
+          <span>
+            <span className="dz-readout__label">{t("caseDetail.featuredItem", { defaultValue: "FEATURED ITEM" })}</span>
+            <span className="dz-case-stage__name">{featuredGroup?.name ?? theCase.name}</span>
+          </span>
+          <a href="#opening-station" className="dz-btn">
+            {t("caseDetail.goToOpening", { defaultValue: "Go to opening" })} <span aria-hidden="true">↓</span>
+          </a>
         </div>
       </section>
 
-      <section id="opening-station" className="case-opening-station" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
-        <div className="case-opening-heading"><span className="section-kicker">{t("caseDetail.openingSequence", { defaultValue: "OPENING SEQUENCE" })}</span><span>{isPreview ? t("caseDetail.demoOnly", { defaultValue: "DEMO ONLY" }) : t("caseDetail.provablyFair")}</span></div>
+      <section id="opening-station" className="dz-panel" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
+        <div className="dz-panel__label"><span className="section-kicker">{t("caseDetail.openingSequence", { defaultValue: "OPENING SEQUENCE" })}</span><span>{isPreview ? t("caseDetail.demoOnly", { defaultValue: "DEMO ONLY" }) : t("caseDetail.provablyFair")}</span></div>
 
       {!opening && !winningItem && previewItems.length > 0 && (
         <div className="case-opening-preview" aria-hidden="true">
@@ -389,45 +389,31 @@ export function CaseDetailPage() {
         </div>
       )}
 
-      <div
-        className="spin-mode-toggle"
-        role="group"
-        aria-label={t("caseDetail.spinMode", { defaultValue: "Режим открытия" })}
-      >
-        <button
-          type="button"
-          className={!quickSpin ? "active" : ""}
-          onClick={() => toggleQuickSpin(false)}
-          disabled={opening || spinning}
-        >
+      <div className="dz-chips" role="group" aria-label={t("caseDetail.spinMode", { defaultValue: "Режим открытия" })}>
+        <button type="button" className="dz-chip" aria-pressed={!quickSpin} onClick={() => toggleQuickSpin(false)} disabled={opening || spinning}>
           {t("caseDetail.spinFull")}
         </button>
-        <button
-          type="button"
-          className={quickSpin ? "active" : ""}
-          onClick={() => toggleQuickSpin(true)}
-          disabled={opening || spinning}
-        >
+        <button type="button" className="dz-chip" aria-pressed={quickSpin} onClick={() => toggleQuickSpin(true)} disabled={opening || spinning}>
           {t("caseDetail.spinQuick")}
         </button>
       </div>
 
       {user && !isPreview ? (
-        <div className="open-button-row">
-          <button onClick={openCase} disabled={opening || spinning} className="open-button">
+        <div className="dz-confirm">
+          <button onClick={openCase} disabled={opening || spinning} className="dz-commit">
             {opening
               ? t("caseDetail.rolling")
               : spinning
                 ? t("caseDetail.spinning")
                 : t("caseDetail.openFor", { price: formatMinor(theCase.priceMinor, theCase.currency) })}
           </button>
-          <button onClick={demoSpin} disabled={opening || spinning} className="open-button demo-button" title={t("caseDetail.demoSpin")}>
+          <button onClick={demoSpin} disabled={opening || spinning} className="dz-btn" title={t("caseDetail.demoSpin")}>
             {t("caseDetail.demoSpin")}
           </button>
         </div>
       ) : (
         <>
-          <button onClick={demoSpin} disabled={opening || spinning} className="open-button demo-button" aria-describedby={isPreview ? "catalog-preview-notice" : undefined}>
+          <button onClick={demoSpin} disabled={opening || spinning} className="dz-btn" aria-describedby={isPreview ? "catalog-preview-notice" : undefined}>
             {opening ? t("caseDetail.rolling") : spinning ? t("caseDetail.spinning") : t("caseDetail.demoSpin")}
           </button>
           <p className="hint">
@@ -441,57 +427,51 @@ export function CaseDetailPage() {
       {error && <p className="form-error">{error}</p>}
       </section>
 
-      {result && revealed && (
-        <div className={`result-panel ${isChaseRarity(result.item.rarity) ? "result-panel-chase" : ""}`} role="status" aria-live="polite" style={{ "--rarity-color": rarityColor(result.item.rarity) } as CSSProperties}>
-          <span className="result-reveal-ring" aria-hidden="true" />
-          <span className="result-reveal-burst" aria-hidden="true" />
-          <span className="result-reveal-sparks" aria-hidden="true">{Array.from({ length: 12 }, (_, index) => <i key={index} style={{ "--spark-index": index } as CSSProperties} />)}</span>
-          <p className="result-kicker">{t("caseDetail.resultKicker", { defaultValue: "ПРЕДМЕТ ПОЛУЧЕН" })}</p>
-          <h2>{t("caseDetail.youGot", { name: result.item.name })}</h2>
-          <span className="result-rarity" style={{ color: rarityColor(result.item.rarity) }}>{t("caseDetail.rarity", { defaultValue: result.item.rarity })}</span>
-          <img src={result.item.imageUrl} alt={result.item.name} className="result-image" />
-          <p className="value">{formatMinor(result.item.valueMinor, result.item.currency)}</p>
-          <div className="result-actions">
-            <Link to="/inventory" className="result-action result-action-primary">{t("caseDetail.claim", { defaultValue: "Забрать в инвентарь" })}</Link>
-            <button type="button" className="result-action result-action-secondary" onClick={openCase} disabled={opening}>{t("caseDetail.openAgain", { defaultValue: "Открыть ещё" })}</button>
-          </div>
-          <details>
-            <summary>{t("caseDetail.roundDetails")}</summary>
-            <ul>
-              <li>{t("caseDetail.roll", { roll: result.roll.toFixed(8) })}</li>
-              <li>{t("caseDetail.nonce", { nonce: result.nonce })}</li>
-              <li>{t("caseDetail.serverSeedHash", { hash: result.serverSeedHash })}</li>
-              <li>{t("caseDetail.clientSeed", { seed: result.clientSeed })}</li>
-              <li>
-                <Link to={`/verify/${result.openEventId}`}>{t("caseDetail.verifyThisResult")}</Link>
-              </li>
-            </ul>
-          </details>
-        </div>
-      )}
-
-      {!result && demoItem && revealed && (
-        <div
-          className={`result-panel demo-result ${isChaseRarity(demoItem.rarity) ? "result-panel-chase" : ""}`}
+      {revealed && winningItem && (
+        <section
+          className="dz-record"
           role="status"
           aria-live="polite"
-          style={{ "--rarity-color": rarityColor(demoItem.rarity) } as CSSProperties}
+          style={{ "--dz-rarity": rarityColor(winningItem.rarity) } as CSSProperties}
         >
-          <span className="result-reveal-ring" aria-hidden="true" />
-          <span className="result-reveal-burst" aria-hidden="true" />
-          <span className="result-reveal-sparks" aria-hidden="true">{Array.from({ length: 12 }, (_, index) => <i key={index} style={{ "--spark-index": index } as CSSProperties} />)}</span>
-          <p className="result-kicker">{t("caseDetail.demoResultLabel")}</p>
-          <h2>{t("caseDetail.demoYouGot", { name: demoItem.name })}</h2>
-          <img src={demoItem.imageUrl} alt={demoItem.name} className="result-image" />
-          <p className="value">{formatMinor(demoItem.valueMinor, demoItem.currency)}</p>
-          <p className="hint">
-            {t("caseDetail.demoResultHint")} <Link to="/login">{t("caseDetail.logIn")}</Link>
-          </p>
-        </div>
+          <img className="dz-record__art" src={winningItem.imageUrl} alt="" />
+          <div>
+            <span className="dz-record__label">
+              {result
+                ? t("caseDetail.resultKicker", { defaultValue: "ПРЕДМЕТ ПОЛУЧЕН" })
+                : t("caseDetail.demoResultLabel", { defaultValue: "ДЕМО — предмет не зачислен" })}
+              {" · "}
+              {t(`rarity.${winningItem.rarity}`, { defaultValue: RARITY_LABELS[winningItem.rarity] })}
+            </span>
+            <h2 className="dz-record__name">{winningItem.name}</h2>
+            <p className="dz-record__value">{formatMinor(winningItem.valueMinor, winningItem.currency)}</p>
+            <div className="dz-record__actions">
+              {result ? (
+                <>
+                  <Link to="/inventory" className="dz-btn">{t("caseDetail.claim", { defaultValue: "Забрать в инвентарь" })}</Link>
+                  <Link to={`/verify/${result.openEventId}`} className="dz-btn">{t("caseDetail.verifyThisResult", { defaultValue: "Проверить результат" })}</Link>
+                </>
+              ) : (
+                <Link to="/login" className="dz-btn">{t("caseDetail.logIn")}</Link>
+              )}
+            </div>
+            {result && (
+              <details className="dz-protocol__fair">
+                <summary>{t("caseDetail.roundDetails")}</summary>
+                <dl>
+                  <dt>roll</dt><dd>{result.roll.toFixed(8)}</dd>
+                  <dt>nonce</dt><dd>{result.nonce}</dd>
+                  <dt>server seed hash</dt><dd>{result.serverSeedHash}</dd>
+                  <dt>client seed</dt><dd>{result.clientSeed}</dd>
+                </dl>
+              </details>
+            )}
+          </div>
+        </section>
       )}
 
       {seedHash && (
-        <div className="fairness-panel">
+        <div className="dz-panel">
           <h3>{t("caseDetail.provablyFair")}</h3>
           <p>
             {t("caseDetail.serverSeedCommitment")}
@@ -508,7 +488,12 @@ export function CaseDetailPage() {
         </div>
       )}
 
-      <div className="case-contents-heading"><div><span className="section-kicker">DROP TABLE / {String(skinGroups.length).padStart(2, "0")} SKINS · {String(theCase.items.length).padStart(2, "0")} OUTCOMES</span><h2 className="section-heading">{t("caseDetail.itemsHeading")}</h2></div><p>{t("caseDetail.groupedOddsDisclosure", { defaultValue: "Each card combines all available wear conditions. The chance shown is the total chance for that skin design." })}</p></div>
+      <PageHeader
+        level={2}
+        kicker={`DROP TABLE / ${String(skinGroups.length).padStart(2, "0")} SKINS · ${String(theCase.items.length).padStart(2, "0")} OUTCOMES`}
+        title={t("caseDetail.itemsHeading")}
+        lede={t("caseDetail.groupedOddsDisclosure", { defaultValue: "Each card combines all available wear conditions. The chance shown is the total chance for that skin design." })}
+      />
       <div className="dz-item-grid">
         {skinGroups.map((group) => (
           <ItemCard
