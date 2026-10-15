@@ -32,6 +32,14 @@ export function ItemCard({
       className="dz-item-card"
       style={{ "--dz-rarity": rarityColor(rarity) } as CSSProperties}
     >
+      {/* Premium inspection popup — pure CSS, no JS state */}
+      <div className="dz-item-card__inspect" aria-hidden="true">
+        <img src={imageUrl} alt="" />
+        <span className="dz-item-card__inspect-rarity">{rarityLabel}</span>
+        <span className="dz-item-card__inspect-name">{name}</span>
+        <span className="dz-item-card__inspect-value">{value}</span>
+      </div>
+
       <div className="dz-item-card__cell">
         <img src={imageUrl} alt={name} loading="lazy" decoding="async" />
         {badge && <span className="dz-item-card__badge">{badge}</span>}
