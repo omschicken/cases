@@ -8,9 +8,9 @@ import { RARITY_LABELS, rarityColor } from "../../lib/rarity";
 import type { CaseItem, OpenCaseResult } from "../../lib/types";
 import { DropChamber } from "./DropChamber";
 
-export type ProtocolPhase = "arming" | "activation" | "reveal";
+export type ProtocolPhase = "arming" | "showcase" | "activation" | "reveal";
 
-const PHASE_ORDER: ProtocolPhase[] = ["arming", "activation", "reveal"];
+const PHASE_ORDER: ProtocolPhase[] = ["arming", "showcase", "activation", "reveal"];
 
 interface DropProtocolProps {
   phase: ProtocolPhase;
@@ -112,6 +112,7 @@ export function DropProtocol({
 
   const phaseLabel = {
     arming:     t("caseDetail.unlocking", { defaultValue: "Открываем замок…" }),
+    showcase:   t("caseDetail.chestOpen", { defaultValue: "Сундук открыт" }),
     activation: t("caseDetail.spinning", { defaultValue: "Определяем предмет…" }),
     reveal:     t("caseDetail.resultKicker", { defaultValue: "Предмет получен" }),
   }[phase];
@@ -160,7 +161,12 @@ export function DropProtocol({
       )}
 
       <div className="dz-protocol__stage">
-        {phase === "activation" && reel ? (
+        {phase === "showcase" ? (
+          // Showcase: chest fills the stage — reel hasn't appeared yet.
+          <div className="dz-protocol__showcase-stage">
+            {caseChest ?? null}
+          </div>
+        ) : phase === "activation" && reel ? (
           <div className="dz-protocol__reel">{reel}</div>
         ) : phase === "reveal" && item ? (
           isApex ? (

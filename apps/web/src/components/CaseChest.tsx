@@ -6,6 +6,8 @@ type CaseChestProps = {
   itemImageUrl?: string;
   className?: string;
   opening?: boolean;
+  /** Chest is frozen-open after the burst, during the showcase phase. */
+  open?: boolean;
 };
 
 /** Stable visual identity: a case keeps the same treatment in every view. */
@@ -56,7 +58,7 @@ function OrbitRing({ radius, count, delay }: { radius: number; count: number; de
 }
 
 /** Decorative case preview — never represents an opening result. */
-export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", opening = false }: CaseChestProps) {
+export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", opening = false, open = false }: CaseChestProps) {
   const { seed, variant, hue, finish } = caseVisualIdentity(caseSlug);
   const mark = caseName.replace(/\s*case$/i, "").slice(0, 3).toUpperCase();
   const serial = String(seed % 10000).padStart(4, "0");
@@ -65,7 +67,7 @@ export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", op
 
   return (
     <div
-      className={`case-chest case-chest-v${variant} case-chest-f${finish} ${opening ? "case-chest-is-opening" : ""} ${className}`}
+      className={`case-chest case-chest-v${variant} case-chest-f${finish} ${opening ? "case-chest-is-opening" : ""} ${open ? "case-chest-is-open" : ""} ${className}`}
       style={{
         "--chest-hue": hue,
         "--chest-sat": `${saturation}%`,
@@ -81,12 +83,14 @@ export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", op
       <OrbitRing radius={42} count={6} delay={0} />
       <OrbitRing radius={58} count={4} delay={-1.2} />
 
+      {/* Interior light: shown during opening burst and showcase (open state) */}
+      {(opening || open) && <span className="case-chest-interior-light" />}
+
       {/* Opening effects */}
       {opening && (
         <>
           <span className="case-chest-flare" />
           <span className="case-chest-scan" />
-          <span className="case-chest-interior-light" />
           <span className="case-chest-beam" />
           <span className="case-chest-rays" />
           <span className="case-chest-shockwave" />

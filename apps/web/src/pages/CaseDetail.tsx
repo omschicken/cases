@@ -96,6 +96,7 @@ function weightedSample(items: CaseItem[]): CaseItem {
 
 const QUICK_SPIN_KEY = "gundone.quickSpin";
 const CASE_OPENING_DURATION_MS = 1250;
+const SHOWCASE_DURATION_MS = 2000;
 const PREVIEW_ART = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 420'%3E%3Crect width='640' height='420' fill='%23151b2d'/%3E%3Cpath d='M80 300 220 100l140 200 90-120 110 120' fill='none' stroke='%23b86bff' stroke-width='10'/%3E%3C/svg%3E";
 
 function previewCase(slug: string): CaseDto {
@@ -124,6 +125,8 @@ export function CaseDetailPage() {
   const [seedHash, setSeedHash] = useState<string | null>(null);
   const [clientSeed, setClientSeed] = useState<string | null>(null);
   const [opening, setOpening] = useState(false);
+  const [showcasing, setShowcasing] = useState(false);
+  const showcaseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [result, setResult] = useState<OpenCaseResult | null>(null);
   const [demoItem, setDemoItem] = useState<CaseItem | null>(null);
   const [revealed, setRevealed] = useState(false);
@@ -212,6 +215,13 @@ export function CaseDetailPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revealed]);
 
+  function startShowcase() {
+    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const duration = reducedMotion ? 50 : SHOWCASE_DURATION_MS;
+    setShowcasing(true);
+    showcaseTimerRef.current = setTimeout(() => setShowcasing(false), duration);
+  }
+
   async function openCase() {
     if (!theCase || openingLockRef.current) return;
     openingLockRef.current = true;
@@ -222,6 +232,7 @@ export function CaseDetailPage() {
     setResult(null);
     setDemoItem(null);
     setProtocolDismissed(false);
+    let success = false;
     try {
       // The result is fully determined here — the reel below just animates
       // toward it, it never influences the outcome.
@@ -232,12 +243,14 @@ export function CaseDetailPage() {
       if (response.status === "rejected") throw response.reason;
       setResult(response.value);
       setSpinKey((k) => k + 1);
+      success = true;
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotOpenCase"));
       openingLockRef.current = false;
     } finally {
       setOpening(false);
     }
+    if (success) startShowcase();
   }
 
   // No account, no money, no server call — just a client-side preview of the
@@ -256,6 +269,7 @@ export function CaseDetailPage() {
     setDemoItem(weightedSample(theCase.items));
     setSpinKey((k) => k + 1);
     setOpening(false);
+    startShowcase();
   }
 
   if (error && !theCase) return (
@@ -284,16 +298,27 @@ export function CaseDetailPage() {
     ? null
     : opening && !winningItem
       ? "arming"
-      : winningItem && !revealed
-        ? "activation"
-        : winningItem && revealed
-          ? "reveal"
-          : null;
+      : showcasing
+        ? "showcase"
+        : winningItem && !revealed
+          ? "activation"
+          : winningItem && revealed
+            ? "reveal"
+            : null;
 
   /** Ends the animation early. The outcome was decided by the server before
    *  the first frame, so this reveals what already dropped — it never
    *  re-rolls, and the reel is unmounted rather than hurried. */
   function skipAnimation() {
+    if (showcasing) {
+      // Skip the showcase — jump straight to the reel.
+      if (showcaseTimerRef.current) {
+        clearTimeout(showcaseTimerRef.current);
+        showcaseTimerRef.current = null;
+      }
+      setShowcasing(false);
+      return;
+    }
     setRevealed(true);
     openingLockRef.current = false;
   }
@@ -330,6 +355,7 @@ export function CaseDetailPage() {
               caseName={theCase.name}
               caseSlug={theCase.slug}
               opening={opening}
+              open={showcasing}
             />
           }
           reel={winningItem && (
