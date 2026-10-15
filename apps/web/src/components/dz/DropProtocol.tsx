@@ -191,10 +191,15 @@ export function DropProtocol({
             )}
             </div>
           </div>
+        ) : isOpening ? (
+          // Opening burst: no chamber frame so the explosion fills the stage.
+          <div className="dz-protocol__burst-stage">
+            {caseChest ?? null}
+          </div>
         ) : (
           <DropChamber
             className="dz-protocol__chamber"
-            state={phase === "arming" ? "cycling" : "armed"}
+            state="armed"
             rarityColor={accent}
             depth={220}
             hudLeft={caseName}

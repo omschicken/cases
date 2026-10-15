@@ -34,30 +34,79 @@
   animation: dz-protocol-in var(--dz-d-move) var(--dz-e-enter);
 }
 
+/* During opening, the background pulses brighter with the eruption */
+.dz-protocol--opening {
+  animation:
+    dz-protocol-in var(--dz-d-move) var(--dz-e-enter),
+    protocol-bg-pulse 1.25s ease-out both;
+}
+@keyframes protocol-bg-pulse {
+  0%, 50%  { background-color: transparent; }
+  64%      {
+    background:
+      radial-gradient(ellipse 140% 100% at 50% 44%,
+        color-mix(in srgb, var(--dz-rarity) 32%, transparent) 0%,
+        color-mix(in srgb, var(--dz-rarity) 8%, transparent) 60%,
+        transparent 80%),
+      var(--dz-void);
+  }
+  100%     {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%,
+        color-mix(in srgb, var(--dz-rarity) 10%, transparent), transparent 70%),
+      var(--dz-void);
+  }
+}
+
 @keyframes dz-protocol-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-/* ── Opening flash: radial burst from the chest position ───────────────── */
+/* ── Opening burst: radial flash ───────────────────────────────────────── */
 .dz-protocol--opening::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 400;
-  background: radial-gradient(ellipse 60% 50% at 50% 46%,
-    rgba(255,255,255,.55) 0%,
-    var(--dz-rarity, #fff) 22%,
-    transparent 62%);
+  background: radial-gradient(ellipse 70% 65% at 50% 44%,
+    rgba(255,255,255,.9) 0%,
+    rgba(255,255,255,.6) 10%,
+    color-mix(in srgb, var(--dz-rarity, hsl(26,85%,55%)) 80%, transparent) 28%,
+    transparent 60%);
   opacity: 0;
   pointer-events: none;
   animation: protocol-flash 1.25s ease-out both;
 }
 @keyframes protocol-flash {
-  0%, 62%  { opacity: 0; }
-  74%      { opacity: .65; }
-  86%      { opacity: .15; }
+  0%, 52%  { opacity: 0; }
+  64%      { opacity: 1; }
+  76%      { opacity: .3; }
   100%     { opacity: 0; }
+}
+
+/* ── Full-screen god rays spinning out from the chest ──────────────────── */
+.dz-protocol--opening::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 380;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 44%,
+    color-mix(in srgb, var(--dz-rarity, hsl(26,85%,55%)) 22%, transparent) 0deg 5deg,
+    transparent 5deg 14deg,
+    color-mix(in srgb, var(--dz-rarity, hsl(26,85%,55%)) 10%, transparent) 14deg 18deg,
+    transparent 18deg 30deg
+  );
+  opacity: 0;
+  pointer-events: none;
+  animation: fullscreen-rays 1.25s ease-out both;
+}
+@keyframes fullscreen-rays {
+  0%, 52%  { opacity: 0; transform: rotate(-14deg) scale(.9); }
+  63%      { opacity: .8; transform: rotate(0deg) scale(1); }
+  78%      { opacity: .45; transform: rotate(16deg) scale(1.06); }
+  100%     { opacity: 0; transform: rotate(36deg) scale(1.15); }
 }
 
 /* ── Top bar ───────────────────────────────────────────────────────────── */
@@ -134,12 +183,36 @@
   .dz-protocol__chamber { aspect-ratio: 4 / 3; }
 }
 
-/* The case during ARMING. */
+/* The case during ARMING (non-opening state). */
 .dz-protocol__case {
   width: clamp(200px, 38vw, 420px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
+}
+
+/* Burst stage: no chamber frame — the chest animates freely. */
+.dz-protocol__burst-stage {
+  position: relative;
+  width: min(94vw, 900px);
+  height: min(74vh, 560px);
+  display: grid;
+  place-items: center;
+  animation: burst-stage-zoom 1.25s ease-out both;
+}
+@keyframes burst-stage-zoom {
+  0%    { transform: scale(1); }
+  12%   { transform: scale(.95) translateY(3px); }
+  50%   { transform: scale(1.04) translateY(-5px); }
+  68%   { transform: scale(1.12) translateY(-10px); }
+  84%   { transform: scale(1.06) translateY(-7px); }
+  100%  { transform: scale(1); }
+}
+
+/* Inside the burst stage, give the chest more breathing room */
+.dz-protocol__burst-stage .case-chest-detail {
+  width: min(100%, 46rem);
+  height: 28rem;
 }
 
 .dz-protocol__case img {
