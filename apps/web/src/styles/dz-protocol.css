@@ -39,6 +39,27 @@
   to   { opacity: 1; }
 }
 
+/* ── Opening flash: radial burst from the chest position ───────────────── */
+.dz-protocol--opening::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: radial-gradient(ellipse 60% 50% at 50% 46%,
+    rgba(255,255,255,.55) 0%,
+    var(--dz-rarity, #fff) 22%,
+    transparent 62%);
+  opacity: 0;
+  pointer-events: none;
+  animation: protocol-flash 1.25s ease-out both;
+}
+@keyframes protocol-flash {
+  0%, 62%  { opacity: 0; }
+  74%      { opacity: .65; }
+  86%      { opacity: .15; }
+  100%     { opacity: 0; }
+}
+
 /* ── Top bar ───────────────────────────────────────────────────────────── */
 .dz-protocol__bar {
   display: flex;
@@ -86,7 +107,9 @@
   display: grid;
   place-items: center;
   min-height: 0;
-  overflow: hidden;
+  /* overflow: visible so the chest's rays, rings and shockwave can bleed
+     outside the chamber frame during the opening sequence. */
+  overflow: visible;
   padding: var(--dz-s3) 0;
 }
 
@@ -113,7 +136,7 @@
 
 /* The case during ARMING. */
 .dz-protocol__case {
-  width: clamp(130px, 22vw, 240px);
+  width: clamp(200px, 38vw, 420px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;

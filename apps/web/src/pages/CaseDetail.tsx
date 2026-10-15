@@ -310,6 +310,7 @@ export function CaseDetailPage() {
           item={winningItem}
           result={result}
           oddsPercent={winningItem ? dropChancePercent(winningItem, theCase.items) : undefined}
+          isOpening={opening}
           caseChest={
             <CaseChest
               className="case-chest-detail"

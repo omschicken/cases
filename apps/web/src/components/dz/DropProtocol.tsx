@@ -25,6 +25,8 @@ interface DropProtocolProps {
   caseChest?: ReactNode;
   /** The reel, mounted by the caller so this component owns no spin timing. */
   reel?: ReactNode;
+  /** True while the chest's opening animation is running — adds screen-wide flash. */
+  isOpening?: boolean;
   /** Ends the animation early. The outcome is already final, so this only
    *  stops the animation — it never re-rolls. */
   onSkip: () => void;
@@ -40,7 +42,7 @@ interface DropProtocolProps {
  * cannot influence it, and intentionally offers no near-miss effect.
  */
 export function DropProtocol({
-  phase, caseName, item, result, oddsPercent, caseChest, reel,
+  phase, caseName, item, result, oddsPercent, caseChest, reel, isOpening = false,
   onSkip, onClose, onOpenAgain, canOpenAgain = false,
 }: DropProtocolProps) {
   const { t } = useTranslation();
@@ -122,7 +124,7 @@ export function DropProtocol({
   return createPortal(
     <div
       ref={rootRef}
-      className="dz-protocol"
+      className={`dz-protocol${isOpening ? " dz-protocol--opening" : ""}`}
       role="dialog"
       aria-modal="true"
       aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}

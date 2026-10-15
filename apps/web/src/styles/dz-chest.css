@@ -355,8 +355,8 @@
   animation: chest-rattle 1.25s cubic-bezier(.2,.7,.3,1) both;
 }
 @keyframes chest-rattle {
-  /* Micro-tremble */
-  0%    { transform: translateY(0) rotate(0deg); }
+  /* Compress spring inward then snap up */
+  0%    { transform: translateY(4px) scaleY(.97) scaleX(1.025); }
   4%    { transform: translateY(-1px) rotate(.2deg); }
   8%    { transform: translateY(1px) rotate(-.2deg); }
   12%   { transform: translateY(-1px) rotate(.3deg); }
@@ -496,6 +496,10 @@
 .case-chest-spark:nth-child(8)  { animation: spark-fly  0.95s ease-out  .44s both; --sa: -126deg; --sd: 44px; }
 .case-chest-spark:nth-child(9)  { animation: spark-fly  1.18s ease-out  .42s both; --sa: 162deg;  --sd: 58px; }
 .case-chest-spark:nth-child(10) { animation: spark-fly  1.08s ease-out  .43s both; --sa: -162deg; --sd: 40px; }
+.case-chest-spark:nth-child(11) { animation: spark-fly  1.12s ease-out  .44s both; --sa: 36deg;   --sd: 60px; }
+.case-chest-spark:nth-child(12) { animation: spark-fly  0.88s ease-out  .46s both; --sa: -36deg;  --sd: 54px; }
+.case-chest-spark:nth-child(13) { animation: spark-fly  1.22s ease-out  .43s both; --sa: 72deg;   --sd: 62px; }
+.case-chest-spark:nth-child(14) { animation: spark-fly  0.98s ease-out  .45s both; --sa: -72deg;  --sd: 58px; }
 
 @keyframes spark-fly {
   0%   { opacity: 0;   transform: rotate(var(--sa)) translateY(0)             scale(0); }
@@ -526,6 +530,68 @@
   0%   { opacity: .9; width: 8px;   height: 8px;   margin: -4px  0 0 -4px;  filter: blur(0); }
   40%  { opacity: .5; }
   100% { opacity: 0;  width: 320px; height: 220px; margin: -110px 0 0 -160px; filter: blur(3px); }
+}
+
+/* ── God rays: spinning conic sunburst ───────────────────────── */
+.case-chest-rays {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 35%;
+  width: 520px;
+  height: 520px;
+  margin-left: -260px;
+  margin-top: -260px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--chest-bright) 80%, transparent) 0deg 4deg,
+    transparent 4deg 11deg,
+    color-mix(in srgb, var(--chest-glow) 60%, transparent) 11deg 14deg,
+    transparent 14deg 30deg
+  );
+  mask: radial-gradient(circle, transparent 10%, rgba(255,255,255,.85) 18%, rgba(255,255,255,1) 52%, transparent 70%);
+  -webkit-mask: radial-gradient(circle, transparent 10%, rgba(255,255,255,.85) 18%, rgba(255,255,255,1) 52%, transparent 70%);
+  opacity: 0;
+  transform: rotate(-15deg) scale(.2);
+  pointer-events: none;
+  animation: rays-burst 1.25s ease-out both;
+}
+@keyframes rays-burst {
+  0%, 55%  { opacity: 0; transform: rotate(-15deg) scale(.2); }
+  64%      { opacity: .85; transform: rotate(0deg) scale(.75); }
+  78%      { opacity: .65; transform: rotate(16deg) scale(1.1); }
+  90%      { opacity: .28; transform: rotate(30deg) scale(1.45); }
+  100%     { opacity: 0; transform: rotate(48deg) scale(1.9); }
+}
+
+/* ── Shockwave: expanding elliptical pressure ring ───────────── */
+.case-chest-shockwave {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 14%;
+  width: 340px;
+  height: 220px;
+  margin-left: -170px;
+  margin-top: -110px;
+  border-radius: 50%;
+  border: 2px solid var(--chest-bright);
+  box-shadow:
+    0 0 14px 5px var(--chest-bright),
+    0 0 32px 10px color-mix(in srgb, var(--chest-glow) 45%, transparent),
+    inset 0 0 14px 4px color-mix(in srgb, var(--chest-bright) 20%, transparent);
+  opacity: 0;
+  transform: scale(.03);
+  pointer-events: none;
+  animation: shockwave-ring 1.25s ease-out both;
+}
+@keyframes shockwave-ring {
+  0%, 46%  { opacity: 0; transform: scale(.03); }
+  50%      { opacity: 1; transform: scale(.07); border-width: 3px; }
+  62%      { opacity: .8; transform: scale(.65); filter: blur(.5px); }
+  78%      { opacity: .4; transform: scale(1.35); filter: blur(2px); border-width: 1.5px; }
+  100%     { opacity: 0; transform: scale(2.3); filter: blur(7px); border-width: 1px; }
 }
 
 /* ── Flare: central bloom flash ──────────────────────────────── */
@@ -735,8 +801,8 @@
 
 /* ── Detail page variant ─────────────────────────────────────── */
 .case-chest-detail {
-  width: min(100%, 22rem);
-  height: 13rem;
+  width: min(100%, 28rem);
+  height: 17rem;
 }
 .case-chest-detail .case-chest-lid-mark { font-size: 1rem; }
 .case-chest-detail .case-chest-glyph { width: 55%; height: 55%; }
