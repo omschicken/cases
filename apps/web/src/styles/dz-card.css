@@ -440,6 +440,17 @@
   to   { transform: translateX(100%); }
 }
 
+/* Chest component inside a case card — scaled to fit the cell */
+.dz-case-card__chest {
+  width: 82%;
+  height: 82%;
+  max-width: 160px;
+}
+
+.dz-case-card__chest .case-chest-assembly { transform: scale(0.72); transform-origin: center bottom; }
+.dz-case-card__chest .case-chest-aura,
+.dz-case-card__chest .case-orbit-ring { display: none; }
+
 @media (prefers-reduced-motion: reduce) {
   .dz-case-card--skeleton .dz-case-card__cell::after,
   .dz-case-card:hover .dz-case-card__scan,

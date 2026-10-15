@@ -230,10 +230,6 @@ export function CaseListPage() {
         {!loading && visibleCases.map((c, i) => {
           const tiers = rarityTiers(c) as ItemRarity[];
           const chase = highestRarity(tiers);
-          const highlight = featuredItem(c);
-          const artUrl = c.imageUrl && !c.imageUrl.startsWith("data:image")
-            ? c.imageUrl
-            : (highlight && !highlight.imageUrl.startsWith("data:image") ? highlight.imageUrl : undefined);
           return (
             <CaseCard
               key={c.id}
@@ -241,7 +237,6 @@ export function CaseListPage() {
               index={i}
               tiers={tiers}
               chase={chase}
-              artUrl={artUrl}
               tier={caseToTier.get(c.id)}
               rarityLabel={chase
                 ? t(`rarity.${chase}`, { defaultValue: RARITY_LABELS[chase] })

@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { formatMinor } from "../../lib/money";
 import { rarityColor } from "../../lib/rarity";
+import { CaseChest } from "../CaseChest";
 import type { CaseDto, ItemRarity } from "../../lib/types";
 
 interface CaseCardProps {
@@ -12,8 +13,6 @@ interface CaseCardProps {
   tiers: ItemRarity[];
   /** Highest tier in the case; drives every light on the card. */
   chase: ItemRarity | null;
-  /** Art for the cell — the case's headline item. */
-  artUrl?: string;
   tier?: "entry" | "core" | "apex";
   rarityLabel: string;
   priceLabel: string;
@@ -26,7 +25,7 @@ interface CaseCardProps {
  * and owns no state, so a 90-card grid stays one render.
  */
 export function CaseCard({
-  caseDto, index, tiers, chase, artUrl, tier, rarityLabel, priceLabel,
+  caseDto, index, tiers, chase, tier, rarityLabel, priceLabel,
 }: CaseCardProps) {
   const accent = chase ? rarityColor(chase) : undefined;
 
@@ -47,9 +46,7 @@ export function CaseCard({
 
       <div className="dz-case-card__cell">
         <div className="dz-case-card__object">
-          {artUrl
-            ? <img src={artUrl} alt="" loading="lazy" decoding="async" />
-            : <CaseGlyph slug={caseDto.slug} />}
+          <CaseChest caseName={caseDto.name} caseSlug={caseDto.slug} className="dz-case-card__chest" />
         </div>
         <span className="dz-case-card__fixture" aria-hidden="true" />
         <span className="dz-case-card__scan" aria-hidden="true" />
@@ -87,24 +84,6 @@ export function CaseCard({
   );
 }
 
-/** Fallback mark when a case has no usable item art, derived from the slug so
- *  a case always looks the same. Deliberately plain: a wrong-looking stand-in
- *  is worse than an honest one. */
-function CaseGlyph({ slug }: { slug: string }) {
-  const seed = [...slug].reduce((v, c) => ((v * 31) + c.charCodeAt(0)) >>> 0, 7);
-  const rotation = seed % 4;
-  return (
-    <svg viewBox="0 0 64 64" fill="none" aria-hidden="true" style={{ width: "58%", opacity: 0.5 }}>
-      <rect
-        x="10" y="18" width="44" height="30" rx="3"
-        stroke="var(--dz-rarity)" strokeWidth="1.5"
-        transform={`rotate(${rotation * 1.5} 32 33)`}
-      />
-      <path d="M10 28h44M24 18v30" stroke="var(--dz-rarity)" strokeWidth="1" opacity="0.5" />
-      <circle cx="32" cy="38" r="4" stroke="var(--dz-rarity)" strokeWidth="1.5" />
-    </svg>
-  );
-}
 
 /** Placeholder card for the loading grid — identical box, so no CLS. */
 export function CaseCardSkeleton() {
