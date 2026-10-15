@@ -3237,9 +3237,10 @@ body::before { opacity: 0.018; }
 
 /* ── Keyframes ──────────────────────────────────────────────────────── */
 @keyframes reel-arrive {
-  0%   { opacity: 0; transform: scale(0.82) translateY(10px); }
-  60%  { transform: scale(1.08) translateY(-4px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0%   { transform: scaleX(1.06) scaleY(0.91); }
+  42%  { transform: scaleX(0.97) scaleY(1.06); }
+  70%  { transform: scaleX(1.01) scaleY(0.985); }
+  100% { transform: scale(1); }
 }
 @keyframes reel-flash-v2 {
   0%   { opacity: 0; }
@@ -3349,7 +3350,7 @@ body::before { opacity: 0.018; }
 .reel-item-landed {
   background: radial-gradient(ellipse 80% 80% at 50% 60%, rgba(var(--rarity-rgb, 245,200,66),.15) 0%, transparent 70%) !important;
   border-bottom-color: var(--rarity-color, var(--accent)) !important;
-  animation: reel-arrive .55s cubic-bezier(.2,.8,.3,1) both;
+  animation: reel-arrive .46s cubic-bezier(.22, 1, .36, 1) both;
 }
 .reel-item-landed img {
   filter: drop-shadow(0 0 16px var(--rarity-color, var(--accent))) drop-shadow(0 4px 12px rgba(0,0,0,.5));

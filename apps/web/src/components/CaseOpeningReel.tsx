@@ -30,11 +30,9 @@ export function CaseOpeningReel({
   const targetRef    = useRef<HTMLDivElement>(null);
   const finishedRef  = useRef(false);
   const onFinishedRef = useRef(onFinished);
-  const [transform, setTransform]     = useState(0);
-  const [spinning,  setSpinning]      = useState(false);
-  const [landed,    setLanded]        = useState(false);
-  // brief "about to land" state for pre-land glow
-  const [nearEnd,   setNearEnd]       = useState(false);
+  const [transform, setTransform] = useState(0);
+  const [spinning,  setSpinning]  = useState(false);
+  const [landed,    setLanded]    = useState(false);
 
   const { length: REEL_LENGTH, targetIndex: TARGET_INDEX, durationMs: SPIN_DURATION_MS } =
     quick ? QUICK_SPIN : FULL_SPIN;
@@ -60,9 +58,9 @@ export function CaseOpeningReel({
     finishedRef.current = false;
     setTransform(0);
     setLanded(false);
-    setNearEnd(false);
 
-    let raf2 = 0, nearEndTimer = 0, finishTimer = 0;
+
+    let raf2 = 0, finishTimer = 0;
     const raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => {
         const viewportWidth = viewportRef.current?.clientWidth ?? 0;
@@ -81,15 +79,12 @@ export function CaseOpeningReel({
         setTransform(-offset);
 
         setSpinning(true);
-        // Trigger pre-land glow ~600 ms before the end
-        nearEndTimer  = window.setTimeout(() => setNearEnd(true),  SPIN_DURATION_MS - 600);
-        finishTimer   = window.setTimeout(finish, SPIN_DURATION_MS + 260);
+        finishTimer = window.setTimeout(finish, SPIN_DURATION_MS + 260);
       });
     });
     return () => {
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
-      window.clearTimeout(nearEndTimer);
       window.clearTimeout(finishTimer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,19 +96,13 @@ export function CaseOpeningReel({
     <div
       className={[
         "case-reel-wrap",
-        spinning  ? "case-reel-spinning"  : "",
-        landed    ? "case-reel-landed"    : "",
-        nearEnd   ? "case-reel-near-end"  : "",
-        chase     ? "case-reel-chase"     : "",
+        spinning ? "case-reel-spinning" : "",
+        landed   ? "case-reel-landed"   : "",
+        chase    ? "case-reel-chase"    : "",
       ].join(" ")}
       style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties}
       aria-label={landed ? "Результат открытия" : "Открытие кейса"}
     >
-      {/* Pre-reveal screen pulse layer */}
-      {nearEnd && !landed && (
-        <div className="reel-pre-flash" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
-      )}
-
       <div className="case-reel-viewport" ref={viewportRef}>
         <div
           className="case-reel-track"
@@ -159,26 +148,9 @@ export function CaseOpeningReel({
         <div className="reel-fade-right" aria-hidden="true" />
       </div>
 
-      {/* Post-land effects — shown for ALL rarities, intensity scales via CSS */}
+      {/* Landing flash — one clean color hit, no circus */}
       {landed && (
-        <>
-          <div className={`reel-flash${chase ? " reel-flash-chase" : ""}`} style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
-          <div className="reel-burst" style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
-          <div className="reel-particles" aria-hidden="true">
-            {Array.from({ length: chase ? 20 : 8 }, (_, i) => (
-              <span
-                key={i}
-                className="reel-particle"
-                style={{
-                  "--p-i":     i,
-                  "--p-angle": `${(i / (chase ? 20 : 8)) * 360}deg`,
-                  "--p-dist":  `${(chase ? 60 : 30) + Math.random() * (chase ? 80 : 40)}px`,
-                  "--rarity-color": rarityColor(winningItem.rarity),
-                } as CSSProperties}
-              />
-            ))}
-          </div>
-        </>
+        <div className={`reel-flash${chase ? " reel-flash-chase" : ""}`} style={{ "--rarity-color": rarityColor(winningItem.rarity) } as CSSProperties} />
       )}
     </div>
   );

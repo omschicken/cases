@@ -86,24 +86,12 @@ export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", op
       {/* Interior light: shown during opening burst and showcase (open state) */}
       {(opening || open) && <span className="case-chest-interior-light" />}
 
-      {/* Opening effects */}
+      {/* Opening effects — keep these three, no circus */}
       {opening && (
         <>
           <span className="case-chest-flare" />
-          <span className="case-chest-scan" />
           <span className="case-chest-beam" />
           <span className="case-chest-rays" />
-          <span className="case-chest-shockwave" />
-          <span className="case-chest-sparks">
-            {Array.from({ length: 14 }, (_, i) => (
-              <span key={i} className="case-chest-spark" style={{ "--spark-i": i } as CSSProperties} />
-            ))}
-          </span>
-          <span className="case-chest-rings">
-            {Array.from({ length: 5 }, (_, i) => (
-              <span key={i} className="case-chest-ring" style={{ "--ring-i": i } as CSSProperties} />
-            ))}
-          </span>
         </>
       )}
 
