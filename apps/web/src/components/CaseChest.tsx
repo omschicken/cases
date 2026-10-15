@@ -86,6 +86,18 @@ export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", op
         <>
           <span className="case-chest-flare" />
           <span className="case-chest-scan" />
+          <span className="case-chest-interior-light" />
+          <span className="case-chest-beam" />
+          <span className="case-chest-sparks">
+            {Array.from({ length: 10 }, (_, i) => (
+              <span key={i} className="case-chest-spark" style={{ "--spark-i": i } as CSSProperties} />
+            ))}
+          </span>
+          <span className="case-chest-rings">
+            {Array.from({ length: 4 }, (_, i) => (
+              <span key={i} className="case-chest-ring" style={{ "--ring-i": i } as CSSProperties} />
+            ))}
+          </span>
         </>
       )}
 
