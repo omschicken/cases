@@ -254,6 +254,25 @@
   .dz-field input { min-height: 44px; }
 }
 
+/* ── Route transition ────────────────────────────────────────────────────
+   Entrance only, opacity and transform only, so it runs on the compositor
+   and cannot reflow the incoming page. Short on purpose: this fires on every
+   navigation, and anything a user feels twice is already too long. */
+.dz-route--enter {
+  animation: dz-route-in var(--dz-d-move) var(--dz-e-exit) both;
+}
+
+@keyframes dz-route-in {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Durations already collapse via tokens; dropping the animation entirely
+     also removes the transform, so nothing is left mid-flight. */
+  .dz-route--enter { animation: none; }
+}
+
 /* ── Log rows ────────────────────────────────────────────────────────────
    A history or ledger reads as a technical journal, but the figures stay in
    interface type: a date and an amount are the reason the page exists, so

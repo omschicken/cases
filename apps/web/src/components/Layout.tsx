@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { RouteTransition } from "./dz/RouteTransition";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
@@ -116,7 +117,9 @@ export function Layout() {
         {menuOpen && <div className="sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
         <Sidebar open={menuOpen} />
         <main className="page-content">
-          <Outlet />
+          <RouteTransition>
+            <Outlet />
+          </RouteTransition>
         </main>
       </div>
       <footer className="site-footer">

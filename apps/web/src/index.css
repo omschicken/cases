@@ -8858,14 +8858,10 @@ body::before { opacity: 0.018; }
 }
 .catalog-retry:hover { border-color: var(--accent); color: var(--accent); }
 
-/* ── PAGE CONTENT FADE-IN ──────────────────────────────────────── */
-.page-content > * {
-  animation: page-slide-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes page-slide-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+/* Page entrance now lives in components/dz/RouteTransition.tsx. The rule that
+   was here animated `.page-content > *` from opacity:0 on every load, first
+   paint included, with no reduced-motion guard — it delayed LCP by its own
+   duration for a flourish, which is exactly what the component avoids. */
 
 /* ── GAME HEADING ──────────────────────────────────────────────── */
 .game-heading {
