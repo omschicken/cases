@@ -7,7 +7,10 @@
  *
  * Called directly from ChestOpeningOverlay's GSAP timeline, one function
  * per phase, so sound stays locked to the beat that's actually on screen
- * instead of firing once at the start and drifting out of sync.
+ * instead of firing once at the start and drifting out of sync. The
+ * timeline has grown to a ~3.2s cinematic pace (tension 0.9s, crack 0.4s,
+ * eruption 0.7s, reveal 0.8s, settle 0.4s) — each function below fills its
+ * phase's real duration rather than a quick stab at the start of it.
  */
 
 let sharedCtx: AudioContext | null = null;
@@ -36,8 +39,6 @@ function reverbSend(c: AudioContext): GainNode {
   for (let ch = 0; ch < 2; ch++) {
     const d = impulse.getChannelData(ch);
     for (let i = 0; i < len; i++) {
-      // Dense noise shaped by an exponential decay, with a touch of early
-      // reflection density falloff so it reads as a room, not static.
       const decay = (1 - i / len) ** 2.6;
       d[i] = (Math.random() * 2 - 1) * decay;
     }
@@ -56,15 +57,18 @@ function reverbSend(c: AudioContext): GainNode {
   return send;
 }
 
-/** Shaped white-noise burst: exponential amplitude decay. Connects to both
- *  the dry output and (optionally) the shared reverb send. */
+/** Shaped noise burst: exponential amplitude decay, through a configurable
+ *  filter (optionally swept from `cutoff` to `sweepTo` over its duration).
+ *  Connects to both the dry output and, with `wet > 0`, the reverb send. */
 function noise(
   c: AudioContext,
   startTime: number,
   duration: number,
   amplitude: number,
-  cutoffHz: number,
+  cutoff: number,
   wet = 0,
+  type: BiquadFilterType = "lowpass",
+  sweepTo?: number,
 ): void {
   const len = Math.ceil(c.sampleRate * duration);
   const buf = c.createBuffer(1, len, c.sampleRate);
@@ -76,17 +80,19 @@ function noise(
   src.buffer = buf;
   const g = c.createGain();
   g.gain.value = amplitude;
-  const lpf = c.createBiquadFilter();
-  lpf.type = "lowpass";
-  lpf.frequency.value = cutoffHz;
-  src.connect(lpf);
-  lpf.connect(g);
+  const filt = c.createBiquadFilter();
+  filt.type = type;
+  filt.frequency.setValueAtTime(cutoff, startTime);
+  if (sweepTo) filt.frequency.exponentialRampToValueAtTime(sweepTo, startTime + duration);
+  if (type === "bandpass") filt.Q.value = 1.1;
+  src.connect(filt);
+  filt.connect(g);
   g.connect(c.destination);
   if (wet > 0) {
     const send = reverbSend(c);
     const wetG = c.createGain();
     wetG.gain.value = wet;
-    lpf.connect(wetG);
+    filt.connect(wetG);
     wetG.connect(send);
   }
   src.start(startTime);
@@ -123,169 +129,141 @@ function metallicPing(c: AudioContext, at: number, freq: number, vol: number, le
   }
 }
 
-/** TENSION (0–0.3s) — a low hum building under a faint rising riser, like
- *  pressure finding its way out before the lock gives. */
+/** Modulates an AudioParam with a sine LFO — vibrato, wobble, tremolo. */
+function addLFO(c: AudioContext, param: AudioParam, rateHz: number, depth: number, start: number, duration: number): void {
+  const osc = c.createOscillator();
+  osc.type = "sine";
+  osc.frequency.value = rateHz;
+  const depthGain = c.createGain();
+  depthGain.gain.value = depth;
+  osc.connect(depthGain);
+  depthGain.connect(param);
+  osc.start(start);
+  osc.stop(start + duration + 0.05);
+}
+
+/** TENSION (~0.9s) — pressure building before the lock gives: a sub drone
+ *  that wobbles like it's about to lose control, a faint electrical hum,
+ *  and two metal creaks as the chest strains against itself. */
 export function playTension(): void {
   try {
     const c = ac();
     const t = c.currentTime;
+    const dur = 0.9;
 
-    const hum = c.createOscillator();
-    hum.type = "sawtooth";
-    hum.frequency.setValueAtTime(34, t);
-    hum.frequency.linearRampToValueAtTime(58, t + 0.3);
-    const humG = c.createGain();
-    humG.gain.setValueAtTime(0, t);
-    humG.gain.linearRampToValueAtTime(0.11, t + 0.18);
-    humG.gain.linearRampToValueAtTime(0.07, t + 0.3);
-    const humF = c.createBiquadFilter();
-    humF.type = "lowpass";
-    humF.frequency.value = 150;
-    hum.connect(humF);
-    humF.connect(humG);
-    humG.connect(c.destination);
-    hum.start(t);
-    hum.stop(t + 0.32);
+    const drone = c.createOscillator();
+    drone.type = "sine";
+    drone.frequency.value = 40;
+    const droneG = c.createGain();
+    droneG.gain.setValueAtTime(0, t);
+    droneG.gain.linearRampToValueAtTime(0.15, t + dur);
+    drone.connect(droneG);
+    droneG.connect(c.destination);
+    drone.start(t);
+    drone.stop(t + dur + 0.05);
+    addLFO(c, droneG.gain, 5.5, 0.025, t, dur);
 
-    // Faint filtered-noise riser underneath — the room starting to charge.
-    noise(c, t, 0.32, 0.05, 900, 0.3);
+    noise(c, t, dur, 0.04, 800, 0, "highpass");
 
-    // Three ticks — the lock gem flickering, each a touch brighter.
-    for (let i = 0; i < 3; i++) {
-      const at = t + 0.06 + i * 0.07;
-      const tick = c.createOscillator();
-      tick.type = "sine";
-      tick.frequency.value = 820 + i * 160;
-      const tickG = c.createGain();
-      tickG.gain.setValueAtTime(0.04 + i * 0.012, at);
-      tickG.gain.exponentialRampToValueAtTime(0.0005, at + 0.05);
-      tick.connect(tickG);
-      tickG.connect(c.destination);
-      tick.start(at);
-      tick.stop(at + 0.06);
+    for (const at of [0.3, 0.65]) {
+      const creak = c.createOscillator();
+      creak.type = "sine";
+      creak.frequency.setValueAtTime(180, t + at);
+      creak.frequency.exponentialRampToValueAtTime(90, t + at + 0.12);
+      const creakG = c.createGain();
+      creakG.gain.setValueAtTime(0.09, t + at);
+      creakG.gain.exponentialRampToValueAtTime(0.0005, t + at + 0.16);
+      creak.connect(creakG);
+      creakG.connect(c.destination);
+      creak.start(t + at);
+      creak.stop(t + at + 0.18);
     }
   } catch {
     // AudioContext unavailable (browser policy, iOS gesture lock) — silent
   }
 }
 
-/** CRACK (0.3–0.6s) — the lock breaking: a felt sub punch, a brittle snap,
- *  and a resonant metallic ring trailing into the reverb. */
+/** CRACK (~0.4s) — a beat of silence, then the lock gives all at once:
+ *  a felt sub punch under a metallic impact, a resonant ring, and a
+ *  bright shatter trailing off. */
 export function playCrack(): void {
   try {
     const c = ac();
     const t = c.currentTime;
+    const hold = 0.06; // micro-pause before impact, matching the visual freeze
 
-    // Sub punch — the physical weight of the lock giving way.
-    const thud = c.createOscillator();
-    thud.type = "sine";
-    thud.frequency.setValueAtTime(130, t);
-    thud.frequency.exponentialRampToValueAtTime(38, t + 0.16);
-    const thudG = c.createGain();
-    thudG.gain.setValueAtTime(0.3, t);
-    thudG.gain.exponentialRampToValueAtTime(0.0008, t + 0.22);
-    thud.connect(thudG);
-    thudG.connect(c.destination);
-    thud.start(t);
-    thud.stop(t + 0.24);
+    noise(c, t + hold, 0.08, 0.7, 1200, 0.3, "bandpass", 4000);
 
-    // Brittle snap transient.
-    const snapLen = Math.ceil(c.sampleRate * 0.05);
-    const snapBuf = c.createBuffer(1, snapLen, c.sampleRate);
-    const snapD = snapBuf.getChannelData(0);
-    for (let i = 0; i < snapLen; i++) {
-      snapD[i] = (Math.random() * 2 - 1) * Math.exp(-i / (c.sampleRate * 0.007));
-    }
-    const snap = c.createBufferSource();
-    snap.buffer = snapBuf;
-    const snapG = c.createGain();
-    snapG.gain.value = 0.42;
-    const snapF = c.createBiquadFilter();
-    snapF.type = "bandpass";
-    snapF.frequency.value = 2800;
-    snapF.Q.value = 0.9;
-    snap.connect(snapF);
-    snapF.connect(snapG);
-    snapG.connect(c.destination);
-    snap.start(t);
+    const sub = c.createOscillator();
+    sub.type = "sine";
+    sub.frequency.setValueAtTime(55, t + hold);
+    sub.frequency.exponentialRampToValueAtTime(32, t + hold + 0.1);
+    const subG = c.createGain();
+    subG.gain.setValueAtTime(0.5, t + hold);
+    subG.gain.exponentialRampToValueAtTime(0.0008, t + hold + 0.12);
+    sub.connect(subG);
+    subG.connect(c.destination);
+    sub.start(t + hold);
+    sub.stop(t + hold + 0.14);
 
-    // Resonant metallic ring, trailing into the reverb tail.
-    metallicPing(c, t + 0.015, 1760, 0.1, 0.9, 0.5);
+    metallicPing(c, t + hold + 0.01, 1760, 0.09, 0.8, 0.5);
 
-    noise(c, t + 0.03, 0.16, 0.18, 3600);
+    noise(c, t + hold + 0.08, 0.3, 0.22, 6000, 0.25, "highpass");
   } catch {
     // silent
   }
 }
 
-/** ERUPTION (0.6–0.9s) — the lid blows open: a felt sub boom under a
- *  filtered whoosh, with a shimmering high bloom riding the reverb. */
+/** ERUPTION (~0.7s) — the lid blows open: a filtered whoosh sweeping
+ *  upward, three sines blooming in like a space suddenly opening, and a
+ *  sub-bass swell underneath the whole thing. */
 export function playEruption(): void {
   try {
     const c = ac();
     const t = c.currentTime;
 
-    // Sub boom — more weight than the original: a short pitch-dropping kick.
-    const boom = c.createOscillator();
-    boom.type = "sine";
-    boom.frequency.setValueAtTime(150, t);
-    boom.frequency.exponentialRampToValueAtTime(36, t + 0.26);
-    const boomG = c.createGain();
-    boomG.gain.setValueAtTime(0.34, t);
-    boomG.gain.exponentialRampToValueAtTime(0.0008, t + 0.34);
-    boom.connect(boomG);
-    boomG.connect(c.destination);
-    boom.start(t);
-    boom.stop(t + 0.36);
+    noise(c, t, 0.5, 0.35, 200, 0.25, "bandpass", 3000);
 
-    // Whoosh: filtered noise with a rising bandpass sweep.
-    const whooshLen = Math.ceil(c.sampleRate * 0.5);
-    const whooshBuf = c.createBuffer(1, whooshLen, c.sampleRate);
-    const whooshD = whooshBuf.getChannelData(0);
-    for (let i = 0; i < whooshLen; i++) {
-      whooshD[i] = (Math.random() * 2 - 1) * (1 - i / whooshLen) ** 1.2;
-    }
-    const whoosh = c.createBufferSource();
-    whoosh.buffer = whooshBuf;
-    const whooshF = c.createBiquadFilter();
-    whooshF.type = "bandpass";
-    whooshF.Q.value = 0.7;
-    whooshF.frequency.setValueAtTime(300, t);
-    whooshF.frequency.exponentialRampToValueAtTime(4200, t + 0.4);
-    const whooshG = c.createGain();
-    whooshG.gain.value = 0.38;
-    whoosh.connect(whooshF);
-    whooshF.connect(whooshG);
-    whooshG.connect(c.destination);
-    whoosh.start(t);
+    [880, 1320, 1760].forEach((freq, i) => {
+      const osc = c.createOscillator();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      const g = c.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.08, t + 0.3 + i * 0.03);
+      g.gain.linearRampToValueAtTime(0, t + 0.65);
+      osc.connect(g);
+      g.connect(c.destination);
+      const wetG = c.createGain();
+      wetG.gain.value = 0.45;
+      g.connect(wetG);
+      wetG.connect(reverbSend(c));
+      osc.start(t);
+      osc.stop(t + 0.7);
+    });
 
-    // Shimmering high bloom — the burst of light, sent to reverb for air.
-    const shimmer = c.createOscillator();
-    shimmer.type = "sine";
-    shimmer.frequency.setValueAtTime(1400, t + 0.08);
-    shimmer.frequency.exponentialRampToValueAtTime(2800, t + 0.3);
-    const shimmerG = c.createGain();
-    shimmerG.gain.setValueAtTime(0, t + 0.08);
-    shimmerG.gain.linearRampToValueAtTime(0.12, t + 0.16);
-    shimmerG.gain.linearRampToValueAtTime(0, t + 0.42);
-    shimmer.connect(shimmerG);
-    shimmerG.connect(c.destination);
-    const shimmerSend = c.createGain();
-    shimmerSend.gain.value = 0.4;
-    shimmerG.connect(shimmerSend);
-    shimmerSend.connect(reverbSend(c));
-    shimmer.start(t + 0.08);
-    shimmer.stop(t + 0.45);
+    const sub = c.createOscillator();
+    sub.type = "sine";
+    sub.frequency.value = 50;
+    const subG = c.createGain();
+    subG.gain.setValueAtTime(0, t);
+    subG.gain.linearRampToValueAtTime(0.22, t + 0.3);
+    subG.gain.linearRampToValueAtTime(0, t + 0.7);
+    sub.connect(subG);
+    subG.connect(c.destination);
+    sub.start(t);
+    sub.stop(t + 0.72);
   } catch {
     // silent
   }
 }
 
 /**
- * REVEAL (0.9–1.4s) — the item appears as a short, arpeggiated bell chord
- * through the reverb, not a flat simultaneous stack. Higher rarity → richer
- * chord, longer sustain, more overtones. Apex rarities get a near-silent
- * beat, a felt boom, then the chord cascades in with real sparkle.
+ * REVEAL (~0.8s, ringing on into settle via reverb) — a melodic lead tone
+ * with vibrato carries the payoff, an overtone shimmers above it, and the
+ * rarity's harmonic chord arpeggiates in underneath. Higher rarity → richer
+ * chord, longer sustain. Apex rarities (Covert/Gold) land a felt sub hit
+ * the instant the item is known — the "kingslayer" beat.
  */
 export function playReveal(rarity?: string): void {
   try {
@@ -302,19 +280,52 @@ export function playReveal(rarity?: string): void {
 
     if (isApex) {
       noise(c, chordAt - 0.04, 0.4, 0.5, 1600);
+
       const boom = c.createOscillator();
       boom.type = "sine";
-      boom.frequency.setValueAtTime(90, chordAt - 0.02);
-      boom.frequency.exponentialRampToValueAtTime(32, chordAt + 0.3);
+      boom.frequency.setValueAtTime(55, chordAt);
+      boom.frequency.exponentialRampToValueAtTime(30, chordAt + 0.5);
       const boomG = c.createGain();
-      boomG.gain.setValueAtTime(0.3, chordAt - 0.02);
-      boomG.gain.exponentialRampToValueAtTime(0.0008, chordAt + 0.4);
+      boomG.gain.setValueAtTime(0.4, chordAt);
+      boomG.gain.exponentialRampToValueAtTime(0.0008, chordAt + 0.6);
       boom.connect(boomG);
       boomG.connect(c.destination);
-      boom.start(chordAt - 0.02);
-      boom.stop(chordAt + 0.42);
+      boom.start(chordAt);
+      boom.stop(chordAt + 0.62);
     }
 
+    // Melodic lead with vibrato — the voice that carries the payoff.
+    const lead = c.createOscillator();
+    lead.type = "sine";
+    lead.frequency.value = 1320;
+    const leadG = c.createGain();
+    leadG.gain.setValueAtTime(0, chordAt);
+    leadG.gain.linearRampToValueAtTime(0.1, chordAt + 0.4);
+    leadG.gain.exponentialRampToValueAtTime(0.0006, chordAt + 0.8);
+    lead.connect(leadG);
+    leadG.connect(c.destination);
+    const leadWet = c.createGain();
+    leadWet.gain.value = 0.3;
+    leadG.connect(leadWet);
+    leadWet.connect(send);
+    addLFO(c, lead.frequency, 5, 15, chordAt, 0.8);
+    lead.start(chordAt);
+    lead.stop(chordAt + 0.85);
+
+    // Overtone shimmer, an octave and a fifth above.
+    const over = c.createOscillator();
+    over.type = "sine";
+    over.frequency.value = 2640;
+    const overG = c.createGain();
+    overG.gain.setValueAtTime(0, chordAt);
+    overG.gain.linearRampToValueAtTime(0.04, chordAt + 0.4);
+    overG.gain.exponentialRampToValueAtTime(0.0004, chordAt + 0.8);
+    over.connect(overG);
+    overG.connect(c.destination);
+    over.start(chordAt);
+    over.stop(chordAt + 0.85);
+
+    // The rarity's harmonic chord, arpeggiated in underneath the lead.
     const freqMap: Record<string, number[]> = {
       CONSUMER:   [330, 440, 660],
       INDUSTRIAL: [330, 440, 660],
@@ -325,16 +336,13 @@ export function playReveal(rarity?: string): void {
       GOLD:       [110, 165, 247, 370, 554, 880, 1108],
     };
     const freqs = (rarity ? freqMap[rarity] : undefined) ?? freqMap.MIL_SPEC;
-    const baseVol = isApex ? 0.13 : isHigh ? 0.1 : 0.08;
-    // Light upward arpeggio — each note lands a beat after the last,
-    // bell-like, instead of one flat simultaneous stack.
-    const stagger = isHigh ? 0.045 : 0.028;
+    const baseVol = isApex ? 0.12 : isHigh ? 0.09 : 0.07;
+    const stagger = isHigh ? 0.05 : 0.03;
 
     freqs.forEach((freq, i) => {
-      const at = chordAt + i * stagger;
+      const at = chordAt + 0.05 + i * stagger;
       const partVol = (baseVol / freqs.length) * (freq > 500 ? 0.7 : 1.0) * 1.4;
 
-      // Fundamental + a quiet octave-up partial for a bell-like timbre.
       for (const [mult, mix] of [[1, 1], [2.01, 0.22]] as const) {
         const osc = c.createOscillator();
         osc.type = freq < 280 ? "sine" : "triangle";

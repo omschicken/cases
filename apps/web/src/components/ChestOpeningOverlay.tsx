@@ -47,21 +47,32 @@ const CHASE_RARITIES = new Set<ItemRarity>(["CLASSIFIED", "COVERT", "GOLD"]);
  * CHEST OPENING OVERLAY — fullscreen GSAP + Canvas burst/reveal.
  *
  * Mounted via portal to document.body whenever CaseChest has opening=true.
- * Owns its own timeline: tension → crack → eruption → (hold for the item,
- * if it isn't known yet) → reveal → settle → onDone.
+ * A ~3.2s cinematic timeline, five phases:
+ *
+ *   TENSION   0.00 – 0.90s   dread builds: drone, accelerating heartbeat,
+ *                            tightening trembles, ending in a held, silent
+ *                            freeze-frame right before the lock gives
+ *   CRACK     0.90 – 1.30s   the lock breaks — impact, not a flourish
+ *   ERUPTION  1.30 – 2.00s   the lid blows open, light and particles
+ *   REVEAL    2.00 – 2.80s   the item rises (holds here if the result
+ *                            isn't known yet — see awaitItem below)
+ *   SETTLE    2.80 – 3.20s   everything fades but the chord's reverb tail
  *
  * The chest itself carries the case's own color identity throughout the
  * burst. The reveal step retints to the item's actual rarity color — the
  * payoff should look like what just dropped, not like the box it came from.
  *
  * Pure layout lives in CSS; every bit of motion is GSAP acting directly on
- * refs, so there are no @keyframes to keep in sync with this timeline.
+ * refs, so there are no @keyframes to keep in sync with this timeline —
+ * sound included: each phase's audio call sits on the same timeline tick
+ * as the visual beat it belongs to, so nothing can drift out of sync.
  */
 export function ChestOpeningOverlay({
   mark, serial, variant, hue, saturation, lightness,
   itemImageUrl, itemName, itemRarity, onDone,
 }: ChestOpeningOverlayProps) {
   const stageRef    = useRef<HTMLDivElement>(null);
+  const auraRef     = useRef<HTMLDivElement>(null);
   const chestRef    = useRef<HTMLDivElement>(null);
   const lidRef      = useRef<HTMLDivElement>(null);
   const lockRef     = useRef<HTMLDivElement>(null);
@@ -123,53 +134,88 @@ export function ChestOpeningOverlay({
           onComplete: () => gsap.set(target, { x: 0, y: 0 }) });
     }
 
+    // Quick dim flash at the crack — distinct from the bigger eruption
+    // flash. case-chest-is-cracking is a real class (not just inline
+    // style) so the moment is addressable from CSS too; GSAP still owns
+    // the actual opacity timing, consistent with the rest of this file.
+    function crackFlash() {
+      gsap.fromTo(flashRef.current, { opacity: 0 }, { opacity: 0.35, duration: 0.05, yoyo: true, repeat: 1, ease: "power1.inOut" });
+      stageRef.current?.classList.add("case-chest-is-cracking");
+      window.setTimeout(() => stageRef.current?.classList.remove("case-chest-is-cracking"), 100);
+    }
+
     const tl = gsap.timeline({
       defaults: { ease: "power2.out" },
       onComplete: () => onDoneRef.current(),
     });
     timelineRef.current = tl;
 
-    // ── TENSION (0 – 0.3s) ────────────────────────────────────────────
+    // ── TENSION (0 – 0.9s) — dread builds, then a held, silent beat ───
     tl.call(() => playTension())
-      .to(chestRef.current, { scale: 1.08, duration: 0.3, ease: "power1.inOut" }, 0)
-      .to(shadowRef.current, { scaleX: 0.85, opacity: 0.35, duration: 0.3, ease: "power1.inOut" }, 0)
+      .to(chestRef.current, { scale: 1.05, duration: 0.9, ease: "power1.in" }, 0)
+      .to(auraRef.current, { opacity: 0.55, duration: 0.9, ease: "power1.in" }, 0)
+      .to(shadowRef.current, { scaleX: 0.85, opacity: 0.35, duration: 0.9, ease: "power1.in" }, 0)
+      // Trembling intensifies toward the crack, then stops dead — the gap
+      // between the last keyframe (~0.82s) and the crack label (0.9s) is
+      // a deliberate freeze-frame with nothing scheduled in it.
       .to(chestRef.current, {
         keyframes: [
           { x: 0, y: 0, rotation: 0, duration: 0 },
-          { x: -2, y: 1, rotation: -0.4, duration: 0.05 },
-          { x: 3, y: -1, rotation: 0.5, duration: 0.05 },
-          { x: -3, y: 1, rotation: -0.6, duration: 0.05 },
-          { x: 2, y: -2, rotation: 0.4, duration: 0.05 },
-          { x: 0, y: 0, rotation: 0, duration: 0.05 },
+          { x: -1, y: 0.5, rotation: -0.2, duration: 0.09 },
+          { x: 1.5, y: -0.5, rotation: 0.25, duration: 0.09 },
+          { x: -1.5, y: 0.5, rotation: -0.3, duration: 0.09 },
+          { x: 1, y: -1, rotation: 0.2, duration: 0.09 },
+          { x: -2, y: 1, rotation: -0.4, duration: 0.08 },
+          { x: 3, y: -1.5, rotation: 0.5, duration: 0.08 },
+          { x: -3.5, y: 1.5, rotation: -0.65, duration: 0.07 },
+          { x: 4, y: -2, rotation: 0.8, duration: 0.07 },
+          { x: -4.5, y: 2, rotation: -0.9, duration: 0.06 },
+          { x: 0, y: 0, rotation: 0, duration: 0.06 },
         ],
-      }, 0.05)
-      .to(lockRef.current, { scale: 1.12, duration: 0.15, repeat: 1, yoyo: true }, 0.08)
-      .to(lockHaloRef.current, { opacity: 0.9, scale: 1.6, duration: 0.22, ease: "power1.in" }, 0.08)
+      }, 0.04)
+      // Lock halo flares in the last stretch before it breaks.
+      .to(lockHaloRef.current, { opacity: 0.9, scale: 1.6, duration: 0.2, ease: "power1.in" }, 0.6);
 
-      // ── CRACK (0.3 – 0.6s) ──────────────────────────────────────────
-      .addLabel("crack", 0.3)
-      .call(() => { playCrack(); punch(stageRef.current, 6); }, [], "crack")
+    // Accelerating heartbeat on the lock gem — each pulse a little faster
+    // than the last, like a countdown closing in on the crack.
+    {
+      let at = 0.12;
+      let period = 0.22;
+      while (at < 0.8) {
+        tl.to(lockRef.current, { scale: 1.15, duration: 0.07, yoyo: true, repeat: 1, ease: "power1.inOut" }, at);
+        period *= 0.82;
+        at += Math.max(period, 0.07);
+      }
+    }
+
+    tl
+      // ── CRACK (0.9 – 1.3s) — the lock breaks, impact not flourish ───
+      .addLabel("crack", 0.9)
+      .call(() => { playCrack(); punch(stageRef.current, 7); crackFlash(); }, [], "crack")
       .to(lockHaloRef.current, { opacity: 0, scale: 2.2, duration: 0.25, ease: "power2.out" }, "crack")
-      .to(lockRef.current, { opacity: 0, scale: 1.5, duration: 0.18, ease: "power2.in" }, "crack")
-      .to(lidRef.current, { rotateX: -30, duration: 0.3, ease: "back.out(1.6)" }, "crack")
-      .to(shadowRef.current, { scaleX: 1.1, opacity: 0.5, duration: 0.3 }, "crack")
+      .to(lockRef.current, { opacity: 0, scale: 1.5, duration: 0.22, ease: "power2.in" }, "crack")
+      .to(lidRef.current, { rotateX: -30, duration: 0.4, ease: "back.out(1.6)" }, "crack")
+      .to(shadowRef.current, { scaleX: 1.1, opacity: 0.5, duration: 0.4 }, "crack")
 
-      // ── ERUPTION (0.6 – 0.9s) ───────────────────────────────────────
-      .addLabel("eruption", 0.6)
-      .call(() => { playEruption(); burstFromChest(90, [160, 460]); punch(stageRef.current, 10); }, [], "eruption")
-      .to(lidRef.current, { rotateX: -96, duration: 0.3 }, "eruption")
-      .to(beamRef.current, { opacity: 1, scaleY: 1, duration: 0.3, ease: "power2.out" }, "eruption")
-      .to(beamCoreRef.current, { opacity: 0.9, scaleY: 1, duration: 0.25, ease: "power2.out" }, "eruption")
+      // ── ERUPTION (1.3 – 2.0s) — slow and majestic, not a flash ──────
+      .addLabel("eruption", 1.3)
+      .call(() => { playEruption(); burstFromChest(90, [160, 460]); punch(stageRef.current, 11); }, [], "eruption")
+      .to(lidRef.current, { rotateX: -96, duration: 0.35 }, "eruption")
+      .to(beamRef.current, { opacity: 1, scaleY: 1, duration: 0.4, ease: "power2.out" }, "eruption")
+      .to(beamCoreRef.current, { opacity: 0.9, scaleY: 1, duration: 0.3, ease: "power2.out" }, "eruption")
       .fromTo(shockRef.current,
         { opacity: 0.8, scale: 0.1 },
-        { opacity: 0, scale: 7, duration: 0.6, ease: "power2.out" },
+        { opacity: 0, scale: 7, duration: 0.65, ease: "power2.out" },
         "eruption")
-      .to(flashRef.current, { opacity: 0.9, duration: 0.08, yoyo: true, repeat: 1 }, "eruption+=0.15")
-      .to(chestRef.current, { scale: 1.02, duration: 0.3, ease: "power1.out" }, "eruption")
-      .to(shadowRef.current, { scaleX: 0.7, opacity: 0.25, duration: 0.3 }, "eruption")
+      .to(flashRef.current, { opacity: 0.9, duration: 0.1, yoyo: true, repeat: 1 }, "eruption+=0.2")
+      .to(chestRef.current, { scale: 1.02, duration: 0.35, ease: "power1.out" }, "eruption")
+      .to(shadowRef.current, { scaleX: 0.7, opacity: 0.25, duration: 0.35 }, "eruption")
+      // Lets the glow linger through the rest of the eruption window
+      // instead of dropping away immediately — the "glorious" part.
+      .to(beamRef.current, { opacity: 0.75, duration: 0.3 }, "eruption+=0.4")
 
       // ── Hold point: reveal only plays once the item is known ────────
-      .addLabel("awaitItem", 0.9)
+      .addLabel("awaitItem", 2.0)
       .call(() => {
         if (!itemReadyRef.current) {
           tl.pause();
@@ -179,7 +225,7 @@ export function ChestOpeningOverlay({
         }
       }, [], "awaitItem")
 
-      // ── REVEAL (0.9 – 1.4s) ──────────────────────────────────────────
+      // ── REVEAL (2.0 – 2.8s) ──────────────────────────────────────────
       // itemImgRef/nameRef only exist once the item prop is set, which is
       // exactly when this label resumes — so their tweens are built here,
       // on the fly, rather than captured (as null) at timeline-construction time.
@@ -193,31 +239,31 @@ export function ChestOpeningOverlay({
         playReveal(rarity);
         burstFromChest(chase ? 110 : 60, chase ? [100, 320] : [80, 240], glow ? hexToHue(glow) : hue);
       }, [], "awaitItem")
-      .to(beamRef.current, { opacity: 0.4, duration: 0.3 }, "awaitItem")
+      .to(beamRef.current, { opacity: 0.4, duration: 0.4 }, "awaitItem")
       .fromTo(itemRef.current,
         { opacity: 0, scale: 0.5, y: 24 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.4)" },
-        "awaitItem+=0.05")
+        { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "back.out(1.3)" },
+        "awaitItem+=0.1")
       .call(() => {
         // A natural turn-to-the-light, not a full spin — a flat image edge-on
         // at 90°/270° reads as a glitch, not a flourish.
         if (itemImgRef.current) {
           gsap.fromTo(itemImgRef.current,
             { rotateY: -16, rotateX: 6 },
-            { rotateY: 0, rotateX: 0, duration: 0.7, ease: "power3.out" });
+            { rotateY: 0, rotateX: 0, duration: 1.0, ease: "power3.out" });
         }
         if (nameRef.current) {
-          gsap.to(nameRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out", delay: 0.3 });
+          gsap.to(nameRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.5 });
         }
-      }, [], "awaitItem+=0.05")
+      }, [], "awaitItem+=0.1")
 
-      // ── SETTLE (1.4 – 1.8s) ──────────────────────────────────────────
-      .addLabel("settle", "awaitItem+=0.5")
-      .to(beamRef.current, { opacity: 0, duration: 0.35 }, "settle")
-      .to(beamCoreRef.current, { opacity: 0, duration: 0.35 }, "settle")
-      .to(chestRef.current, { opacity: 0.25, duration: 0.35 }, "settle")
-      .to(shadowRef.current, { opacity: 0, duration: 0.35 }, "settle")
-      .call(() => { particles?.stop(); }, [], "settle+=0.3");
+      // ── SETTLE (2.8 – 3.2s) — fades out; the chord rings on via reverb ─
+      .addLabel("settle", "awaitItem+=0.8")
+      .to(beamRef.current, { opacity: 0, duration: 0.4 }, "settle")
+      .to(beamCoreRef.current, { opacity: 0, duration: 0.4 }, "settle")
+      .to(chestRef.current, { opacity: 0.25, duration: 0.4 }, "settle")
+      .to(shadowRef.current, { opacity: 0, duration: 0.4 }, "settle")
+      .call(() => { particles?.stop(); }, [], "settle+=0.35");
 
     return () => {
       tl.kill();
@@ -254,6 +300,7 @@ export function ChestOpeningOverlay({
         <div className="chest-burst-shockwave" ref={shockRef} aria-hidden="true" />
         <div className="chest-burst-beam" ref={beamRef} aria-hidden="true" />
         <div className="chest-burst-beam-core" ref={beamCoreRef} aria-hidden="true" />
+        <div className="chest-burst-aura" ref={auraRef} aria-hidden="true" />
 
         <div className="chest-burst-chest" ref={chestRef} aria-hidden="true">
           <div className="chest-burst-lid" ref={lidRef}>

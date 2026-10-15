@@ -429,11 +429,30 @@
   mix-blend-mode: screen;
 }
 
+/* Tension glow: grows behind the chest through the 0–0.9s build-up —
+   GSAP owns the opacity ramp, this just sets the idle starting point. */
+.chest-burst-aura {
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsl(var(--chest-hue) var(--chest-sat) var(--chest-lit)) 0%, transparent 68%);
+  opacity: 0.18;
+  filter: blur(28px);
+  pointer-events: none;
+}
+
 .chest-burst-chest {
   position: relative;
   width: min(58vw, 300px);
   height: min(38vh, 200px);
   transform-style: preserve-3d;
+}
+
+/* Brief tag applied for ~100ms right at the crack beat — GSAP drives the
+   actual flash opacity on .chest-burst-flash; this is just a CSS hook for
+   the moment itself (e.g. a quick punch-in on the whole stage). */
+.case-chest-is-cracking {
+  filter: brightness(1.18) contrast(1.05);
 }
 
 .chest-burst-shadow {
