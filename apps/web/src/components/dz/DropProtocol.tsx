@@ -21,8 +21,8 @@ interface DropProtocolProps {
   result: OpenCaseResult | null;
   /** The item's real chance, from the same weights the server rolls against. */
   oddsPercent?: string;
-  /** Art for the case itself during ARMING. */
-  caseArtUrl?: string;
+  /** Rendered chest during ARMING — replaces the static art image. */
+  caseChest?: ReactNode;
   /** The reel, mounted by the caller so this component owns no spin timing. */
   reel?: ReactNode;
   /** Ends the animation early. The outcome is already final, so this only
@@ -40,7 +40,7 @@ interface DropProtocolProps {
  * cannot influence it, and intentionally offers no near-miss effect.
  */
 export function DropProtocol({
-  phase, caseName, item, result, oddsPercent, caseArtUrl, reel,
+  phase, caseName, item, result, oddsPercent, caseChest, reel,
   onSkip, onClose, onOpenAgain, canOpenAgain = false,
 }: DropProtocolProps) {
   const { t } = useTranslation();
@@ -199,7 +199,7 @@ export function DropProtocol({
             status={phaseLabel}
           >
             <div className="dz-protocol__case">
-              {caseArtUrl && <img src={caseArtUrl} alt="" />}
+              {caseChest ?? null}
             </div>
           </DropChamber>
         )}

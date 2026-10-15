@@ -310,9 +310,14 @@ export function CaseDetailPage() {
           item={winningItem}
           result={result}
           oddsPercent={winningItem ? dropChancePercent(winningItem, theCase.items) : undefined}
-          caseArtUrl={featuredItem && !featuredItem.imageUrl.startsWith("data:image")
-            ? featuredItem.imageUrl
-            : undefined}
+          caseChest={
+            <CaseChest
+              className="case-chest-detail"
+              caseName={theCase.name}
+              caseSlug={theCase.slug}
+              opening={opening}
+            />
+          }
           reel={winningItem && (
             <CaseOpeningReel
               key={spinKey}
