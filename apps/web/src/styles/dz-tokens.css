@@ -221,3 +221,33 @@
   outline-offset: 3px;
   border-radius: var(--dz-r-sm);
 }
+
+/* ── Procedural film-grain texture ──────────────────────────────────────
+   SVG feTurbulence fractal noise, tiled as a fixed CSS background. Pure
+   CSS — no images, no JS. The layer uses mix-blend-mode: soft-light so it
+   interacts naturally with any surface color: dark areas deepen, light
+   areas lighten slightly, but nothing is blown out.
+
+   opacity 0.04 — barely perceptible individually but felt across the page
+   as material depth. Disable entirely with prefers-reduced-motion (the
+   motion budget is zero — this never moves — but some users have reduced
+   visibility preferences too, and killing decorative overlays there is
+   respectful). */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  user-select: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  background-repeat: repeat;
+  mix-blend-mode: soft-light;
+  opacity: 0.04;
+  will-change: unset;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after { display: none; }
+}
