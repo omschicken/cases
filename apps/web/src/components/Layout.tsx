@@ -16,7 +16,7 @@ import { OnboardingModal } from "./OnboardingModal";
 
 function MenuIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
       <path d="M3 5.5 L17 5.5 M3 10 L17 10 M3 14.5 L17 14.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   );
@@ -48,47 +48,55 @@ export function Layout() {
   useEffect(() => initEffects(), []);
 
   return (
-    <div className="app-shell">
+    <div className="dz-shell">
       <DropsTicker />
-      <header className="top-nav">
+
+      <header className="dz-topbar">
         <button
-          className="menu-toggle"
+          className="dz-menu-toggle"
           onClick={() => setMenuOpen((v) => !v)}
           aria-label="Меню"
           aria-expanded={menuOpen}
         >
           <MenuIcon />
         </button>
-        <NavLink to="/" className="brand">
-          <span className="brand-sigil" aria-hidden="true"><span>D</span><i /></span>
-          <span className="brand-word">
-            DROP<span className="brand-suffix">ZONE</span>
+
+        <NavLink to="/" className="dz-brand">
+          <span className="dz-brand__sigil" aria-hidden="true">
+            <span>D</span><i />
+          </span>
+          <span className="dz-brand__word">
+            DROP<span className="dz-brand__suffix">ZONE</span>
           </span>
         </NavLink>
-        <div className="nav-right">
+
+        <div className="dz-topbar__right">
           {user ? (
             <>
               {balanceMinor !== null && (
-                <NavLink to="/wallet" className="balance-pill">
+                <NavLink to="/wallet" className="dz-balance">
                   {formatMinor(balanceMinor)}
                 </NavLink>
               )}
-              <div className={`account-menu${profileOpen ? " account-menu--open" : ""}`}>
+              <div className={`dz-account${profileOpen ? " dz-account--open" : ""}`}>
                 <button
                   type="button"
-                  className="account-menu-trigger"
+                  className="dz-account__trigger"
                   aria-label={t("nav.profile")}
                   title={t("nav.profile")}
                   aria-expanded={profileOpen}
                   onClick={() => setProfileOpen((v) => !v)}
                 >
-                  {user.steamAvatarUrl ? <img src={user.steamAvatarUrl} alt="" /> : <span>{(user.displayName ?? user.email).slice(0, 1).toUpperCase()}</span>}
+                  {user.steamAvatarUrl
+                    ? <img src={user.steamAvatarUrl} alt="" />
+                    : <span>{(user.displayName ?? user.email).slice(0, 1).toUpperCase()}</span>
+                  }
                 </button>
                 {profileOpen && (
                   <>
-                    <div className="account-menu-backdrop" onClick={() => setProfileOpen(false)} />
-                    <div className="account-menu-panel">
-                      <p className="account-menu-name">{user.displayName ?? user.email}</p>
+                    <div className="dz-account__backdrop" onClick={() => setProfileOpen(false)} />
+                    <div className="dz-account__panel">
+                      <p className="dz-account__name">{user.displayName ?? user.email}</p>
                       <NavLink to="/profile">{t("nav.profile")}</NavLink>
                       <NavLink to="/inventory">{t("nav.sidebar.inventory")}</NavLink>
                       <NavLink to="/history">{t("nav.sidebar.history")}</NavLink>
@@ -101,31 +109,41 @@ export function Layout() {
             </>
           ) : (
             <>
-              <a href={`${API_URL}/auth/steam`} className="steam-login-button">
+              <a href={`${API_URL}/auth/steam`} className="dz-steam-btn">
                 {t("nav.logInSteam")}
               </a>
-              <NavLink to="/login" className="account-guest" aria-label={t("nav.profile")} title={t("nav.profile")}>
-                <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M4.8 20c.5-4.3 3-6.4 7.2-6.4s6.7 2.1 7.2 6.4"/></svg>
+              <NavLink to="/login" className="dz-guest-btn" aria-label={t("nav.profile")} title={t("nav.profile")}>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                  <circle cx="12" cy="8" r="3.4" />
+                  <path d="M4.8 20c.5-4.3 3-6.4 7.2-6.4s6.7 2.1 7.2 6.4" />
+                </svg>
               </NavLink>
             </>
           )}
           <LanguageSwitcher />
         </div>
       </header>
+
       <PagesBar />
-      <div className="body-row">
-        {menuOpen && <div className="sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
+
+      <div className="dz-body">
+        {menuOpen && <div className="dz-sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
         <Sidebar open={menuOpen} />
-        <main className="page-content">
+        <main className="dz-main">
           <RouteTransition>
             <Outlet />
           </RouteTransition>
         </main>
       </div>
-      <footer className="site-footer">
-        <div className="site-footer-heading"><strong>DROP<span>ZONE</span></strong><span>18+</span></div>
+
+      <footer className="dz-footer">
+        <div className="dz-footer__heading">
+          <strong className="dz-footer__brand">DROP<span>ZONE</span></strong>
+          <span className="dz-footer__age">18+</span>
+        </div>
         <p>{t("nav.footer")}</p>
       </footer>
+
       <BottomNav />
       <OnboardingModal />
     </div>

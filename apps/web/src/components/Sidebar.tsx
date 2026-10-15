@@ -22,10 +22,10 @@ export function Sidebar({ open = false }: SidebarProps) {
   const { user } = useAuth();
 
   return (
-    <aside className={`sidebar ${open ? "sidebar-open" : ""}`}>
-      <nav className="sidebar-nav">
+    <aside className={`dz-sidebar${open ? " dz-sidebar--open" : ""}`}>
+      <nav className="dz-sidebar__nav">
         {mainNavItems.map(({ to, key, icon: Icon, end }) => (
-          <NavLink key={to} to={to} end={end} className="sidebar-link">
+          <NavLink key={to} to={to} end={end} className="dz-sidebar__link">
             <Icon />
             <span>{t(`nav.sidebar.${key}`)}</span>
           </NavLink>
@@ -34,18 +34,18 @@ export function Sidebar({ open = false }: SidebarProps) {
 
       {user && (
         <>
-          <div className="sidebar-divider" />
-          <nav className="sidebar-nav">
-            <NavLink to="/inventory" className="sidebar-link">
+          <div className="dz-sidebar__divider" />
+          <nav className="dz-sidebar__nav">
+            <NavLink to="/inventory" className="dz-sidebar__link">
               <IconInventory />
               <span>{t("nav.sidebar.inventory")}</span>
             </NavLink>
-            <NavLink to="/history" className="sidebar-link">
+            <NavLink to="/history" className="dz-sidebar__link">
               <IconHistory />
               <span>{t("nav.sidebar.history")}</span>
             </NavLink>
             {user.role === "ADMIN" && (
-              <NavLink to="/admin" className="sidebar-link">
+              <NavLink to="/admin" className="dz-sidebar__link">
                 <IconAdmin />
                 <span>{t("nav.sidebar.admin")}</span>
               </NavLink>
