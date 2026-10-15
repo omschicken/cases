@@ -318,6 +318,11 @@
 .dz-log__name {
   margin: 0;
   font-family: var(--dz-font-interface);
+  /* Item names are proper nouns from Steam. Legacy ancestors set
+     text-transform:uppercase and it inherits, which rendered
+     "AK-47 | Slate (Field-Tested)" as shouting; reset explicitly so no
+     surrounding page can case-transform a name. */
+  text-transform: none;
   font-size: var(--dz-type-sm);
   font-weight: 600;
   color: var(--dz-text-1);

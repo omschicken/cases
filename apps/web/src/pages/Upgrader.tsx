@@ -1,18 +1,21 @@
 import type { CSSProperties } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { GameEmptyState } from "../components/GameEmptyState";
 import { GameSteps } from "../components/GameSteps";
 import { useAuth } from "../context/AuthContext";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
-import { rarityColor } from "../lib/rarity";
+import { RARITY_LABELS } from "../lib/rarity";
 import type { CaseItem, GameOperationDto, InventoryItemDto } from "../lib/types";
 import { PageHeader, Readout } from "../components/dz/PageHeader";
+import { SelectableItem, Step, Outcome , Gate} from "../components/dz/SelectableItem";
 
 type UpgradeResult = { operation: GameOperationDto; won: boolean; item: CaseItem | null; target: CaseItem; chance: number };
 
 export function UpgraderPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [inventory, setInventory] = useState<InventoryItemDto[]>([]);
   const [targets, setTargets] = useState<CaseItem[]>([]);
@@ -51,18 +54,28 @@ export function UpgraderPage() {
     finally { submittingRef.current = false; setSubmitting(false); }
   }
 
-  if (!user) return <div className="game-workspace game-auth game-auth--upgrader"><span>DROPZONE / UPGRADER</span><h1>АПГРЕЙД</h1><p>Войди, чтобы выбрать предмет и цель.</p><Link to="/login" className="feature-primary">Войти <span aria-hidden="true">↗</span></Link></div>;
+  if (!user) return <Gate kicker="DROPZONE / UPGRADER" title="АПГРЕЙД" body="Войди, чтобы выбрать предмет и цель." action={<Link to="/login" className="dz-commit">Войти <span aria-hidden="true">↗</span></Link>} />;
 
-  return <div className="game-workspace game-workspace--upgrade">
+  return <div className="dz-workspace">
     <PageHeader kicker="ЛАБОРАТОРИЯ / LIVE" title="АПГРЕЙД" lede="Выбери свой предмет и более дорогую цель. Шанс рассчитывается до подтверждения и ограничен 75%." aside={<Readout label="ШАНС" value={`${(chance * 100).toFixed(1)}%`} />} />
     {error && <div className="catalog-notice" role="alert">{error}</div>}
-    {result && <section className={`game-result ${result.won ? "game-result--won" : "game-result--lost"}`}><span>{result.won ? "АПГРЕЙД УСПЕШЕН" : "ПОПЫТКА НЕ УДАЛАСЬ"}</span>{result.won && result.item && <img src={result.item.imageUrl} alt={result.item.name}/>}<div><h2>{result.won ? result.target.name : "Предмет использован"}</h2><strong>ROLL {result.operation.roll.toFixed(5)} / {(result.chance * 100).toFixed(1)}%</strong></div></section>}
+    {result && <Outcome won={result.won} label={result.won ? "АПГРЕЙД УСПЕШЕН" : "ПОПЫТКА НЕ УДАЛАСЬ"} name={result.won ? result.target.name : "Предмет использован"} meta={`ROLL ${result.operation.roll.toFixed(5)} / ${(result.chance * 100).toFixed(1)}%`} imageUrl={result.won && result.item ? result.item.imageUrl : undefined} />}
     {loading ? <p>Загрузка…</p> : <div className="upgrade-layout">
-      <section><div className="game-section-label"><span>01 / ТВОЙ ПРЕДМЕТ</span><span>{inventory.length}</span></div>{inventory.length === 0 ? <GameEmptyState variant="upgrade-source" label="СТАРТ / ИНВЕНТАРЬ" title="Нужен исходный предмет" description="Открой кейс, чтобы получить предмет для апгрейда. Он появится здесь автоматически после обновления страницы." action={<Link to="/#collections">Открыть каталог <span aria-hidden="true">↗</span></Link>}/> : <div className="game-item-grid">{inventory.map((item) => <button type="button" key={item.id} disabled={submitting} className={`game-item ${sourceId === item.id ? "selected" : ""}`} onClick={() => { setSourceId(item.id); setTargetId(""); setResult(null); setConfirming(false); }} style={{ "--rarity-color": rarityColor(item.caseItem.rarity) } as CSSProperties}><img src={item.caseItem.imageUrl} alt=""/><strong>{item.caseItem.name}</strong><b>{formatMinor(item.caseItem.valueMinor, item.caseItem.currency)}</b></button>)}</div>}</section>
+      <section><Step label="01 / Твой предмет" count={inventory.length} />{inventory.length === 0 ? <GameEmptyState variant="upgrade-source" label="СТАРТ / ИНВЕНТАРЬ" title="Нужен исходный предмет" description="Открой кейс, чтобы получить предмет для апгрейда. Он появится здесь автоматически после обновления страницы." action={<Link to="/#collections">Открыть каталог <span aria-hidden="true">↗</span></Link>}/> : <div className="dz-pick-grid">{inventory.map((item) => <SelectableItem key={item.id} name={item.caseItem.name} imageUrl={item.caseItem.imageUrl} value={formatMinor(item.caseItem.valueMinor, item.caseItem.currency)} rarity={item.caseItem.rarity} rarityLabel={t(`rarity.${item.caseItem.rarity}`, { defaultValue: RARITY_LABELS[item.caseItem.rarity] })} selected={sourceId === item.id} disabled={submitting} onSelect={() => { setSourceId(item.id); setTargetId(""); setResult(null); setConfirming(false); }} />)}</div>}</section>
       <div className="upgrade-arrow" aria-hidden="true">→</div>
-      <section><div className="game-section-label"><span>02 / ЦЕЛЬ</span><span>{eligibleTargets.length}</span></div>{!source ? <GameEmptyState variant="upgrade-target" label="ЦЕЛЬ / ЗАБЛОКИРОВАНА" title="Сначала выбери предмет" description="После выбора мы покажем только цели дороже исходного предмета и рассчитаем шанс."/> : eligibleTargets.length === 0 ? <GameEmptyState variant="upgrade-target" label="ЦЕЛЬ / НЕТ ВАРИАНТОВ" title="Нет подходящих целей" description="Для этого предмета сейчас нет более дорогих целей. Выбери другой исходный предмет."/> : <div className="game-item-grid">{eligibleTargets.map((item) => <button type="button" key={item.id} disabled={submitting} className={`game-item ${targetId === item.id ? "selected" : ""}`} onClick={() => { setTargetId(item.id); setResult(null); setConfirming(false); }} style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}><img src={item.imageUrl} alt=""/><strong>{item.name}</strong><b>{formatMinor(item.valueMinor, item.currency)}</b></button>)}</div>}</section>
+      <section><Step label="02 / Цель" count={eligibleTargets.length} />{!source ? <GameEmptyState variant="upgrade-target" label="ЦЕЛЬ / ЗАБЛОКИРОВАНА" title="Сначала выбери предмет" description="После выбора мы покажем только цели дороже исходного предмета и рассчитаем шанс."/> : eligibleTargets.length === 0 ? <GameEmptyState variant="upgrade-target" label="ЦЕЛЬ / НЕТ ВАРИАНТОВ" title="Нет подходящих целей" description="Для этого предмета сейчас нет более дорогих целей. Выбери другой исходный предмет."/> : <div className="dz-pick-grid">{eligibleTargets.map((item) => <SelectableItem key={item.id} name={item.name} imageUrl={item.imageUrl} value={formatMinor(item.valueMinor, item.currency)} rarity={item.rarity} rarityLabel={t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })} selected={targetId === item.id} disabled={submitting} onSelect={() => { setTargetId(item.id); setResult(null); setConfirming(false); }} />)}</div>}</section>
     </div>}
-    <aside className="upgrade-runbar"><div><span>ИТОГОВЫЙ ШАНС</span><strong>{(chance * 100).toFixed(1)}%</strong></div><p>При неудаче исходный предмет будет использован. Каждый результат записывается с roll и nonce.</p>{confirming ? <div className="game-confirm"><button type="button" onClick={() => void execute()} disabled={submitting}>{submitting ? "Выполняем…" : "Подтвердить попытку"}</button><button type="button" onClick={() => setConfirming(false)} disabled={submitting}>Отмена</button></div> : <button type="button" className="game-run" disabled={!source || !target} onClick={() => setConfirming(true)}>Запустить апгрейд</button>}</aside>
+    <aside className="dz-summary">
+      <span className="dz-summary__label">Итоговый шанс</span>
+      <span className="dz-summary__figure">{(chance * 100).toFixed(1)}%</span>
+      <p className="dz-summary__label">При неудаче исходный предмет будет использован. Каждый результат записывается с roll и nonce.</p>
+      {confirming
+        ? <div className="dz-confirm">
+            <button type="button" className="dz-commit" onClick={() => void execute()} disabled={submitting}>{submitting ? "Выполняем…" : "Подтвердить попытку"}</button>
+            <button type="button" className="dz-confirm__cancel" onClick={() => setConfirming(false)} disabled={submitting}>Отмена</button>
+          </div>
+        : <button type="button" className="dz-commit" disabled={!source || !target} onClick={() => setConfirming(true)}>Запустить апгрейд</button>}
+    </aside>
     {!loading && inventory.length === 0 && <GameSteps label="ПУТЬ К АПГРЕЙДУ" steps={[{ title: "Получи предмет", description: "Открой кейс — полученный предмет появится в инвентаре." }, { title: "Выбери цель", description: "Доступны только предметы дороже исходного. Шанс виден до подтверждения." }, { title: "Реши, рисковать ли", description: "При неудаче исходный предмет будет использован." }]}/>}
   </div>;
 }

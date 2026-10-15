@@ -1,0 +1,526 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   GAME SURFACES — Battles, Upgrade, Contracts, Cards
+
+   Those four pages shared one legacy vocabulary (game-workspace, game-item,
+   game-summary, game-confirm, game-result, game-auth) and each had drifted
+   its own way. One set of primitives here replaces all of it, so a change to
+   the selection affordance lands on all four at once instead of three times
+   out of four.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dz-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s5);
+  min-width: 0;
+}
+
+/* Work area beside a summary rail. The rail is fixed-width so the item grid
+   gets every remaining pixel; below 1000px it drops under the work area
+   rather than squeezing both into unusable columns. */
+.dz-workspace__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20rem;
+  gap: var(--dz-s4);
+  align-items: start;
+}
+
+@media (max-width: 1000px) {
+  .dz-workspace__layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ── Numbered step ───────────────────────────────────────────────────────
+   "01 / CHOOSE A CASE" — the spine that makes a multi-step game screen
+   legible without a tutorial. */
+.dz-step {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--dz-s3);
+  margin-bottom: var(--dz-s3);
+  padding-bottom: var(--dz-s2);
+  border-bottom: 1px solid var(--dz-edge);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-3);
+}
+
+.dz-step__count { color: var(--dz-text-4); }
+
+/* ── Selectable tile ─────────────────────────────────────────────────────
+   A real <button>, so keyboard and screen readers get selection for free.
+   Selection is never signalled by colour alone: the tick, the border weight
+   and the lift all carry it, because a rarity-tinted border on a colour-blind
+   screen is no signal at all. */
+.dz-pick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr));
+  gap: var(--dz-s3);
+}
+
+@media (max-width: 520px) {
+  .dz-pick-grid { grid-template-columns: repeat(auto-fill, minmax(min(120px, 100%), 1fr)); }
+}
+
+.dz-pick {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s2);
+  padding: var(--dz-s3);
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-md);
+  background: linear-gradient(180deg, var(--dz-surface-1), var(--dz-surface-0));
+  color: var(--dz-text-2);
+  text-align: left;
+  cursor: pointer;
+  /* Transform only on hover, so a grid of these never reflows. */
+  transition:
+    border-color var(--dz-d-micro) var(--dz-e-enter),
+    background var(--dz-d-micro) var(--dz-e-enter),
+    transform var(--dz-d-micro) var(--dz-e-exit),
+    box-shadow var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-pick:hover:not(:disabled) {
+  border-color: var(--dz-edge-strong);
+  transform: translate3d(0, -2px, 0);
+  box-shadow: var(--dz-shadow-near);
+}
+
+.dz-pick:focus-visible {
+  outline: 2px solid var(--dz-amber);
+  outline-offset: 2px;
+}
+
+.dz-pick:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dz-pick.is-selected {
+  border-color: var(--dz-rarity, var(--dz-amber));
+  border-width: 2px;
+  /* Keep the box identical to an unselected tile: a 2px border would
+     otherwise shift the contents by a pixel and ripple through the grid. */
+  padding: calc(var(--dz-s3) - 1px);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--dz-rarity, var(--dz-amber)) 12%, var(--dz-surface-1)),
+    var(--dz-surface-0));
+  box-shadow: 0 0 20px color-mix(in srgb, var(--dz-rarity, var(--dz-amber)) 22%, transparent);
+}
+
+/* The tick — the non-colour half of the selected signal. */
+.dz-pick__tick {
+  position: absolute;
+  top: var(--dz-s2);
+  right: var(--dz-s2);
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--dz-rarity, var(--dz-amber));
+  color: var(--dz-void);
+  font-size: 0.66rem;
+  font-weight: 700;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity var(--dz-d-quick) var(--dz-e-snap),
+    transform var(--dz-d-quick) var(--dz-e-snap);
+}
+
+.dz-pick.is-selected .dz-pick__tick {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.dz-pick__art {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: var(--dz-surface-0);
+  border-radius: var(--dz-r-sm);
+}
+
+.dz-pick__rarity {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-rarity, var(--dz-text-4));
+}
+
+.dz-pick__name {
+  font-family: var(--dz-font-interface);
+  /* Item names are proper nouns from Steam. Legacy ancestors set
+     text-transform:uppercase and it inherits, which rendered
+     "AK-47 | Slate (Field-Tested)" as shouting; reset explicitly so no
+     surrounding page can case-transform a name. */
+  text-transform: none;
+  font-size: var(--dz-type-xs);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--dz-text-1);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.6em;
+}
+
+.dz-pick__value {
+  margin-top: auto;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--dz-text-1);
+}
+
+/* ── Filter chips ────────────────────────────────────────────────────────
+   A horizontal filter row. Scrolls rather than wrapping on a phone, so the
+   set stays one predictable line instead of reflowing the page beneath it. */
+.dz-chips {
+  display: flex;
+  gap: var(--dz-s2);
+  overflow-x: auto;
+  padding-bottom: var(--dz-s1);
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dz-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dz-s2);
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 0 var(--dz-s3);
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-1);
+  color: var(--dz-text-3);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    border-color var(--dz-d-micro) var(--dz-e-enter),
+    color var(--dz-d-micro) var(--dz-e-enter),
+    background var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-chip:hover { border-color: var(--dz-edge-strong); color: var(--dz-text-1); }
+
+.dz-chip:focus-visible {
+  outline: 2px solid var(--dz-amber);
+  outline-offset: 2px;
+}
+
+.dz-chip[aria-pressed="true"] {
+  border-color: var(--dz-rarity, var(--dz-amber));
+  color: var(--dz-rarity, var(--dz-amber));
+  background: color-mix(in srgb, var(--dz-rarity, var(--dz-amber)) 12%, var(--dz-surface-1));
+}
+
+/* The count rides in a pill so it reads as metadata, not part of the label. */
+.dz-chip b {
+  padding: 0 5px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.4);
+  font-variant-numeric: tabular-nums;
+  color: var(--dz-text-2);
+}
+
+@media (hover: none) { .dz-chip { min-height: 40px; } }
+
+/* ── Summary rail ────────────────────────────────────────────────────────
+   What the player is about to commit to, and the button that does it. */
+.dz-summary {
+  position: sticky;
+  top: var(--dz-s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s3);
+  padding: var(--dz-s4);
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-lg);
+  background: linear-gradient(180deg, var(--dz-surface-2), var(--dz-surface-0));
+}
+
+@media (max-width: 1000px) {
+  .dz-summary { position: static; }
+}
+
+.dz-summary__label {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+}
+
+.dz-summary__rows {
+  display: grid;
+  gap: var(--dz-s2);
+  margin: 0;
+}
+
+.dz-summary__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--dz-s3);
+  padding-bottom: var(--dz-s2);
+  border-bottom: 1px solid var(--dz-edge);
+}
+
+.dz-summary__row dt {
+  font-size: var(--dz-type-xs);
+  color: var(--dz-text-4);
+}
+
+.dz-summary__row dd {
+  margin: 0;
+  font-family: var(--dz-font-interface);
+  font-size: var(--dz-type-xs);
+  font-weight: 600;
+  color: var(--dz-text-1);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* The figure the whole screen is about — a chance, a total. */
+.dz-summary__figure {
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-amber);
+  line-height: 1;
+}
+
+/* ── Commit action ───────────────────────────────────────────────────────
+   48px: this is the button that spends money, so it is the largest target
+   on the screen and never shares a row with its own cancel. */
+.dz-commit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dz-s2);
+  min-height: 48px;
+  padding: 0 var(--dz-s5);
+  border: 0;
+  border-radius: var(--dz-r-md);
+  background: linear-gradient(180deg, var(--dz-amber-hot), var(--dz-amber));
+  color: var(--dz-void);
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-sm);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    filter var(--dz-d-micro) var(--dz-e-enter),
+    box-shadow var(--dz-d-micro) var(--dz-e-enter),
+    transform var(--dz-d-micro) var(--dz-e-exit);
+}
+
+.dz-commit:hover:not(:disabled),
+.dz-commit:focus-visible {
+  filter: brightness(1.07);
+  box-shadow: 0 0 26px color-mix(in srgb, var(--dz-amber) 40%, transparent);
+  transform: translate3d(0, -1px, 0);
+}
+
+.dz-commit:focus-visible {
+  outline: 2px solid var(--dz-amber-hot);
+  outline-offset: 3px;
+}
+
+.dz-commit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: var(--dz-surface-3);
+  color: var(--dz-text-4);
+}
+
+/* Confirm step: the destructive-ish choice and its way out, stacked so a
+   mis-tap on a phone cannot hit the wrong one. */
+.dz-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s2);
+}
+
+.dz-confirm__cancel {
+  min-height: 40px;
+  border: 1px solid var(--dz-edge-strong);
+  border-radius: var(--dz-r-md);
+  background: transparent;
+  color: var(--dz-text-3);
+  font-family: var(--dz-font-interface);
+  font-size: var(--dz-type-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--dz-d-micro) var(--dz-e-enter), color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-confirm__cancel:hover:not(:disabled),
+.dz-confirm__cancel:focus-visible {
+  border-color: var(--dz-edge-lit);
+  color: var(--dz-text-1);
+}
+
+.dz-confirm__cancel:focus-visible {
+  outline: 2px solid var(--dz-amber);
+  outline-offset: 2px;
+}
+
+/* ── Outcome ─────────────────────────────────────────────────────────────
+   A win and a loss are reported in the same layout, differing in colour and
+   wording only. Nothing here is exaggerated on a win or softened on a loss:
+   both are the same server roll. */
+.dz-outcome {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--dz-s4);
+  padding: var(--dz-s4);
+  border: 1px solid color-mix(in srgb, var(--dz-outcome-color) 40%, var(--dz-edge));
+  border-left: 3px solid var(--dz-outcome-color);
+  border-radius: var(--dz-r-lg);
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--dz-outcome-color) 9%, var(--dz-surface-1)),
+    var(--dz-surface-0) 60%);
+  animation: dz-outcome-in var(--dz-d-move) var(--dz-e-exit) both;
+}
+
+.dz-outcome--won  { --dz-outcome-color: var(--dz-success); }
+.dz-outcome--lost { --dz-outcome-color: var(--dz-danger); }
+
+@keyframes dz-outcome-in {
+  from { opacity: 0; transform: translate3d(0, -8px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+.dz-outcome__art {
+  width: 84px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-0);
+}
+
+.dz-outcome__label {
+  display: block;
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-outcome-color);
+  margin-bottom: 2px;
+}
+
+.dz-outcome__name {
+  margin: 0;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-lg);
+  font-weight: 700;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-text-1);
+  overflow-wrap: break-word;
+}
+
+.dz-outcome__meta {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  color: var(--dz-text-4);
+}
+
+@media (max-width: 600px) {
+  .dz-outcome {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: var(--dz-s3);
+  }
+  .dz-outcome > :last-child { grid-column: 1 / -1; }
+}
+
+/* ── Versus ──────────────────────────────────────────────────────────────
+   Battles only: two drops, one verdict between them. */
+.dz-versus {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--dz-s4);
+}
+
+.dz-versus__mark {
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-lg);
+  font-weight: 700;
+  color: var(--dz-text-4);
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 600px) {
+  .dz-versus {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    text-align: center;
+  }
+}
+
+/* ── Sign-in gate ────────────────────────────────────────────────────────
+   Shown where a game needs an account. A considered screen, not a redirect. */
+.dz-gate {
+  display: grid;
+  justify-items: center;
+  gap: var(--dz-s3);
+  padding: var(--dz-s8) var(--dz-s4);
+  text-align: center;
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-lg);
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, var(--dz-light-key), transparent 70%),
+    linear-gradient(180deg, var(--dz-surface-1), var(--dz-void));
+}
+
+.dz-gate__kicker {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-amber);
+}
+
+.dz-gate__title {
+  margin: 0;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-xl);
+  font-weight: 700;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-text-1);
+}
+
+.dz-gate__body {
+  margin: 0;
+  max-width: 42ch;
+  color: var(--dz-text-3);
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dz-outcome { animation: none; }
+  .dz-pick__tick { transition: none; }
+}

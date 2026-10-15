@@ -317,6 +317,11 @@
 .dz-case-card__name {
   margin: 0;
   font-family: var(--dz-font-display);
+  /* Item names are proper nouns from Steam. Legacy ancestors set
+     text-transform:uppercase and it inherits, which rendered
+     "AK-47 | Slate (Field-Tested)" as shouting; reset explicitly so no
+     surrounding page can case-transform a name. */
+  text-transform: none;
   font-size: var(--dz-type-md);
   font-weight: 700;
   letter-spacing: var(--dz-tracking-display);
