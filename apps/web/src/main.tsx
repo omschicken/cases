@@ -4,6 +4,7 @@ import "./index.css";
 // Loaded after index.css so the dz- system wins on source order. It shares no
 // selector with the legacy sheet, so this is belt-and-braces, not a fix.
 import "./styles/dz-tokens.css";
+import "./styles/dz-chest.css";
 import "./styles/dz-chamber.css";
 import "./styles/dz-card.css";
 import "./styles/dz-hero.css";

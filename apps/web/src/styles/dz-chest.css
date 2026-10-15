@@ -1,0 +1,689 @@
+/* ════════════════════════════════════════════════════════════════
+   dz-chest.css  —  CaseChest visual system & opening cinema
+   Loaded after index.css; overrides legacy .case-chest-* rules.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Derived colour tokens ───────────────────────────────────── */
+/* CaseChest.tsx inlines: --chest-hue (0-360), --chest-sat (%), --chest-lit (%) */
+.case-chest {
+  --chest-bright: hsl(var(--chest-hue, 120) var(--chest-sat, 65%) var(--chest-lit, 54%));
+  --chest-glow:   hsl(var(--chest-hue, 120) var(--chest-sat, 65%) 76%);
+  --chest-light:  hsl(var(--chest-hue, 120) 40% 55%);
+  --chest-mid:    hsl(var(--chest-hue, 120) 24% 28%);
+  --chest-dark:   hsl(var(--chest-hue, 120) 18% 11%);
+  --lid-rest: 20%;
+
+  /* layout */
+  position: relative;
+  width: min(100%, 18rem);
+  height: 11rem;
+  margin: auto;
+  perspective: 800px;
+  isolation: isolate;
+}
+
+/* ── Aura (soft radial behind chest) ────────────────────────── */
+.case-chest-aura {
+  position: absolute;
+  inset: 10% 8% 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--chest-bright) 0%, transparent 70%);
+  opacity: .18;
+  filter: blur(24px);
+  animation: chest-aura-pulse 3.6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes chest-aura-pulse {
+  from { opacity: .12; transform: scale(.88); }
+  to   { opacity: .26; transform: scale(1.08); }
+}
+
+/* ── Atmosphere (outer mist ring) ───────────────────────────── */
+.case-chest-atmosphere {
+  position: absolute;
+  inset: -20% -24%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--chest-bright) 0 12%, transparent 60%);
+  opacity: .07;
+  filter: blur(40px);
+  pointer-events: none;
+  animation: chest-atmosphere-idle 6s ease-in-out infinite alternate;
+}
+@keyframes chest-atmosphere-idle {
+  from { opacity: .05; transform: scale(.9); }
+  to   { opacity: .12; transform: scale(1.1); }
+}
+
+/* ── Orbit rings ─────────────────────────────────────────────── */
+.case-orbit-ring {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  pointer-events: none;
+  animation: orbit-spin calc(7s + var(--orbit-delay, 0s) * -1.4) linear infinite;
+  --r: var(--orbit-r, 42px);
+  width: calc(var(--r) * 2);
+  height: calc(var(--r) * 2);
+  margin-left: calc(var(--r) * -1);
+  margin-top: calc(var(--r) * -1);
+}
+@keyframes orbit-spin {
+  to { transform: rotate(360deg); }
+}
+.case-orbit-dot {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--chest-bright);
+  box-shadow: 0 0 5px 1px var(--chest-bright);
+  opacity: .55;
+  left: 50%;
+  top: 0;
+  transform-origin: 0 var(--r, 42px);
+  transform: rotate(calc(360deg / var(--orbit-count, 6) * var(--dot-i, 0))) translateX(-50%);
+}
+
+/* ── Assembly (float + opening shake host) ───────────────────── */
+.case-chest-assembly {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  animation: chest-float 4.2s ease-in-out infinite;
+}
+@keyframes chest-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-5px); }
+}
+
+/* ── Lid ─────────────────────────────────────────────────────── */
+.case-chest-lid {
+  position: absolute;
+  z-index: 3;
+  left: 8%; right: 8%;
+  top: var(--lid-rest, 20%);
+  height: 26%;
+  border: 1.5px solid var(--chest-light);
+  border-bottom: 3px solid var(--chest-bright);
+  clip-path: polygon(5% 0, 95% 0, 100% 28%, 98% 100%, 2% 100%, 0 28%);
+  background:
+    linear-gradient(
+      180deg,
+      var(--chest-light) 0 16%,
+      var(--chest-mid)   16% 78%,
+      var(--chest-dark)  78%
+    );
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,.14),
+    inset 0 -2px 0 rgba(0,0,0,.4),
+    0 6px 14px rgba(0,0,0,.35);
+  transform-origin: 50% 100%;
+  overflow: hidden;
+}
+
+/* Lid inner content layout */
+.case-chest-lid-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 0 14%;
+}
+.case-chest-lid-stripe {
+  position: absolute;
+  left: 0; right: 0;
+  top: 48%; height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%, var(--chest-bright) 30%, var(--chest-glow) 50%,
+    var(--chest-bright) 70%, transparent 100%
+  );
+  opacity: .7;
+}
+.case-chest-lid-mark {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--chest-glow);
+  font: 900 .82rem/1 var(--font-display, 'DM Mono', monospace);
+  letter-spacing: .06em;
+  text-shadow: 0 0 8px var(--chest-bright);
+  white-space: nowrap;
+}
+.case-chest-lid-serial {
+  position: absolute;
+  right: 10%;
+  bottom: 14%;
+  color: var(--chest-bright);
+  font: 700 .32rem/1 var(--font-display, monospace);
+  letter-spacing: .14em;
+  opacity: .65;
+}
+.case-chest-lid-edge {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%, var(--chest-glow) 25%, var(--chest-bright) 50%,
+    var(--chest-glow) 75%, transparent 100%
+  );
+  opacity: .9;
+  box-shadow: 0 0 8px 1px var(--chest-bright);
+}
+
+/* ── Lock ─────────────────────────────────────────────────────── */
+.case-chest-lock {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 0;
+  width: 18%;
+  height: 44%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.case-chest-lock-body {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 0; height: 64%;
+  border: 1.5px solid var(--chest-bright);
+  border-top: 2px solid var(--chest-light);
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);
+  background: linear-gradient(
+    165deg,
+    var(--chest-light)  0 18%,
+    var(--chest-mid)    18% 65%,
+    var(--chest-dark)   65%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.2),
+    0 4px 10px rgba(0,0,0,.5);
+}
+.case-chest-lock-shackle {
+  position: absolute;
+  left: 20%; right: 20%;
+  top: 0; height: 50%;
+  border: 2px solid var(--chest-light);
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0 / 80% 80% 0 0;
+  background: transparent;
+}
+.case-chest-lock-gem {
+  position: absolute;
+  left: 50%; top: 34%;
+  width: 38%; height: 32%;
+  transform: translate(-50%, 0);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 35%,
+    var(--chest-glow) 0 28%,
+    var(--chest-bright) 30% 50%,
+    var(--chest-mid) 52%
+  );
+  box-shadow:
+    0 0 6px 2px var(--chest-bright),
+    0 0 14px 4px color-mix(in srgb, var(--chest-bright) 40%, transparent);
+  animation: gem-pulse 2.8s ease-in-out infinite alternate;
+}
+@keyframes gem-pulse {
+  from { opacity: .8; box-shadow: 0 0 6px 2px var(--chest-bright), 0 0 14px 4px transparent; }
+  to   { opacity: 1;  box-shadow: 0 0 10px 4px var(--chest-bright), 0 0 22px 8px color-mix(in srgb, var(--chest-bright) 35%, transparent); }
+}
+
+/* ── Body ────────────────────────────────────────────────────── */
+.case-chest-body {
+  position: absolute;
+  z-index: 2;
+  left: 10%; right: 10%;
+  top: 41%; height: 47%;
+  border: 1.5px solid var(--chest-light);
+  border-bottom: 4px solid var(--chest-bright);
+  clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%);
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--chest-bright) 22%, transparent) 0 30%, transparent 31%),
+    repeating-linear-gradient(135deg, transparent 0 18px, rgba(0,0,0,.1) 19px 20px),
+    linear-gradient(165deg, var(--chest-mid) 0%, var(--chest-dark) 65%);
+  box-shadow:
+    inset 0 10px 20px rgba(0,0,0,.45),
+    inset 0 -6px 0 rgba(0,0,0,.3),
+    0 16px 18px rgba(0,0,0,.38);
+  overflow: hidden;
+}
+/* clear legacy pseudo-element edge stripes — new component uses .case-chest-corner */
+.case-chest-body::before,
+.case-chest-body::after { display: none; }
+
+/* Specular shine overlay */
+.case-chest-body-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    170deg,
+    rgba(255,255,255,.09) 0 35%,
+    transparent 36%
+  );
+  pointer-events: none;
+}
+/* Grid texture */
+.case-chest-body-grid {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 28px);
+  pointer-events: none;
+  opacity: .6;
+}
+
+/* Corner accent brackets */
+.case-chest-corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: var(--chest-bright);
+  border-style: solid;
+  opacity: .75;
+  pointer-events: none;
+}
+.case-chest-corner-tl { top: 8%;  left: 5%;  border-width: 1.5px 0 0 1.5px; }
+.case-chest-corner-tr { top: 8%;  right: 5%; border-width: 1.5px 1.5px 0 0; }
+.case-chest-corner-bl { bottom: 8%; left: 5%;  border-width: 0 0 1.5px 1.5px; }
+.case-chest-corner-br { bottom: 8%; right: 5%; border-width: 0 1.5px 1.5px 0; }
+
+/* Center glyph */
+.case-chest-glyph-wrap {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 44%; height: 78%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.case-chest-glyph-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--chest-bright) 18%, transparent) 0 40%,
+    transparent 42%
+  );
+  filter: blur(4px);
+}
+.case-chest-glyph {
+  position: relative;
+  z-index: 1;
+  width: 60%;
+  height: 60%;
+  color: var(--chest-bright);
+  filter:
+    drop-shadow(0 0 4px var(--chest-bright))
+    drop-shadow(0 0 10px color-mix(in srgb, var(--chest-bright) 45%, transparent));
+  opacity: .85;
+  animation: glyph-breathe 3.8s ease-in-out infinite alternate;
+}
+@keyframes glyph-breathe {
+  from { opacity: .7;  filter: drop-shadow(0 0 3px var(--chest-bright)); }
+  to   { opacity: .95; filter: drop-shadow(0 0 7px var(--chest-bright)) drop-shadow(0 0 14px color-mix(in srgb, var(--chest-bright) 40%, transparent)); }
+}
+
+/* Name band */
+.case-chest-nameband {
+  position: absolute;
+  left: 5%; right: 5%;
+  bottom: 10%;
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  height: 12%;
+}
+.case-chest-nameband-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--chest-bright) 60%, transparent);
+  opacity: .5;
+}
+.case-chest-nameband-text {
+  flex: 0 0 auto;
+  max-width: 66%;
+  color: var(--chest-glow);
+  font: 800 .3rem/1 var(--font-display, monospace);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: .8;
+}
+
+/* ── Ground shadow ───────────────────────────────────────────── */
+.case-chest-shadow {
+  position: absolute;
+  left: 14%; right: 14%;
+  bottom: 1%;
+  height: 7%;
+  border-radius: 50%;
+  background: #020808;
+  filter: blur(10px);
+  opacity: .7;
+}
+
+/* ── Item reveal (won item floats above chest) ───────────────── */
+.case-chest-reveal {
+  position: absolute;
+  z-index: 10;
+  left: 50%; top: 0%;
+  width: 70%; height: auto;
+  transform: translate(-50%, -40%);
+  filter:
+    drop-shadow(0 0 14px var(--chest-bright))
+    drop-shadow(0 0 30px color-mix(in srgb, var(--chest-bright) 50%, transparent))
+    drop-shadow(0 20px 12px rgba(0,0,0,.6));
+  animation: reveal-enter .55s cubic-bezier(.18,.9,.28,1) both;
+}
+@keyframes reveal-enter {
+  from { opacity: 0; transform: translate(-50%, -20%) scale(.7); filter: brightness(3); }
+  to   { opacity: 1; transform: translate(-50%, -40%) scale(1); }
+}
+
+/* ── Flare (kept from legacy, enhanced) ─────────────────────── */
+.case-chest-flare {
+  position: absolute;
+  z-index: 8;
+  left: 50%; top: 40%;
+  width: 4rem; height: 4rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 20px 10px var(--chest-bright),
+    0 0 60px 26px var(--chest-glow),
+    0 0 120px 50px color-mix(in srgb, var(--chest-bright) 30%, transparent);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  animation: chest-flare-new 1.4s ease-out both;
+  pointer-events: none;
+}
+@keyframes chest-flare-new {
+  0%,50% { opacity: 0;   transform: translate(-50%,-50%) scale(.15); }
+  68%    { opacity: 1;   transform: translate(-50%,-50%) scale(1); }
+  80%    { opacity: .7;  transform: translate(-50%,-50%) scale(1.5); }
+  100%   { opacity: 0;   transform: translate(-50%,-50%) scale(3); }
+}
+
+/* ── Scan line (kept from legacy, enhanced) ─────────────────── */
+.case-chest-scan {
+  position: absolute;
+  z-index: 7;
+  left: 8%; right: 8%;
+  top: 14%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--chest-glow) 30%, var(--chest-bright) 50%, var(--chest-glow) 70%, transparent);
+  box-shadow: 0 0 10px 3px var(--chest-bright);
+  opacity: 0;
+  animation: scan-new 1.4s ease-in-out both;
+  pointer-events: none;
+}
+@keyframes scan-new {
+  0%,15%  { opacity: 0;   transform: translateY(0); }
+  28%     { opacity: .9;  transform: translateY(0); }
+  82%     { opacity: .4;  transform: translateY(9.5rem); }
+  100%    { opacity: 0;   transform: translateY(11rem); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   OPENING ANIMATION — 5-phase cinematic sequence
+   Total runtime: ~1.4 s
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Phase 1+2: Rattle (0 → 0.55s) — escalating shake on assembly */
+.case-chest-is-opening .case-chest-assembly {
+  animation: chest-rattle-new 1.4s cubic-bezier(.22,.75,.28,1) both;
+}
+@keyframes chest-rattle-new {
+  0%      { transform: translateY(0) rotate(0); }
+  6%      { transform: translateY(-1px) rotate(.3deg); }
+  12%     { transform: translateY(1px) rotate(-.3deg); }
+  18%     { transform: translate(-2px,1px) rotate(-.6deg); }
+  24%     { transform: translate(3px,-2px) rotate(.8deg); }
+  30%     { transform: translate(-3px,0) rotate(-.5deg); }
+  36%     { transform: translate(4px,-3px) rotate(.7deg); }
+  42%     { transform: translate(-5px,2px) rotate(-1.1deg); }
+  46%     { transform: translate(5px,-1px) rotate(.9deg); }
+  50%     { transform: translate(-3px,-1px) rotate(-.4deg); }
+  /* Phase 3: lid rises + assembly settles (0.55 → 1.0s) */
+  60%     { transform: translateY(-6px); }
+  80%     { transform: translateY(-10px); }
+  100%    { transform: translateY(-4px); }
+}
+
+/* Phase 3: Lid opens in 3D perspective */
+.case-chest-is-opening .case-chest-lid {
+  animation: chest-lid-new 1.4s cubic-bezier(.16,.82,.24,1) both !important;
+}
+@keyframes chest-lid-new {
+  0%,42%   { top: var(--lid-rest, 20%); transform: rotateX(0); }
+  60%      { top: calc(var(--lid-rest, 20%) - 3%); transform: rotateX(-22deg); }
+  75%,100% { top: calc(var(--lid-rest, 20%) - 18%); transform: rotateX(-82deg); }
+}
+
+/* Phase 2: Lock mechanism break (0.35 → 0.7s) */
+.case-chest-is-opening .case-chest-lock {
+  animation: chest-lock-new 1.4s ease-in both;
+}
+@keyframes chest-lock-new {
+  0%,32%  { opacity: 1; transform: translateX(-50%) scale(1); filter: brightness(1); }
+  44%     { opacity: 1; transform: translateX(-50%) scale(1.2); filter: brightness(2.5); }
+  56%,100 { opacity: 0; transform: translate(-50%, 60%) scale(.5) rotate(22deg); filter: brightness(3); }
+}
+
+/* Lock gem blazes just before lock flies off */
+.case-chest-is-opening .case-chest-lock-gem {
+  animation: gem-blaze 1.4s ease-in both;
+}
+@keyframes gem-blaze {
+  0%,25%  { opacity: .9; box-shadow: 0 0 6px 2px var(--chest-bright); }
+  38%     { opacity: 1;  box-shadow: 0 0 18px 8px var(--chest-glow), 0 0 40px 18px var(--chest-bright); }
+  52%,100%{ opacity: 0;  box-shadow: 0 0 0 0 transparent; }
+}
+
+/* Lock shackle flies upward */
+.case-chest-is-opening .case-chest-lock-shackle {
+  animation: shackle-fly 1.4s ease-in both;
+}
+@keyframes shackle-fly {
+  0%,34%  { opacity: 1; transform: translateY(0); }
+  50%,100%{ opacity: 0; transform: translateY(-140%) rotate(-18deg); }
+}
+
+/* Phase 4: Aura expands with opening */
+.case-chest-is-opening .case-chest-aura {
+  animation: aura-open 1.4s ease-out both;
+}
+@keyframes aura-open {
+  0%     { opacity: .12; transform: scale(.7); filter: blur(24px); }
+  55%    { opacity: .45; }
+  72%    { opacity: .6;  transform: scale(1.6); filter: blur(30px); }
+  100%   { opacity: .1;  transform: scale(2);   filter: blur(40px); }
+}
+
+/* Atmosphere erupts */
+.case-chest-is-opening .case-chest-atmosphere {
+  animation: atmosphere-erupt 1.4s ease-out both;
+}
+@keyframes atmosphere-erupt {
+  0%,40% { opacity: .07; transform: scale(.9); }
+  68%    { opacity: .4;  transform: scale(1.5); }
+  100%   { opacity: .05; transform: scale(2.2); filter: blur(60px); }
+}
+
+/* Orbit rings speed up during opening */
+.case-chest-is-opening .case-orbit-ring {
+  animation-duration: 1.2s;
+  opacity: 0;
+  animation: orbit-opening 1.4s ease-out both;
+}
+@keyframes orbit-opening {
+  0%      { opacity: .55; transform: rotate(0); }
+  50%     { opacity: .9;  transform: rotate(240deg) scale(1.3); }
+  100%    { opacity: 0;   transform: rotate(540deg) scale(2); }
+}
+
+/* Glyph flares with opening */
+.case-chest-is-opening .case-chest-glyph {
+  animation: glyph-opening 1.4s ease-out both;
+}
+@keyframes glyph-opening {
+  0%,38%  { opacity: .85; filter: drop-shadow(0 0 5px var(--chest-bright)); }
+  55%     { opacity: 1;   filter: drop-shadow(0 0 16px var(--chest-glow)) brightness(2.5); }
+  75%,100%{ opacity: 0;   filter: drop-shadow(0 0 0 transparent); }
+}
+
+/* Body shine blazes */
+.case-chest-is-opening .case-chest-body-shine {
+  animation: body-shine-open 1.4s ease-out both;
+}
+@keyframes body-shine-open {
+  0%,45% { opacity: 1; }
+  62%    { background: rgba(255,255,255,.22); opacity: 1; }
+  80%    { background: linear-gradient(170deg, rgba(255,255,255,.45) 0 40%, transparent 41%); }
+  100%   { opacity: 0; }
+}
+
+/* Name band fades out */
+.case-chest-is-opening .case-chest-nameband {
+  animation: nameband-fade 1.4s ease-in-out both;
+}
+@keyframes nameband-fade {
+  0%,40% { opacity: .8; }
+  65%,100%{ opacity: 0; }
+}
+
+/* Lid edge blazes as lid opens */
+.case-chest-is-opening .case-chest-lid-edge {
+  animation: lid-edge-open 1.4s ease-out both;
+}
+@keyframes lid-edge-open {
+  0%,44%  { opacity: .9; box-shadow: 0 0 8px 1px var(--chest-bright); }
+  58%     { opacity: 1;  box-shadow: 0 0 22px 8px var(--chest-glow); }
+  80%,100%{ opacity: 0;  box-shadow: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VARIANT OVERRIDES (v0–v5) — chassis shape + personality
+   Legacy clip-paths preserved; new elements re-themed.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* v0 — Standard crate (default) */
+.case-chest-v0 .case-chest-body { clip-path: polygon(0 0, 100% 0, 94% 100%, 6% 100%); }
+.case-chest-v0 .case-chest-lid  { clip-path: polygon(7% 0, 93% 0, 100% 27%, 97% 100%, 3% 100%, 0 27%); }
+
+/* v1 — Slim tech locker */
+.case-chest-v1 { --lid-rest: 18%; }
+.case-chest-v1 .case-chest-body {
+  left: 7%; right: 7%; top: 35%; height: 54%;
+  clip-path: polygon(5% 0, 95% 0, 100% 17%, 100% 100%, 0 100%, 0 17%);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 11%, color-mix(in srgb, var(--chest-bright) 13%, transparent) 11% 12%),
+    linear-gradient(155deg, var(--chest-mid) 0%, var(--chest-dark) 78%);
+}
+.case-chest-v1 .case-chest-lid  { left: 7%; right: 7%; height: 22%; clip-path: polygon(4% 0, 96% 0, 100% 100%, 0 100%); }
+.case-chest-v1 .case-chest-lock { height: 30%; width: 24%; }
+
+/* v2 — Arcane cylinder (circular lock) */
+.case-chest-v2 { --lid-rest: 18%; }
+.case-chest-v2 .case-chest-body {
+  left: 13%; right: 13%; top: 35%; height: 56%;
+  clip-path: polygon(12% 0, 88% 0, 100% 20%, 93% 100%, 7% 100%, 0 20%);
+  background:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--chest-bright) 30%, transparent) 0 19%, transparent 20%),
+    repeating-radial-gradient(circle at 50% 50%, transparent 0 14px, color-mix(in srgb, var(--chest-bright) 16%, transparent) 15px 16px),
+    linear-gradient(140deg, #635438, #27241e 72%);
+}
+.case-chest-v2 .case-chest-lid  { left: 13%; right: 13%; height: 26%; clip-path: polygon(12% 0, 88% 0, 100% 100%, 0 100%); }
+.case-chest-v2 .case-chest-lock { top: 5%; width: 22%; height: 58%; border-radius: 50%; clip-path: none; }
+.case-chest-v2 .case-chest-lock-body { clip-path: none; border-radius: 50%; }
+.case-chest-v2 .case-chest-lock-shackle { display: none; }
+
+/* v3 — Faceted diamond */
+.case-chest-v3 { --lid-rest: 17%; }
+.case-chest-v3 .case-chest-body {
+  left: 9%; right: 9%; top: 32%; height: 57%;
+  clip-path: polygon(0 14%, 9% 0, 91% 0, 100% 14%, 100% 86%, 91% 100%, 9% 100%, 0 86%);
+  background:
+    repeating-linear-gradient(125deg, transparent 0 18px, color-mix(in srgb, var(--chest-bright) 20%, transparent) 18px 22px, transparent 22px 36px),
+    linear-gradient(155deg, #4a2622, #1b1c1c 72%);
+}
+.case-chest-v3 .case-chest-lid  { left: 9%; right: 9%; height: 24%; clip-path: polygon(8% 0, 92% 0, 100% 35%, 95% 100%, 5% 100%, 0 35%); }
+.case-chest-v3 .case-chest-lock { width: 14%; height: 32%; }
+
+/* v4 — Signal / tech blue */
+.case-chest-v4 { --lid-rest: 15%; }
+.case-chest-v4 .case-chest-body {
+  left: 12%; right: 12%; top: 30%; height: 61%;
+  clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+  background:
+    radial-gradient(circle at 50% 55%, color-mix(in srgb, var(--chest-bright) 28%, transparent), transparent 44%),
+    repeating-linear-gradient(90deg, transparent 0 22px, color-mix(in srgb, var(--chest-bright) 10%, transparent) 23px 24px),
+    linear-gradient(145deg, #273f51, #101922 75%);
+}
+.case-chest-v4 .case-chest-lid  { left: 12%; right: 12%; height: 23%; clip-path: polygon(0 0, 100% 0, 94% 100%, 6% 100%); }
+.case-chest-v4 .case-chest-lock { width: 9%; height: 24%; }
+.case-chest-v4 .case-chest-lock-body { clip-path: none; border-radius: 3px; }
+
+/* v5 — Crown / imperial */
+.case-chest-v5 { --lid-rest: 16%; }
+.case-chest-v5 .case-chest-body {
+  left: 7%; right: 7%; top: 33%; height: 56%;
+  clip-path: polygon(4% 0, 22% 0, 27% 8%, 73% 8%, 78% 0, 96% 0, 100% 100%, 0 100%);
+  background:
+    repeating-linear-gradient(45deg, transparent 0 12px, color-mix(in srgb, var(--chest-bright) 8%, transparent) 13px 14px),
+    linear-gradient(155deg, #3b2f00, #1a1a0a 70%);
+}
+.case-chest-v5 .case-chest-lid  { left: 7%; right: 7%; height: 24%; clip-path: polygon(3% 0, 97% 0, 100% 100%, 0 100%); }
+.case-chest-v5 .case-chest-lock { width: 20%; }
+
+/* ── Finish variants (f0–f3) — surface micro-variations ─────── */
+.case-chest-f1 .case-chest-body { filter: contrast(1.05) saturate(1.15); }
+.case-chest-f2 .case-chest-body-grid { background: repeating-linear-gradient(45deg, rgba(255,255,255,.04) 0 1px, transparent 1px 20px); }
+.case-chest-f3 .case-chest-body-shine { background: linear-gradient(200deg, rgba(255,255,255,.14) 0 25%, transparent 26%); }
+.case-chest-f3 .case-chest-body { filter: saturate(.85) brightness(.96); }
+
+/* ── Card variant (scaled-down inside case grid) ─────────────── */
+.dz-case-card__chest {
+  width: 82%;
+  height: 82%;
+  max-width: 160px;
+}
+.dz-case-card__chest .case-chest-assembly {
+  transform: scale(.72);
+  transform-origin: center bottom;
+}
+.dz-case-card__chest .case-chest-aura,
+.dz-case-card__chest .case-orbit-ring {
+  display: none;
+}
+/* Subtle idle pulse so the grid doesn't look dead */
+.dz-case-card__chest .case-chest-glyph {
+  animation: glyph-breathe 5s ease-in-out infinite alternate;
+}
+.dz-case-card__chest .case-chest-atmosphere {
+  animation-duration: 9s;
+  opacity: .05;
+}
+
+/* ── Detail page variant (larger stage) ──────────────────────── */
+.case-chest-detail {
+  width: min(100%, 22rem);
+  height: 13rem;
+}
+.case-chest-detail .case-chest-lid-mark {
+  font-size: 1rem;
+}
+.case-chest-detail .case-chest-glyph {
+  width: 55%;
+  height: 55%;
+}
