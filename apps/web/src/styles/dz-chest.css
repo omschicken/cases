@@ -463,7 +463,25 @@
   place-items: center;
   gap: 4px;
   transform-origin: bottom center;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 2px 20px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 hsl(var(--chest-hue) var(--chest-sat) 75% / 0.35),
+    inset 0 -6px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* Metallic sheen band — a diagonal catch-light, like brushed metal. */
+.chest-burst-lid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    hsl(var(--chest-hue) var(--chest-sat) 92% / 0.22) 48%,
+    transparent 62%
+  );
+  pointer-events: none;
 }
 
 .chest-burst-lid-mark {
@@ -515,14 +533,46 @@
   position: absolute;
   inset: 50% 0 0 0;
   border-radius: 0 0 12px 12px;
-  background: linear-gradient(
-    145deg,
-    hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.4)) 0%,
-    hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.22)) 100%
-  );
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 18%,
+      hsl(var(--chest-hue) var(--chest-sat) 70% / 0.05) 18% calc(18% + 1px)
+    ),
+    linear-gradient(
+      145deg,
+      hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.4)) 0%,
+      hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.22)) 100%
+    );
   display: grid;
   place-items: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 hsl(var(--chest-hue) var(--chest-sat) 70% / 0.2);
+}
+
+/* Corner brackets — same device the idle chest uses, so the burst reads
+   as the same object, not a stand-in. */
+.chest-burst-body::before,
+.chest-burst-body::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid hsl(var(--chest-hue) var(--chest-sat) 72% / 0.55);
+  pointer-events: none;
+}
+.chest-burst-body::before {
+  top: 8px;
+  left: 8px;
+  border-right: none;
+  border-bottom: none;
+}
+.chest-burst-body::after {
+  bottom: 8px;
+  right: 8px;
+  border-left: none;
+  border-top: none;
 }
 
 .chest-burst-glyph-wrap {
