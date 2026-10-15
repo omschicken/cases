@@ -674,3 +674,88 @@
   .dz-page-header { align-items: flex-start; }
   .dz-page-header__aside { width: 100%; }
 }
+
+/* ── Contextual ambient environment ─────────────────────────────────────
+   When a result is revealed, the case-detail page wrapper gets
+   data-rarity="GOLD" (etc.) and the page breathes the rarity's color.
+   This is a radial ambient glow behind all content — felt, not seen.
+   Only on .case-detail so it never leaks to other pages. */
+
+.case-detail {
+  position: relative;
+}
+
+/* Ambient layer — sits behind the content, overflow clips at the page edge */
+.case-detail::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 55% at 50% 0%,
+    var(--dz-ambient, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--dz-d-scene) var(--dz-e-enter);
+}
+
+/* Children must sit above the ambient layer */
+.case-detail > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Per-rarity ambient color tokens — each rarity gets its own glow character */
+.case-detail[data-rarity="CONSUMER"]   { --dz-ambient: rgba(176, 195, 217, 0.07); }
+.case-detail[data-rarity="INDUSTRIAL"] { --dz-ambient: rgba(94, 152, 217, 0.10); }
+.case-detail[data-rarity="MIL_SPEC"]   { --dz-ambient: rgba(75, 105, 255, 0.11); }
+.case-detail[data-rarity="RESTRICTED"] { --dz-ambient: rgba(136, 71, 255, 0.13); }
+.case-detail[data-rarity="CLASSIFIED"] { --dz-ambient: rgba(211, 44, 230, 0.14); }
+.case-detail[data-rarity="COVERT"]     { --dz-ambient: rgba(235, 75, 75, 0.16); }
+.case-detail[data-rarity="GOLD"]       { --dz-ambient: rgba(245, 200, 66, 0.18); }
+
+/* Show the ambient when rarity is set */
+.case-detail[data-rarity]::before {
+  opacity: 1;
+}
+
+/* dz-record entrance — slides up and fades in on reveal */
+.dz-record {
+  animation: dz-record-in var(--dz-d-move) var(--dz-e-enter) both;
+}
+
+@keyframes dz-record-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Chase rarities (Classified, Covert, Gold) get a stronger border pulse */
+.case-detail[data-rarity="CLASSIFIED"] .dz-record,
+.case-detail[data-rarity="COVERT"]     .dz-record,
+.case-detail[data-rarity="GOLD"]       .dz-record {
+  animation: dz-record-in var(--dz-d-move) var(--dz-e-enter) both,
+             dz-record-pulse 3s 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes dz-record-pulse {
+  from { box-shadow: 0 0 0 0 transparent; }
+  to   { box-shadow: 0 0 32px -4px var(--dz-rarity); }
+}
+
+/* Reduced motion: no animations, ambient stays static */
+@media (prefers-reduced-motion: reduce) {
+  .case-detail::before {
+    transition: none;
+  }
+  .dz-record {
+    animation: none;
+  }
+}

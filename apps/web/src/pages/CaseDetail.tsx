@@ -299,7 +299,10 @@ export function CaseDetailPage() {
     .slice(0, 5);
 
   return (
-    <div className="case-detail">
+    <div
+      className="case-detail"
+      data-rarity={revealed && winningItem ? winningItem.rarity : undefined}
+    >
       {protocolPhase && (
         <DropProtocol
           phase={protocolPhase}
@@ -350,11 +353,21 @@ export function CaseDetailPage() {
       <section className="dz-case-stage">
         <DropChamber
           className="dz-case-stage__chamber"
-          state="idle"
-          rarityColor={featuredItem ? rarityColor(featuredItem.rarity) : undefined}
+          state={revealed && winningItem ? "revealed" : "idle"}
+          rarityColor={
+            revealed && winningItem
+              ? rarityColor(winningItem.rarity)
+              : featuredItem
+                ? rarityColor(featuredItem.rarity)
+                : undefined
+          }
           depth={210}
           hudLeft={theCase.slug.toUpperCase()}
-          hudRight={t("caseDetail.featuredItem", { defaultValue: "FEATURED ITEM" })}
+          hudRight={
+            revealed && winningItem
+              ? t(`rarity.${winningItem.rarity}`, { defaultValue: RARITY_LABELS[winningItem.rarity] })
+              : t("caseDetail.featuredItem", { defaultValue: "FEATURED ITEM" })
+          }
         >
           <div className="dz-case-stage__art">
             {featuredItem && !featuredItem.imageUrl.startsWith("data:image")
