@@ -1,14 +1,14 @@
 /* ═══════════════════════════════════════════════════════════════════════
    DROP PROTOCOL — DROPZONE signature #3
 
-   The opening sequence, staged as one scene instead of three things
-   scattered down the page (a status line, a reel, and a result panel the
-   user had to scroll to). Four phases on one stage:
+   The opening sequence, staged as one scene instead of things scattered
+   down the page (a status line and a result panel the user had to scroll
+   to). Two phases on one stage:
 
-     ARMING      the chamber charges while the server decides
-     ACTIVATION  the reel runs inside the chamber frame
-     REVEAL      the item rises out of the cell, lit by its own rarity
-     INSPECTION  the item is presented for study, with the real odds
+     ARMING   the chest's own fullscreen overlay runs the whole burst →
+              reveal → settle sequence; this scene's stage underneath it
+              is just a frame
+     REVEAL   the item is presented for study, with the real odds
 
    The server remains the only authority on the outcome. This layer is
    presentation over a result that is already final before the first frame
@@ -191,43 +191,7 @@
   place-items: center;
 }
 
-/* Showcase stage: chest is the sole hero, filling ≥60% of screen. */
-.dz-protocol__showcase-stage {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
-  animation: showcase-enter 0.5s cubic-bezier(0.08, 0.92, 0.20, 1) both;
-}
-@keyframes showcase-enter {
-  from { opacity: 0; transform: scale(0.88); }
-  to   { opacity: 1; transform: scale(1); }
-}
-.dz-protocol__showcase-stage .case-chest-detail {
-  width: min(100%, 68rem);
-  height: clamp(22rem, 70vh, 46rem);
-}
-
-/* Rarity glow pulses around the chest in showcase */
-.dz-protocol__showcase-stage::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: radial-gradient(ellipse 50% 40% at 50% 50%,
-    color-mix(in srgb, var(--dz-rarity, hsl(26,85%,55%)) 22%, transparent),
-    transparent 70%);
-  pointer-events: none;
-  animation: showcase-glow-pulse 2s ease-in-out infinite alternate;
-}
-@keyframes showcase-glow-pulse {
-  from { opacity: 0.5; }
-  to   { opacity: 1.0; }
-}
-.dz-protocol__showcase-stage > * { position: relative; z-index: 1; }
-
-/* Burst stage: no chamber frame — the chest animates freely. */
+/* Burst stage: no chamber frame — the chest's own overlay animates freely. */
 .dz-protocol__burst-stage {
   position: relative;
   width: min(94vw, 900px);
@@ -255,14 +219,6 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-
-/* ── Reel slot ───────────────────────────────────────────────────────────
-   The existing CaseOpeningReel is mounted here untouched. It keeps its own
-   markup, timing and transitionend handling — the scene only frames it. */
-.dz-protocol__reel {
-  width: min(100%, 900px);
-  padding: 0 var(--dz-s4);
 }
 
 /* ── Reveal ──────────────────────────────────────────────────────────────
@@ -665,6 +621,4 @@
   .dz-protocol__item-art { animation: none; }
   .dz-protocol__item-art--apex { animation: none; }
   .dz-protocol__veil { animation: none; opacity: 0; }
-  .dz-protocol__showcase-stage { animation: none; }
-  .dz-protocol__showcase-stage::after { animation: none; }
 }

@@ -336,442 +336,189 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CINEMATIC OPENING SEQUENCE
-   Total: 1.25 s — fits within CASE_OPENING_DURATION_MS
-   ═══════════════════════════════════════════════════════════════
-
-   Timeline:
-     0–0.35s  BUILD-UP    chest trembles, gem pulses faster, corners glow
-     0.35–0.6s LOCK BREAK  gem blazes → shackle flies → lock shatters
-     0.5–0.85s LID SWING   lid rotates back 85°, interior light floods out
-     0.65–1.0s ERUPTION    beam shoots up, rings expand, atmosphere explodes
-     0.88–1.1s BLOOM       blinding white flash fills the chest
-     1.0–1.25s SETTLE      light fades, chest in open position
-
+   GSAP BURST OVERLAY — fullscreen opening sequence
+   Layout only. All motion (tension/crack/eruption/reveal/settle) is
+   driven by GSAP acting on these elements' refs — see
+   ChestOpeningOverlay.tsx. No @keyframes here by design: the
+   timeline there is the single source of truth for timing.
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Phase 1: Rattle — escalating shake ─────────────────────── */
-.case-chest-is-opening .case-chest-assembly {
-  animation: chest-rattle 1.25s cubic-bezier(.2,.7,.3,1) both;
-}
-@keyframes chest-rattle {
-  /* Compress spring inward then snap up */
-  0%    { transform: translateY(4px) scaleY(.97) scaleX(1.025); }
-  4%    { transform: translateY(-1px) rotate(.2deg); }
-  8%    { transform: translateY(1px) rotate(-.2deg); }
-  12%   { transform: translateY(-1px) rotate(.3deg); }
-  /* Increasing shake */
-  16%   { transform: translate(-2px, 1px) rotate(-.5deg); }
-  20%   { transform: translate(3px, -2px) rotate(.7deg); }
-  24%   { transform: translate(-3px, 0) rotate(-.4deg); }
-  28%   { transform: translate(4px, -2px) rotate(.8deg); }
-  /* Violent rattle */
-  32%   { transform: translate(-5px, 2px) rotate(-1.2deg); }
-  36%   { transform: translate(6px, -3px) rotate(1.4deg); }
-  40%   { transform: translate(-6px, 1px) rotate(-1deg); }
-  /* Lock shatters — brief upward recoil */
-  44%   { transform: translate(2px, -5px) rotate(.4deg); }
-  48%   { transform: translate(-1px, -8px) rotate(-.2deg); }
-  /* Lid lifts — chest floats up */
-  56%   { transform: translateY(-10px); }
-  72%   { transform: translateY(-14px); }
-  88%   { transform: translateY(-12px); }
-  100%  { transform: translateY(-6px); }
-}
-
-/* ── Phase 3: Lid opens in 3D perspective ────────────────────── */
-.case-chest-is-opening .case-chest-lid {
-  animation: chest-lid-open 1.25s cubic-bezier(.15,.85,.22,1) both !important;
-}
-@keyframes chest-lid-open {
-  0%,38%  { top: var(--lid-rest, 20%); transform: rotateX(0deg); }
-  54%     { top: calc(var(--lid-rest, 20%) - 4%);  transform: rotateX(-28deg); }
-  72%,100%{ top: calc(var(--lid-rest, 20%) - 20%); transform: rotateX(-88deg); }
-}
-
-/* ── Phase 2: Lock breaks ────────────────────────────────────── */
-.case-chest-is-opening .case-chest-lock {
-  animation: lock-break 1.25s ease-in both;
-}
-@keyframes lock-break {
-  0%,30%  { opacity: 1; transform: translateX(-50%) scale(1)     filter: brightness(1); }
-  40%     { opacity: 1; transform: translateX(-50%) scale(1.15);  filter: brightness(2); }
-  48%     { opacity: 1; transform: translateX(-50%) scale(1.3);   filter: brightness(4); }
-  56%,100%{ opacity: 0; transform: translate(-50%, -70%) scale(.4) rotate(25deg); filter: brightness(6); }
-}
-
-.case-chest-is-opening .case-chest-lock-gem {
-  animation: gem-blaze 1.25s ease-in both;
-}
-@keyframes gem-blaze {
-  0%,22%  { opacity: .9; box-shadow: 0 0 6px 2px var(--chest-bright); }
-  30%     { opacity: 1;  box-shadow: 0 0 12px 5px var(--chest-glow),  0 0 28px 12px var(--chest-bright); animation-timing-function: ease-out; }
-  40%     { opacity: 1;  box-shadow: 0 0 22px 10px var(--chest-glow), 0 0 60px 28px var(--chest-bright); }
-  50%,100%{ opacity: 0;  box-shadow: none; }
-}
-
-.case-chest-is-opening .case-chest-lock-shackle {
-  animation: shackle-fly 1.25s ease-in both;
-}
-@keyframes shackle-fly {
-  0%,32%  { opacity: 1; transform: translateY(0) rotate(0deg); }
-  50%,100%{ opacity: 0; transform: translateY(-160%) rotate(-30deg); }
-}
-
-/* ── Interior light: floods from the crack as lid opens ─────── */
-.case-chest-interior-light {
-  position: absolute;
-  z-index: 5;
-  left: 8%; right: 8%;
-  top: 41%;
-  height: 4px;
-  background: var(--chest-glow);
-  box-shadow:
-    0 -30px 60px 30px var(--chest-bright),
-    0 0     20px 10px var(--chest-glow);
-  opacity: 0;
-  filter: blur(2px);
-  pointer-events: none;
-  animation: interior-light 1.25s ease-out both;
-}
-@keyframes interior-light {
-  0%,46%  { opacity: 0;  transform: scaleX(.1); }
-  55%     { opacity: .5; transform: scaleX(.7); }
-  64%     { opacity: 1;  transform: scaleX(1);  box-shadow: 0 -60px 120px 60px var(--chest-bright), 0 0 40px 20px var(--chest-glow); }
-  80%     { opacity: .8; }
-  100%    { opacity: 0;  transform: scaleX(1.2); }
-}
-
-/* ── Vertical beam: light pillar shoots upward ───────────────── */
-.case-chest-beam {
-  position: absolute;
-  z-index: 6;
-  left: 50%;
-  bottom: 42%;
-  width: 12px;
-  height: 0;
-  transform: translateX(-50%);
-  background: linear-gradient(to top, var(--chest-bright) 0%, var(--chest-glow) 40%, transparent 100%);
-  filter: blur(4px);
-  opacity: 0;
-  pointer-events: none;
-  animation: beam-rise 1.25s ease-out both;
-}
-@keyframes beam-rise {
-  0%,50%  { height: 0; opacity: 0; }
-  58%     { height: 0; opacity: 1; }
-  72%     { height: 140%; opacity: 1; filter: blur(4px); }
-  84%     { height: 200%; opacity: .7; filter: blur(6px); }
-  100%    { height: 260%; opacity: 0; filter: blur(10px); }
-}
-
-/* ── Spark burst: 10 sparks fly from lock position ───────────── */
-.case-chest-sparks {
-  position: absolute;
-  z-index: 9;
-  left: 50%;
-  top: 16%;
-  width: 0; height: 0;
-  pointer-events: none;
-}
-.case-chest-spark {
-  position: absolute;
-  width: 4px; height: 4px;
-  border-radius: 50%;
-  background: var(--chest-glow);
-  box-shadow: 0 0 6px 2px var(--chest-bright);
-  opacity: 0;
-  /* Each spark fires at a unique angle: 36° × i */
-  animation: spark-fly-1 1.25s ease-out both;
-  animation-name: spark-fly-1;
-}
-/* Different angle per spark using nth-child */
-.case-chest-spark:nth-child(1)  { animation: spark-fly  1.25s ease-out  .44s both; --sa: -18deg;  --sd: 48px; }
-.case-chest-spark:nth-child(2)  { animation: spark-fly  1.0s  ease-out  .42s both; --sa: 18deg;   --sd: 42px; }
-.case-chest-spark:nth-child(3)  { animation: spark-fly  1.15s ease-out  .46s both; --sa: 54deg;   --sd: 55px; }
-.case-chest-spark:nth-child(4)  { animation: spark-fly  1.1s  ease-out  .43s both; --sa: -54deg;  --sd: 50px; }
-.case-chest-spark:nth-child(5)  { animation: spark-fly  0.9s  ease-out  .45s both; --sa: 90deg;   --sd: 38px; }
-.case-chest-spark:nth-child(6)  { animation: spark-fly  1.2s  ease-out  .41s both; --sa: -90deg;  --sd: 46px; }
-.case-chest-spark:nth-child(7)  { animation: spark-fly  1.05s ease-out  .47s both; --sa: 126deg;  --sd: 52px; }
-.case-chest-spark:nth-child(8)  { animation: spark-fly  0.95s ease-out  .44s both; --sa: -126deg; --sd: 44px; }
-.case-chest-spark:nth-child(9)  { animation: spark-fly  1.18s ease-out  .42s both; --sa: 162deg;  --sd: 58px; }
-.case-chest-spark:nth-child(10) { animation: spark-fly  1.08s ease-out  .43s both; --sa: -162deg; --sd: 40px; }
-.case-chest-spark:nth-child(11) { animation: spark-fly  1.12s ease-out  .44s both; --sa: 36deg;   --sd: 60px; }
-.case-chest-spark:nth-child(12) { animation: spark-fly  0.88s ease-out  .46s both; --sa: -36deg;  --sd: 54px; }
-.case-chest-spark:nth-child(13) { animation: spark-fly  1.22s ease-out  .43s both; --sa: 72deg;   --sd: 62px; }
-.case-chest-spark:nth-child(14) { animation: spark-fly  0.98s ease-out  .45s both; --sa: -72deg;  --sd: 58px; }
-
-@keyframes spark-fly {
-  0%   { opacity: 0;   transform: rotate(var(--sa)) translateY(0)             scale(0); }
-  8%   { opacity: 1;   transform: rotate(var(--sa)) translateY(-6px)          scale(1.8); }
-  40%  { opacity: .9;  transform: rotate(var(--sa)) translateY(calc(var(--sd) * -0.6)) scale(1.2); }
-  100% { opacity: 0;   transform: rotate(var(--sa)) translateY(calc(var(--sd) * -1))   scale(.3); }
-}
-
-/* ── Expanding rings: sonar-like energy pulses ───────────────── */
-.case-chest-rings {
-  position: absolute;
-  z-index: 1;
-  left: 50%;
-  top: 46%;
-  width: 0; height: 0;
-  pointer-events: none;
-}
-.case-chest-ring {
-  position: absolute;
-  border: 2px solid var(--chest-bright);
-  border-radius: 50%;
-  opacity: 0;
-  /* Centered: negative margin = half width */
-  animation: ring-expand 1.25s ease-out both;
-  animation-delay: calc(.62s + var(--ring-i, 0) * .11s);
-}
-@keyframes ring-expand {
-  0%   { opacity: .9; width: 8px;   height: 8px;   margin: -4px  0 0 -4px;  filter: blur(0); }
-  40%  { opacity: .5; }
-  100% { opacity: 0;  width: 320px; height: 220px; margin: -110px 0 0 -160px; filter: blur(3px); }
-}
-
-/* ── God rays: spinning conic sunburst ───────────────────────── */
-.case-chest-rays {
-  position: absolute;
-  z-index: 0;
-  left: 50%;
-  top: 35%;
-  width: 520px;
-  height: 520px;
-  margin-left: -260px;
-  margin-top: -260px;
-  border-radius: 50%;
-  background: repeating-conic-gradient(
-    from 0deg,
-    color-mix(in srgb, var(--chest-bright) 80%, transparent) 0deg 4deg,
-    transparent 4deg 11deg,
-    color-mix(in srgb, var(--chest-glow) 60%, transparent) 11deg 14deg,
-    transparent 14deg 30deg
-  );
-  mask: radial-gradient(circle, transparent 10%, rgba(255,255,255,.85) 18%, rgba(255,255,255,1) 52%, transparent 70%);
-  -webkit-mask: radial-gradient(circle, transparent 10%, rgba(255,255,255,.85) 18%, rgba(255,255,255,1) 52%, transparent 70%);
-  opacity: 0;
-  transform: rotate(-15deg) scale(.2);
-  pointer-events: none;
-  animation: rays-burst 1.25s ease-out both;
-}
-@keyframes rays-burst {
-  0%, 55%  { opacity: 0; transform: rotate(-15deg) scale(.2); }
-  64%      { opacity: .85; transform: rotate(0deg) scale(.75); }
-  78%      { opacity: .65; transform: rotate(16deg) scale(1.1); }
-  90%      { opacity: .28; transform: rotate(30deg) scale(1.45); }
-  100%     { opacity: 0; transform: rotate(48deg) scale(1.9); }
-}
-
-/* ── Shockwave: expanding elliptical pressure ring ───────────── */
-.case-chest-shockwave {
-  position: absolute;
-  z-index: 1;
-  left: 50%;
-  top: 14%;
-  width: 340px;
-  height: 220px;
-  margin-left: -170px;
-  margin-top: -110px;
-  border-radius: 50%;
-  border: 2px solid var(--chest-bright);
-  box-shadow:
-    0 0 14px 5px var(--chest-bright),
-    0 0 32px 10px color-mix(in srgb, var(--chest-glow) 45%, transparent),
-    inset 0 0 14px 4px color-mix(in srgb, var(--chest-bright) 20%, transparent);
-  opacity: 0;
-  transform: scale(.03);
-  pointer-events: none;
-  animation: shockwave-ring 1.25s ease-out both;
-}
-@keyframes shockwave-ring {
-  0%, 46%  { opacity: 0; transform: scale(.03); }
-  50%      { opacity: 1; transform: scale(.07); border-width: 3px; }
-  62%      { opacity: .8; transform: scale(.65); filter: blur(.5px); }
-  78%      { opacity: .4; transform: scale(1.35); filter: blur(2px); border-width: 1.5px; }
-  100%     { opacity: 0; transform: scale(2.3); filter: blur(7px); border-width: 1px; }
-}
-
-/* ── Flare: central bloom flash ──────────────────────────────── */
-.case-chest-flare {
-  position: absolute;
-  z-index: 8;
-  left: 50%; top: 38%;
-  width: 6rem; height: 6rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, #fff 0 20%, var(--chest-glow) 22% 50%, transparent 52%);
-  box-shadow:
-    0 0 30px 16px var(--chest-bright),
-    0 0 80px 40px var(--chest-glow),
-    0 0 160px 80px color-mix(in srgb, var(--chest-bright) 25%, transparent);
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(.1);
-  animation: flare-bloom 1.25s ease-out both;
-  pointer-events: none;
-}
-@keyframes flare-bloom {
-  0%,55%  { opacity: 0;  transform: translate(-50%,-50%) scale(.1); }
-  68%     { opacity: .6; transform: translate(-50%,-50%) scale(.8); }
-  78%     { opacity: 1;  transform: translate(-50%,-50%) scale(1.2); }
-  88%     { opacity: .9; transform: translate(-50%,-50%) scale(1.5); }
-  100%    { opacity: 0;  transform: translate(-50%,-50%) scale(3.5); }
-}
-
-/* ── Scan line ───────────────────────────────────────────────── */
-.case-chest-scan {
-  position: absolute;
-  z-index: 7;
-  left: 6%; right: 6%;
-  top: 14%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--chest-glow) 25%, #fff 50%, var(--chest-glow) 75%, transparent);
-  box-shadow: 0 0 12px 4px var(--chest-bright);
-  opacity: 0;
-  animation: scan-sweep 1.25s ease-in-out both;
-  pointer-events: none;
-}
-@keyframes scan-sweep {
-  0%,12% { opacity: 0;   transform: translateY(0); }
-  22%    { opacity: 1;   transform: translateY(0); }
-  78%    { opacity: .4;  transform: translateY(9.5rem); }
-  100%   { opacity: 0;   transform: translateY(11rem); }
-}
-
-/* ── Atmosphere eruption ─────────────────────────────────────── */
-.case-chest-is-opening .case-chest-atmosphere {
-  animation: atmosphere-erupt 1.25s ease-out both;
-}
-@keyframes atmosphere-erupt {
-  0%,38% { opacity: .06; transform: scale(.88); filter: blur(44px); }
-  62%    { opacity: .5;  transform: scale(1.6); filter: blur(50px); }
-  80%    { opacity: .8;  transform: scale(2.2); filter: blur(60px); }
-  100%   { opacity: .06; transform: scale(2.8); filter: blur(80px); }
-}
-
-/* ── Aura during opening ─────────────────────────────────────── */
-.case-chest-is-opening .case-chest-aura {
-  animation: aura-erupt 1.25s ease-out both;
-}
-@keyframes aura-erupt {
-  0%     { opacity: .18; transform: scale(.85); filter: blur(24px); }
-  50%    { opacity: .55; transform: scale(1.2); filter: blur(28px); }
-  70%    { opacity: .8;  transform: scale(1.7); filter: blur(34px); }
-  100%   { opacity: .08; transform: scale(2.4); filter: blur(50px); }
-}
-
-/* ── Orbit rings spin fast, then scatter ─────────────────────── */
-.case-chest-is-opening .case-orbit-ring {
-  animation: orbit-scatter 1.25s ease-out both;
-}
-@keyframes orbit-scatter {
-  0%    { opacity: .5;  transform: rotate(0deg)   scale(1); }
-  40%   { opacity: .9;  transform: rotate(180deg) scale(1.1); }
-  65%   { opacity: .6;  transform: rotate(380deg) scale(1.5); }
-  100%  { opacity: 0;   transform: rotate(600deg) scale(2.5); }
-}
-
-/* ── Glyph flares and burns out ──────────────────────────────── */
-.case-chest-is-opening .case-chest-glyph {
-  animation: glyph-burnout 1.25s ease-out both;
-}
-@keyframes glyph-burnout {
-  0%,30%  { opacity: .85; filter: drop-shadow(0 0 4px var(--chest-bright)); }
-  48%     { opacity: 1;   filter: drop-shadow(0 0 18px var(--chest-glow)) brightness(3); }
-  62%     { opacity: 1;   filter: drop-shadow(0 0 30px var(--chest-glow)) brightness(6) blur(1px); }
-  78%,100%{ opacity: 0;   filter: none; }
-}
-
-/* ── Body shine blazes ───────────────────────────────────────── */
-.case-chest-is-opening .case-chest-body-shine {
-  animation: body-blaze 1.25s ease-out both;
-}
-@keyframes body-blaze {
-  0%,42%  { opacity: 1; background: linear-gradient(170deg, rgba(255,255,255,.09) 0 35%, transparent 36%); }
-  62%     { background: linear-gradient(170deg, rgba(255,255,255,.35) 0 50%, rgba(255,255,255,.1) 51%); opacity: 1; }
-  80%     { background: rgba(255,255,255,.18); opacity: 1; }
-  100%    { opacity: 0; }
-}
-
-/* ── Corner accents flash ────────────────────────────────────── */
-.case-chest-is-opening .case-chest-corner {
-  animation: corner-flash 1.25s ease-out both;
-}
-@keyframes corner-flash {
-  0%,38%  { opacity: .75; }
-  55%     { opacity: 1; box-shadow: 0 0 8px 3px var(--chest-bright); }
-  72%,100%{ opacity: 0; }
-}
-
-/* ── Lid edge blazes ─────────────────────────────────────────── */
-.case-chest-is-opening .case-chest-lid-edge {
-  animation: lid-edge-blaze 1.25s ease-out both;
-}
-@keyframes lid-edge-blaze {
-  0%,44%  { opacity: .9;  box-shadow: 0 0 8px 1px var(--chest-bright); }
-  58%     { opacity: 1;   box-shadow: 0 0 30px 12px var(--chest-glow); }
-  80%,100%{ opacity: 0;   box-shadow: none; }
-}
-
-/* ── Nameband fades ──────────────────────────────────────────── */
-.case-chest-is-opening .case-chest-nameband {
-  animation: nameband-fade 1.25s ease-in both;
-}
-@keyframes nameband-fade {
-  0%,38%  { opacity: .8; }
-  62%,100%{ opacity: 0; }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   FULLSCREEN BURST OVERLAY
-   Portal rendered over everything when opening=true.
-   The chest gets room to breathe — rays, shockwave, flare reach
-   the edges of the screen without being clipped.
-   ═══════════════════════════════════════════════════════════════ */
-
-.case-chest-burst-overlay {
+.chest-burst-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9950;
+  z-index: 9999;
   display: grid;
   place-items: center;
   background: rgba(0, 0, 0, 0.92);
   backdrop-filter: blur(6px) saturate(0.3);
   -webkit-backdrop-filter: blur(6px) saturate(0.3);
+}
+
+.chest-burst-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
   pointer-events: none;
-  animation: burst-overlay-enter 0.1s ease both;
-}
-@keyframes burst-overlay-enter {
-  from { opacity: 0; }
-  to   { opacity: 1; }
 }
 
-.case-chest-burst-overlay--exit {
-  animation: burst-overlay-exit 0.26s ease both;
-}
-@keyframes burst-overlay-exit {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
-/* Chest inside the overlay — unconstrained size, effects can bleed to edges */
-.case-chest-burst-fullscreen {
-  width: min(80vw, 520px) !important;
-  height: clamp(300px, 46vh, 420px) !important;
-  /* No overflow clipping — rays and shockwave fill the screen */
-  overflow: visible !important;
+.chest-burst-stage {
+  position: relative;
+  z-index: 2;
+  width: min(90vw, 560px);
+  height: min(70vh, 560px);
+  display: grid;
+  place-items: center;
+  perspective: 900px;
 }
 
-/* The overlay itself has overflow:visible so portal children can escape the chest box */
-.case-chest-burst-overlay {
-  overflow: visible;
+.chest-burst-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chest-burst-beam {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  width: 42%;
+  height: 65vh;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: bottom center;
+  background: linear-gradient(to top, hsl(var(--chest-hue) var(--chest-sat) var(--chest-lit)) 0%, transparent 100%);
+  opacity: 0;
+  filter: blur(18px);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.chest-burst-chest {
+  position: relative;
+  width: min(58vw, 300px);
+  height: min(38vh, 200px);
+  transform-style: preserve-3d;
+}
+
+.chest-burst-lid {
+  position: absolute;
+  inset: 0 0 50% 0;
+  border-radius: 12px 12px 0 0;
+  background: linear-gradient(
+    145deg,
+    hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.55)) 0%,
+    hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.3)) 100%
+  );
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  transform-origin: bottom center;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+}
+
+.chest-burst-lid-mark {
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  color: hsl(var(--chest-hue) var(--chest-sat) 85%);
+}
+
+.chest-burst-lid-serial {
+  font-size: 0.65rem;
+  opacity: 0.5;
+  color: hsl(var(--chest-hue) var(--chest-sat) 85%);
+}
+
+.chest-burst-lock {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border-radius: 50%;
+  background: hsl(var(--chest-hue) var(--chest-sat) 20%);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.chest-burst-lock-gem {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: hsl(var(--chest-hue) var(--chest-sat) 70%);
+  box-shadow: 0 0 10px 3px hsl(var(--chest-hue) var(--chest-sat) 60%);
+}
+
+.chest-burst-body {
+  position: absolute;
+  inset: 50% 0 0 0;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(
+    145deg,
+    hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.4)) 0%,
+    hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.22)) 100%
+  );
+  display: grid;
+  place-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.chest-burst-glyph-wrap {
+  width: 56px;
+  height: 56px;
+  color: hsl(var(--chest-hue) var(--chest-sat) 70%);
+  opacity: 0.6;
+}
+
+.chest-burst-item {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+}
+
+.chest-burst-item img {
+  width: min(32vw, 180px);
+  max-height: 40vh;
+  object-fit: contain;
+  filter: drop-shadow(0 0 30px hsl(var(--chest-hue) var(--chest-sat) 60%));
+  transform-style: preserve-3d;
+}
+
+.chest-burst-item-glow {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsl(var(--chest-hue) var(--chest-sat) 60%) 0%, transparent 70%);
+  opacity: 0.5;
+  filter: blur(20px);
+  z-index: -1;
+}
+
+.chest-burst-name {
+  position: absolute;
+  bottom: 8%;
+  z-index: 5;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: translateY(16px);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .case-chest-burst-overlay,
-  .case-chest-burst-overlay--exit {
-    animation: none;
+  .chest-burst-overlay {
+    display: none;
   }
 }
 

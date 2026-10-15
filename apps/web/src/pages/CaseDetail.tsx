@@ -3,11 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../lib/api";
-import { playChestOpen, playRevealChord } from "../lib/openingSound";
 import { formatMinor } from "../lib/money";
-import { isChaseRarity, RARITY_LABELS, RARITY_RANK, rarityColor } from "../lib/rarity";
+import { RARITY_LABELS, RARITY_RANK, rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
-import { CaseOpeningReel } from "../components/CaseOpeningReel";
 import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol";
 import { ItemCard } from "../components/dz/ItemCard";
 import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
@@ -94,9 +92,6 @@ function weightedSample(items: CaseItem[]): CaseItem {
   return items[items.length - 1];
 }
 
-const QUICK_SPIN_KEY = "gundone.quickSpin";
-const CASE_OPENING_DURATION_MS = 1250;
-const SHOWCASE_DURATION_MS = 2000;
 const PREVIEW_ART = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 420'%3E%3Crect width='640' height='420' fill='%23151b2d'/%3E%3Cpath d='M80 300 220 100l140 200 90-120 110 120' fill='none' stroke='%23b86bff' stroke-width='10'/%3E%3C/svg%3E";
 
 function previewCase(slug: string): CaseDto {
@@ -125,39 +120,15 @@ export function CaseDetailPage() {
   const [seedHash, setSeedHash] = useState<string | null>(null);
   const [clientSeed, setClientSeed] = useState<string | null>(null);
   const [opening, setOpening] = useState(false);
-  const [showcasing, setShowcasing] = useState(false);
-  const showcaseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [result, setResult] = useState<OpenCaseResult | null>(null);
   const [demoItem, setDemoItem] = useState<CaseItem | null>(null);
   const [revealed, setRevealed] = useState(false);
-  const [spinKey, setSpinKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [requestId, setRequestId] = useState(0);
   // The staged opening scene is dismissible; the page below keeps the result
   // panel, so closing it never hides the provably-fair record.
   const [protocolDismissed, setProtocolDismissed] = useState(false);
   const openingLockRef = useRef(false);
-  const [quickSpin, setQuickSpin] = useState(() => {
-    try {
-      return localStorage.getItem(QUICK_SPIN_KEY) === "1";
-    } catch {
-      return false;
-    }
-  });
-
-  function toggleQuickSpin(next: boolean) {
-    setQuickSpin(next);
-    try {
-      localStorage.setItem(QUICK_SPIN_KEY, next ? "1" : "0");
-    } catch {
-      // Private-browsing/blocked storage — the toggle still works for this visit.
-    }
-  }
-
-  function openingDelay() {
-    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    return new Promise<void>((resolve) => window.setTimeout(resolve, reducedMotion ? 80 : CASE_OPENING_DURATION_MS));
-  }
 
   useEffect(() => {
     if (!slug) return;
@@ -206,70 +177,47 @@ export function CaseDetailPage() {
       .catch(() => undefined);
   }, [user]);
 
-  // Play reveal chord when the reel finishes and item appears.
-  useEffect(() => {
-    if (revealed && winningItem) {
-      playRevealChord(winningItem.rarity);
-    }
-  // winningItem identity is stable once set — rarity never changes mid-session
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [revealed]);
-
-  function startShowcase() {
-    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    const duration = reducedMotion ? 50 : SHOWCASE_DURATION_MS;
-    setShowcasing(true);
-    showcaseTimerRef.current = setTimeout(() => setShowcasing(false), duration);
+  /** Fires once the chest's own burst/reveal overlay has settled on the item. */
+  function handleChestRevealed() {
+    setOpening(false);
+    setRevealed(true);
+    openingLockRef.current = false;
   }
 
   async function openCase() {
     if (!theCase || openingLockRef.current) return;
     openingLockRef.current = true;
     setError(null);
-    playChestOpen();
     setOpening(true);
     setRevealed(false);
     setResult(null);
     setDemoItem(null);
     setProtocolDismissed(false);
-    let success = false;
     try {
-      // The result is fully determined here — the reel below just animates
-      // toward it, it never influences the outcome.
-      const [response] = await Promise.allSettled([
-        api.post<OpenCaseResult>("/cases/open", { caseId: theCase.id }),
-        openingDelay(),
-      ]);
-      if (response.status === "rejected") throw response.reason;
-      setResult(response.value);
-      setSpinKey((k) => k + 1);
-      success = true;
+      // The result is fully determined here — the chest overlay below just
+      // animates toward it, it never influences the outcome. The overlay
+      // holds its own reveal step until this resolves and winningItem is set.
+      const response = await api.post<OpenCaseResult>("/cases/open", { caseId: theCase.id });
+      setResult(response);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotOpenCase"));
-      openingLockRef.current = false;
-    } finally {
       setOpening(false);
+      openingLockRef.current = false;
     }
-    if (success) startShowcase();
   }
 
-  // No account, no money, no server call — just a client-side preview of the
-  // reel so visitors can see how it feels before logging in.
-  async function demoSpin() {
+  // No account, no money, no server call — just a client-side preview so
+  // visitors can see how it feels before logging in. The item is known
+  // immediately, so the chest overlay's reveal step never has to wait.
+  function demoSpin() {
     if (!theCase || openingLockRef.current) return;
     openingLockRef.current = true;
     setError(null);
     setResult(null);
-    setDemoItem(null);
     setRevealed(false);
-    playChestOpen();
-    setOpening(true);
     setProtocolDismissed(false);
-    await openingDelay();
+    setOpening(true);
     setDemoItem(weightedSample(theCase.items));
-    setSpinKey((k) => k + 1);
-    setOpening(false);
-    startShowcase();
   }
 
   if (error && !theCase) return (
@@ -289,36 +237,25 @@ export function CaseDetailPage() {
   );
 
   const winningItem = result?.item ?? demoItem;
-  const spinning = winningItem !== null && !revealed;
 
   // Phase is derived, never stored, so it cannot drift from the opening
   // state it describes. A failed request leaves opening false with no item,
-  // which resolves to null here and closes the scene on its own.
+  // which resolves to null here and closes the scene on its own. The chest's
+  // own overlay owns the whole burst→reveal choreography now, so there's
+  // nothing left to stage between "arming" and "reveal".
   const protocolPhase: ProtocolPhase | null = protocolDismissed
     ? null
-    : opening && !winningItem
+    : opening
       ? "arming"
-      : showcasing
-        ? "showcase"
-        : winningItem && !revealed
-          ? "activation"
-          : winningItem && revealed
-            ? "reveal"
-            : null;
+      : winningItem && revealed
+        ? "reveal"
+        : null;
 
   /** Ends the animation early. The outcome was decided by the server before
-   *  the first frame, so this reveals what already dropped — it never
-   *  re-rolls, and the reel is unmounted rather than hurried. */
+   *  the first frame, so this just cuts the chest overlay's own choreography
+   *  short and shows what already dropped — it never re-rolls. */
   function skipAnimation() {
-    if (showcasing) {
-      // Skip the showcase — jump straight to the reel.
-      if (showcaseTimerRef.current) {
-        clearTimeout(showcaseTimerRef.current);
-        showcaseTimerRef.current = null;
-      }
-      setShowcasing(false);
-      return;
-    }
+    setOpening(false);
     setRevealed(true);
     openingLockRef.current = false;
   }
@@ -355,18 +292,12 @@ export function CaseDetailPage() {
               caseName={theCase.name}
               caseSlug={theCase.slug}
               opening={opening}
-              open={showcasing}
+              itemImageUrl={winningItem?.imageUrl}
+              itemName={winningItem?.name}
+              itemRarity={winningItem?.rarity}
+              onRevealed={handleChestRevealed}
             />
           }
-          reel={winningItem && (
-            <CaseOpeningReel
-              key={spinKey}
-              poolItems={theCase.items}
-              winningItem={winningItem}
-              onFinished={() => { setRevealed(true); openingLockRef.current = false; }}
-              quick={quickSpin}
-            />
-          )}
           onSkip={skipAnimation}
           onClose={() => setProtocolDismissed(true)}
           onOpenAgain={openCase}
@@ -455,32 +386,21 @@ export function CaseDetailPage() {
         </div>
       )}
 
-      <div className="dz-chips" role="group" aria-label={t("caseDetail.spinMode", { defaultValue: "Режим открытия" })}>
-        <button type="button" className="dz-chip" aria-pressed={!quickSpin} onClick={() => toggleQuickSpin(false)} disabled={opening || spinning}>
-          {t("caseDetail.spinFull")}
-        </button>
-        <button type="button" className="dz-chip" aria-pressed={quickSpin} onClick={() => toggleQuickSpin(true)} disabled={opening || spinning}>
-          {t("caseDetail.spinQuick")}
-        </button>
-      </div>
-
       {user && !isPreview ? (
         <div className="dz-confirm">
-          <button onClick={openCase} disabled={opening || spinning} className="dz-commit">
+          <button onClick={openCase} disabled={opening} className="dz-commit">
             {opening
               ? t("caseDetail.rolling")
-              : spinning
-                ? t("caseDetail.spinning")
-                : t("caseDetail.openFor", { price: formatMinor(theCase.priceMinor, theCase.currency) })}
+              : t("caseDetail.openFor", { price: formatMinor(theCase.priceMinor, theCase.currency) })}
           </button>
-          <button onClick={demoSpin} disabled={opening || spinning} className="dz-btn" title={t("caseDetail.demoSpin")}>
+          <button onClick={demoSpin} disabled={opening} className="dz-btn" title={t("caseDetail.demoSpin")}>
             {t("caseDetail.demoSpin")}
           </button>
         </div>
       ) : (
         <>
-          <button onClick={demoSpin} disabled={opening || spinning} className="dz-btn" aria-describedby={isPreview ? "catalog-preview-notice" : undefined}>
-            {opening ? t("caseDetail.rolling") : spinning ? t("caseDetail.spinning") : t("caseDetail.demoSpin")}
+          <button onClick={demoSpin} disabled={opening} className="dz-btn" aria-describedby={isPreview ? "catalog-preview-notice" : undefined}>
+            {opening ? t("caseDetail.rolling") : t("caseDetail.demoSpin")}
           </button>
           <p className="hint">
             {isPreview

@@ -1,15 +1,18 @@
 import type { CSSProperties } from "react";
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { ChestOpeningOverlay } from "./ChestOpeningOverlay";
 
 type CaseChestProps = {
   caseName: string;
   caseSlug: string;
   itemImageUrl?: string;
+  itemName?: string;
+  itemRarity?: string;
   className?: string;
   opening?: boolean;
   /** Chest is frozen-open after the burst, during the showcase phase. */
   open?: boolean;
+  /** Called once the burst/reveal sequence inside the overlay has settled. */
+  onRevealed?: () => void;
 };
 
 /** Stable visual identity: a case keeps the same treatment in every view. */
@@ -26,7 +29,7 @@ export function caseVisualIdentity(caseSlug: string) {
 }
 
 /** Main glyph SVG per variant */
-function CaseGlyph({ variant }: { variant: number }) {
+export function CaseGlyph({ variant }: { variant: number }) {
   const shapes = [
     // 0 — flame
     <path key="flame" d="M32 6c4 14-3 18-8 26-4 6-3 13 2 17-2-9 8-12 8-21 11 10 17 19 14 28-2 11-12 18-23 17C13 72 5 62 8 50c2-9 9-15 15-22-1 10 4 14 9 16-4-12 3-21 0-38Z" strokeWidth="2"/>,
@@ -59,53 +62,38 @@ function OrbitRing({ radius, count, delay }: { radius: number; count: number; de
   );
 }
 
-/** Decorative case preview — never represents an opening result. */
-export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", opening = false, open = false }: CaseChestProps) {
+/**
+ * Decorative case preview — never represents an opening result on its own.
+ *
+ * Idle and frozen-open ("showcase") states render in place, as before.
+ * The actual burst/reveal sequence is a separate fullscreen overlay
+ * (ChestOpeningOverlay) so it gets the whole screen instead of this
+ * component's small footprint — this element just hides while that's live.
+ */
+export function CaseChest({
+  caseName, caseSlug, itemImageUrl, itemName, itemRarity, className = "",
+  opening = false, open = false, onRevealed,
+}: CaseChestProps) {
   const { seed, variant, hue, finish } = caseVisualIdentity(caseSlug);
   const mark = caseName.replace(/\s*case$/i, "").slice(0, 3).toUpperCase();
   const serial = String(seed % 10000).padStart(4, "0");
   const saturation = [65, 72, 58, 80, 55, 70][variant];
   const lightness  = [52, 60, 48, 55, 58, 65][finish % 4];
 
-  const [overlayAlive, setOverlayAlive] = useState(false);
-  const [overlayExiting, setOverlayExiting] = useState(false);
-  const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (opening) {
-      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
-      setOverlayAlive(true);
-      setOverlayExiting(false);
-    } else if (overlayAlive) {
-      setOverlayExiting(true);
-      exitTimerRef.current = setTimeout(() => {
-        setOverlayAlive(false);
-        setOverlayExiting(false);
-      }, 260);
-    }
-    return () => { if (exitTimerRef.current) clearTimeout(exitTimerRef.current); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [opening]);
-
+  const cls = `case-chest case-chest-v${variant} case-chest-f${finish} ${open ? "case-chest-is-open" : ""} ${className}`;
   const cssVars = {
     "--chest-hue": hue,
     "--chest-sat": `${saturation}%`,
     "--chest-lit": `${lightness}%`,
   } as CSSProperties;
 
-  function buildBody(portalMode: boolean) {
-    const cls = [
-      "case-chest",
-      `case-chest-v${variant}`,
-      `case-chest-f${finish}`,
-      portalMode        ? "case-chest-burst-fullscreen" : "",
-      opening           ? "case-chest-is-opening"       : "",
-      open              ? "case-chest-is-open"           : "",
-      !portalMode       ? className                      : "",
-    ].filter(Boolean).join(" ");
-
-    return (
-      <div className={cls} style={cssVars} aria-hidden="true">
+  return (
+    <>
+      <div
+        className={cls}
+        style={opening ? ({ ...cssVars, visibility: "hidden" } as CSSProperties) : cssVars}
+        aria-hidden="true"
+      >
         {/* Atmospheric glow */}
         <span className="case-chest-aura" />
         <span className="case-chest-atmosphere" />
@@ -114,20 +102,11 @@ export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", op
         <OrbitRing radius={42} count={6} delay={0} />
         <OrbitRing radius={58} count={4} delay={-1.2} />
 
-        {/* Interior light: shown during opening burst and showcase (open state) */}
-        {(opening || open) && <span className="case-chest-interior-light" />}
+        {/* Interior light during the frozen-open showcase state */}
+        {open && <span className="case-chest-interior-light" />}
 
-        {/* Opening effects — keep these three, no circus */}
-        {opening && (
-          <>
-            <span className="case-chest-flare" />
-            <span className="case-chest-beam" />
-            <span className="case-chest-rays" />
-          </>
-        )}
-
-        {/* Revealed item floats above the chest — never shown in portal */}
-        {!portalMode && itemImageUrl && <img className="case-chest-reveal" src={itemImageUrl} alt="" />}
+        {/* Revealed item floats above the chest */}
+        {itemImageUrl && <img className="case-chest-reveal" src={itemImageUrl} alt="" />}
 
         {/* The case body */}
         <div className="case-chest-assembly">
@@ -177,22 +156,20 @@ export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", op
           <div className="case-chest-shadow" />
         </div>
       </div>
-    );
-  }
 
-  return (
-    <>
-      {/* In-document placeholder — hidden while the portal overlay is active */}
-      <div style={overlayAlive ? { visibility: "hidden" } as CSSProperties : undefined}>
-        {buildBody(false)}
-      </div>
-
-      {/* Fullscreen burst portal — appears over everything during opening */}
-      {overlayAlive && createPortal(
-        <div className={`case-chest-burst-overlay${overlayExiting ? " case-chest-burst-overlay--exit" : ""}`}>
-          {buildBody(true)}
-        </div>,
-        document.body
+      {opening && onRevealed && (
+        <ChestOpeningOverlay
+          mark={mark}
+          serial={serial}
+          variant={variant}
+          hue={hue}
+          saturation={saturation}
+          lightness={lightness}
+          itemImageUrl={itemImageUrl ?? null}
+          itemName={itemName}
+          itemRarity={itemRarity}
+          onDone={onRevealed}
+        />
       )}
     </>
   );

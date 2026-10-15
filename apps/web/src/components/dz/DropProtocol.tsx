@@ -8,9 +8,9 @@ import { RARITY_LABELS, rarityColor } from "../../lib/rarity";
 import type { CaseItem, OpenCaseResult } from "../../lib/types";
 import { DropChamber } from "./DropChamber";
 
-export type ProtocolPhase = "arming" | "showcase" | "activation" | "reveal";
+export type ProtocolPhase = "arming" | "reveal";
 
-const PHASE_ORDER: ProtocolPhase[] = ["arming", "showcase", "activation", "reveal"];
+const PHASE_ORDER: ProtocolPhase[] = ["arming", "reveal"];
 
 interface DropProtocolProps {
   phase: ProtocolPhase;
@@ -21,10 +21,10 @@ interface DropProtocolProps {
   result: OpenCaseResult | null;
   /** The item's real chance, from the same weights the server rolls against. */
   oddsPercent?: string;
-  /** Rendered chest during ARMING — replaces the static art image. */
+  /** Rendered chest during ARMING — owns its own fullscreen burst/reveal
+   *  sequence once opening=true, so this component's stage underneath it
+   *  doesn't matter visually. */
   caseChest?: ReactNode;
-  /** The reel, mounted by the caller so this component owns no spin timing. */
-  reel?: ReactNode;
   /** True while the chest's opening animation is running — adds screen-wide flash. */
   isOpening?: boolean;
   /** Rarity of the dropped item — drives per-rarity reveal styling. */
@@ -44,7 +44,7 @@ interface DropProtocolProps {
  * cannot influence it, and intentionally offers no near-miss effect.
  */
 export function DropProtocol({
-  phase, caseName, item, result, oddsPercent, caseChest, reel, isOpening = false,
+  phase, caseName, item, result, oddsPercent, caseChest, isOpening = false,
   itemRarity, onSkip, onClose, onOpenAgain, canOpenAgain = false,
 }: DropProtocolProps) {
   const { t } = useTranslation();
@@ -111,10 +111,8 @@ export function DropProtocol({
   const isHighRarity = isApex || itemRarity === "CLASSIFIED";
 
   const phaseLabel = {
-    arming:     t("caseDetail.unlocking", { defaultValue: "Открываем замок…" }),
-    showcase:   t("caseDetail.chestOpen", { defaultValue: "Сундук открыт" }),
-    activation: t("caseDetail.spinning", { defaultValue: "Определяем предмет…" }),
-    reveal:     t("caseDetail.resultKicker", { defaultValue: "Предмет получен" }),
+    arming: t("caseDetail.unlocking", { defaultValue: "Открываем замок…" }),
+    reveal: t("caseDetail.resultKicker", { defaultValue: "Предмет получен" }),
   }[phase];
 
   // Demo openings carry no server payload and must stay visibly distinct
@@ -161,14 +159,7 @@ export function DropProtocol({
       )}
 
       <div className="dz-protocol__stage">
-        {phase === "showcase" ? (
-          // Showcase: chest fills the stage — reel hasn't appeared yet.
-          <div className="dz-protocol__showcase-stage">
-            {caseChest ?? null}
-          </div>
-        ) : phase === "activation" && reel ? (
-          <div className="dz-protocol__reel">{reel}</div>
-        ) : phase === "reveal" && item ? (
+        {phase === "reveal" && item ? (
           isApex ? (
             // Apex reveal: no chamber frame — item fills the stage freely
             <div className="dz-protocol__reveal dz-protocol__reveal--apex">
