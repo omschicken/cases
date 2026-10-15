@@ -349,9 +349,10 @@
   z-index: 9999;
   display: grid;
   place-items: center;
-  background: rgba(0, 0, 0, 0.92);
-  backdrop-filter: blur(6px) saturate(0.3);
-  -webkit-backdrop-filter: blur(6px) saturate(0.3);
+  /* Near-opaque already, so a backdrop-filter blur on whatever's behind it
+     bought almost nothing visually while being one of the costliest effects
+     a compositor can run — radial gradient reads just as deep. */
+  background: radial-gradient(ellipse at center, rgba(10, 8, 6, 0.97) 0%, rgba(0, 0, 0, 0.97) 70%);
 }
 
 .chest-burst-canvas {
@@ -362,6 +363,10 @@
 }
 
 .chest-burst-stage {
+  /* Set via JS at the reveal beat; every glow/beam/particle after that
+     point falls back to it ahead of the case's own hue — the payoff
+     should look like what dropped, not like the box it came from. */
+  --item-glow: hsl(var(--chest-hue) var(--chest-sat) var(--chest-lit));
   position: relative;
   z-index: 2;
   width: min(90vw, 560px);
@@ -380,6 +385,20 @@
   pointer-events: none;
 }
 
+.chest-burst-shockwave {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 180px;
+  height: 180px;
+  margin: -90px 0 0 -90px;
+  border-radius: 50%;
+  border: 2px solid var(--item-glow);
+  box-shadow: 0 0 24px 4px var(--item-glow);
+  opacity: 0;
+  pointer-events: none;
+}
+
 .chest-burst-beam {
   position: absolute;
   bottom: 50%;
@@ -388,9 +407,24 @@
   height: 65vh;
   transform: translateX(-50%) scaleY(0);
   transform-origin: bottom center;
-  background: linear-gradient(to top, hsl(var(--chest-hue) var(--chest-sat) var(--chest-lit)) 0%, transparent 100%);
+  background: linear-gradient(to top, var(--item-glow) 0%, transparent 100%);
   opacity: 0;
   filter: blur(18px);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.chest-burst-beam-core {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  width: 10%;
+  height: 60vh;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: bottom center;
+  background: linear-gradient(to top, #fff 0%, var(--item-glow) 40%, transparent 100%);
+  opacity: 0;
+  filter: blur(3px);
   pointer-events: none;
   mix-blend-mode: screen;
 }
@@ -400,6 +434,20 @@
   width: min(58vw, 300px);
   height: min(38vh, 200px);
   transform-style: preserve-3d;
+}
+
+.chest-burst-shadow {
+  position: absolute;
+  bottom: 14%;
+  left: 50%;
+  width: min(50vw, 260px);
+  height: 28px;
+  margin-left: calc(min(50vw, 260px) / -2);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55) 0%, transparent 72%);
+  opacity: 0.4;
+  transform-origin: center;
+  pointer-events: none;
 }
 
 .chest-burst-lid {
@@ -446,6 +494,15 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
+.chest-burst-lock-halo {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsl(var(--chest-hue) var(--chest-sat) 70%) 0%, transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+}
+
 .chest-burst-lock-gem {
   width: 10px;
   height: 10px;
@@ -488,7 +545,7 @@
   width: min(32vw, 180px);
   max-height: 40vh;
   object-fit: contain;
-  filter: drop-shadow(0 0 30px hsl(var(--chest-hue) var(--chest-sat) 60%));
+  filter: drop-shadow(0 0 30px var(--item-glow));
   transform-style: preserve-3d;
 }
 
@@ -497,7 +554,7 @@
   width: 220px;
   height: 220px;
   border-radius: 50%;
-  background: radial-gradient(circle, hsl(var(--chest-hue) var(--chest-sat) 60%) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--item-glow) 0%, transparent 70%);
   opacity: 0.5;
   filter: blur(20px);
   z-index: -1;
