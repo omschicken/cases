@@ -1,8 +1,6 @@
-import type { CSSProperties } from "react";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
 import { useTranslation } from "react-i18next";
+import { CaseChest } from "../components/CaseChest";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { DropHero } from "../components/dz/DropHero";
@@ -10,6 +8,7 @@ import { StatsBar } from "../components/StatsBar";
 import { RecentDrops } from "../components/RecentDrops";
 import { highestRarity, RARITY_LABELS, RARITY_RANK } from "../lib/rarity";
 import { CaseCard, CaseCardSkeleton } from "../components/dz/CaseCard";
+import { PageHeader } from "../components/dz/PageHeader";
 import type { CaseDto, ItemRarity } from "../lib/types";
 
 type SortMode = "default" | "priceAsc" | "priceDesc";
@@ -101,49 +100,74 @@ export function CaseListPage() {
   }, [collections]);
 
   return (
-    <div className="case-list-page">
+    <div>
       <DropHero featuredCase={cases[0]} catalogStatus={loading ? "loading" : error ? "error" : "empty"} />
       <StatsBar />
 
-      {cases.length > 0 && <section className="collection-discovery" aria-labelledby="collection-discovery-heading">
-        <div className="collection-discovery-head">
-          <div>
-            <span className="section-kicker">DROPZONE / SELECT YOUR ROUTE</span>
-            <h2 id="collection-discovery-heading">{t("home.discoveryHeading")}</h2>
+      {cases.length > 0 && (
+        <section className="collection-discovery" aria-labelledby="collection-discovery-heading">
+          <div className="collection-discovery-head">
+            <div>
+              <span className="section-kicker">DROPZONE / SELECT YOUR ROUTE</span>
+              <h2 id="collection-discovery-heading">{t("home.discoveryHeading")}</h2>
+            </div>
+            <p>{t("home.discoveryIntro")}</p>
           </div>
-          <p>{t("home.discoveryIntro")}</p>
-        </div>
-        <div className="collection-route-grid">
-          {collections.map((group, index) => {
-            const representative = group.representative;
-            const highlight = representative && featuredItem(representative);
-            return (
-              <button
-                key={group.id}
-                type="button"
-                className={`collection-route collection-route-${group.id}${collection === group.id ? " is-active" : ""}`}
-                onClick={() => { setCollection(group.id); document.getElementById("collections")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
-                aria-pressed={collection === group.id}
-                disabled={!group.members.length}
-              >
-                <span className="collection-route-index">0{index + 1} / 0{COLLECTIONS.length}</span>
-                {representative && <span className="collection-route-art"><CaseChest caseName={representative.name} caseSlug={representative.slug} itemImageUrl={highlight?.imageUrl} /></span>}
-                <span className="collection-route-bottom">
-                  <span><strong>{t(`home.collection.${group.id}.title`)}</strong><small>{t(`home.collection.${group.id}.subtitle`)}</small></span>
-                  <span className="collection-route-meta">{t("home.collectionCases")} <b>{group.members.length}</b><em>{group.minimum ? `${t("home.collectionFrom")} ${formatMinor(group.minimum.priceMinor, group.minimum.currency)}` : ""}</em></span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </section>}
+          <div className="collection-route-grid">
+            {collections.map((group, index) => {
+              const representative = group.representative;
+              const highlight = representative && featuredItem(representative);
+              return (
+                <button
+                  key={group.id}
+                  type="button"
+                  className={`collection-route collection-route-${group.id}${collection === group.id ? " is-active" : ""}`}
+                  onClick={() => {
+                    setCollection(group.id);
+                    document.getElementById("collections")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  aria-pressed={collection === group.id}
+                  disabled={!group.members.length}
+                >
+                  <span className="collection-route-index">0{index + 1} / 0{COLLECTIONS.length}</span>
+                  {representative && (
+                    <span className="collection-route-art">
+                      <CaseChest caseName={representative.name} caseSlug={representative.slug} itemImageUrl={highlight?.imageUrl} />
+                    </span>
+                  )}
+                  <span className="collection-route-bottom">
+                    <span>
+                      <strong>{t(`home.collection.${group.id}.title`)}</strong>
+                      <small>{t(`home.collection.${group.id}.subtitle`)}</small>
+                    </span>
+                    <span className="collection-route-meta">
+                      {t("home.collectionCases")} <b>{group.members.length}</b>
+                      <em>{group.minimum ? `${t("home.collectionFrom")} ${formatMinor(group.minimum.priceMinor, group.minimum.currency)}` : ""}</em>
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
-      <div id="collections" className="cases-toolbar">
-        <div className="cases-heading-group"><span className="section-kicker">DROPZONE / COLLECTIONS</span><h1 className="section-heading cases-toolbar-heading">{t("home.casesHeading")}</h1><p className="section-intro">{t("home.casesIntro")}</p></div>
-        <div className="cases-controls">
-          <label className="case-search-wrap">
+      {/* ── Catalog toolbar ───────────────────────────────────────────────── */}
+      <div id="collections">
+        <PageHeader
+          kicker="DROPZONE / COLLECTIONS"
+          title={t("home.casesHeading")}
+          lede={t("home.casesIntro")}
+        />
+
+        <div className="dz-toolbar" style={{ marginTop: "var(--dz-s3)" }}>
+          {/* Search */}
+          <label className="dz-field dz-field--row" style={{ flex: "1 1 200px" }}>
             <span className="sr-only">{t("home.searchCases")}</span>
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" strokeWidth="1.7"/><path d="m16 16 4.4 4.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+              <circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" strokeWidth="1.7"/>
+              <path d="m16 16 4.4 4.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
+            </svg>
             <input
               type="search"
               value={query}
@@ -152,7 +176,9 @@ export function CaseListPage() {
               autoComplete="off"
             />
           </label>
-          <label className="sort-select-wrap">
+
+          {/* Sort */}
+          <label className="dz-field">
             <span>{t("home.sortLabel")}</span>
             <select value={sort} onChange={(e) => setSort(e.target.value as SortMode)}>
               <option value="default">{t("home.sortDefault")}</option>
@@ -161,29 +187,50 @@ export function CaseListPage() {
             </select>
           </label>
         </div>
+
+        {/* Collection filter chips */}
+        {cases.length > 0 && (
+          <div className="dz-chips" style={{ marginTop: "var(--dz-s3)" }} role="group" aria-label={t("home.collectionFilterLabel")}>
+            <button
+              type="button"
+              className="dz-chip"
+              aria-pressed={collection === "all"}
+              onClick={() => setCollection("all")}
+            >
+              {t("home.collectionAll")}<b>{cases.length}</b>
+            </button>
+            {collections.map((group) => (
+              <button
+                type="button"
+                key={group.id}
+                className="dz-chip"
+                aria-pressed={collection === group.id}
+                onClick={() => setCollection(group.id)}
+              >
+                {t(`home.collection.${group.id}.title`)}<b>{group.members.length}</b>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      {cases.length > 0 && <div className="collection-filters" role="group" aria-label={t("home.collectionFilterLabel")}>
-        <button type="button" className={collection === "all" ? "is-active" : ""} aria-pressed={collection === "all"} onClick={() => setCollection("all")}>{t("home.collectionAll")}<span>{cases.length}</span></button>
-        {collections.map((group) => <button type="button" key={group.id} className={collection === group.id ? "is-active" : ""} aria-pressed={collection === group.id} onClick={() => setCollection(group.id)}>{t(`home.collection.${group.id}.title`)}<span>{group.members.length}</span></button>)}
-      </div>}
-
+      {/* Error notice */}
       {error && (
-        <div className="catalog-notice" role="alert">
-          <span>{error}</span>
-          <button type="button" className="catalog-retry" onClick={() => setRequestId((id) => id + 1)}>
+        <div role="alert" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--dz-s3)", marginTop: "var(--dz-s4)", padding: "var(--dz-s3) var(--dz-s4)", border: "1px solid var(--dz-edge-strong)", borderRadius: "var(--dz-r-sm)", background: "var(--dz-surface-1)" }}>
+          <span style={{ color: "var(--dz-text-2)", fontSize: "var(--dz-type-xs)" }}>{error}</span>
+          <button type="button" className="dz-btn" onClick={() => setRequestId((id) => id + 1)}>
             {t("common.retry", { defaultValue: "Повторить" })}
           </button>
         </div>
       )}
+
+      {/* Case grid */}
       <div className="dz-case-grid" aria-busy={loading}>
         {loading && Array.from({ length: 10 }, (_, i) => <CaseCardSkeleton key={i} />)}
         {!loading && visibleCases.map((c, i) => {
           const tiers = rarityTiers(c) as ItemRarity[];
           const chase = highestRarity(tiers);
           const highlight = featuredItem(c);
-          // Only real artwork reaches the cell. The inline data: placeholders
-          // used by offline preview cases would read as a broken image.
           const artUrl = highlight && !highlight.imageUrl.startsWith("data:image")
             ? highlight.imageUrl
             : undefined;
@@ -204,17 +251,30 @@ export function CaseListPage() {
           );
         })}
       </div>
+
+      {/* Empty state */}
       {!loading && filteredCases.length === 0 && !error && (
-        <p className="case-grid-empty" role="status">
-          {query ? t("home.noSearchResults", { query }) : t("home.noCasesYet")}
-        </p>
+        <div className="dz-empty" role="status">
+          <span className="dz-empty__mark" aria-hidden="true">◎</span>
+          <p className="dz-empty__title">
+            {query ? t("home.noSearchResults", { query }) : t("home.noCasesYet")}
+          </p>
+        </div>
       )}
 
+      {/* Load more */}
       {!loading && filteredCases.length > visibleCases.length && (
-        <button className="case-load-more" type="button" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}>
-          {t("home.showMoreCases", { count: Math.min(PAGE_SIZE, filteredCases.length - visibleCases.length) })}
-          <span aria-hidden="true">↓</span>
-        </button>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "var(--dz-s5)" }}>
+          <button
+            className="dz-btn"
+            type="button"
+            style={{ minWidth: "min(100%, 280px)" }}
+            onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
+          >
+            {t("home.showMoreCases", { count: Math.min(PAGE_SIZE, filteredCases.length - visibleCases.length) })}
+            <span aria-hidden="true" style={{ color: "var(--dz-amber)" }}>↓</span>
+          </button>
+        </div>
       )}
 
       <RecentDrops />

@@ -254,6 +254,49 @@
   .dz-field input { min-height: 44px; }
 }
 
+/* Row variant: icon + input side by side (e.g. a search field). */
+.dz-field--row {
+  flex-direction: row;
+  align-items: center;
+  border: 1px solid var(--dz-edge-strong);
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-2);
+  padding: 0 var(--dz-s3);
+  transition: border-color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-field--row:focus-within {
+  border-color: var(--dz-amber);
+}
+
+.dz-field--row svg {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: var(--dz-text-4);
+}
+
+.dz-field--row input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  min-height: 38px;
+  padding: 0 var(--dz-s2);
+}
+
+.dz-field--row input:hover,
+.dz-field--row input:focus-visible {
+  border-color: transparent;
+  background: transparent;
+  outline: none;
+}
+
+@media (hover: none) {
+  .dz-field--row input { min-height: 44px; }
+}
+
 /* ── Case stage ──────────────────────────────────────────────────────────
    The case on its own detail page, in the same cell it appeared in on the
    catalog card and will appear in when opened. That continuity is the point:
