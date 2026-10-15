@@ -724,6 +724,58 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   FULLSCREEN BURST OVERLAY
+   Portal rendered over everything when opening=true.
+   The chest gets room to breathe — rays, shockwave, flare reach
+   the edges of the screen without being clipped.
+   ═══════════════════════════════════════════════════════════════ */
+
+.case-chest-burst-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9950;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(6px) saturate(0.3);
+  -webkit-backdrop-filter: blur(6px) saturate(0.3);
+  pointer-events: none;
+  animation: burst-overlay-enter 0.1s ease both;
+}
+@keyframes burst-overlay-enter {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.case-chest-burst-overlay--exit {
+  animation: burst-overlay-exit 0.26s ease both;
+}
+@keyframes burst-overlay-exit {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Chest inside the overlay — unconstrained size, effects can bleed to edges */
+.case-chest-burst-fullscreen {
+  width: min(80vw, 520px) !important;
+  height: clamp(300px, 46vh, 420px) !important;
+  /* No overflow clipping — rays and shockwave fill the screen */
+  overflow: visible !important;
+}
+
+/* The overlay itself has overflow:visible so portal children can escape the chest box */
+.case-chest-burst-overlay {
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-chest-burst-overlay,
+  .case-chest-burst-overlay--exit {
+    animation: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    SHOWCASE STATE — chest frozen open after the burst
    ═══════════════════════════════════════════════════════════════ */
 

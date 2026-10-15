@@ -1,4 +1,6 @@
 import type { CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 type CaseChestProps = {
   caseName: string;
@@ -65,86 +67,133 @@ export function CaseChest({ caseName, caseSlug, itemImageUrl, className = "", op
   const saturation = [65, 72, 58, 80, 55, 70][variant];
   const lightness  = [52, 60, 48, 55, 58, 65][finish % 4];
 
-  return (
-    <div
-      className={`case-chest case-chest-v${variant} case-chest-f${finish} ${opening ? "case-chest-is-opening" : ""} ${open ? "case-chest-is-open" : ""} ${className}`}
-      style={{
-        "--chest-hue": hue,
-        "--chest-sat": `${saturation}%`,
-        "--chest-lit": `${lightness}%`,
-      } as CSSProperties}
-      aria-hidden="true"
-    >
-      {/* Atmospheric glow */}
-      <span className="case-chest-aura" />
-      <span className="case-chest-atmosphere" />
+  const [overlayAlive, setOverlayAlive] = useState(false);
+  const [overlayExiting, setOverlayExiting] = useState(false);
+  const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-      {/* Orbit decoration */}
-      <OrbitRing radius={42} count={6} delay={0} />
-      <OrbitRing radius={58} count={4} delay={-1.2} />
+  useEffect(() => {
+    if (opening) {
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+      setOverlayAlive(true);
+      setOverlayExiting(false);
+    } else if (overlayAlive) {
+      setOverlayExiting(true);
+      exitTimerRef.current = setTimeout(() => {
+        setOverlayAlive(false);
+        setOverlayExiting(false);
+      }, 260);
+    }
+    return () => { if (exitTimerRef.current) clearTimeout(exitTimerRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opening]);
 
-      {/* Interior light: shown during opening burst and showcase (open state) */}
-      {(opening || open) && <span className="case-chest-interior-light" />}
+  const cssVars = {
+    "--chest-hue": hue,
+    "--chest-sat": `${saturation}%`,
+    "--chest-lit": `${lightness}%`,
+  } as CSSProperties;
 
-      {/* Opening effects — keep these three, no circus */}
-      {opening && (
-        <>
-          <span className="case-chest-flare" />
-          <span className="case-chest-beam" />
-          <span className="case-chest-rays" />
-        </>
-      )}
+  function buildBody(portalMode: boolean) {
+    const cls = [
+      "case-chest",
+      `case-chest-v${variant}`,
+      `case-chest-f${finish}`,
+      portalMode        ? "case-chest-burst-fullscreen" : "",
+      opening           ? "case-chest-is-opening"       : "",
+      open              ? "case-chest-is-open"           : "",
+      !portalMode       ? className                      : "",
+    ].filter(Boolean).join(" ");
 
-      {/* Revealed item floats above the chest */}
-      {itemImageUrl && <img className="case-chest-reveal" src={itemImageUrl} alt="" />}
+    return (
+      <div className={cls} style={cssVars} aria-hidden="true">
+        {/* Atmospheric glow */}
+        <span className="case-chest-aura" />
+        <span className="case-chest-atmosphere" />
 
-      {/* The case body */}
-      <div className="case-chest-assembly">
-        {/* Top lid */}
-        <div className="case-chest-lid">
-          <div className="case-chest-lid-inner">
-            <span className="case-chest-lid-stripe" />
-            <span className="case-chest-lid-mark">{mark}</span>
-            <span className="case-chest-lid-serial">#{serial}</span>
+        {/* Orbit decoration */}
+        <OrbitRing radius={42} count={6} delay={0} />
+        <OrbitRing radius={58} count={4} delay={-1.2} />
+
+        {/* Interior light: shown during opening burst and showcase (open state) */}
+        {(opening || open) && <span className="case-chest-interior-light" />}
+
+        {/* Opening effects — keep these three, no circus */}
+        {opening && (
+          <>
+            <span className="case-chest-flare" />
+            <span className="case-chest-beam" />
+            <span className="case-chest-rays" />
+          </>
+        )}
+
+        {/* Revealed item floats above the chest — never shown in portal */}
+        {!portalMode && itemImageUrl && <img className="case-chest-reveal" src={itemImageUrl} alt="" />}
+
+        {/* The case body */}
+        <div className="case-chest-assembly">
+          {/* Top lid */}
+          <div className="case-chest-lid">
+            <div className="case-chest-lid-inner">
+              <span className="case-chest-lid-stripe" />
+              <span className="case-chest-lid-mark">{mark}</span>
+              <span className="case-chest-lid-serial">#{serial}</span>
+            </div>
+            <span className="case-chest-lid-edge" />
           </div>
-          <span className="case-chest-lid-edge" />
-        </div>
 
-        {/* Lock clasp */}
-        <div className="case-chest-lock">
-          <span className="case-chest-lock-body" />
-          <span className="case-chest-lock-shackle" />
-          <span className="case-chest-lock-gem" />
-        </div>
-
-        {/* Main body */}
-        <div className="case-chest-body">
-          <span className="case-chest-body-shine" />
-          <span className="case-chest-body-grid" />
-
-          {/* Corner accents */}
-          <span className="case-chest-corner case-chest-corner-tl" />
-          <span className="case-chest-corner case-chest-corner-tr" />
-          <span className="case-chest-corner case-chest-corner-bl" />
-          <span className="case-chest-corner case-chest-corner-br" />
-
-          {/* Center glyph */}
-          <div className="case-chest-glyph-wrap">
-            <span className="case-chest-glyph-bg" />
-            <CaseGlyph variant={variant} />
+          {/* Lock clasp */}
+          <div className="case-chest-lock">
+            <span className="case-chest-lock-body" />
+            <span className="case-chest-lock-shackle" />
+            <span className="case-chest-lock-gem" />
           </div>
 
-          {/* Name band */}
-          <div className="case-chest-nameband">
-            <span className="case-chest-nameband-line" />
-            <span className="case-chest-nameband-text">{caseName.replace(/\s*case$/i, "").toUpperCase()}</span>
-            <span className="case-chest-nameband-line" />
-          </div>
-        </div>
+          {/* Main body */}
+          <div className="case-chest-body">
+            <span className="case-chest-body-shine" />
+            <span className="case-chest-body-grid" />
 
-        {/* Ground shadow */}
-        <div className="case-chest-shadow" />
+            {/* Corner accents */}
+            <span className="case-chest-corner case-chest-corner-tl" />
+            <span className="case-chest-corner case-chest-corner-tr" />
+            <span className="case-chest-corner case-chest-corner-bl" />
+            <span className="case-chest-corner case-chest-corner-br" />
+
+            {/* Center glyph */}
+            <div className="case-chest-glyph-wrap">
+              <span className="case-chest-glyph-bg" />
+              <CaseGlyph variant={variant} />
+            </div>
+
+            {/* Name band */}
+            <div className="case-chest-nameband">
+              <span className="case-chest-nameband-line" />
+              <span className="case-chest-nameband-text">{caseName.replace(/\s*case$/i, "").toUpperCase()}</span>
+              <span className="case-chest-nameband-line" />
+            </div>
+          </div>
+
+          {/* Ground shadow */}
+          <div className="case-chest-shadow" />
+        </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <>
+      {/* In-document placeholder — hidden while the portal overlay is active */}
+      <div style={overlayAlive ? { visibility: "hidden" } as CSSProperties : undefined}>
+        {buildBody(false)}
+      </div>
+
+      {/* Fullscreen burst portal — appears over everything during opening */}
+      {overlayAlive && createPortal(
+        <div className={`case-chest-burst-overlay${overlayExiting ? " case-chest-burst-overlay--exit" : ""}`}>
+          {buildBody(true)}
+        </div>,
+        document.body
+      )}
+    </>
   );
 }
