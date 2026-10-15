@@ -422,5 +422,16 @@
     "CLASSIFIED": "Confidencial",
     "COVERT": "Secreto",
     "GOLD": "Extremamente raro"
+  },
+  "ledgerReason": {
+    "DEPOSIT": "Depósito",
+    "WITHDRAWAL": "Saque",
+    "CASE_OPEN": "Abertura de caixa",
+    "ITEM_SELL": "Venda de item",
+    "REFERRAL_COMMISSION": "Comissão de indicação",
+    "ADMIN_ADJUSTMENT": "Ajuste",
+    "GAME_BATTLE": "Batalha",
+    "DAILY_BONUS": "Bônus diário",
+    "PROMO_CODE": "Código promocional"
   }
 }

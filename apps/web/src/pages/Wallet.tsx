@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import type { LedgerEntryDto, PaymentRail, WalletDto } from "../lib/types";
+import { PageHeader, Readout } from "../components/dz/PageHeader";
 
 export function WalletPage() {
   const { t } = useTranslation();
@@ -72,8 +73,12 @@ export function WalletPage() {
 
   return (
     <div className="wallet-page">
-      <h1>{t("wallet.title")}</h1>
-      <p className="balance-display">{wallet ? formatMinor(wallet.balanceMinor) : "…"}</p>
+      <PageHeader
+        kicker="DROPZONE / WALLET"
+        title={t("wallet.title")}
+        lede={t("wallet.lede", { defaultValue: "Пополнение, вывод и полная история операций по счёту." })}
+        aside={<Readout label={t("wallet.balance", { defaultValue: "Баланс" })} value={wallet ? formatMinor(wallet.balanceMinor) : "…"} />}
+      />
 
       {error && <p className="form-error">{error}</p>}
       {info && <p className="form-info">{info}</p>}
@@ -136,8 +141,8 @@ export function WalletPage() {
       )}
 
       <h3>{t("wallet.recentActivity")}</h3>
-      <div className="table-scroll">
-        <table className="ledger-table">
+      <div className="dz-table-scroll">
+        <table className="dz-table">
           <thead>
             <tr>
               <th>{t("wallet.date")}</th>
@@ -150,8 +155,8 @@ export function WalletPage() {
             {ledger.map((entry) => (
               <tr key={entry.id}>
                 <td>{new Date(entry.createdAt).toLocaleString()}</td>
-                <td>{entry.reason}</td>
-                <td className={Number(entry.amountMinor) < 0 ? "negative" : "positive"}>
+                <td>{t(`ledgerReason.${entry.reason}`, { defaultValue: entry.reason.replace(/_/g, " ") })}</td>
+                <td className={Number(entry.amountMinor) < 0 ? "dz-amount-neg" : "dz-amount-pos"}>
                   {formatMinor(entry.amountMinor)}
                 </td>
                 <td>{formatMinor(entry.balanceAfterMinor)}</td>

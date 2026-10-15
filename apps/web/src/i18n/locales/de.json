@@ -422,5 +422,16 @@
     "CLASSIFIED": "Geheim",
     "COVERT": "Verdeckt",
     "GOLD": "Außerordentlich selten"
+  },
+  "ledgerReason": {
+    "DEPOSIT": "Einzahlung",
+    "WITHDRAWAL": "Auszahlung",
+    "CASE_OPEN": "Case-Öffnung",
+    "ITEM_SELL": "Item-Verkauf",
+    "REFERRAL_COMMISSION": "Empfehlungsprovision",
+    "ADMIN_ADJUSTMENT": "Korrektur",
+    "GAME_BATTLE": "Battle",
+    "DAILY_BONUS": "Täglicher Bonus",
+    "PROMO_CODE": "Promo-Code"
   }
 }

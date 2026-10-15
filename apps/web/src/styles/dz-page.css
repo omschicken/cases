@@ -254,6 +254,155 @@
   .dz-field input { min-height: 44px; }
 }
 
+/* ── Table ───────────────────────────────────────────────────────────────
+   For data that genuinely has rows and columns, like a ledger. Kept as a real
+   <table> rather than rebuilt from divs: the header associations are what let
+   a screen reader say "Amount: −450 ₽" instead of reading a loose number.
+   The wrapper scrolls on narrow screens so the columns stay intact instead of
+   collapsing into unreadable slivers. */
+.dz-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-md);
+}
+
+.dz-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--dz-font-interface);
+  font-size: var(--dz-type-xs);
+}
+
+.dz-table thead th {
+  position: sticky;
+  top: 0;
+  padding: var(--dz-s3);
+  text-align: left;
+  white-space: nowrap;
+  background: var(--dz-surface-2);
+  border-bottom: 1px solid var(--dz-edge-strong);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+}
+
+.dz-table tbody td {
+  padding: var(--dz-s3);
+  border-bottom: 1px solid var(--dz-edge);
+  color: var(--dz-text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.dz-table tbody tr:last-child td { border-bottom: 0; }
+
+.dz-table tbody tr:hover td { background: var(--dz-surface-1); }
+
+/* Signed amounts. The sign itself carries the meaning; colour reinforces it,
+   so the column still reads correctly without colour vision. */
+.dz-table .dz-amount-pos { color: var(--dz-success); font-weight: 600; }
+.dz-table .dz-amount-neg { color: var(--dz-danger);  font-weight: 600; }
+
+/* ── Status badge ────────────────────────────────────────────────────────
+   KYC state, withdrawal state, anything with a small fixed set of outcomes.
+   The dot plus the wording carry the state; colour only reinforces it, so it
+   still reads without colour vision. */
+.dz-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dz-s2);
+  padding: 2px var(--dz-s3);
+  border: 1px solid color-mix(in srgb, var(--dz-status-color, var(--dz-text-4)) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--dz-status-color, var(--dz-text-4)) 12%, transparent);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dz-status-color, var(--dz-text-3));
+  white-space: nowrap;
+}
+
+.dz-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: 0 0 auto;
+}
+
+.dz-status--ok      { --dz-status-color: var(--dz-success); }
+.dz-status--pending { --dz-status-color: var(--dz-amber); }
+.dz-status--bad     { --dz-status-color: var(--dz-danger); }
+.dz-status--idle    { --dz-status-color: var(--dz-text-4); }
+
+/* ── Stat tiles ──────────────────────────────────────────────────────────
+   A row of linked figures. Each is a navigation target, so the whole tile is
+   the hit area rather than the number inside it. */
+.dz-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
+  gap: var(--dz-s3);
+}
+
+.dz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s1);
+  padding: var(--dz-s4);
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-md);
+  background: linear-gradient(180deg, var(--dz-surface-1), var(--dz-surface-0));
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--dz-d-micro) var(--dz-e-enter),
+    transform var(--dz-d-micro) var(--dz-e-exit),
+    box-shadow var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-stat:hover,
+.dz-stat:focus-visible {
+  border-color: var(--dz-edge-lit);
+  transform: translate3d(0, -2px, 0);
+  box-shadow: var(--dz-shadow-near);
+}
+
+.dz-stat:focus-visible {
+  outline: 2px solid var(--dz-amber);
+  outline-offset: 2px;
+}
+
+.dz-stat__label {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+}
+
+.dz-stat__value {
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-lg);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-text-1);
+}
+
+.dz-stat__arrow {
+  margin-top: var(--dz-s1);
+  font-size: var(--dz-type-xs);
+  color: var(--dz-text-4);
+  transition: color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-stat:hover .dz-stat__arrow,
+.dz-stat:focus-visible .dz-stat__arrow { color: var(--dz-amber); }
+
 /* ── Route transition ────────────────────────────────────────────────────
    Entrance only, opacity and transform only, so it runs on the compositor
    and cannot reflow the incoming page. Short on purpose: this fires on every

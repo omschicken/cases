@@ -422,5 +422,16 @@
     "CLASSIFIED": "Засекречене",
     "COVERT": "Таємне",
     "GOLD": "Винятково рідкісне"
+  },
+  "ledgerReason": {
+    "DEPOSIT": "Поповнення",
+    "WITHDRAWAL": "Виведення",
+    "CASE_OPEN": "Відкриття кейса",
+    "ITEM_SELL": "Продаж предмета",
+    "REFERRAL_COMMISSION": "Реферальна комісія",
+    "ADMIN_ADJUSTMENT": "Коригування",
+    "GAME_BATTLE": "Бій",
+    "DAILY_BONUS": "Щоденний бонус",
+    "PROMO_CODE": "Промокод"
   }
 }

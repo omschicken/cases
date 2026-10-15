@@ -457,5 +457,16 @@
     "CLASSIFIED": "Classified",
     "COVERT": "Covert",
     "GOLD": "Exceedingly Rare"
+  },
+  "ledgerReason": {
+    "DEPOSIT": "Deposit",
+    "WITHDRAWAL": "Withdrawal",
+    "CASE_OPEN": "Case opening",
+    "ITEM_SELL": "Item sale",
+    "REFERRAL_COMMISSION": "Referral commission",
+    "ADMIN_ADJUSTMENT": "Adjustment",
+    "GAME_BATTLE": "Battle",
+    "DAILY_BONUS": "Daily bonus",
+    "PROMO_CODE": "Promo code"
   }
 }

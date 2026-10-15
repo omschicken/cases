@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -6,6 +7,7 @@ import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import type { CaseOpenHistoryDto, InventoryItemDto, KycStatus, WalletDto } from "../lib/types";
 import { PageHeader, Readout } from "../components/dz/PageHeader";
+import { rarityColor } from "../lib/rarity";
 
 interface KycMeResponse {
   status: KycStatus;
@@ -23,6 +25,16 @@ const kycLabels: Record<KycStatus, { ru: string; en: string }> = {
   PENDING: { ru: "На проверке", en: "Under review" },
   VERIFIED: { ru: "Подтверждена", en: "Verified" },
   REJECTED: { ru: "Отклонена", en: "Rejected" },
+};
+
+/** KYC state to badge tone. Typed against KycStatus rather than string, so
+ *  adding a state to the union fails the build here instead of silently
+ *  rendering a neutral badge for it. */
+const KYC_TONE: Record<KycStatus, "ok" | "pending" | "bad" | "idle"> = {
+  VERIFIED: "ok",
+  PENDING: "pending",
+  REJECTED: "bad",
+  UNVERIFIED: "idle",
 };
 
 export function ProfilePage() {
@@ -113,33 +125,44 @@ export function ProfilePage() {
         </>}
       />
 
-      <nav className="profile-shortcuts" aria-label={t("profile.title")}>
-        <Link to="/inventory"><span>01</span>{t("nav.sidebar.inventory")} <i aria-hidden="true">↗</i></Link>
-        <Link to="/history"><span>02</span>{t("nav.sidebar.history")} <i aria-hidden="true">↗</i></Link>
-        <Link to="/wallet"><span>03</span>{t("nav.pagesBar.wallet", { defaultValue: "Кошелёк" })} <i aria-hidden="true">↗</i></Link>
+      <nav className="dz-chips" aria-label={t("profile.title")}>
+        <Link to="/inventory" className="dz-chip">{t("nav.sidebar.inventory")} <b>01</b></Link>
+        <Link to="/history" className="dz-chip">{t("nav.sidebar.history")} <b>02</b></Link>
+        <Link to="/wallet" className="dz-chip">{t("nav.pagesBar.wallet", { defaultValue: "Кошелёк" })} <b>03</b></Link>
       </nav>
 
-      <section className="profile-overview" aria-label={t("profile.title")}>
-        <div className="profile-overview-head"><span>{t("profile.dashboard")}</span><span>DROPZONE / LIVE DATA</span></div>
+      <section className="dz-panel" aria-label={t("profile.title")}>
+        <div className="dz-panel__label"><span>{t("profile.dashboard")}</span><span>DROPZONE / LIVE DATA</span></div>
         {overviewError && <div className="catalog-notice" role="alert"><span>{t("profile.overviewError")}</span><button type="button" className="catalog-retry" onClick={loadOverview}>{t("common.retry")}</button></div>}
-        <div className="profile-stat-grid" aria-busy={overviewLoading}>
-          <Link to="/wallet"><span>{t("wallet.title")}</span><strong>{wallet ? formatMinor(wallet.balanceMinor) : overviewLoading ? "…" : "—"}</strong><i aria-hidden="true">↗</i></Link>
-          <Link to="/inventory"><span>{t("nav.sidebar.inventory")}</span><strong>{inventory ? inventory.length : overviewLoading ? "…" : "—"}</strong><i aria-hidden="true">↗</i></Link>
-          <Link to="/history"><span>{t("profile.recentOpens")}</span><strong>{recentOpens ? recentOpens.length : overviewLoading ? "…" : "—"}</strong><i aria-hidden="true">↗</i></Link>
+        <div className="dz-stat-grid" aria-busy={overviewLoading}>
+          <Link to="/wallet" className="dz-stat"><span className="dz-stat__label">{t("wallet.title")}</span><span className="dz-stat__value">{wallet ? formatMinor(wallet.balanceMinor) : overviewLoading ? "…" : "—"}</span><span className="dz-stat__arrow" aria-hidden="true">↗</span></Link>
+          <Link to="/inventory" className="dz-stat"><span className="dz-stat__label">{t("nav.sidebar.inventory")}</span><span className="dz-stat__value">{inventory ? inventory.length : overviewLoading ? "…" : "—"}</span><span className="dz-stat__arrow" aria-hidden="true">↗</span></Link>
+          <Link to="/history" className="dz-stat"><span className="dz-stat__label">{t("profile.recentOpens")}</span><span className="dz-stat__value">{recentOpens ? recentOpens.length : overviewLoading ? "…" : "—"}</span><span className="dz-stat__arrow" aria-hidden="true">↗</span></Link>
         </div>
-        {recentOpens && recentOpens.length > 0 && <div className="profile-recent">
-          <div className="profile-overview-head"><span>{t("profile.recentOpens")}</span><Link to="/history">{t("profile.allHistory")} ↗</Link></div>
-          {recentOpens.slice(0, 3).map((open) => <Link to={`/verify/${open.id}`} key={open.id} className="profile-recent-row"><img src={open.resultCaseItem.imageUrl} alt="" loading="lazy" /><span><strong>{open.resultCaseItem.name}</strong><small>{open.case.name}</small></span><b>{formatMinor(open.resultCaseItem.valueMinor, open.resultCaseItem.currency)}</b></Link>)}
+        {recentOpens && recentOpens.length > 0 && <div>
+          <div className="dz-panel__label"><span>{t("profile.recentOpens")}</span><Link to="/history">{t("profile.allHistory")} ↗</Link></div>
+          <ol className="dz-log">
+            {recentOpens.slice(0, 3).map((open) => (
+              <li key={open.id} className="dz-log__row" style={{ "--dz-rarity": rarityColor(open.resultCaseItem.rarity) } as CSSProperties}>
+                <img className="dz-log__art" src={open.resultCaseItem.imageUrl} alt="" loading="lazy" />
+                <div className="dz-log__main">
+                  <p className="dz-log__name">{open.resultCaseItem.name}</p>
+                  <span className="dz-log__meta"><Link to={`/verify/${open.id}`}>{open.case.name}</Link></span>
+                </div>
+                <span className="dz-log__value">{formatMinor(open.resultCaseItem.valueMinor, open.resultCaseItem.currency)}</span>
+              </li>
+            ))}
+          </ol>
         </div>}
       </section>
 
       {error && <p className="form-error">{error}</p>}
       {info && <p className="form-info">{info}</p>}
 
-      <section className="profile-settings-panel">
+      <section className="dz-panel">
         <h2>{t("profile.kyc.heading")}</h2>
         <p>
-          {t("profile.kyc.status")} <strong className={`profile-kyc-status profile-kyc-status--${kyc?.status?.toLowerCase() ?? "loading"}`}>{kyc ? kycLabels[kyc.status][i18n.language.startsWith("ru") ? "ru" : "en"] : "…"}</strong>
+          {t("profile.kyc.status")} <strong className={`dz-status dz-status--${kyc ? KYC_TONE[kyc.status] : "idle"}`}>{kyc ? kycLabels[kyc.status][i18n.language.startsWith("ru") ? "ru" : "en"] : "…"}</strong>
         </p>
         {kyc?.latest?.rejectionReason && (
           <p className="form-error">{t("profile.kyc.reason", { reason: kyc.latest.rejectionReason })}</p>
@@ -178,7 +201,7 @@ export function ProfilePage() {
         )}
       </section>
 
-      <section className="profile-settings-panel">
+      <section className="dz-panel">
         <h2>{t("profile.seed.heading")}</h2>
         {seed && (
           <ul>

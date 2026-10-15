@@ -422,5 +422,16 @@
     "CLASSIFIED": "Gizli",
     "COVERT": "Çok Gizli",
     "GOLD": "Son Derece Nadir"
+  },
+  "ledgerReason": {
+    "DEPOSIT": "Para yatırma",
+    "WITHDRAWAL": "Para çekme",
+    "CASE_OPEN": "Kasa açma",
+    "ITEM_SELL": "Eşya satışı",
+    "REFERRAL_COMMISSION": "Referans komisyonu",
+    "ADMIN_ADJUSTMENT": "Düzeltme",
+    "GAME_BATTLE": "Savaş",
+    "DAILY_BONUS": "Günlük bonus",
+    "PROMO_CODE": "Promosyon kodu"
   }
 }

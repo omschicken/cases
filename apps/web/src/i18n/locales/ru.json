@@ -460,5 +460,16 @@
     "CLASSIFIED": "Засекреченное",
     "COVERT": "Тайное",
     "GOLD": "Исключительное"
+  },
+  "ledgerReason": {
+    "DEPOSIT": "Пополнение",
+    "WITHDRAWAL": "Вывод",
+    "CASE_OPEN": "Открытие кейса",
+    "ITEM_SELL": "Продажа предмета",
+    "REFERRAL_COMMISSION": "Реферальная комиссия",
+    "ADMIN_ADJUSTMENT": "Корректировка",
+    "GAME_BATTLE": "Сражение",
+    "DAILY_BONUS": "Ежедневный бонус",
+    "PROMO_CODE": "Промокод"
   }
 }
