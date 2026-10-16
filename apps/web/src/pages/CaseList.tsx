@@ -240,7 +240,7 @@ export function CaseListPage() {
               rarityLabel={chase
                 ? t(`rarity.${chase}`, { defaultValue: RARITY_LABELS[chase] })
                 : t("home.caseCollection", { defaultValue: "COLLECTION" })}
-              priceLabel={t("home.casePriceFrom", { defaultValue: "CASE PRICE" })}
+              priceLabel={t("caseCard.priceLabel", { defaultValue: "Открыть за" })}
             />
           );
         })}
