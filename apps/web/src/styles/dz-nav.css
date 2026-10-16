@@ -367,10 +367,10 @@
 .dz-sidebar-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 69;
-  background: rgba(5, 7, 11, 0.72);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  z-index: 59; /* below topbar (z-index: 60) */
+  background: rgba(5, 7, 11, 0.65);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   animation: dz-backdrop-in var(--dz-d-enter, 240ms) var(--dz-e-enter) both;
 }
 
@@ -430,30 +430,35 @@
 
 /* ── Mobile (< 768px) ───────────────────────────────────────────────── */
 @media (max-width: 767px) {
+  /* Sidebar stays IN the flex flow — slides in by shifting its own margin,
+     which pushes .dz-main to the right instead of overlapping it. */
+  .dz-body {
+    display: flex;
+    position: relative;
+    overflow-x: hidden; /* clips the off-screen sidebar */
+  }
+
   .dz-sidebar {
-    position: fixed;
-    z-index: 70;
-    top: 0;
-    left: 0;
-    bottom: 0;
+    /* In-flow, no fixed/absolute — moves content, not covers it */
+    position: relative;
+    flex: 0 0 min(270px, 82vw);
     width: min(270px, 82vw);
-    padding-top: 56px; /* sit under topbar */
-    transform: translateX(-100%);
-    transition: transform var(--dz-d-move) var(--dz-e-enter);
+    min-height: calc(100dvh - 56px); /* fill height behind scroll */
+    margin-left: calc(-1 * min(270px, 82vw)); /* hidden by default */
+    transition: margin-left var(--dz-d-move, 260ms) var(--dz-e-enter, ease);
     box-shadow: none;
+    z-index: auto;
   }
 
   .dz-sidebar--open {
-    transform: translateX(0);
-    box-shadow: 4px 0 48px rgba(0, 0, 0, 0.6);
-  }
-
-  .dz-body {
-    display: block;
+    margin-left: 0;
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.55);
   }
 
   .dz-main {
     overflow-y: unset;
+    min-width: 0;
+    flex: 1;
   }
 }
 
