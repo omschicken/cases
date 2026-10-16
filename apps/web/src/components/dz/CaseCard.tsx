@@ -46,12 +46,14 @@ export function CaseCard({ caseDto, index, tiers, tier, priceLabel }: CaseCardPr
             ))}
           </span>
         </div>
-        <div className="dzc__row">
-          <span className="dzc__price" aria-label={priceLabel}>
-            <Money minor={caseDto.priceMinor} currency={caseDto.currency} />
-          </span>
-          <span className="dzc__open">Открыть</span>
-        </div>
+      </div>
+
+      <div className="dzc__foot">
+        <span className="dzc__price">
+          <span className="dzc__price-label">{priceLabel}</span>
+          <Money minor={caseDto.priceMinor} currency={caseDto.currency} />
+        </span>
+        <span className="dzc__open">Открыть</span>
       </div>
     </Link>
   );

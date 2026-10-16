@@ -429,28 +429,38 @@ export function CaseDetailPage() {
             {String(skinGroups.length).padStart(2, "0")} / {String(theCase.items.length).padStart(2, "0")}
           </span>
         </div>
-        <div className="dza-items__rail">
-          {skinGroups.map((group) => (
-            <article
-              key={group.name}
-              className="dza-item"
-              style={{ "--rc": rarityColor(group.rarity) } as CSSProperties}
+        {RARITY_RANK.map((rarity) => {
+          const groups = skinGroups.filter((g) => g.rarity === rarity);
+          if (groups.length === 0) return null;
+          return (
+            <div
+              key={rarity}
+              className="dza-tier"
+              style={{ "--rc": rarityColor(rarity) } as CSSProperties}
             >
-              <span className="dza-item__chance">{groupChancePercent(group, totalWeight)}%</span>
-              <img src={group.imageUrl} alt={group.name} loading="lazy" />
-              <span className="dza-item__rarity">
-                {t(`rarity.${group.rarity}`, { defaultValue: RARITY_LABELS[group.rarity] })}
-              </span>
-              <h3 className="dza-item__name">{group.name}</h3>
-              <span className="dza-item__value">
-                {group.minValueMinor === group.maxValueMinor
-                  ? formatMinor(group.minValueMinor, group.currency)
-                  : `${formatMinor(group.minValueMinor, group.currency)} — ${formatMinor(group.maxValueMinor, group.currency)}`}
-              </span>
-              <span className="dza-item__wear">{group.items.map(exteriorLabel).join(" · ")}</span>
-            </article>
-          ))}
-        </div>
+              <h3 className="dza-tier__title">
+                <span>{t(`rarity.${rarity}`, { defaultValue: RARITY_LABELS[rarity] })}</span>
+                <i aria-hidden="true" />
+                <b>{String(groups.length).padStart(2, "0")}</b>
+              </h3>
+              <div className="dza-items__rail">
+                {groups.map((group) => (
+                  <article key={group.name} className="dza-item" style={{ "--rc": rarityColor(group.rarity) } as CSSProperties}>
+                    <span className="dza-item__chance">{groupChancePercent(group, totalWeight)}%</span>
+                    <img src={group.imageUrl} alt={group.name} loading="lazy" />
+                    <h4 className="dza-item__name">{group.name}</h4>
+                    <span className="dza-item__value">
+                      {group.minValueMinor === group.maxValueMinor
+                        ? formatMinor(group.minValueMinor, group.currency)
+                        : `${formatMinor(group.minValueMinor, group.currency)} – ${formatMinor(group.maxValueMinor, group.currency)}`}
+                    </span>
+                    <span className="dza-item__wear">{group.items.map(exteriorLabel).join(" · ")}</span>
+                  </article>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </section>
     </div>
   );

@@ -478,3 +478,26 @@ h1, h2, h3, h4 { font-weight: 500 !important; }
 }
 .pages-bar-link:hover { color: var(--chrome); }
 .pages-bar-link.active { color: var(--chrome); border-bottom-color: var(--accent); }
+
+/* ═══ Case card price foot ════════════════════════════════════════════ */
+.dzc__body { justify-content: flex-start; padding: 14px 16px 10px; border-top: 1px solid var(--border); }
+.dzc__foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 12px 16px; border-top: 1px solid var(--border); background: rgba(0, 0, 0, 0.2);
+}
+.dzc__price { display: block; font: 600 1rem var(--mono); color: var(--chrome); }
+.dzc__price .dz-figure { font: 600 1rem var(--mono); color: var(--chrome); letter-spacing: 0; }
+.dzc__price-label {
+  display: block; margin-bottom: 2px;
+  font: 500 0.65rem "Inter", sans-serif; letter-spacing: 0.06em; text-transform: uppercase; color: var(--chrome-dim);
+}
+
+/* ═══ Case page: one section per rarity, rarest first ═════════════════ */
+.dza-tier { --rc: var(--rarity-grey); padding-top: 20px; }
+.dza-tier__title {
+  display: flex; align-items: center; gap: 12px; margin: 0; padding: 0 24px 12px;
+  font: 500 0.78rem "Inter", sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rc);
+}
+.dza-tier__title i { flex: 1; height: 1px; background: color-mix(in srgb, var(--rc) 25%, transparent); }
+.dza-tier__title b { font: 400 0.68rem var(--mono); color: var(--chrome-dim); }
+.dza-item__name { text-transform: none; }
