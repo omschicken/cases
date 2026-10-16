@@ -135,8 +135,8 @@
     "title": "Verificar rodada",
     "couldNotLoad": "Não foi possível carregar esta rodada",
     "publishedHash": "Hash publicado da semente do servidor:",
-    "verified": "✅ Verificado — este resultado é genuíno.",
-    "verificationFailed": "❌ Falha na verificação.",
+    "verified": "Verificado — este resultado é genuíno.",
+    "verificationFailed": "Falha na verificação.",
     "hashMatches": "O hash da semente do servidor confere: {{value}}",
     "itemMatches": "O item corresponde à rolagem recalculada: {{value}}",
     "roll": "Rolagem: {{roll}}"

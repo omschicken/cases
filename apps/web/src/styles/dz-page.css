@@ -480,7 +480,7 @@
   gap: var(--dz-s2);
   padding: 2px var(--dz-s3);
   border: 1px solid color-mix(in srgb, var(--dz-status-color, var(--dz-text-4)) 45%, transparent);
-  border-radius: 999px;
+  border-radius: 8px;
   background: color-mix(in srgb, var(--dz-status-color, var(--dz-text-4)) 12%, transparent);
   font-family: var(--dz-font-technical);
   font-size: var(--dz-type-tech);
@@ -714,7 +714,7 @@
 .case-detail[data-rarity="RESTRICTED"] { --dz-ambient: rgba(136, 71, 255, 0.13); }
 .case-detail[data-rarity="CLASSIFIED"] { --dz-ambient: rgba(211, 44, 230, 0.14); }
 .case-detail[data-rarity="COVERT"]     { --dz-ambient: rgba(235, 75, 75, 0.16); }
-.case-detail[data-rarity="GOLD"]       { --dz-ambient: rgba(245, 200, 66, 0.18); }
+.case-detail[data-rarity="GOLD"]       { --dz-ambient: rgba(124, 107, 255, 0.18); }
 
 /* Show the ambient when rarity is set */
 .case-detail[data-rarity]::before {

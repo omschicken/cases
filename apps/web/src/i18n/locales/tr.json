@@ -135,8 +135,8 @@
     "title": "Turu doğrula",
     "couldNotLoad": "Bu tur yüklenemedi",
     "publishedHash": "Yayımlanan sunucu seed hash'i:",
-    "verified": "✅ Doğrulandı — bu sonuç gerçek.",
-    "verificationFailed": "❌ Doğrulama başarısız.",
+    "verified": "Doğrulandı — bu sonuç gerçek.",
+    "verificationFailed": "Doğrulama başarısız.",
     "hashMatches": "Sunucu seed hash'i eşleşiyor: {{value}}",
     "itemMatches": "Eşya yeniden hesaplanan çekilişle eşleşiyor: {{value}}",
     "roll": "Çekiliş: {{roll}}"

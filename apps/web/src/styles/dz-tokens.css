@@ -12,53 +12,53 @@
      Graphite, not pure black. The reference language is a dark industrial
      room: shadows carry a cold blue-green cast, lit faces go warm. Pure
      #000 kills that and flattens every object placed on it. */
-  --dz-void:        #05070B;
-  --dz-surface-0:   #080B11;
-  --dz-surface-1:   #0D1119;
-  --dz-surface-2:   #141A25;
-  --dz-surface-3:   #1C2432;
-  --dz-surface-4:   #26303F;
+  --dz-void: #05060A;
+  --dz-surface-0: #05060A;
+  --dz-surface-1: #0A0C14;
+  --dz-surface-2: #0F1120;
+  --dz-surface-3: #161929;
+  --dz-surface-4: #1E2236;
 
   /* Metal the chamber is built from — reads as brushed steel under amber. */
-  --dz-metal:       #2A3340;
-  --dz-metal-lit:   #3D4858;
-  --dz-metal-edge:  #4E5A6B;
+  --dz-metal: #1E2236;
+  --dz-metal-lit: #2B3050;
+  --dz-metal-edge: #3A4068;
 
   /* ── Light ─────────────────────────────────────────────────────────────
      Light is a first-class material here, not a glow filter. Each token is
      a real lighting role so surfaces can be lit consistently. */
   --dz-light-ambient: rgba(168, 197, 255, 0.04);
-  --dz-light-key:     rgba(245, 200, 66, 0.22);
-  --dz-light-rim:     rgba(255, 226, 150, 0.40);
-  --dz-light-bounce:  rgba(245, 200, 66, 0.07);
-  --dz-light-spec:    rgba(255, 248, 230, 0.85);
+  --dz-light-key:     rgba(124, 107, 255, 0.22);
+  --dz-light-rim:     rgba(165, 148, 255, 0.40);
+  --dz-light-bounce:  rgba(124, 107, 255, 0.07);
+  --dz-light-spec:    rgba(232, 234, 242, 0.85);
 
   /* ── Accent — warm metallic amber ──────────────────────────────────── */
-  --dz-amber:        #F5C842;
-  --dz-amber-hot:    #FFD966;
-  --dz-amber-deep:   #C9962A;
-  --dz-amber-ember:  #FF8A3D;
+  --dz-amber:        #7C6BFF;
+  --dz-amber-hot:    #A594FF;
+  --dz-amber-deep:   #5A49D8;
+  --dz-amber-ember:  #A594FF;
 
   /* ── Cold technical counterpoint ───────────────────────────────────── */
-  --dz-ice:          #A8C5FF;
-  --dz-ice-dim:      #5A6A8A;
+  --dz-ice: #A594FF;
+  --dz-ice-dim: #6B7089;
 
   /* ── Text ──────────────────────────────────────────────────────────────
      Four steps. --dz-text-4 is the floor for anything a user must read;
      anything dimmer is decorative only and must not carry meaning. */
-  --dz-text-1: #F2F5FC;
-  --dz-text-2: #C4CCDD;
-  --dz-text-3: #8E99B0;
-  --dz-text-4: #6B7488;
+  --dz-text-1: #E8EAF2;
+  --dz-text-2: #B4B8CC;
+  --dz-text-3: #8A8FA8;
+  --dz-text-4: #6B7089;
 
   /* ── State ─────────────────────────────────────────────────────────── */
-  --dz-danger:  #FF4757;
+  --dz-danger: #FF3D57;
   --dz-success: #2FD480;
 
   /* ── Borders ───────────────────────────────────────────────────────── */
-  --dz-edge:        rgba(255, 255, 255, 0.07);
-  --dz-edge-strong: rgba(255, 255, 255, 0.14);
-  --dz-edge-lit:    rgba(245, 200, 66, 0.34);
+  --dz-edge: rgba(255, 255, 255, 0.06);
+  --dz-edge-strong: rgba(255, 255, 255, 0.15);
+  --dz-edge-lit:    rgba(124, 107, 255, 0.34);
 
   /* ── Typography ────────────────────────────────────────────────────────
      Three roles, as the brief requires:
@@ -67,9 +67,9 @@
        technical — metadata, serials, codes. Decorative density only.
      Technical NEVER carries primary content: it stays small, so putting a
      price or a case name in it would trade legibility for atmosphere. */
-  --dz-font-display:   "Space Grotesk", "Inter", system-ui, sans-serif;
+  --dz-font-display: "Inter", system-ui, sans-serif;
   --dz-font-interface: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  --dz-font-technical: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  --dz-font-technical: "DM Mono", ui-monospace, monospace;
 
   /* Fluid display scale — clamps so 320px never overflows and 1920px never
      looks undersized, without a breakpoint per step. */
@@ -99,10 +99,10 @@
   --dz-s9: 7rem;
 
   /* ── Radius — industrial hardware is tight, not pill-shaped ────────── */
-  --dz-r-sm: 3px;
-  --dz-r-md: 6px;
-  --dz-r-lg: 10px;
-  --dz-r-xl: 14px;
+  --dz-r-sm: 2px;
+  --dz-r-md: 4px;
+  --dz-r-lg: 6px;
+  --dz-r-xl: 8px;
 
   /* ── Motion ────────────────────────────────────────────────────────────
      One movement language for the whole product. Durations map to
@@ -146,13 +146,13 @@
      Authentic CS2 values — this audience reads them instantly, so they are
      never restyled for aesthetics. Mirrors lib/rarity.ts; that file stays
      the source of truth for JS. */
-  --dz-r-consumer:   #B0C3D9;
-  --dz-r-industrial: #5E98D9;
-  --dz-r-milspec:    #4B69FF;
-  --dz-r-restricted: #8847FF;
-  --dz-r-classified: #D32CE6;
-  --dz-r-covert:     #EB4B4B;
-  --dz-r-gold:       #F5C842;
+  --dz-r-consumer: #8FA3BF;
+  --dz-r-industrial: #4D9EFF;
+  --dz-r-milspec: #5B7CFF;
+  --dz-r-restricted: #9B6EFF;
+  --dz-r-classified: #FF6FD8;
+  --dz-r-covert: #FF3D57;
+  --dz-r-gold: #FFB800;
 
   /* Per-instance channel. Components set --dz-rarity locally and every
      light in the subtree picks it up, which is what makes the interface

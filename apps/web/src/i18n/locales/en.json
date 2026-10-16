@@ -158,8 +158,8 @@
     "title": "Verify round",
     "couldNotLoad": "Could not load this round",
     "publishedHash": "Published server seed hash:",
-    "verified": "✅ Verified — this result is genuine.",
-    "verificationFailed": "❌ Verification failed.",
+    "verified": "Verified — this result is genuine.",
+    "verificationFailed": "Verification failed.",
     "hashMatches": "Server seed hash matches: {{value}}",
     "itemMatches": "Item matches recomputed roll: {{value}}",
     "roll": "Roll: {{roll}}"

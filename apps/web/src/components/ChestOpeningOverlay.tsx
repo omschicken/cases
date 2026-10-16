@@ -139,6 +139,7 @@ export function ChestOpeningOverlay({
     // style) so the moment is addressable from CSS too; GSAP still owns
     // the actual opacity timing, consistent with the rest of this file.
     function crackFlash() {
+      navigator.vibrate?.([15, 50, 80]);
       gsap.fromTo(flashRef.current, { opacity: 0 }, { opacity: 0.35, duration: 0.05, yoyo: true, repeat: 1, ease: "power1.inOut" });
       stageRef.current?.classList.add("case-chest-is-cracking");
       window.setTimeout(() => stageRef.current?.classList.remove("case-chest-is-cracking"), 100);

@@ -1,111 +1,142 @@
+import type { CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { api } from "../../lib/api";
 import { formatMinor } from "../../lib/money";
-import { RARITY_RANK, rarityColor } from "../../lib/rarity";
-import type { CaseDto } from "../../lib/types";
-import { DropChamber } from "./DropChamber";
+import { rarityColor } from "../../lib/rarity";
+import type { CaseDto, RecentDropDto } from "../../lib/types";
+import { CaseChest, caseVisualIdentity } from "../CaseChest";
+import { Money } from "../Money";
 
 interface DropHeroProps {
   featuredCase?: CaseDto;
   catalogStatus?: "loading" | "empty" | "error";
 }
 
-/**
- * DROP HERO — the featured case suspended in THE DROP CHAMBER.
- *
- * Replaces the rotating carousel with a single focused object. Reuses the
- * existing home.hero.* translation keys so no locale needs re-translating.
- */
-export function DropHero({ featuredCase, catalogStatus = "loading" }: DropHeroProps) {
-  const { t } = useTranslation();
+/** Horizontal marquee of the latest drops. Linear, no pauses, no jumps: the
+ *  list is rendered twice and the track slides by exactly one copy. */
+function LiveFeed() {
+  const [drops, setDrops] = useState<RecentDropDto[]>([]);
 
-  const featuredItem = featuredCase?.items.reduce<CaseDto["items"][number] | undefined>(
-    (best, item) => {
-      if (!best) return item;
-      const diff = RARITY_RANK.indexOf(item.rarity) - RARITY_RANK.indexOf(best.rarity);
-      return diff < 0 || (diff === 0 && BigInt(item.valueMinor) > BigInt(best.valueMinor))
-        ? item
-        : best;
-    },
-    undefined,
-  );
+  useEffect(() => {
+    api.get<RecentDropDto[]>("/cases/recent-drops").then((d) => setDrops(d.slice(0, 12))).catch(() => undefined);
+  }, []);
 
-  // Offline-preview cases ship inline data: placeholders; showing one would
-  // present a stand-in as real artwork.
-  const artUrl = featuredItem && !featuredItem.imageUrl.startsWith("data:image")
-    ? featuredItem.imageUrl
-    : undefined;
-
-  const accent = featuredItem ? rarityColor(featuredItem.rarity) : undefined;
-  const unavailable = catalogStatus === "error";
-
+  if (drops.length === 0) return null;
   return (
-    <section className="dz-hero" aria-labelledby="dz-hero-title">
-      <div className="dz-hero__copy">
-        <span className="dz-hero__eyebrow">{t("home.hero.slide1.eyebrow")}</span>
-        <h1 id="dz-hero-title" className="dz-hero__title">
-          {t("home.hero.slide1.title")}
-        </h1>
-        <p className="dz-hero__lede">{t("home.hero.slide1.subtitle")}</p>
-        <div className="dz-hero__actions">
-          <Link to="/#collections" className="dz-hero__cta">
-            {t("home.hero.slide1.cta")}
-            <span aria-hidden="true">↗</span>
-          </Link>
-          <span className="dz-hero__proof">{t("home.hero.fairness")}</span>
+    <div className="dzh-feed" aria-label="Live feed">
+      <span className="dzh-feed__label"><i aria-hidden="true" />LIVE</span>
+      <div className="dzh-feed__window">
+        <div className="dzh-feed__track">
+          {[...drops, ...drops].map((d, i) => (
+            <span
+              className="dzh-drop"
+              key={`${d.id}-${i}`}
+              style={{ "--rc": rarityColor(d.item.rarity) } as CSSProperties}
+            >
+              <img src={d.item.imageUrl} alt="" loading="lazy" />
+              <span className="dzh-drop__name">{d.item.name}</span>
+              <span className="dzh-drop__value">{formatMinor(d.item.valueMinor, d.item.currency)}</span>
+            </span>
+          ))}
         </div>
       </div>
-
-      <div className="dz-hero__stage">
-        <DropChamber
-          className="dz-hero__chamber"
-          state={featuredCase ? "armed" : "idle"}
-          rarityColor={accent}
-          depth={210}
-          hudLeft={featuredCase ? "DZ / 001" : unavailable ? "API / WAIT" : "DZ / 000"}
-          hudRight="CS / 2"
-          status={featuredCase ? t("home.hero.featured") : undefined}
-        >
-          <div className="dz-hero__art">
-            {artUrl
-              ? <img src={artUrl} alt={featuredItem?.name ?? ""} />
-              : <ChamberEmptyMark />}
-          </div>
-        </DropChamber>
-
-        <div className="dz-hero__readout">
-          <span>
-            <span className="dz-hero__readout-label">
-              {featuredItem ? t("home.hero.topDrop") : t("home.casesHeading")}
-            </span>
-            <span className="dz-hero__readout-name">
-              {featuredItem?.name
-                ?? (unavailable
-                  ? t("home.hero.loadingArt")
-                  : catalogStatus === "empty"
-                    ? t("home.noCasesYet")
-                    : t("common.loading"))}
-            </span>
-          </span>
-          {featuredItem && (
-            <span className="dz-hero__readout-value">
-              {formatMinor(featuredItem.valueMinor, featuredItem.currency)}
-            </span>
-          )}
-        </div>
-      </div>
-    </section>
+    </div>
   );
 }
 
-/** Shown when the chamber has nothing in it — loading, empty, or offline.
- *  An empty lit cell is an honest state, so it needs no fake case. */
-function ChamberEmptyMark() {
+/** Featured case on a CSS 3D card. Pointer position eases the tilt
+ *  (lerp 0.05); on touch screens it sways by itself. */
+function FloatingCase({ featuredCase }: { featuredCase?: CaseDto }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+    const coarse = window.matchMedia("(pointer: coarse)").matches;
+
+    let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+    const onMove = (e: PointerEvent) => {
+      tx = (e.clientX / window.innerWidth - 0.5) * 2;
+      ty = (e.clientY / window.innerHeight - 0.5) * 2;
+    };
+    if (!coarse) window.addEventListener("pointermove", onMove, { passive: true });
+
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      if (coarse) {
+        const t = (now - t0) / 1000;
+        tx = Math.sin(t * 0.8) * 0.7;
+        ty = Math.cos(t * 0.6) * 0.5;
+      }
+      cx += (tx - cx) * 0.05;
+      cy += (ty - cy) * 0.05;
+      el.style.transform = `rotateX(${(-cy * 10).toFixed(2)}deg) rotateY(${(cx * 14).toFixed(2)}deg)`;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  if (!featuredCase) {
+    return <div className="dzh-card dzh-card--empty dz-skeleton" aria-hidden="true" />;
+  }
+  const { hue } = caseVisualIdentity(featuredCase.slug);
   return (
-    <svg viewBox="0 0 120 90" fill="none" aria-hidden="true" style={{ width: "62%", opacity: 0.32 }}>
-      <rect x="20" y="26" width="80" height="44" rx="3" stroke="var(--dz-text-4)" strokeWidth="1.5" strokeDasharray="5 4" />
-      <path d="M20 40h80" stroke="var(--dz-text-4)" strokeWidth="1" opacity="0.6" />
-      <circle cx="60" cy="55" r="6" stroke="var(--dz-text-4)" strokeWidth="1.5" />
-    </svg>
+    <Link
+      to={`/cases/${featuredCase.slug}`}
+      className="dzh-scene"
+      style={{ "--chest-hue": hue } as CSSProperties}
+      aria-label={featuredCase.name}
+    >
+      <div className="dzh-card" ref={cardRef}>
+        <span className="dzh-card__edge" aria-hidden="true" />
+        <span className="dzh-card__serial">FEATURED</span>
+        <div className="dzh-card__art">
+          <CaseChest caseName={featuredCase.name} caseSlug={featuredCase.slug} className="dzh-chest" />
+        </div>
+        <div className="dzh-card__foot">
+          <span className="dzh-card__name">{featuredCase.name}</span>
+          <span className="dzh-card__price"><Money minor={featuredCase.priceMinor} currency={featuredCase.currency} /></span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+/** Landing hero: live feed on top, headline and actions left, a floating
+ *  featured case right. */
+export function DropHero({ featuredCase }: DropHeroProps) {
+  const { t } = useTranslation();
+  return (
+    <section className="dzh" aria-labelledby="dz-hero-title">
+      <LiveFeed />
+      <div className="dzh__grid">
+        <div className="dzh__copy">
+          <h1 id="dz-hero-title" className="dzh__title">
+            {t("home.hero.v2.title1", { defaultValue: "Открой" })}<br />
+            {t("home.hero.v2.title2", { defaultValue: "кейс" })}
+          </h1>
+          <p className="dzh__lede">
+            {t("home.hero.v2.lede", { defaultValue: "Честно. Быстро. Бесплатный старт." })}
+          </p>
+          <div className="dzh__actions">
+            <Link to={featuredCase ? `/cases/${featuredCase.slug}` : "/#collections"} className="dzh__btn dzh__btn--primary">
+              {t("home.hero.v2.open", { defaultValue: "Открыть" })}
+            </Link>
+            <a href="#recent-drops" className="dzh__btn">
+              {t("home.hero.v2.drops", { defaultValue: "Смотреть дропы" })}
+            </a>
+          </div>
+        </div>
+        <FloatingCase featuredCase={featuredCase} />
+      </div>
+    </section>
   );
 }

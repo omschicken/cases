@@ -135,8 +135,8 @@
     "title": "Runde überprüfen",
     "couldNotLoad": "Diese Runde konnte nicht geladen werden",
     "publishedHash": "Veröffentlichter Server-Seed-Hash:",
-    "verified": "✅ Verifiziert — dieses Ergebnis ist echt.",
-    "verificationFailed": "❌ Überprüfung fehlgeschlagen.",
+    "verified": "Verifiziert — dieses Ergebnis ist echt.",
+    "verificationFailed": "Überprüfung fehlgeschlagen.",
     "hashMatches": "Server-Seed-Hash stimmt überein: {{value}}",
     "itemMatches": "Gegenstand stimmt mit neu berechnetem Wurf überein: {{value}}",
     "roll": "Wurf: {{roll}}"

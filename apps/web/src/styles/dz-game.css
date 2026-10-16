@@ -233,7 +233,7 @@
 /* The count rides in a pill so it reads as metadata, not part of the label. */
 .dz-chip b {
   padding: 0 5px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: rgba(0, 0, 0, 0.4);
   font-variant-numeric: tabular-nums;
   color: var(--dz-text-2);

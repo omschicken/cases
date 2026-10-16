@@ -3,13 +3,13 @@ import type { ItemRarity } from "./types";
 // Authentic CS2 rarity colors — recognizable to anyone who's opened a case
 // on Steam, which is exactly the audience here.
 export const RARITY_COLORS: Record<ItemRarity, string> = {
-  CONSUMER: "#B0C3D9",
-  INDUSTRIAL: "#5E98D9",
-  MIL_SPEC: "#4B69FF",
-  RESTRICTED: "#8847FF",
-  CLASSIFIED: "#D32CE6",
-  COVERT: "#EB4B4B",
-  GOLD: "#F5C842",
+  CONSUMER: "#8FA3BF",
+  INDUSTRIAL: "#4D9EFF",
+  MIL_SPEC: "#5B7CFF",
+  RESTRICTED: "#9B6EFF",
+  CLASSIFIED: "#FF6FD8",
+  COVERT: "#FF3D57",
+  GOLD: "#FFB800",
 };
 
 export const RARITY_LABELS: Record<ItemRarity, string> = {

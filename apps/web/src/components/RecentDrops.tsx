@@ -31,7 +31,7 @@ export function RecentDrops() {
   const looped = [...drops, ...drops];
 
   return (
-    <div className="drops-section">
+    <div className="drops-section" id="recent-drops">
       <h3 className="drops-heading">{t("home.recentDrops")}</h3>
       <div className="drops-marquee">
         <div className="drops-track">

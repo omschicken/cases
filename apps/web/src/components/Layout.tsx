@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { api, API_URL } from "../lib/api";
-import { formatMinor } from "../lib/money";
+import { Money } from "./Money";
 import { initEffects } from "../lib/effects";
 import type { WalletDto } from "../lib/types";
 import { Sidebar } from "./Sidebar";
@@ -13,21 +13,13 @@ import { DropsTicker } from "./DropsTicker";
 import { PagesBar } from "./PagesBar";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { OnboardingModal } from "./OnboardingModal";
-
-function MenuIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M3 5.5 L17 5.5 M3 10 L17 10 M3 14.5 L17 14.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-    </svg>
-  );
-}
+import { CursorTrail } from "./CursorTrail";
 
 export function Layout() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const location = useLocation();
   const [balanceMinor, setBalanceMinor] = useState<string | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
@@ -41,8 +33,8 @@ export function Layout() {
       .catch(() => setBalanceMinor(null));
   }, [user]);
 
-  // Close drawers whenever the route changes.
-  useEffect(() => { setMenuOpen(false); setProfileOpen(false); }, [location.pathname]);
+  // Close the account panel whenever the route changes.
+  useEffect(() => { setProfileOpen(false); }, [location.pathname]);
 
   // Global visual effects (3D tilt, cursor glow) — init once, cleaned up on unmount.
   useEffect(() => initEffects(), []);
@@ -52,22 +44,8 @@ export function Layout() {
       <DropsTicker />
 
       <header className="dz-topbar">
-        <button
-          className="dz-menu-toggle"
-          onClick={() => setMenuOpen((v) => !v)}
-          aria-label="Меню"
-          aria-expanded={menuOpen}
-        >
-          <MenuIcon />
-        </button>
-
         <NavLink to="/" className="dz-brand">
-          <span className="dz-brand__sigil" aria-hidden="true">
-            <span>D</span><i />
-          </span>
-          <span className="dz-brand__word">
-            DROP<span className="dz-brand__suffix">ZONE</span>
-          </span>
+          <span className="dz-brand__word">DZ</span>
         </NavLink>
 
         <div className="dz-topbar__right">
@@ -75,7 +53,7 @@ export function Layout() {
             <>
               {balanceMinor !== null && (
                 <NavLink to="/wallet" className="dz-balance">
-                  {formatMinor(balanceMinor)}
+                  <Money minor={balanceMinor} />
                 </NavLink>
               )}
               <div className={`dz-account${profileOpen ? " dz-account--open" : ""}`}>
@@ -127,8 +105,7 @@ export function Layout() {
       <PagesBar />
 
       <div className="dz-body">
-        {menuOpen && <div className="dz-sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
-        <Sidebar open={menuOpen} />
+        <Sidebar />
         <main className="dz-main">
           <RouteTransition>
             <Outlet />
@@ -138,13 +115,14 @@ export function Layout() {
 
       <footer className="dz-footer">
         <div className="dz-footer__heading">
-          <strong className="dz-footer__brand">DROP<span>ZONE</span></strong>
+          <strong className="dz-footer__brand">DZ</strong>
           <span className="dz-footer__age">18+</span>
         </div>
         <p>{t("nav.footer")}</p>
       </footer>
 
       <BottomNav />
+      <CursorTrail />
       <OnboardingModal />
     </div>
   );

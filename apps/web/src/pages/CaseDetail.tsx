@@ -7,11 +7,9 @@ import { formatMinor } from "../lib/money";
 import { RARITY_LABELS, RARITY_RANK, rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
 import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol";
-import { ItemCard } from "../components/dz/ItemCard";
+import { Money } from "../components/Money";
 import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
-import { PageHeader, Readout } from "../components/dz/PageHeader";
-import { DropChamber } from "../components/dz/DropChamber";
 
 const EXTERIOR_PATTERN = / \((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
 const EXTERIOR_SHORT: Record<string, string> = {
@@ -260,17 +258,7 @@ export function CaseDetailPage() {
     openingLockRef.current = false;
   }
   const skinGroups = groupCaseItems(theCase.items);
-  const featuredItem = theCase.items.reduce<CaseItem | null>((best, item) => {
-    if (!best) return item;
-    return BigInt(item.valueMinor) > BigInt(best.valueMinor) ? item : best;
-  }, null);
   const totalWeight = theCase.items.reduce((total, item) => total + item.weight, 0);
-  const featuredGroup = featuredItem ? skinGroups.find((group) => featuredItem.name.replace(EXTERIOR_PATTERN, "") === group.name) : null;
-  const featuredChance = featuredGroup ? groupChancePercent(featuredGroup, totalWeight) : "0";
-  const previewItems = [...theCase.items]
-    .filter((item) => !item.imageUrl.startsWith("data:image"))
-    .sort((a, b) => Number(b.valueMinor) - Number(a.valueMinor))
-    .slice(0, 5);
 
   return (
     <div
@@ -310,107 +298,66 @@ export function CaseDetailPage() {
           <button type="button" className="catalog-retry" onClick={() => setRequestId((id) => id + 1)}>{t("common.retry", { defaultValue: "Retry" })}</button>
         </div>
       )}
-      <nav className="case-detail-breadcrumb" aria-label={t("caseDetail.breadcrumbLabel", { defaultValue: "Breadcrumb" })}>
-        <Link to="/#collections">{t("caseDetail.allCases", { defaultValue: "All cases" })}</Link>
-        <span aria-hidden="true">/</span>
-        <span aria-current="page">{theCase.name}</span>
-      </nav>
-      <PageHeader
-        kicker={`DROPZONE / ${t("caseDetail.collectionLabel", { defaultValue: "COLLECTION" })}`}
-        title={theCase.name}
-        lede={t("caseDetail.heroDescription", { defaultValue: "Explore every possible item and its exact chance before opening." })}
-        aside={<>
-          <Readout label={t("caseDetail.casePrice", { defaultValue: "CASE PRICE" })} value={formatMinor(theCase.priceMinor, theCase.currency)} />
-          <Readout label={t("caseDetail.skinCount", { defaultValue: "SKIN DESIGNS" })} value={String(skinGroups.length)} />
-          <Readout label={t("caseDetail.featuredChance", { defaultValue: "TOP ITEM CHANCE" })} value={`${featuredChance}%`} />
-        </>}
-      />
+      {/* ZONE 1 — slim header */}
+      <header className="dza-head">
+        <Link to="/" className="dza-back" aria-label={t("caseDetail.backToCases", { defaultValue: "Назад к кейсам" })}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </Link>
+        <nav className="dza-crumb" aria-label={t("caseDetail.breadcrumbLabel", { defaultValue: "Breadcrumb" })}>
+          <Link to="/#collections">{t("caseDetail.crumbCases", { defaultValue: "Кейсы" })}</Link>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{theCase.name.replace(/\s*case$/i, "")}</span>
+        </nav>
+      </header>
 
-      <section className="dz-case-stage">
-        <DropChamber
-          className="dz-case-stage__chamber"
-          state={revealed && winningItem ? "revealed" : "idle"}
-          rarityColor={
-            revealed && winningItem
-              ? rarityColor(winningItem.rarity)
-              : featuredItem
-                ? rarityColor(featuredItem.rarity)
+      {/* ZONE 2 — arena */}
+      <section id="opening-station" className="dza-arena" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
+        <div className="dza-arena__stage">
+          <CaseChest
+            className="case-chest-detail"
+            caseName={theCase.name}
+            caseSlug={theCase.slug}
+            opening={opening}
+            itemImageUrl={
+              revealed && winningItem && !winningItem.imageUrl.startsWith("data:image")
+                ? winningItem.imageUrl
                 : undefined
-          }
-          depth={210}
-          hudLeft={theCase.slug.toUpperCase()}
-          hudRight={
-            revealed && winningItem
-              ? t(`rarity.${winningItem.rarity}`, { defaultValue: RARITY_LABELS[winningItem.rarity] })
-              : t("caseDetail.featuredItem", { defaultValue: "FEATURED ITEM" })
-          }
-        >
-          <div className="dz-case-stage__art">
-            <CaseChest
-              className="case-chest-detail"
-              caseName={theCase.name}
-              caseSlug={theCase.slug}
-              opening={opening}
-              itemImageUrl={
-                revealed && winningItem && !winningItem.imageUrl.startsWith("data:image")
-                  ? winningItem.imageUrl
-                  : undefined
-              }
-            />
+            }
+          />
+        </div>
+
+        <div className="dza-arena__panel">
+          <div className="dza-arena__price">
+            <span className="dza-arena__label">{t("caseDetail.casePrice", { defaultValue: "Цена" })}</span>
+            <Money minor={theCase.priceMinor} currency={theCase.currency} />
+            <span className="dza-arena__label">{isPreview ? t("caseDetail.demoOnly", { defaultValue: "DEMO ONLY" }) : t("caseDetail.provablyFair")}</span>
           </div>
-        </DropChamber>
-        <div className="dz-case-stage__foot">
-          <span>
-            <span className="dz-readout__label">{t("caseDetail.featuredItem", { defaultValue: "FEATURED ITEM" })}</span>
-            <span className="dz-case-stage__name">{featuredGroup?.name ?? theCase.name}</span>
-          </span>
-          <a href="#opening-station" className="dz-btn">
-            {t("caseDetail.goToOpening", { defaultValue: "Go to opening" })} <span aria-hidden="true">↓</span>
-          </a>
+
+          {user && !isPreview ? (
+            <>
+              <button onClick={openCase} disabled={opening} className="dza-open">
+                {opening ? t("caseDetail.rolling") : t("caseDetail.open", { defaultValue: "Открыть" })}
+              </button>
+              <button onClick={demoSpin} disabled={opening} className="dza-demo">
+                {t("caseDetail.demoSpin")}
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={demoSpin} disabled={opening} className="dza-open" aria-describedby={isPreview ? "catalog-preview-notice" : undefined}>
+                {opening ? t("caseDetail.rolling") : t("caseDetail.demoSpin")}
+              </button>
+              <p className="dza-hint">
+                {isPreview
+                  ? t("caseDetail.previewHint")
+                  : <>{t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link></>}
+              </p>
+            </>
+          )}
+          {error && <p className="form-error">{error}</p>}
         </div>
-      </section>
-
-      <section id="opening-station" className="dz-panel" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
-        <div className="dz-panel__label"><span className="section-kicker">{t("caseDetail.openingSequence", { defaultValue: "OPENING SEQUENCE" })}</span><span>{isPreview ? t("caseDetail.demoOnly", { defaultValue: "DEMO ONLY" }) : t("caseDetail.provablyFair")}</span></div>
-
-      {!opening && !winningItem && previewItems.length > 0 && (
-        <div className="case-opening-preview" aria-hidden="true">
-          <div className="case-opening-preview-track">
-            {previewItems.map((item) => (
-              <div className="case-opening-preview-item" key={item.id} style={{ "--rarity-color": rarityColor(item.rarity) } as CSSProperties}>
-                <img src={item.imageUrl} alt="" />
-              </div>
-            ))}
-          </div>
-          <span className="case-opening-preview-marker" />
-        </div>
-      )}
-
-      {user && !isPreview ? (
-        <div className="dz-confirm">
-          <button onClick={openCase} disabled={opening} className="dz-commit">
-            {opening
-              ? t("caseDetail.rolling")
-              : t("caseDetail.openFor", { price: formatMinor(theCase.priceMinor, theCase.currency) })}
-          </button>
-          <button onClick={demoSpin} disabled={opening} className="dz-btn" title={t("caseDetail.demoSpin")}>
-            {t("caseDetail.demoSpin")}
-          </button>
-        </div>
-      ) : (
-        <>
-          <button onClick={demoSpin} disabled={opening} className="dz-btn" aria-describedby={isPreview ? "catalog-preview-notice" : undefined}>
-            {opening ? t("caseDetail.rolling") : t("caseDetail.demoSpin")}
-          </button>
-          <p className="hint">
-            {isPreview
-              ? t("caseDetail.previewHint")
-              : <>{t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link></>}
-          </p>
-        </>
-      )}
-
-      {error && <p className="form-error">{error}</p>}
       </section>
 
       {revealed && winningItem && (
@@ -474,28 +421,37 @@ export function CaseDetailPage() {
         </div>
       )}
 
-      <PageHeader
-        level={2}
-        kicker={`DROP TABLE / ${String(skinGroups.length).padStart(2, "0")} SKINS · ${String(theCase.items.length).padStart(2, "0")} OUTCOMES`}
-        title={t("caseDetail.itemsHeading")}
-        lede={t("caseDetail.groupedOddsDisclosure", { defaultValue: "Each card combines all available wear conditions. The chance shown is the total chance for that skin design." })}
-      />
-      <div className="dz-item-grid">
-        {skinGroups.map((group) => (
-          <ItemCard
-            key={group.name}
-            name={group.name}
-            imageUrl={group.imageUrl}
-            rarity={group.rarity}
-            rarityLabel={t(`rarity.${group.rarity}`, { defaultValue: RARITY_LABELS[group.rarity] })}
-            value={group.minValueMinor === group.maxValueMinor
-              ? formatMinor(group.minValueMinor, group.currency)
-              : `${formatMinor(group.minValueMinor, group.currency)} — ${formatMinor(group.maxValueMinor, group.currency)}`}
-            badge={`${groupChancePercent(group, totalWeight)}%`}
-            wear={group.items.map(exteriorLabel)}
-          />
-        ))}
-      </div>
+      {/* ZONE 3 — contents */}
+      <section className="dza-items" aria-labelledby="dza-items-title">
+        <div className="dza-items__head">
+          <h2 id="dza-items-title">{t("caseDetail.itemsHeading")}</h2>
+          <span className="dza-items__count">
+            {String(skinGroups.length).padStart(2, "0")} / {String(theCase.items.length).padStart(2, "0")}
+          </span>
+        </div>
+        <div className="dza-items__rail">
+          {skinGroups.map((group) => (
+            <article
+              key={group.name}
+              className="dza-item"
+              style={{ "--rc": rarityColor(group.rarity) } as CSSProperties}
+            >
+              <span className="dza-item__chance">{groupChancePercent(group, totalWeight)}%</span>
+              <img src={group.imageUrl} alt={group.name} loading="lazy" />
+              <span className="dza-item__rarity">
+                {t(`rarity.${group.rarity}`, { defaultValue: RARITY_LABELS[group.rarity] })}
+              </span>
+              <h3 className="dza-item__name">{group.name}</h3>
+              <span className="dza-item__value">
+                {group.minValueMinor === group.maxValueMinor
+                  ? formatMinor(group.minValueMinor, group.currency)
+                  : `${formatMinor(group.minValueMinor, group.currency)} — ${formatMinor(group.maxValueMinor, group.currency)}`}
+              </span>
+              <span className="dza-item__wear">{group.items.map(exteriorLabel).join(" · ")}</span>
+            </article>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

@@ -127,8 +127,8 @@
   letter-spacing: var(--dz-tracking-tech);
   text-transform: uppercase;
   color: var(--dz-amber);
-  background: rgba(245, 200, 66, 0.08);
-  border: 1px solid rgba(245, 200, 66, 0.2);
+  background: rgba(124, 107, 255, 0.08);
+  border: 1px solid rgba(124, 107, 255, 0.2);
   border-radius: var(--dz-r-sm);
   text-decoration: none;
   white-space: nowrap;
@@ -137,8 +137,8 @@
 }
 
 .dz-balance:hover {
-  background: rgba(245, 200, 66, 0.14);
-  border-color: rgba(245, 200, 66, 0.38);
+  background: rgba(124, 107, 255, 0.14);
+  border-color: rgba(124, 107, 255, 0.38);
 }
 
 /* ── Account avatar & menu ──────────────────────────────────────────── */
@@ -168,7 +168,7 @@
 .dz-account__trigger:hover,
 .dz-account--open .dz-account__trigger {
   border-color: var(--dz-amber);
-  box-shadow: 0 0 0 3px rgba(245, 200, 66, 0.14);
+  box-shadow: 0 0 0 3px rgba(124, 107, 255, 0.14);
 }
 
 .dz-account__trigger img {
@@ -233,7 +233,7 @@
 .dz-account__panel a:hover,
 .dz-account__panel button:hover {
   color: var(--dz-amber);
-  background: rgba(245, 200, 66, 0.07);
+  background: rgba(124, 107, 255, 0.07);
 }
 
 /* ── Steam sign-in button ───────────────────────────────────────────── */
@@ -345,7 +345,7 @@
 
 .dz-sidebar__link.active {
   color: var(--dz-amber);
-  background: rgba(245, 200, 66, 0.07);
+  background: rgba(124, 107, 255, 0.07);
 }
 
 .dz-sidebar__link.active svg {
@@ -416,7 +416,7 @@
   padding: 2px var(--dz-s2);
   font: 800 var(--dz-type-tech) var(--dz-font-display);
   color: var(--dz-amber);
-  border: 1px solid rgba(245, 200, 66, 0.28);
+  border: 1px solid rgba(124, 107, 255, 0.28);
   border-radius: 4px;
 }
 

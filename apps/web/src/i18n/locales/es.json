@@ -135,8 +135,8 @@
     "title": "Verificar ronda",
     "couldNotLoad": "No se pudo cargar esta ronda",
     "publishedHash": "Hash publicado de la semilla del servidor:",
-    "verified": "✅ Verificado — este resultado es genuino.",
-    "verificationFailed": "❌ La verificación falló.",
+    "verified": "Verificado — este resultado es genuino.",
+    "verificationFailed": "La verificación falló.",
     "hashMatches": "El hash de la semilla del servidor coincide: {{value}}",
     "itemMatches": "El objeto coincide con la tirada recalculada: {{value}}",
     "roll": "Tirada: {{roll}}"
