@@ -6,7 +6,8 @@
  *   pnpm --filter @cs2-cases/api seed:cases -- --dry-run                          (no network)
  *
  * Env: API_URL (default https://cases-x18t.vercel.app/api), ADMIN_JWT or --jwt=<token>,
- *      SLUG_SUFFIX (e.g. "-v2": create alongside existing slugs instead of skipping).
+ *      SLUG_SUFFIX (e.g. "-v2": create alongside existing slugs instead of skipping),
+ *      ONLY (comma-separated base slugs, e.g. "static-case,overdrive-case"; default: all six).
  *
  * Notes on the data:
  * - Drops, exteriors, rarities and RUB prices below are the design brief, verbatim.
@@ -159,7 +160,10 @@ const rub = (minor: number) => `${(minor / 100).toLocaleString("ru-RU", { maximu
 
 async function main() {
   const suffix = process.env.SLUG_SUFFIX ?? "";
-  const payloads = CASES.map((c) => buildPayload(c, suffix));
+  const only = process.env.ONLY?.split(",").map((x) => x.trim()).filter(Boolean);
+  const selected = only ? CASES.filter((c) => only.includes(c.slug)) : CASES;
+  if (selected.length === 0) throw new Error(`ONLY matched no case: ${process.env.ONLY}`);
+  const payloads = selected.map((c) => buildPayload(c, suffix));
 
   if (placeholders.size) {
     console.warn(`\n${placeholders.size} skin(s) have no image in the catalog — placeholder used (add real URLs to IMAGE_OVERRIDES):`);
