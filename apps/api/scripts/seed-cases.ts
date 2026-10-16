@@ -186,8 +186,10 @@ async function main() {
     if (!login.ok) throw new Error(`Login failed: HTTP ${login.status}`);
     jwt = ((await login.json()) as { accessToken: string }).accessToken;
   }
-  if (!jwt) throw new Error("Set ADMIN_JWT (or pass --jwt=...), or ADMIN_EMAIL + ADMIN_PASSWORD");
-  const headers = { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` };
+  // With no token here, the request goes out bare: a network-level secret (e.g. a sandbox that
+  // injects "Authorization: Bearer ..." for this host) may be adding it. A 401 means it is missing/expired.
+  if (!jwt) console.warn("No ADMIN_JWT set — sending requests without an Authorization header (relying on an injected one).");
+  const headers: Record<string, string> = { "Content-Type": "application/json", ...(jwt ? { Authorization: `Bearer ${jwt}` } : {}) };
 
   // A duplicate slug surfaces as a 500 on this API (unhandled unique violation), so look first.
   const listed = await fetch(`${base}/admin/cases`, { headers });
