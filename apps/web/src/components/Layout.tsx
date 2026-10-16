@@ -104,9 +104,8 @@ export function Layout() {
 
       <PagesBar />
 
-      <div className={`dz-body${menuOpen ? " dz-body--sidebar-open" : ""}`}>
-        {menuOpen && <div className="dz-sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
-        <Sidebar open={menuOpen} />
+      <div className="dz-body">
+        <Sidebar />
         <main className="dz-main">
           <RouteTransition>
             <Outlet />
