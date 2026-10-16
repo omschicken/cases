@@ -108,7 +108,6 @@ export function CaseListPage() {
         <section className="collection-discovery" aria-labelledby="collection-discovery-heading">
           <div className="collection-discovery-head">
             <div>
-              <span className="section-kicker">DROPZONE / SELECT YOUR ROUTE</span>
               <h2 id="collection-discovery-heading">{t("home.discoveryHeading")}</h2>
             </div>
             <p>{t("home.discoveryIntro")}</p>

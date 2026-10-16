@@ -429,3 +429,52 @@ h1, h2, h3, h4 { font-weight: 500 !important; }
 /* Legacy mobile rules narrow the assembly inside wide chests; the arena
    chest always fills its own box. */
 .dza-arena .case-chest-assembly { inset: 0; width: 100%; max-width: none; }
+
+/* ═══ FIXES: layout, hero, nav, buttons ═══════════════════════════════ */
+:root { --sidebar-w: 56px; }
+
+/* The rail only opens for keyboard focus or hover — a mouse click leaves
+   :focus-within behind and used to pin it open over the hero. */
+.dz-sidebar:focus-within:not(:hover):not(.dz-sidebar--pinned) .dz-sidebar__inner { width: 56px; }
+.dz-sidebar:has(:focus-visible) .dz-sidebar__inner { width: 200px; }
+.dz-sidebar:focus-within:not(:hover):not(:has(:focus-visible)):not(.dz-sidebar--pinned) .dz-sidebar__link span { opacity: 0; }
+/* Pinned: the rail takes real layout space instead of overlaying content. */
+@media (min-width: 768px) {
+  .dz-sidebar--pinned { flex-basis: 200px; width: 200px; }
+}
+
+/* Active item reads clearly; the rest stay dim. */
+.dz-sidebar__link.active { background: rgba(124, 107, 255, 0.08); color: var(--chrome); }
+.dz-sidebar__link.active svg { color: var(--accent-hot); }
+.dz-sidebar__link:not(.active) { color: var(--chrome-dim); }
+
+/* Hero: smaller headline, contained, padded clear of the rail. */
+.dzh { overflow: hidden; }
+.dzh__grid { padding: 56px 32px 24px calc(var(--sidebar-w) * 0 + 40px); }
+.dzh__title { font-size: clamp(2.8rem, 7vw, 6rem); overflow-wrap: anywhere; }
+@media (max-width: 860px) { .dzh__grid { padding: 32px 20px 8px; } }
+
+/* Both hero buttons: one height, one padding, one radius. */
+.dzh__btn {
+  box-sizing: border-box; height: 48px; padding: 0 28px; border-radius: 4px;
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; border: 1px solid var(--border-lit);
+}
+.dzh__btn--primary { border-color: var(--accent); }
+
+/* Featured card footer: air, one line, divider above. */
+.dzh-card__foot { padding: 16px 20px; gap: 16px; border-top: 1px solid var(--border); }
+.dzh-card__name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dzh-card__price { flex: none; }
+
+/* Secondary nav: a real 40px strip that belongs to the header. */
+.pages-bar {
+  display: flex; align-items: center; gap: 4px; height: 40px; padding: 0 24px;
+  background: var(--bg); border-bottom: 1px solid var(--border); overflow-x: auto;
+}
+.pages-bar-link {
+  display: flex; align-items: center; height: 100%; padding: 0 12px;
+  font: 500 0.68rem "Inter", sans-serif; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--chrome-dim); text-decoration: none; border-bottom: 2px solid transparent; border-radius: 0;
+}
+.pages-bar-link:hover { color: var(--chrome); }
+.pages-bar-link.active { color: var(--chrome); border-bottom-color: var(--accent); }
