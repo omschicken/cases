@@ -1,185 +1,204 @@
 /**
- * Creates the six flagship cases through the admin API.
+ * Creates six flagship cases through the admin API.
  *
- *   ADMIN_EMAIL=... ADMIN_PASSWORD=... pnpm --filter @cs2-cases/api seed:cases
- *   pnpm --filter @cs2-cases/api seed:cases -- --dry-run     (no network, prints the plan)
+ *   ADMIN_JWT=eyJ... pnpm --filter @cs2-cases/api seed:cases
+ *   ADMIN_EMAIL=... ADMIN_PASSWORD=... pnpm --filter @cs2-cases/api seed:cases   (logs in for you)
+ *   pnpm --filter @cs2-cases/api seed:cases -- --dry-run                          (no network)
  *
- * Skin names, Steam CDN image URLs and prices are NOT typed in here: every item
- * is looked up by exact name in prisma/cs2-items.json (the catalog the main seed
- * uses) and then expanded into its listed exterior variants with LIVE Skinport
- * RUB prices, exactly like prisma/seed.ts. A name with no catalog entry or no
- * live listing stops the run with the full list of misses — nothing is guessed.
- * --dry-run skips the network and prints the plan with catalog prices instead.
+ * Env: API_URL (default https://cases-x18t.vercel.app/api), ADMIN_JWT or --jwt=<token>,
+ *      SLUG_SUFFIX (e.g. "-v2": create alongside existing slugs instead of skipping).
  *
- * POST /admin/cases stores the price it is given as-is, so the script computes
- * it with marketCasePrice() (the same helper the reprice job uses).
+ * Notes on the data:
+ * - Drops, exteriors, rarities and RUB prices below are the design brief, verbatim.
+ * - POST /admin/cases stores priceMinor as given — the server does NOT reprice. So the
+ *   script prices each case with marketCasePrice() (EV / 0.9), using the brief's
+ *   "~price" only as a floor. Quoting the brief's price alone would sell cases below EV.
+ * - Image URLs come from prisma/cs2-items.json (real Steam CDN links). Skins missing from
+ *   that catalog use a clearly marked placeholder (see PLACEHOLDER_IMAGE) and are listed
+ *   in the output — paste the real URL into IMAGE_OVERRIDES to fix them.
+ * - Rarity enum values are CONSUMER / INDUSTRIAL (the API rejects *_GRADE).
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { marketCasePrice } from "../src/prices/case-pricing";
-import { fetchMarketListings, pricedVariants } from "../src/prices/market-catalog";
 
-type Rarity = "MIL_SPEC" | "RESTRICTED" | "CLASSIFIED" | "COVERT" | "GOLD";
+type Rarity = "CONSUMER" | "INDUSTRIAL" | "MIL_SPEC" | "RESTRICTED" | "CLASSIFIED" | "COVERT" | "GOLD";
+type Exterior = "FN" | "MW" | "FT" | "WW" | "BS";
+/** [skin name, exterior, price in RUB] */
+type Drop = [string, Exterior, number];
+interface CaseSpec { slug: string; name: string; floorRub: number; drops: Record<Rarity, Drop[]>; }
 
-interface CatalogItem { name: string; rarity: string; valueMinor: number; imageUrl: string; }
-interface CaseSpec { slug: string; name: string; theme: string; drops: Record<Rarity, string[]>; }
+const EXTERIOR: Record<Exterior, string> = {
+  FN: "Factory New", MW: "Minimal Wear", FT: "Field-Tested", WW: "Well-Worn", BS: "Battle-Scarred",
+};
 
-/**
- * Real CS2 case odds (79.92 / 15.98 / 3.2 / 0.64 / 0.26 %), as weights out of 1000.
- * CS2 cases contain nothing below Mil-Spec, and the catalog has no Consumer or
- * Industrial skins (and no images for them), so those tiers are not used.
- * Each tier's weight is split evenly across the items listed for it.
- */
-const TIER_WEIGHT: Record<Rarity, number> = { MIL_SPEC: 799, RESTRICTED: 160, CLASSIFIED: 32, COVERT: 6, GOLD: 3 };
+/** Relative tier weights; each tier's weight is split evenly across its drops. */
+const TIER_WEIGHT: Record<Rarity, number> = {
+  CONSUMER: 4000, INDUSTRIAL: 3200, MIL_SPEC: 1600, RESTRICTED: 700, CLASSIFIED: 350, COVERT: 130, GOLD: 20,
+};
 const TIERS = Object.keys(TIER_WEIGHT) as Rarity[];
 const CURRENCY = "RUB";
-const MIN_PRICE_MINOR = 5_000; // never list a case under 50 RUB
+
+/** Real Steam CDN URLs for skins the bundled catalog doesn't have, keyed by base name (no exterior). */
+const IMAGE_OVERRIDES: Record<string, string> = {};
+const PLACEHOLDER_IMAGE = "https://placehold.co/256x192/0F1120/6B7089?text=CS2";
 
 const CASES: CaseSpec[] = [
   {
-    slug: "ignition-case", name: "Ignition Case", theme: "fire / red",
+    slug: "static-case", name: "Static Case", floorRub: 150,
     drops: {
-      MIL_SPEC: ["Five-SeveN | Flame Test", "MAG-7 | Firestarter", "Glock-18 | Bunsen Burner", "Desert Eagle | Oxide Blaze", "Glock-18 | Oxide Blaze", "XM1014 | Oxide Blaze", "P2000 | Red FragCam", "MAC-10 | Carnivore"],
-      RESTRICTED: ["Desert Eagle | Crimson Web", "MAC-10 | Heat", "MAG-7 | Heat", "P250 | Inferno", "Galil AR | Crimson Tsunami"],
-      CLASSIFIED: ["AK-47 | Redline", "M4A4 | Hellfire", "AWP | Redline"],
-      COVERT: ["AK-47 | Bloodsport", "P2000 | Fire Elemental"],
-      GOLD: ["★ Karambit | Doppler", "★ M9 Bayonet | Fade"],
+      CONSUMER: [["USP-S | Cortex", "FT", 80], ["Glock-18 | Steel Disruption", "FT", 30], ["M4A4 | 龍王 (Dragon King)", "BS", 50]],
+      INDUSTRIAL: [["AWP | Acheron", "FT", 120], ["MAC-10 | Oceanic", "MW", 60]],
+      MIL_SPEC: [["AK-47 | Slate", "FT", 200], ["FAMAS | Mecha Industries", "FT", 150]],
+      RESTRICTED: [["M4A1-S | Decimator", "FT", 500], ["Desert Eagle | Cobalt Disruption", "FT", 400]],
+      CLASSIFIED: [["AK-47 | Neon Revolution", "FT", 1200]],
+      COVERT: [["AWP | Asiimov", "FT", 4500]],
+      GOLD: [["★ Gut Knife | Fade", "FN", 18000]],
     },
   },
   {
-    slug: "static-case", name: "Static Case", theme: "electric / blue",
+    slug: "overdrive-case", name: "Overdrive Case", floorRub: 200,
     drops: {
-      MIL_SPEC: ["Galil AR | Blue Titanium", "Tec-9 | Blue Titanium", "Glock-18 | Blue Fissure", "Desert Eagle | Blue Ply", "MAG-7 | Cobalt Core", "PP-Bizon | Cobalt Halftone", "P2000 | Oceanic", "SCAR-20 | Blueprint"],
-      RESTRICTED: ["AK-47 | Blue Laminate", "M4A1-S | Bright Water", "AWP | Phobos", "Dual Berettas | Hydro Strike", "USP-S | Dark Water"],
-      CLASSIFIED: ["AWP | Electric Hive", "M4A1-S | Atomic Alloy", "Desert Eagle | Cobalt Disruption"],
-      COVERT: ["AWP | Lightning Strike", "Desert Eagle | Ocean Drive"],
-      GOLD: ["★ Butterfly Knife | Blue Steel", "★ Talon Knife | Blue Steel"],
+      CONSUMER: [["P250 | Verdigris", "FT", 50], ["Nova | Gila", "FT", 40], ["Tec-9 | Isaac", "FT", 60]],
+      INDUSTRIAL: [["MP9 | Bulldozer", "FT", 80], ["XM1014 | Tranquility", "FT", 70]],
+      MIL_SPEC: [["AUG | Stymphalian", "FT", 300], ["M4A4 | Neo-Noir", "FT", 400]],
+      RESTRICTED: [["M4A1-S | Player Two", "FT", 800], ["USP-S | Monster Mashup", "FT", 600]],
+      CLASSIFIED: [["AK-47 | Bloodsport", "FT", 2000]],
+      COVERT: [["M4A1-S | Hyper Beast", "FT", 5000]],
+      GOLD: [["★ Bayonet | Doppler", "FN", 25000]],
     },
   },
   {
-    slug: "overdrive-case", name: "Overdrive Case", theme: "speed / violet",
+    slug: "ignition-case", name: "Ignition Case", floorRub: 500,
     drops: {
-      MIL_SPEC: ["MAC-10 | Ultraviolet", "SG 553 | Ultraviolet", "Five-SeveN | Violent Daimyo", "Tec-9 | Flash Out", "Galil AR | Rocket Pop", "FAMAS | Crypsis", "MP9 | Dart", "P250 | Cassette"],
-      RESTRICTED: ["AK-47 | Orbit Mk01", "M4A4 | Spider Lily", "P90 | Neoqueen", "MP9 | Mount Fuji", "Sawed-Off | Limelight"],
-      CLASSIFIED: ["P90 | Trigon", "AUG | Syd Mead", "AWP | Fever Dream"],
-      COVERT: ["M4A1-S | Player Two", "AK-47 | Neon Rider"],
-      GOLD: ["★ Karambit | Ultraviolet", "★ Skeleton Knife | Ultraviolet"],
+      CONSUMER: [["FAMAS | Doodle Lore", "FT", 100], ["MAC-10 | Tatter", "FT", 80]],
+      INDUSTRIAL: [["MP7 | Abyssal Apparition", "FT", 200], ["PP-Bizon | Forest Leaves", "FT", 150]],
+      MIL_SPEC: [["SG 553 | Colony IV", "FT", 600], ["CZ75-Auto | Tigris", "FT", 500]],
+      RESTRICTED: [["AWP | Mortis", "FT", 1500], ["M4A1-S | Nightmare", "FT", 1200]],
+      CLASSIFIED: [["AK-47 | Nightwish", "FT", 3500]],
+      COVERT: [["AWP | Neo-Noir", "FT", 8000]],
+      GOLD: [["★ Karambit | Tiger Tooth", "FN", 45000]],
     },
   },
   {
-    slug: "meltdown-case", name: "Meltdown Case", theme: "nuclear / green",
+    slug: "blacklight-case", name: "Blacklight Case", floorRub: 1000,
     drops: {
-      MIL_SPEC: ["MP9 | Bioleak", "MP9 | Deadly Poison", "SCAR-20 | Green Marine", "USP-S | PC-GRN", "G3SG1 | Demeter", "MAG-7 | Resupply", "M249 | Magma", "SCAR-20 | Outbreak"],
-      RESTRICTED: ["M249 | Emerald Poison Dart", "P90 | Virus", "AWP | Atheris", "G3SG1 | Dream Glade", "Nova | Gila"],
-      CLASSIFIED: ["P90 | Emerald Dragon", "M4A4 | Desolate Space", "Galil AR | Eco"],
-      COVERT: ["AK-47 | Fuel Injector", "M4A1-S | Chantico's Fire"],
-      GOLD: ["★ Bayonet | Boreal Forest", "★ Falchion Knife | Boreal Forest"],
+      CONSUMER: [["Glock-18 | Vaporwave", "FT", 200], ["P90 | Facility Draft", "FT", 150]],
+      INDUSTRIAL: [["MP5-SD | Phosphor", "FT", 400], ["MAG-7 | Heat", "FT", 300]],
+      MIL_SPEC: [["M4A4 | Cyber Security", "FT", 1200], ["AK-47 | Uncharted", "FT", 1000]],
+      RESTRICTED: [["USP-S | Printstream", "FT", 3000], ["AWP | Exoskeleton", "FT", 2000]],
+      CLASSIFIED: [["M4A1-S | Printstream", "FT", 8000]],
+      COVERT: [["AK-47 | Phantom Disruptor", "FT", 15000]],
+      GOLD: [["★ M9 Bayonet | Lore", "FN", 80000]],
     },
   },
   {
-    slug: "blacklight-case", name: "Blacklight Case", theme: "neon / pink",
+    slug: "sovereign-case", name: "Sovereign Case", floorRub: 3000,
     drops: {
-      MIL_SPEC: ["Five-SeveN | Capillary", "FAMAS | Meow 36", "FAMAS | Doomkitty", "MAC-10 | Rangeen", "Galil AR | Rocket Pop", "AUG | Tom Cat", "MP9 | Capillary", "P250 | Re.built"],
-      RESTRICTED: ["MP7 | Neon Ply", "MAC-10 | Allure", "P90 | Neoqueen", "Glock-18 | Umbral Rabbit", "CZ75-Auto | Pole Position"],
-      CLASSIFIED: ["Sawed-Off | Kiss♥Love", "Five-SeveN | Fairy Tale", "AUG | Death by Puppy"],
-      COVERT: ["P90 | Death by Kitty", "MAC-10 | Neon Rider"],
-      GOLD: ["★ Butterfly Knife | Marble Fade", "★ Karambit | Marble Fade"],
+      CONSUMER: [["Glock-18 | Reactor", "FT", 500], ["P250 | Apep's Curse", "FT", 400]],
+      INDUSTRIAL: [["AWP | Capillary", "FT", 800], ["M4A4 | Spider Lily", "FT", 700]],
+      MIL_SPEC: [["AK-47 | Vulcan", "FT", 3000], ["Desert Eagle | Printstream", "FT", 2500]],
+      RESTRICTED: [["AWP | Wildfire", "FT", 6000], ["M4A1-S | Welcome to the Jungle", "FT", 5000]],
+      CLASSIFIED: [["AWP | Fade", "FN", 20000]],
+      COVERT: [["AK-47 | Gold Arabesque", "FN", 50000]],
+      GOLD: [["★ Butterfly Knife | Fade", "FN", 150000]],
     },
   },
   {
-    slug: "sovereign-case", name: "Sovereign Case", theme: "gold / premium",
+    slug: "apex-case", name: "Apex Case", floorRub: 8000,
     drops: {
-      MIL_SPEC: ["Desert Eagle | Bronze Deco", "Desert Eagle | Corinthian", "P2000 | Imperial", "AUG | Luxe Trim", "AK-47 | Elite Build", "P90 | Elite Build", "Dual Berettas | Panther", "M4A4 | Poly Mag"],
-      RESTRICTED: ["UMP-45 | Gold Bismuth", "Glock-18 | Royal Legion", "Dual Berettas | Royal Consorts", "AUG | Aristocrat", "M4A4 | Evil Daimyo"],
-      CLASSIFIED: ["P2000 | Imperial Dragon", "M4A4 | 龍王 (Dragon King)", "M4A1-S | Decimator"],
-      COVERT: ["M4A1-S | Golden Coil", "Desert Eagle | Golden Koi"],
-      GOLD: ["★ Butterfly Knife | Fade", "★ Talon Knife | Fade"],
+      CONSUMER: [["AWP | Mortis", "FT", 1500], ["M4A1-S | Decimator", "FT", 1200]],
+      INDUSTRIAL: [["★ Karambit | Safari Mesh", "FT", 4000], ["★ M9 Bayonet | Night", "FT", 5000]],
+      MIL_SPEC: [["AK-47 | Fire Serpent", "FT", 25000], ["AWP | Dragon Lore", "FT", 80000]],
+      RESTRICTED: [["★ Karambit | Slaughter", "FT", 35000], ["★ M9 Bayonet | Marble Fade", "FT", 40000]],
+      CLASSIFIED: [["★ Karambit | Tiger Tooth", "FN", 60000]],
+      COVERT: [["★ Karambit | Fade", "FN", 120000]],
+      GOLD: [["AWP | Dragon Lore", "FN", 250000]],
     },
   },
 ];
 
-const catalog = new Map<string, CatalogItem>();
-for (const c of JSON.parse(readFileSync(join(__dirname, "../prisma/cs2-items.json"), "utf8")) as { items: CatalogItem[] }[]) {
-  for (const item of c.items) if (!catalog.has(item.name)) catalog.set(item.name, item);
+const catalogImages = new Map<string, string>();
+for (const c of JSON.parse(readFileSync(join(__dirname, "../prisma/cs2-items.json"), "utf8")) as { items: { name: string; imageUrl: string }[] }[]) {
+  for (const item of c.items) if (!catalogImages.has(item.name)) catalogImages.set(item.name, item.imageUrl);
 }
 
-function buildPayload(spec: CaseSpec, prices?: ReadonlyMap<string, number>) {
+const placeholders = new Set<string>();
+function imageFor(base: string): string {
+  const url = IMAGE_OVERRIDES[base] ?? catalogImages.get(base);
+  if (url) return url;
+  placeholders.add(base);
+  return PLACEHOLDER_IMAGE;
+}
+
+function buildPayload(spec: CaseSpec, suffix: string) {
   const items = TIERS.flatMap((tier) => {
-    const names = spec.drops[tier];
-    return names.flatMap((name) => {
-      const found = catalog.get(name);
-      if (!found) throw new Error(`${spec.slug}: "${name}" is not in prisma/cs2-items.json`);
-      if (found.rarity !== tier) throw new Error(`${spec.slug}: "${name}" is ${found.rarity} in the catalog, listed as ${tier}`);
-      const base = { name, imageUrl: found.imageUrl, weight: TIER_WEIGHT[tier] / names.length, valueMinor: found.valueMinor, currency: CURRENCY, rarity: tier };
-      if (!prices) return [base];
-      const variants = pricedVariants(base, prices);
-      if (variants.length === 0) throw new Error(`${spec.slug}: no live RUB listing for "${name}"`);
-      return variants;
-    });
+    const drops = spec.drops[tier];
+    return drops.map(([base, ext, rub]) => ({
+      name: `${base} (${EXTERIOR[ext]})`,
+      imageUrl: imageFor(base),
+      weight: TIER_WEIGHT[tier] / drops.length,
+      valueMinor: rub * 100,
+      currency: CURRENCY,
+      rarity: tier,
+    }));
   });
-  const total = items.reduce((s, i) => s + i.weight, 0);
-  if (Math.abs(total - 1000) > 1e-6) throw new Error(`${spec.slug}: weights sum to ${total}, expected 1000`);
-  const chase = items.find((i) => i.rarity === "GOLD") ?? items[items.length - 1];
+  const chase = items[items.length - 1];
   return {
-    slug: spec.slug,
+    slug: `${spec.slug}${suffix}`,
     name: spec.name,
-    priceMinor: marketCasePrice(items, MIN_PRICE_MINOR),
+    priceMinor: marketCasePrice(items, spec.floorRub * 100),
     currency: CURRENCY,
     imageUrl: chase.imageUrl,
     items,
+    floorRub: spec.floorRub,
   };
 }
 
-/** Validates every case before touching the network, so a typo can't leave half the set created. */
-function buildAll(prices?: ReadonlyMap<string, number>) {
-  const missing: string[] = [];
-  const payloads = [];
-  for (const spec of CASES) {
-    try { payloads.push(buildPayload(spec, prices)); } catch (e) { missing.push((e as Error).message); }
-  }
-  if (missing.length) {
-    console.error(`\n${missing.length} problem(s):\n  - ${missing.join("\n  - ")}\n`);
-    process.exit(1);
-  }
-  return payloads;
-}
+const rub = (minor: number) => `${(minor / 100).toLocaleString("ru-RU", { maximumFractionDigits: 0 })} RUB`;
 
 async function main() {
-  const dryRun = process.argv.includes("--dry-run");
-  const payloads = buildAll(dryRun ? undefined : await fetchMarketListings(CURRENCY));
-  const rub = (m: number) => `${(m / 100).toFixed(2)} RUB`;
+  const suffix = process.env.SLUG_SUFFIX ?? "";
+  const payloads = CASES.map((c) => buildPayload(c, suffix));
 
-  if (dryRun) {
-    for (const p of payloads) {
-      const ev = p.items.reduce((s, i) => s + i.weight * i.valueMinor, 0) / 1000;
-      console.log(`${p.slug.padEnd(16)} ${String(p.items.length).padStart(2)} items  EV ${rub(ev).padStart(12)}  price ${rub(p.priceMinor).padStart(12)}`);
-    }
-    return;
+  if (placeholders.size) {
+    console.warn(`\n${placeholders.size} skin(s) have no image in the catalog — placeholder used (add real URLs to IMAGE_OVERRIDES):`);
+    for (const p of placeholders) console.warn(`  - ${p}`);
+    console.warn("");
   }
 
-  const base = (process.env.API_URL ?? "http://localhost:3000").replace(/\/$/, "");
-  const email = process.env.ADMIN_EMAIL;
-  const password = process.env.ADMIN_PASSWORD;
-  if (!email || !password) throw new Error("Set ADMIN_EMAIL and ADMIN_PASSWORD");
+  console.log("slug".padEnd(18) + "brief".padStart(12) + "  priced at (EV/0.9, floored at brief)");
+  for (const p of payloads) console.log(p.slug.padEnd(18) + rub(p.floorRub * 100).padStart(12) + "  " + rub(p.priceMinor));
 
-  const login = await fetch(`${base}/auth/login`, {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }),
-  });
-  if (!login.ok) throw new Error(`Login failed: HTTP ${login.status}`);
-  const { accessToken } = (await login.json()) as { accessToken: string };
-  const headers = { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` };
+  if (process.argv.includes("--dry-run")) return;
 
-  const existing = await fetch(`${base}/admin/cases`, { headers });
-  if (!existing.ok) throw new Error(`GET /admin/cases failed: HTTP ${existing.status}`);
-  const have = new Set(((await existing.json()) as { slug: string }[]).map((c) => c.slug));
-
-  let failed = 0;
-  for (const p of payloads) {
-    if (have.has(p.slug)) { console.log(`skip     ${p.slug} (already exists)`); continue; }
-    const res = await fetch(`${base}/admin/cases`, { method: "POST", headers, body: JSON.stringify(p) });
-    if (res.ok) console.log(`created  ${p.slug}  ${p.items.length} items  ${rub(p.priceMinor)}`);
-    else { failed++; console.error(`FAILED   ${p.slug}  HTTP ${res.status}  ${await res.text()}`); }
+  const base = (process.env.API_URL ?? "https://cases-x18t.vercel.app/api").replace(/\/$/, "");
+  let jwt = process.env.ADMIN_JWT ?? process.argv.find((a) => a.startsWith("--jwt="))?.slice(6);
+  if (!jwt && process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+    const login = await fetch(`${base}/auth/login`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: process.env.ADMIN_EMAIL, password: process.env.ADMIN_PASSWORD }),
+    });
+    if (!login.ok) throw new Error(`Login failed: HTTP ${login.status}`);
+    jwt = ((await login.json()) as { accessToken: string }).accessToken;
   }
+  if (!jwt) throw new Error("Set ADMIN_JWT (or pass --jwt=...), or ADMIN_EMAIL + ADMIN_PASSWORD");
+  const headers = { "Content-Type": "application/json", Authorization: `Bearer ${jwt}` };
+
+  // A duplicate slug surfaces as a 500 on this API (unhandled unique violation), so look first.
+  const listed = await fetch(`${base}/admin/cases`, { headers });
+  if (!listed.ok) throw new Error(`GET /admin/cases failed: HTTP ${listed.status}`);
+  const have = new Set(((await listed.json()) as { slug: string }[]).map((c) => c.slug));
+
+  let created = 0, skipped = 0, failed = 0;
+  for (const { floorRub: _floor, ...body } of payloads) {
+    if (have.has(body.slug)) { skipped++; console.log(`skip     ${body.slug} (exists)`); continue; }
+    const res = await fetch(`${base}/admin/cases`, { method: "POST", headers, body: JSON.stringify(body) });
+    if (res.ok) { created++; console.log(`created  ${body.slug}  ${body.items.length} items  ${rub(body.priceMinor)}`); }
+    else if (res.status === 409) { skipped++; console.log(`skip     ${body.slug} (409 already exists)`); }
+    else { failed++; console.error(`FAILED   ${body.slug}  HTTP ${res.status}  ${await res.text()}`); }
+  }
+  console.log(`\ncreated ${created}, skipped ${skipped}, failed ${failed}`);
   if (failed) process.exit(1);
 }
 
