@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 import { ChestOpeningOverlay } from "./ChestOpeningOverlay";
+import { rarityColor } from "../lib/rarity";
+import type { ItemRarity } from "../lib/types";
 
 type CaseChestProps = {
   caseName: string;
@@ -11,12 +13,17 @@ type CaseChestProps = {
   opening?: boolean;
   /** Chest is frozen-open after the burst, during the showcase phase. */
   open?: boolean;
+  /** Detail-page scene only: a weapon teased above the closed chest. */
+  previewItemUrl?: string;
+  previewRarity?: string;
   /** Called once the burst/reveal sequence inside the overlay has settled. */
   onRevealed?: () => void;
 };
 
 /** Stable visual identity: a case keeps the same treatment in every view. */
-export function caseVisualIdentity(caseSlug: string) {
+export function caseVisualIdentity(rawSlug: string) {
+  // re-issued cases ("…-v2", "…-v3") keep the look of the original
+  const caseSlug = rawSlug.replace(/-v\d+$/, "");
   const seed = [...caseSlug].reduce((value, letter) => ((value * 31) + letter.charCodeAt(0)) >>> 0, 7);
   const firstCases: Record<string, number> = {
     "ignition-case": 0, "static-case": 1, "overdrive-case": 2,
@@ -39,8 +46,8 @@ export function CaseGlyph({ variant }: { variant: number }) {
     <g key="orbit"><circle cx="32" cy="32" r="22" strokeWidth="2"/><circle cx="32" cy="32" r="13" strokeWidth="1.5"/><circle cx="32" cy="32" r="4" fill="currentColor" strokeWidth="0"/><path d="M32 4v7M32 53v7M4 32h7M53 32h7" strokeWidth="1.5"/></g>,
     // 3 — shard / diamond
     <path key="shard" d="M32 5 10 24l8 24 14 11 14-11 8-24L32 5ZM10 24l22 8 22-8M32 5v27m0 33V32M19 52l13-20 13 20" strokeWidth="2"/>,
-    // 4 — signal bars
-    <g key="signal"><rect x="5" y="44" width="10" height="16" rx="1.5" strokeWidth="2"/><rect x="20" y="32" width="10" height="28" rx="1.5" strokeWidth="2"/><rect x="35" y="20" width="10" height="40" rx="1.5" strokeWidth="2"/><rect x="50" y="8" width="10" height="52" rx="1.5" strokeWidth="2"/></g>,
+    // 4 — reactor core (hex frame, lens, crosshair ticks)
+    <g key="core"><path d="M32 5 54 18v28L32 59 10 46V18L32 5Z" strokeWidth="2"/><circle cx="32" cy="32" r="10" strokeWidth="2"/><circle cx="32" cy="32" r="3.5" fill="currentColor" strokeWidth="0"/><path d="M32 5v12M32 47v12M10 18l11 6.5M54 18l-11 6.5M10 46l11-6.5M54 46l-11-6.5" strokeWidth="1.5"/></g>,
     // 5 — crown
     <path key="crown" d="M6 20 20 36l12-24 12 24 14-16-6 32H10L6 20Zm6 40h40M20 44h24" strokeWidth="2.5"/>,
   ];
@@ -72,7 +79,7 @@ function OrbitRing({ radius, count, delay }: { radius: number; count: number; de
  */
 export function CaseChest({
   caseName, caseSlug, itemImageUrl, itemName, itemRarity, className = "",
-  opening = false, open = false, onRevealed,
+  opening = false, open = false, previewItemUrl, previewRarity, onRevealed,
 }: CaseChestProps) {
   const { seed, variant, hue, finish } = caseVisualIdentity(caseSlug);
   const mark = caseName.replace(/\s*case$/i, "").slice(0, 3).toUpperCase();
@@ -81,10 +88,14 @@ export function CaseChest({
   const lightness  = [52, 60, 48, 55, 58, 65][finish % 4];
 
   const cls = `case-chest case-chest-v${variant} case-chest-f${finish} ${open ? "case-chest-is-open" : ""} ${className}`;
+  // The detail page gets the full scene (vignette, particles, fog, weapon);
+  // grid cards and the hero keep the lightweight chest.
+  const scene = className.includes("case-chest-detail");
   const cssVars = {
     "--chest-hue": hue,
     "--chest-sat": `${saturation}%`,
     "--chest-lit": `${lightness}%`,
+    ...(scene && previewRarity ? { "--scene-rarity": rarityColor(previewRarity as ItemRarity) } : {}),
   } as CSSProperties;
 
   return (
@@ -94,6 +105,26 @@ export function CaseChest({
         style={opening ? ({ ...cssVars, visibility: "hidden" } as CSSProperties) : cssVars}
         aria-hidden="true"
       >
+        {scene && (
+          <>
+            <span className="case-chest-vignette" />
+            <span className="case-chest-fog" />
+            <span className="case-chest-particles">
+              {Array.from({ length: 14 }, (_, i) => (
+                <span
+                  key={i}
+                  style={{
+                    "--px": `${(i * 37 + seed) % 100}%`,
+                    "--ps": `${2 + ((i * 5 + seed) % 3)}px`,
+                    "--pd": `${7 + ((i * 3 + seed) % 6)}s`,
+                    "--pl": `${-((i * 1.3) % 9)}s`,
+                  } as CSSProperties}
+                />
+              ))}
+            </span>
+          </>
+        )}
+
         {/* Atmospheric glow */}
         <span className="case-chest-aura" />
         <span className="case-chest-atmosphere" />
@@ -107,6 +138,15 @@ export function CaseChest({
 
         {/* Revealed item floats above the chest */}
         {itemImageUrl && <img className="case-chest-reveal" src={itemImageUrl} alt="" />}
+
+        {/* Weapon teased above the closed chest, lit in its rarity colour */}
+        {scene && previewItemUrl && !itemImageUrl && (
+          <div className="case-chest-weapon" aria-hidden="true">
+            <span className="case-chest-weapon-glow" />
+            <img src={previewItemUrl} alt="" />
+            <span className="case-chest-weapon-shadow" />
+          </div>
+        )}
 
         {/* The case body */}
         <div className="case-chest-assembly">
@@ -151,6 +191,8 @@ export function CaseChest({
               <span className="case-chest-nameband-line" />
             </div>
           </div>
+
+          {scene && <span className="case-chest-gap-light" />}
 
           {/* Ground shadow */}
           <div className="case-chest-shadow" />

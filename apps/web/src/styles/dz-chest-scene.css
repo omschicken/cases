@@ -1,0 +1,196 @@
+/* ════════════════════════════════════════════════════════════════
+   Detail-page chest scene — steel case, weapon teaser, atmosphere.
+   Visual only: the GSAP opening overlay uses its own chest-burst-*
+   markup and is not touched by anything here.
+   ════════════════════════════════════════════════════════════════ */
+
+.case-chest.case-chest-detail {
+  /* dark steel body, blue-white edge highlights; accent still follows the case hue */
+  --steel-body: #1a2035;
+  --steel-deep: #0f1424;
+  --steel-edge: #4a6fa5;
+  --steel-hi: #9fc2f0;
+  --scene-glow: var(--scene-rarity, var(--chest-bright));
+  --chest-dark: var(--steel-deep);
+  --chest-mid: var(--steel-body);
+  --chest-light: var(--steel-edge);
+}
+
+/* ── Vignette + navy backdrop ───────────────────────────────── */
+.case-chest-vignette {
+  position: absolute;
+  inset: -55% -55%;
+  z-index: 0;
+  pointer-events: none;
+  /* soft navy pool behind the chest that fades to nothing — no hard edges */
+  background: radial-gradient(ellipse 50% 50% at 50% 56%, rgba(10, 14, 26, 0.95) 0%, rgba(10, 14, 26, 0.7) 38%, transparent 72%);
+}
+
+/* ── Floating particles ─────────────────────────────────────── */
+.case-chest-particles { position: absolute; inset: -30% -20% 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.case-chest-particles span {
+  position: absolute;
+  left: var(--px);
+  bottom: 0;
+  width: var(--ps);
+  height: var(--ps);
+  border-radius: 50%;
+  background: var(--steel-hi);
+  box-shadow: 0 0 6px var(--scene-glow);
+  opacity: 0;
+  animation: scene-rise var(--pd) linear var(--pl) infinite;
+}
+@keyframes scene-rise {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  15%  { opacity: 0.45; }
+  50%  { transform: translate(10px, -110px); opacity: 0.35; }
+  85%  { opacity: 0.3; }
+  100% { transform: translate(-8px, -220px); opacity: 0; }
+}
+
+/* ── Fog at the base ────────────────────────────────────────── */
+.case-chest-fog {
+  position: absolute;
+  left: -18%; right: -18%; bottom: -14%;
+  height: 46%;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 45% 60% at 30% 70%, rgba(120, 150, 200, 0.22), transparent 70%),
+    radial-gradient(ellipse 50% 55% at 72% 75%, rgba(120, 150, 200, 0.18), transparent 70%);
+  filter: blur(14px);
+  animation: scene-fog 9s ease-in-out infinite alternate;
+}
+@keyframes scene-fog {
+  from { transform: translateX(-3%); opacity: 0.7; }
+  to   { transform: translateX(3%);  opacity: 1; }
+}
+
+/* ── Steel body: angled facets, bright edge, engraved plate ──── */
+.case-chest.case-chest-detail .case-chest-body {
+  clip-path: polygon(7% 0, 93% 0, 100% 20%, 96% 100%, 4% 100%, 0 20%);
+  border: 0;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0 6%, transparent 6% 94%, rgba(0, 0, 0, 0.45) 94%),
+    linear-gradient(180deg, rgba(159, 194, 240, 0.16) 0 3%, transparent 3%),
+    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--scene-glow) 20%, transparent) 0 26%, transparent 60%),
+    linear-gradient(165deg, #232c47 0%, var(--steel-body) 45%, var(--steel-deep) 100%);
+  box-shadow: inset 0 1px 0 rgba(159, 194, 240, 0.55), inset 0 -3px 0 rgba(0, 0, 0, 0.45), 0 18px 22px rgba(0, 0, 0, 0.5);
+}
+/* thin bright outline that follows the clipped silhouette */
+.case-chest.case-chest-detail .case-chest-body::before {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(7% 0, 93% 0, 100% 20%, 96% 100%, 4% 100%, 0 20%, 7% 0, 7.6% 1.5%, 1.2% 20.5%, 4.8% 98.5%, 95.2% 98.5%, 98.8% 20.5%, 92.4% 1.5%, 7.6% 1.5%);
+  background: linear-gradient(180deg, var(--steel-hi), var(--steel-edge) 40%, #2a3f66);
+  opacity: 0.9;
+  pointer-events: none;
+}
+.case-chest.case-chest-detail .case-chest-body::after { display: none; }
+.case-chest.case-chest-detail .case-chest-body-grid { opacity: 0.25; }
+
+.case-chest.case-chest-detail .case-chest-glyph-bg {
+  inset: 6% 4%;
+  border-radius: 0;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  background: linear-gradient(160deg, rgba(0, 0, 0, 0.45), rgba(74, 111, 165, 0.12));
+  box-shadow: inset 0 0 0 1px rgba(74, 111, 165, 0.6);
+  filter: none;
+}
+.case-chest.case-chest-detail .case-chest-glyph { color: var(--steel-hi); opacity: 0.9; }
+
+/* ── Lid: steel, tilted slightly open ───────────────────────── */
+.case-chest.case-chest-detail .case-chest-lid {
+  border: 0;
+  clip-path: polygon(6% 0, 94% 0, 100% 100%, 0 100%);
+  background:
+    linear-gradient(180deg, rgba(159, 194, 240, 0.5) 0 4%, transparent 4%),
+    linear-gradient(180deg, #2a3555 0%, var(--steel-body) 60%, var(--steel-deep) 100%);
+  box-shadow: inset 0 2px 0 rgba(159, 194, 240, 0.5), inset 0 -2px 0 rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.45);
+}
+.case-chest.case-chest-detail:not(.case-chest-is-open) .case-chest-lid {
+  transform: perspective(520px) rotateX(-26deg) translateY(-3%);
+}
+.case-chest.case-chest-detail .case-chest-lid-edge { background: linear-gradient(90deg, transparent, var(--steel-hi) 30%, #fff 50%, var(--steel-hi) 70%, transparent); box-shadow: 0 0 10px 1px var(--scene-glow); }
+
+/* ── Light leaking from the gap, pulsing ~3s ────────────────── */
+.case-chest-gap-light {
+  position: absolute;
+  z-index: 2;
+  left: 13%; right: 13%;
+  top: 38.5%;
+  height: 4%;
+  border-radius: 50%;
+  background: linear-gradient(90deg, transparent, var(--scene-glow) 22%, #fff 50%, var(--scene-glow) 78%, transparent);
+  box-shadow: 0 -10px 28px 8px color-mix(in srgb, var(--scene-glow) 55%, transparent), 0 0 12px 2px var(--scene-glow);
+  animation: scene-leak 3s ease-in-out infinite;
+  pointer-events: none;
+}
+.case-chest-gap-light::after {
+  content: "";
+  position: absolute;
+  left: 8%; right: 8%;
+  bottom: 80%;
+  height: 520%;
+  background: linear-gradient(0deg, color-mix(in srgb, var(--scene-glow) 42%, transparent), transparent);
+  clip-path: polygon(0 100%, 100% 100%, 82% 0, 18% 0);
+  filter: blur(7px);
+}
+@keyframes scene-leak {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+.case-chest-is-open .case-chest-gap-light { display: none; }
+
+/* ── Weapon teaser ──────────────────────────────────────────── */
+.case-chest-weapon {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: -40%;
+  width: 60%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.case-chest-weapon-glow {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 135%; aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--scene-glow) 62%, transparent) 0%, color-mix(in srgb, var(--scene-glow) 24%, transparent) 38%, transparent 68%);
+  filter: blur(6px);
+  animation: scene-leak 3s ease-in-out infinite;
+}
+.case-chest-weapon img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 14px 10px rgba(0, 0, 0, 0.6));
+}
+.case-chest-weapon-shadow {
+  position: absolute;
+  left: 18%; right: 18%;
+  bottom: -9%;
+  height: 8%;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  filter: blur(8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-chest-particles span, .case-chest-fog, .case-chest-gap-light, .case-chest-weapon-glow { animation: none; }
+  .case-chest-particles span { opacity: 0.35; }
+}
+@media (max-width: 640px) {
+  .case-chest-particles span:nth-child(n + 8) { display: none; }
+}
+
+/* the lid is unlatched in the scene, so no padlock */
+.case-chest.case-chest-detail .case-chest-lock { display: none; }
+
+/* room for the weapon above the chest and the chest body below it, so the
+   scene never spills over the breadcrumb or the price row */
+.dza-arena__stage:has(.case-chest-detail) { padding-top: clamp(64px, 9vw, 112px); padding-bottom: 84px; }

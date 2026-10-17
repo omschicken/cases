@@ -236,6 +236,16 @@ export function CaseDetailPage() {
 
   const winningItem = result?.item ?? demoItem;
 
+  // The "chase" item teased above the closed chest: the rarest one in the
+  // case that has a real picture (not a generated placeholder).
+  const chaseItem = [...theCase.items]
+    .filter((item) => item.imageUrl && !item.imageUrl.startsWith("data:") && !item.imageUrl.includes("placehold.co"))
+    .sort(
+      (a, b) =>
+        RARITY_RANK.indexOf(a.rarity) - RARITY_RANK.indexOf(b.rarity) ||
+        Number(BigInt(b.valueMinor) - BigInt(a.valueMinor)),
+    )[0];
+
   // Phase is derived, never stored, so it cannot drift from the opening
   // state it describes. A failed request leaves opening false with no item,
   // which resolves to null here and closes the scene on its own. The chest's
@@ -320,6 +330,8 @@ export function CaseDetailPage() {
             caseName={theCase.name}
             caseSlug={theCase.slug}
             opening={opening}
+            previewItemUrl={chaseItem?.imageUrl}
+            previewRarity={chaseItem?.rarity}
             itemImageUrl={
               revealed && winningItem && !winningItem.imageUrl.startsWith("data:image")
                 ? winningItem.imageUrl

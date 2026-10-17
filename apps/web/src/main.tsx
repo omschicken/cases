@@ -5,6 +5,7 @@ import "./index.css";
 // selector with the legacy sheet, so this is belt-and-braces, not a fix.
 import "./styles/dz-tokens.css";
 import "./styles/dz-chest.css";
+import "./styles/dz-chest-scene.css";
 import "./styles/dz-chamber.css";
 import "./styles/dz-card.css";
 import "./styles/dz-hero.css";
