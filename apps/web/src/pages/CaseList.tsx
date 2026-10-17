@@ -103,7 +103,7 @@ export function CaseListPage() {
   return (
     <div>
       <PromoFirstDeposit />
-      <DropHero featuredCase={cases[0]} catalogStatus={loading ? "loading" : error ? "error" : "empty"} />
+      <DropHero caseCount={cases.length} />
       <StatsBar />
 
       {cases.length > 0 && (

@@ -1,17 +1,15 @@
 import type { CSSProperties } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../lib/api";
 import { formatMinor } from "../../lib/money";
 import { rarityColor } from "../../lib/rarity";
-import type { CaseDto, RecentDropDto } from "../../lib/types";
-import { CaseChest, caseVisualIdentity } from "../CaseChest";
-import { Money } from "../Money";
+import type { RecentDropDto } from "../../lib/types";
 
 interface DropHeroProps {
-  featuredCase?: CaseDto;
-  catalogStatus?: "loading" | "empty" | "error";
+  /** Real number of cases in the catalog; omitted claims when unknown. */
+  caseCount?: number;
 }
 
 /** Horizontal marquee of the latest drops. Linear, no pauses, no jumps: the
@@ -46,101 +44,46 @@ function LiveFeed() {
   );
 }
 
-/** Featured case on a CSS 3D card. Pointer position eases the tilt
- *  (lerp 0.05); on touch screens it sways by itself. */
-function FloatingCase({ featuredCase }: { featuredCase?: CaseDto }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = cardRef.current;
-    if (!el) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) return;
-    const coarse = window.matchMedia("(pointer: coarse)").matches;
-
-    let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
-    const onMove = (e: PointerEvent) => {
-      tx = (e.clientX / window.innerWidth - 0.5) * 2;
-      ty = (e.clientY / window.innerHeight - 0.5) * 2;
-    };
-    if (!coarse) window.addEventListener("pointermove", onMove, { passive: true });
-
-    const t0 = performance.now();
-    const tick = (now: number) => {
-      if (coarse) {
-        const t = (now - t0) / 1000;
-        tx = Math.sin(t * 0.8) * 0.7;
-        ty = Math.cos(t * 0.6) * 0.5;
-      }
-      cx += (tx - cx) * 0.05;
-      cy += (ty - cy) * 0.05;
-      el.style.transform = `rotateX(${(-cy * 10).toFixed(2)}deg) rotateY(${(cx * 14).toFixed(2)}deg)`;
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => {
-      window.removeEventListener("pointermove", onMove);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  if (!featuredCase) {
-    return <div className="dzh-card dzh-card--empty dz-skeleton" aria-hidden="true" />;
-  }
-  const { hue } = caseVisualIdentity(featuredCase.slug);
-  return (
-    <Link
-      to={`/cases/${featuredCase.slug}`}
-      className="dzh-scene"
-      style={{ "--chest-hue": hue } as CSSProperties}
-      aria-label={featuredCase.name}
-    >
-      <div className="dzh-card" ref={cardRef}>
-        <span className="dzh-card__edge" aria-hidden="true" />
-        <span className="dzh-card__serial">FEATURED</span>
-        <div className="dzh-card__art">
-          <CaseChest caseName={featuredCase.name} caseSlug={featuredCase.slug} className="dzh-chest" />
-        </div>
-        <div className="dzh-card__foot">
-          <span className="dzh-card__name">{featuredCase.name}</span>
-          <span className="dzh-card__price"><Money minor={featuredCase.priceMinor} currency={featuredCase.currency} /></span>
-        </div>
-      </div>
-    </Link>
-  );
+/** ru plural: 1 кейс, 2-4 кейса, 5+ кейсов. */
+function casesWord(n: number) {
+  const m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return "кейс";
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return "кейса";
+  return "кейсов";
 }
 
-/** Landing hero: live feed on top, headline and actions left, a floating
- *  featured case right. */
-export function DropHero({ featuredCase }: DropHeroProps) {
+/** Landing hero: centred statement, two actions, three micro-facts. */
+export function DropHero({ caseCount }: DropHeroProps) {
   const { t } = useTranslation();
+  const n = caseCount ?? 0;
   return (
-    <section className="dzh" aria-labelledby="dz-hero-title">
+    <section className="hero-v3" aria-labelledby="dz-hero-title">
       <LiveFeed />
-      {featuredCase && /^https?:\/\//.test(featuredCase.imageUrl) && (
-        <div className="dzh__ghosts" aria-hidden="true">
-          {[0, 1, 2].map((i) => <img key={i} className={`dzh__ghost dzh__ghost--${i}`} src={featuredCase.imageUrl} alt="" />)}
+      <span className="hero-v3__glow" aria-hidden="true" />
+      <div className="hero-v3__content">
+        <span className="hero-v3__tag">{t("home.hero.v3.tag", { defaultValue: "CS2 CASE OPENING" })}</span>
+        <h1 id="dz-hero-title" className="hero-v3__title">
+          {t("home.hero.v3.line1", { defaultValue: "ОТКРОЙ ЧТО-ТО" })}
+          <br />
+          <span className="hero-v3__accent">{t("home.hero.v3.line2", { defaultValue: "НЕВОЗМОЖНОЕ" })}</span>
+        </h1>
+        <p className="hero-v3__sub">
+          {n > 0 ? `${n} эксклюзивных ${casesWord(n)}. ` : ""}
+          {t("home.hero.v3.sub", { defaultValue: "Честные шансы. Мгновенный результат." })}
+        </p>
+        <div className="hero-v3__actions">
+          <a href="#collections" className="hero-v3__btn hero-v3__btn--primary">
+            {t("home.hero.v3.open", { defaultValue: "ОТКРЫТЬ КЕЙС" })}
+          </a>
+          <Link to="/fair" className="hero-v3__btn hero-v3__btn--ghost">
+            {t("home.hero.v3.how", { defaultValue: "КАК ЭТО РАБОТАЕТ" })}
+          </Link>
         </div>
-      )}
-      <div className="dzh__grid">
-        <div className="dzh__copy">
-          <h1 id="dz-hero-title" className="dzh__title">
-            {t("home.hero.v2.title1", { defaultValue: "Открой" })}<br />
-            <span className="dzh__accent">{t("home.hero.v2.title2", { defaultValue: "кейс" })}</span>
-          </h1>
-          <p className="dzh__lede">
-            {t("home.hero.v2.lede", { defaultValue: "Честно. Быстро. Бесплатный старт." })}
-          </p>
-          <div className="dzh__actions">
-            <Link to={featuredCase ? `/cases/${featuredCase.slug}` : "/#collections"} className="dzh__btn dzh__btn--primary">
-              {t("home.hero.v2.open", { defaultValue: "Открыть" })}
-            </Link>
-            <a href="#recent-drops" className="dzh__btn">
-              {t("home.hero.v2.drops", { defaultValue: "Смотреть дропы" })}
-            </a>
-          </div>
-        </div>
-        <FloatingCase featuredCase={featuredCase} />
+        <ul className="hero-v3__facts">
+          {n > 0 && <li>{n} {casesWord(n).toUpperCase()}</li>}
+          <li>{t("home.hero.v3.fact2", { defaultValue: "ЧЕСТНАЯ ИГРА" })}</li>
+          <li>{t("home.hero.v3.fact3", { defaultValue: "МГНОВЕННО" })}</li>
+        </ul>
       </div>
     </section>
   );
