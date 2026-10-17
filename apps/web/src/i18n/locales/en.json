@@ -25,6 +25,7 @@
       "history": "History"
     },
     "pagesBar": {
+      "top": "Leaderboard",
       "wallet": "Wallet",
       "referral": "Referral",
       "prizes": "Prizes",

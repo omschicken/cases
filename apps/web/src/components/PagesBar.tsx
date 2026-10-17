@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 const PAGES = [
   { to: "/referral", key: "referral" },
+  { to: "/leaderboard", key: "top" },
   { to: "/prizes", key: "prizes" },
   { to: "/bonuses", key: "bonuses" },
   { to: "/fair", key: "fair" },
