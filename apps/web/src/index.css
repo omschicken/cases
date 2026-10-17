@@ -13774,3 +13774,39 @@ button:not([disabled]):not(.menu-toggle):not(.account-menu-trigger):active,
   background-size: 200% 100%;
   animation: dz-shimmer 1.8s ease-in-out infinite;
 }
+
+/* ── Fix: CaseChest size inside dzc card ───────────────────────
+   .case-chest-assembly uses position:absolute;inset:0 so the outer
+   .case-chest MUST have an explicit height — same pattern as
+   .case-card-editorial .case-chest { height: 6.4rem }.            */
+.dzc__chest {
+  height: 148px;         /* fixed art zone; overrides flex:1 + min-height */
+  min-height: unset;
+}
+/* dzc__chest-art is added to case-chest's className → targets outer div */
+.dzc__chest-art.case-chest {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+/* Scale down the floating animation so the chest doesn't drift out of the card */
+.dzc__chest-art .case-chest-assembly {
+  animation-name: none;   /* disable the 4s float — too slow for small cards */
+  transform-origin: 50% 55%;
+  transform: scale(.82);  /* pull back a bit so the assembly fits the zone */
+}
+/* Restore a subtle scale-pulse on hover for that alive feel */
+.dzc:hover .dzc__chest-art .case-chest-assembly {
+  transform: scale(.88) translateY(-4px);
+  transition: transform .32s cubic-bezier(.2,.88,.2,1);
+}
+/* Orbit rings overhang the chest — clip them */
+.dzc__chest-art .case-orbit-ring { display: none; }
+/* Amplify atmosphere glow inside the small card */
+.dzc__chest-art .case-chest-atmosphere {
+  opacity: .7;
+}
+.dzc:hover .dzc__chest-art .case-chest-atmosphere {
+  opacity: 1;
+  filter: blur(20px);
+}
