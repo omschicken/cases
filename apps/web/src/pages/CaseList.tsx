@@ -103,7 +103,14 @@ export function CaseListPage() {
   return (
     <div>
       <PromoFirstDeposit />
-      <DropHero caseCount={cases.length} />
+      <DropHero
+        caseCount={cases.length}
+        showcase={[...cases]
+          .filter((c) => /^https?:\/\//.test(c.imageUrl ?? ""))
+          .sort((a, b) => Number(BigInt(b.priceMinor) - BigInt(a.priceMinor)))
+          .slice(0, 3)
+          .map((c) => ({ slug: c.slug, name: c.name, imageUrl: c.imageUrl }))}
+      />
       <StatsBar />
 
       {cases.length > 0 && (

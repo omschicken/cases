@@ -10,6 +10,8 @@ import type { RecentDropDto } from "../../lib/types";
 interface DropHeroProps {
   /** Real number of cases in the catalog; omitted claims when unknown. */
   caseCount?: number;
+  /** Up to three real cases (most expensive first) for the right-hand showcase. */
+  showcase?: { slug: string; name: string; imageUrl: string }[];
 }
 
 /** Horizontal marquee of the latest drops. Linear, no pauses, no jumps: the
@@ -53,13 +55,14 @@ function casesWord(n: number) {
 }
 
 /** Landing hero: centred statement, two actions, three micro-facts. */
-export function DropHero({ caseCount }: DropHeroProps) {
+export function DropHero({ caseCount, showcase = [] }: DropHeroProps) {
   const { t } = useTranslation();
   const n = caseCount ?? 0;
   return (
     <section className="hero-v3" aria-labelledby="dz-hero-title">
       <LiveFeed />
       <span className="hero-v3__glow" aria-hidden="true" />
+      <div className="hero-v3__inner">
       <div className="hero-v3__content">
         <span className="hero-v3__tag">{t("home.hero.v3.tag", { defaultValue: "CS2 CASE OPENING" })}</span>
         <h1 id="dz-hero-title" className="hero-v3__title">
@@ -84,6 +87,23 @@ export function DropHero({ caseCount }: DropHeroProps) {
           <li>{t("home.hero.v3.fact2", { defaultValue: "ЧЕСТНАЯ ИГРА" })}</li>
           <li>{t("home.hero.v3.fact3", { defaultValue: "МГНОВЕННО" })}</li>
         </ul>
+      </div>
+
+      {showcase.length > 0 && (
+        <div className="hero-v3__showcase" aria-hidden="true">
+          <span className="hero-v3__showcase-glow" />
+          {showcase.slice(0, 3).map((c, i) => (
+            <Link
+              key={c.slug}
+              to={`/cases/${c.slug}`}
+              tabIndex={-1}
+              className={`hero-v3__case hero-v3__case--${["center", "left", "right"][i]}`}
+            >
+              <img src={c.imageUrl} alt="" loading="lazy" />
+            </Link>
+          ))}
+        </div>
+      )}
       </div>
     </section>
   );

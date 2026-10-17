@@ -445,3 +445,51 @@ h1, h2, h3, h4 { font-weight: 600 !important; letter-spacing: 0.02em; }
   .hero-v3__btn { padding: 14px 28px; font-size: 16px; width: 100%; max-width: 320px; }
   .hero-v3__actions { width: 100%; }
 }
+
+/* ════ Hero v3: two columns + case showcase (desktop) ═════════ */
+.hero-v3__inner { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 1240px; gap: 24px; }
+.hero-v3__content { min-width: 0; }
+.hero-v3__showcase { display: none; }
+
+@media (min-width: 768px) {
+  .hero-v3 { text-align: left; }
+  .hero-v3__content { flex: 1; align-items: flex-start; max-width: none; }
+  .hero-v3__title { font-size: clamp(40px, 4.6vw, 80px); white-space: nowrap; }
+  .hero-v3__actions { justify-content: flex-start; flex-wrap: nowrap; }
+  .hero-v3__btn { padding: 16px 26px; font-size: 16px; letter-spacing: 0.12em; white-space: nowrap; }
+  .hero-v3__facts { justify-content: flex-start; }
+  .hero-v3__showcase {
+    display: block;
+    position: relative;
+    flex: 1;
+    min-height: 400px;
+  }
+  .hero-v3__showcase-glow {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 400px; height: 400px;
+    margin: -200px 0 0 -200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(91, 79, 207, 0.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-v3__case {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 200px;
+    margin: -110px 0 0 -100px;
+  }
+  .hero-v3__case img {
+    display: block;
+    width: 100%;
+    filter: drop-shadow(0 0 30px rgba(124, 106, 247, 0.5));
+    animation: float 4s ease-in-out infinite;
+  }
+  .hero-v3__case--center { z-index: 3; transform: scale(1.1); }
+  .hero-v3__case--left   { z-index: 2; opacity: 0.7; transform: rotate(-15deg) translateX(-80px) translateY(20px); }
+  .hero-v3__case--right  { z-index: 2; opacity: 0.7; transform: rotate(15deg) translateX(80px) translateY(20px); }
+  .hero-v3__case--left img  { animation-delay: 1s; }
+  .hero-v3__case--right img { animation-delay: 2s; }
+}
+@media (min-width: 768px) and (prefers-reduced-motion: reduce) { .hero-v3__case img { animation: none; } }
+@media (max-width: 767px) { .hero-v3__showcase { display: none; } }
