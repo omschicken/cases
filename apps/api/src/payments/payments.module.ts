@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 import { PaymentRail } from "@prisma/client";
 import { PaymentsService } from "./payments.service";
 import { PaymentsController } from "./payments.controller";
+import { CryptoPaymentsController } from "./crypto-payments.controller";
+import { NowpaymentsService } from "./nowpayments.service";
 import { PAYMENT_PROVIDERS, PaymentProvider } from "./payment-provider.interface";
 import { MockCardProvider } from "./providers/mock-card.provider";
 import { MockCryptoProvider } from "./providers/mock-crypto.provider";
@@ -16,6 +18,7 @@ import { WalletModule } from "../wallet/wallet.module";
   imports: [KycModule, ReferralModule, WalletModule],
   providers: [
     PaymentsService,
+    NowpaymentsService,
     MockCardProvider,
     MockCryptoProvider,
     MockSteamProvider,
@@ -34,7 +37,7 @@ import { WalletModule } from "../wallet/wallet.module";
       inject: [MockCardProvider, MockCryptoProvider, MockSteamProvider],
     },
   ],
-  controllers: [PaymentsController],
+  controllers: [PaymentsController, CryptoPaymentsController],
   exports: [PaymentsService],
 })
 export class PaymentsModule {}

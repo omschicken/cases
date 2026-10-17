@@ -119,6 +119,7 @@ model User {
   caseOpenEvents  CaseOpenEvent[]
   provablyFairSeeds ProvablyFairSeed[]
   deposits        Deposit[]
+  payments        Payment[]
   withdrawals     Withdrawal[]
   referralEarningsAsReferrer ReferralEarning[] @relation("ReferrerEarnings")
   referralEarningsAsReferred ReferralEarning[] @relation("ReferredEarnings")
@@ -414,5 +415,25 @@ model PromoCodeRedemption {
   createdAt   DateTime  @default(now())
 
   @@unique([promoCodeId, userId])
+  @@index([userId, createdAt])
+}
+
+// Crypto deposits through NOWPayments. amountRub is in kopecks (minor units).
+// Credited to the wallet exactly once, when the IPN webhook (or the status
+// poll fallback) sees the payment as finished/confirmed.
+model Payment {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  nowpaymentsId  String   @unique
+  amountRub      Int
+  currency       String
+  payAddress     String?
+  payAmount      String?
+  expiresAt      DateTime?
+  status         String   @default("pending") // pending | confirmed | failed
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
   @@index([userId, createdAt])
 }

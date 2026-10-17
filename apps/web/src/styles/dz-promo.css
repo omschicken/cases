@@ -42,3 +42,11 @@
 .fair-calc > h2 { margin: 0; }
 .fair-calc code { word-break: break-all; }
 .fair-history-link { margin: var(--dz-s5) 0; }
+
+/* Crypto deposit */
+.crypto-coins { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--dz-s3); }
+.crypto-coin { display: flex; align-items: center; gap: var(--dz-s3); padding: var(--dz-s3); background: transparent; color: inherit; border: 1px solid rgba(124, 107, 255, 0.25); border-radius: var(--dz-r-sm); cursor: pointer; }
+.crypto-coin--active { border-color: var(--dz-amber); background: rgba(124, 107, 255, 0.12); }
+.crypto-coin__logo { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; color: #fff; font-weight: 700; }
+.crypto-pay__qr { display: grid; place-items: center; padding: var(--dz-s4); background: #fff; border-radius: var(--dz-r-sm); width: fit-content; }
+.crypto-pay input[readonly] { font-family: monospace; }

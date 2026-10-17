@@ -5,6 +5,7 @@ import { formatMinor } from "../lib/money";
 import type { LedgerEntryDto, PaymentRail, WalletDto } from "../lib/types";
 import { PageHeader, Readout } from "../components/dz/PageHeader";
 import { PromoFirstDeposit } from "../components/PromoFirstDeposit";
+import { CryptoDeposit } from "../components/CryptoDeposit";
 
 export function WalletPage() {
   const { t } = useTranslation();
@@ -12,10 +13,6 @@ export function WalletPage() {
   const [ledger, setLedger] = useState<LedgerEntryDto[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-
-  const [depositRail, setDepositRail] = useState<PaymentRail>("CARD");
-  const [depositAmount, setDepositAmount] = useState("5000.00");
-  const depositCurrency = "RUB";
 
   const [withdrawRail, setWithdrawRail] = useState<PaymentRail>("CARD");
   const [withdrawAmount, setWithdrawAmount] = useState("1000.00");
@@ -36,23 +33,6 @@ export function WalletPage() {
   }
 
   useEffect(load, []);
-
-  async function onDeposit(e: FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setInfo(null);
-    try {
-      const result = await api.post<{ status?: string }>("/payments/deposit", {
-        rail: depositRail,
-        amountMinor: Math.round(Number(depositAmount) * 100),
-        currency: depositCurrency,
-      });
-      setInfo(result.status === "CONFIRMED" ? t("wallet.depositConfirmed") : t("wallet.depositPending"));
-      load();
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : t("wallet.depositFailed"));
-    }
-  }
 
   async function onWithdraw(e: FormEvent) {
     e.preventDefault();
@@ -89,26 +69,7 @@ export function WalletPage() {
         <p className="hint">{t("wallet.paymentsUnavailable")}</p>
       ) : (
       <div className="wallet-forms">
-        <form onSubmit={onDeposit} className="auth-form">
-          <h3>{t("wallet.deposit")}</h3>
-          <label>
-            {t("wallet.method")}
-            <select value={depositRail} onChange={(e) => setDepositRail(e.target.value as PaymentRail)}>
-              <option value="CARD">{t("wallet.card")}</option>
-              <option value="CRYPTO">{t("wallet.crypto")}</option>
-              <option value="STEAM_SKIN">{t("wallet.steamSkin")}</option>
-            </select>
-          </label>
-          <label>
-            {t("wallet.amount")}
-            <input value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
-          </label>
-          <label>
-            {t("wallet.currency")}
-            <input value={depositCurrency} readOnly aria-readonly="true" />
-          </label>
-          <button type="submit">{t("wallet.depositButton")}</button>
-        </form>
+        <CryptoDeposit onConfirmed={load} />
 
         <form onSubmit={onWithdraw} className="auth-form">
           <h3>{t("wallet.withdraw")}</h3>
