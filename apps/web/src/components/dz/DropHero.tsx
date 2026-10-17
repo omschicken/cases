@@ -117,11 +117,16 @@ export function DropHero({ featuredCase }: DropHeroProps) {
   return (
     <section className="dzh" aria-labelledby="dz-hero-title">
       <LiveFeed />
+      {featuredCase && /^https?:\/\//.test(featuredCase.imageUrl) && (
+        <div className="dzh__ghosts" aria-hidden="true">
+          {[0, 1, 2].map((i) => <img key={i} className={`dzh__ghost dzh__ghost--${i}`} src={featuredCase.imageUrl} alt="" />)}
+        </div>
+      )}
       <div className="dzh__grid">
         <div className="dzh__copy">
           <h1 id="dz-hero-title" className="dzh__title">
             {t("home.hero.v2.title1", { defaultValue: "Открой" })}<br />
-            {t("home.hero.v2.title2", { defaultValue: "кейс" })}
+            <span className="dzh__accent">{t("home.hero.v2.title2", { defaultValue: "кейс" })}</span>
           </h1>
           <p className="dzh__lede">
             {t("home.hero.v2.lede", { defaultValue: "Честно. Быстро. Бесплатный старт." })}

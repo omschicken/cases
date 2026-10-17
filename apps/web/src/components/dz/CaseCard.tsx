@@ -22,6 +22,8 @@ interface CaseCardProps {
  *  Presentation only: no fetches, no state, so a 90-card grid is one render. */
 export function CaseCard({ caseDto, index, tiers, tier, priceLabel }: CaseCardProps) {
   const { hue } = caseVisualIdentity(caseDto.slug);
+  // A real remote picture beats the generated chest; generated data: SVGs don't count.
+  const hasPicture = /^https?:\/\//.test(caseDto.imageUrl ?? "");
 
   return (
     <Link
@@ -33,7 +35,11 @@ export function CaseCard({ caseDto, index, tiers, tier, priceLabel }: CaseCardPr
         <span className="dzc__serial">DZ-{String(index + 1).padStart(3, "0")}</span>
         {tier && <span className="dzc__chip">{tier}</span>}
         <div className="dzc__chest">
-          <CaseChest caseName={caseDto.name} caseSlug={caseDto.slug} className="dzc__chest-art" />
+          {hasPicture ? (
+            <img className="dzc__img" src={caseDto.imageUrl} alt="" loading="lazy" />
+          ) : (
+            <CaseChest caseName={caseDto.name} caseSlug={caseDto.slug} className="dzc__chest-art" />
+          )}
         </div>
       </div>
 

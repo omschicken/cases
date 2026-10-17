@@ -41,6 +41,7 @@ export function Layout() {
 
   return (
     <div className="dz-shell">
+      <div className="dz-aurora" aria-hidden="true"><i /><i /></div>
       <DropsTicker />
 
       <header className="dz-topbar">

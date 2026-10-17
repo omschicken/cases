@@ -17,6 +17,7 @@ import "./styles/dz-nav.css";
 import "./styles/dz-promo.css";
 import "./styles/dz-leaderboard.css";
 import "./styles/dz-redesign.css";
+import "./styles/dz-overhaul.css";
 import "./i18n";
 import App from "./App";
 

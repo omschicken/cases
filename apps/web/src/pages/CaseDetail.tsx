@@ -9,6 +9,7 @@ import { useAuth } from "../context/AuthContext";
 import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol";
 import { Money } from "../components/Money";
 import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
+import { CaseStage } from "../components/CaseStage";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
 
 const EXTERIOR_PATTERN = / \((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
@@ -325,18 +326,11 @@ export function CaseDetailPage() {
       {/* ZONE 2 — arena */}
       <section id="opening-station" className="dza-arena" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
         <div className="dza-arena__stage">
-          <CaseChest
-            className="case-chest-detail"
+          <CaseStage
             caseName={theCase.name}
-            caseSlug={theCase.slug}
-            opening={opening}
-            previewItemUrl={chaseItem?.imageUrl}
-            previewRarity={chaseItem?.rarity}
-            itemImageUrl={
-              revealed && winningItem && !winningItem.imageUrl.startsWith("data:image")
-                ? winningItem.imageUrl
-                : undefined
-            }
+            caseImageUrl={theCase.imageUrl}
+            chase={chaseItem ? { name: chaseItem.name, imageUrl: chaseItem.imageUrl, rarity: chaseItem.rarity } : undefined}
+            hidden={opening}
           />
         </div>
 

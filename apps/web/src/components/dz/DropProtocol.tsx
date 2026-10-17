@@ -43,6 +43,12 @@ interface DropProtocolProps {
  * Presentation only. The result arrives already decided; this component
  * cannot influence it, and intentionally offers no near-miss effect.
  */
+/** "AWP | Asiimov (Field-Tested)" -> name and exterior shown apart. */
+function splitCondition(name: string) {
+  const m = name.match(/^(.*?)\s*\((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)\s*$/);
+  return m ? { base: m[1], condition: m[2] } : { base: name, condition: "" };
+}
+
 export function DropProtocol({
   phase, caseName, item, result, oddsPercent, caseChest, isOpening = false,
   itemRarity, onSkip, onClose, onOpenAgain, canOpenAgain = false,
@@ -163,6 +169,9 @@ export function DropProtocol({
           isApex ? (
             // Apex reveal: no chamber frame — item fills the stage freely
             <div className="dz-protocol__reveal dz-protocol__reveal--apex">
+              <div className="dz-confetti" aria-hidden="true">
+                {Array.from({ length: 14 }, (_, i) => <i key={i} style={{ "--i": i } as CSSProperties} />)}
+              </div>
               <div className="dz-protocol__item-art dz-protocol__item-art--apex">
                 <img src={item.imageUrl} alt={item.name} />
               </div>
@@ -170,7 +179,8 @@ export function DropProtocol({
                 <span className="dz-protocol__item-rarity">
                   {t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}
                 </span>
-                <h2 className="dz-protocol__item-name">{item.name}</h2>
+                <h2 className="dz-protocol__item-name">{splitCondition(item.name).base}</h2>
+                {splitCondition(item.name).condition && <p className="dz-protocol__item-cond">{splitCondition(item.name).condition}</p>}
                 <p className="dz-protocol__item-value">
                   {formatMinor(item.valueMinor, item.currency)}
                 </p>
@@ -208,7 +218,8 @@ export function DropProtocol({
                 <span className="dz-protocol__item-rarity">
                   {t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}
                 </span>
-                <h2 className="dz-protocol__item-name">{item.name}</h2>
+                <h2 className="dz-protocol__item-name">{splitCondition(item.name).base}</h2>
+                {splitCondition(item.name).condition && <p className="dz-protocol__item-cond">{splitCondition(item.name).condition}</p>}
                 <p className="dz-protocol__item-value">
                   {formatMinor(item.valueMinor, item.currency)}
                 </p>
