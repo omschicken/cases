@@ -13072,3 +13072,219 @@ button:not([disabled]):not(.menu-toggle):not(.account-menu-trigger):active,
   z-index: -1 !important;
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   DROPZONE VISUAL ENHANCEMENT PACK  ·  v2.0
+   Maximum atmosphere, premium feel, rarity-reactive glow system
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Case card — dramatically stronger hover ──────────────────── */
+.case-card-editorial {
+  transition:
+    transform .3s cubic-bezier(.2,.88,.2,1),
+    box-shadow .3s ease,
+    border-color .25s ease !important;
+}
+
+.case-card-editorial:hover {
+  transform: translateY(-10px) !important;
+  border-color: color-mix(in srgb, var(--rarity-color, var(--accent)) 72%, transparent) !important;
+  background: linear-gradient(150deg, rgba(22,28,32,.98), rgba(12,15,18,.98) 72%) !important;
+  box-shadow:
+    0 30px 60px rgba(0,0,0,.55),
+    0 0 0 1px color-mix(in srgb, var(--rarity-color, var(--accent)) 28%, transparent),
+    0 0 70px -16px var(--rarity-color, var(--accent)),
+    inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+
+/* ── 2. Art frame — richer ambient rarity glow ──────────────────── */
+.case-card-art-frame {
+  background: radial-gradient(
+    ellipse at 50% 68%,
+    color-mix(in srgb, var(--rarity-color, var(--accent)) 22%, transparent) 0%,
+    transparent 66%
+  ) !important;
+}
+
+.case-card-art-glow {
+  width: 64% !important;
+  height: 22% !important;
+  opacity: .22 !important;
+  filter: blur(28px) !important;
+  transition: opacity .3s ease, filter .3s ease !important;
+}
+
+.case-card-editorial:hover .case-card-art-glow {
+  opacity: .5 !important;
+  filter: blur(38px) !important;
+}
+
+/* ── 3. Price — gold treatment ───────────────────────────────────── */
+.case-card-foot .price {
+  color: #e6b84a !important;
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+}
+
+/* ── 4. Rarity label — soft glow ────────────────────────────────── */
+.case-card-rarity {
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--rarity-color, var(--accent)) 55%, transparent));
+}
+
+/* ── 5. Arrow button — accent flash on hover ────────────────────── */
+.case-card-editorial:hover .case-card-arrow {
+  background: var(--accent) !important;
+  color: #fff !important;
+  transform: translate(2px, -3px) !important;
+  box-shadow: 0 0 16px -3px var(--accent) !important;
+}
+
+/* ── 6. Case chest aura — cinematic breathing pulse ─────────────── */
+.case-chest-aura {
+  animation: dz-aura-breathe 3.6s ease-in-out infinite !important;
+}
+
+@keyframes dz-aura-breathe {
+  0%, 100% { opacity: .16; transform: scale(.91); }
+  50%       { opacity: .62; transform: scale(1.09); }
+}
+
+.case-card-editorial:hover .case-chest-aura {
+  animation: none !important;
+  opacity: .72 !important;
+  transform: scale(1.1) !important;
+}
+
+/* ── 7. Case chest glyph — glow on hover ────────────────────────── */
+.case-card-editorial:hover .case-chest-glyph {
+  filter: drop-shadow(0 0 10px hsl(var(--chest-hue, 220) 80% 65% / .7)) !important;
+}
+
+/* ── 8. Collection route cards — stronger hover + glow ──────────── */
+.collection-route {
+  transition: transform .25s ease, border-color .25s ease, box-shadow .28s ease !important;
+}
+
+.collection-route:hover,
+.collection-route:focus-visible,
+.collection-route.is-active {
+  transform: translateY(-6px) !important;
+  border-color: var(--route-accent) !important;
+  box-shadow:
+    0 22px 52px rgba(0,0,0,.4),
+    0 0 50px -18px var(--route-accent),
+    inset 0 0 0 1px color-mix(in srgb, var(--route-accent) 22%, transparent) !important;
+}
+
+/* ── 9. Hero orbit rings — more visible, glowing ────────────────── */
+.hero-orbit-outer {
+  border-color: rgba(124,92,255,.25) !important;
+  box-shadow: 0 0 30px -6px rgba(124,92,255,.35), inset 0 0 30px -6px rgba(124,92,255,.12) !important;
+  animation: dz-orbit-spin 32s linear infinite !important;
+}
+
+.hero-orbit-inner {
+  border-color: rgba(35,211,190,.22) !important;
+  box-shadow: 0 0 22px -5px rgba(35,211,190,.3), inset 0 0 22px -5px rgba(35,211,190,.1) !important;
+  animation: dz-orbit-spin 22s linear infinite reverse !important;
+}
+
+@keyframes dz-orbit-spin {
+  from { transform: translate(-50%,-50%) rotate(0deg); }
+  to   { transform: translate(-50%,-50%) rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-orbit-outer, .hero-orbit-inner { animation: none !important; }
+  .case-chest-aura { animation: none !important; }
+}
+
+/* ── 10. Hero CTA button — purple-to-teal gradient ──────────────── */
+.hero-cta-button {
+  background: linear-gradient(112deg, var(--accent) 0%, #38b8a8 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 0 28px -8px var(--accent) !important;
+  transition: transform .2s ease, box-shadow .22s ease !important;
+}
+
+.hero-cta-button:hover {
+  background: linear-gradient(112deg, #9070ff 0%, #2fd4c0 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 0 44px -8px var(--accent), 0 8px 22px rgba(0,0,0,.3) !important;
+  color: #fff !important;
+}
+
+/* ── 11. Hero eyebrow — teal accent ─────────────────────────────── */
+.hero-eyebrow {
+  color: var(--info-strong) !important;
+  text-shadow: 0 0 16px color-mix(in srgb, var(--info) 55%, transparent) !important;
+}
+
+/* ── 12. Section kicker glow ────────────────────────────────────── */
+.collection-discovery-head .section-kicker {
+  color: var(--info-strong) !important;
+  text-shadow: 0 0 16px color-mix(in srgb, var(--info) 50%, transparent) !important;
+}
+
+.cases-heading-group .section-kicker {
+  text-shadow: 0 0 16px color-mix(in srgb, var(--cta) 50%, transparent) !important;
+}
+
+/* ── 13. Stat value — gradient text ─────────────────────────────── */
+.stat-value {
+  background: linear-gradient(125deg, #fff 30%, rgba(124,92,255,.9) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── 14. Case grid load animation — staggered fade-in ───────────── */
+.case-card-editorial {
+  opacity: 0;
+  animation: dz-card-appear .4s ease forwards;
+  animation-delay: calc(var(--index, 0) * 55ms);
+}
+
+@keyframes dz-card-appear {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Reset for hover (already appeared) */
+.case-card-editorial:hover {
+  animation: none !important;
+  opacity: 1 !important;
+}
+
+/* ── 15. Hero banner — richer background ────────────────────────── */
+.hero-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 75% 90% at 78% 50%, rgba(124,92,255,.09), transparent 65%),
+    radial-gradient(ellipse 55% 60% at 20% 85%, rgba(35,211,190,.07), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── 16. Drop pills — subtle hover ──────────────────────────────── */
+.drop-pill {
+  transition: transform .18s ease, box-shadow .18s ease !important;
+}
+
+.drop-pill:hover {
+  transform: translateY(-2px) scale(1.025) !important;
+}
+
+/* ── 17. GOLD rarity special treatment ──────────────────────────── */
+.case-card-editorial:has(.case-chest-aura) .case-card-topline {
+  /* cascade hook – existing gradient already handles gold */
+}
+
+/* ── 18. Chest name plate – brighter on hover ───────────────────── */
+.case-card-editorial:hover .case-chest-nameplate {
+  opacity: 1 !important;
+  letter-spacing: .25em !important;
+}
