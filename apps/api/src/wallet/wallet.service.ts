@@ -2,6 +2,15 @@ import { BadRequestException, Injectable, NotFoundException } from "@nestjs/comm
 import { LedgerReason, Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 
+/** First-deposit promo: +10% of the deposit, capped at 500 RUB (in kopecks). */
+export const FIRST_DEPOSIT_BONUS_PERCENT = 10n;
+export const FIRST_DEPOSIT_BONUS_CAP_MINOR = 50_000n;
+
+export function firstDepositBonusMinor(depositAmountMinor: bigint): bigint {
+  const bonus = (depositAmountMinor * FIRST_DEPOSIT_BONUS_PERCENT) / 100n;
+  return bonus > FIRST_DEPOSIT_BONUS_CAP_MINOR ? FIRST_DEPOSIT_BONUS_CAP_MINOR : bonus;
+}
+
 export interface LedgerRef {
   reason: LedgerReason;
   referenceType: string;
@@ -32,6 +41,44 @@ export class WalletService {
       orderBy: { createdAt: "desc" },
       take,
     });
+  }
+
+  async getPromoStatus(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { firstDepositBonusUsed: true },
+    });
+    if (!user) throw new NotFoundException("User not found");
+    return { firstDepositBonusAvailable: !user.firstDepositBonusUsed };
+  }
+
+  /**
+   * Awards the first-deposit bonus inside the caller's transaction (the same
+   * one that credits the deposit itself). The flag is claimed with a
+   * conditional UPDATE, so two concurrent confirmations can never both win it.
+   * Returns the bonus credited, in minor units (0n if not eligible).
+   */
+  async applyFirstDepositBonusInTx(
+    tx: Prisma.TransactionClient,
+    userId: string,
+    depositAmountMinor: bigint,
+    depositId: string,
+  ): Promise<bigint> {
+    const bonusMinor = firstDepositBonusMinor(depositAmountMinor);
+    if (bonusMinor <= 0n) return 0n;
+
+    const claimed = await tx.user.updateMany({
+      where: { id: userId, firstDepositBonusUsed: false },
+      data: { firstDepositBonusUsed: true },
+    });
+    if (claimed.count === 0) return 0n;
+
+    await this.creditInTx(tx, userId, bonusMinor, {
+      reason: "PROMO_CODE",
+      referenceType: "FirstDepositBonus",
+      referenceId: depositId,
+    });
+    return bonusMinor;
   }
 
   /** Credits (adds to) the wallet balance, opening its own transaction. */

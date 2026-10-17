@@ -15,6 +15,11 @@ export class WalletController {
     return { balanceMinor };
   }
 
+  @Get("promo-status")
+  promoStatus(@CurrentUser() user: AuthenticatedUser) {
+    return this.walletService.getPromoStatus(user.id);
+  }
+
   @Get("me/ledger")
   myLedger(@CurrentUser() user: AuthenticatedUser) {
     return this.walletService.getLedger(user.id);

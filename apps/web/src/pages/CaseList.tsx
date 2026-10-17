@@ -4,6 +4,7 @@ import { CaseChest } from "../components/CaseChest";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { DropHero } from "../components/dz/DropHero";
+import { PromoFirstDeposit } from "../components/PromoFirstDeposit";
 import { StatsBar } from "../components/StatsBar";
 import { RecentDrops } from "../components/RecentDrops";
 import { highestRarity, RARITY_LABELS, RARITY_RANK } from "../lib/rarity";
@@ -101,6 +102,7 @@ export function CaseListPage() {
 
   return (
     <div>
+      <PromoFirstDeposit />
       <DropHero featuredCase={cases[0]} catalogStatus={loading ? "loading" : error ? "error" : "empty"} />
       <StatsBar />
 

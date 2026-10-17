@@ -105,6 +105,9 @@ model User {
   ageConfirmedAt  DateTime
   referralCode    String    @unique
   referredById    String?
+  // Flipped (atomically, with the bonus credit) the first time a deposit earns
+  // the +10% first-deposit bonus; it can never be earned twice.
+  firstDepositBonusUsed Boolean @default(false)
   referredBy      User?     @relation("Referrals", fields: [referredById], references: [id])
   referrals       User[]    @relation("Referrals")
   createdAt       DateTime  @default(now())

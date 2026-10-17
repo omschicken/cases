@@ -48,7 +48,7 @@ export class PaymentsService {
     const result = await provider.initiateDeposit({ userId, amountMinor, currency: dto.currency });
 
     if (result.status === "CONFIRMED") {
-      await this.prisma.$transaction(async (tx) => {
+      const bonusMinor = await this.prisma.$transaction(async (tx) => {
         await this.wallet.creditInTx(tx, userId, amountMinor, {
           reason: "DEPOSIT",
           referenceType: "Deposit",
@@ -58,9 +58,10 @@ export class PaymentsService {
           where: { id: deposit.id },
           data: { status: "CONFIRMED", providerRef: result.providerRef, confirmedAt: new Date() },
         });
+        return this.wallet.applyFirstDepositBonusInTx(tx, userId, amountMinor, deposit.id);
       });
       await this.referral.awardDepositCommission(userId, amountMinor, dto.currency, deposit.id);
-      return { ...deposit, status: "CONFIRMED" as const, providerRef: result.providerRef };
+      return { ...deposit, status: "CONFIRMED" as const, providerRef: result.providerRef, bonusMinor };
     }
 
     if (result.status === "FAILED") {

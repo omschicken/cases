@@ -1,0 +1,33 @@
+/* First-deposit promo banner */
+.dz-promo-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--dz-s4);
+  padding: var(--dz-s3) var(--dz-s5);
+  background: linear-gradient(90deg, rgba(124, 107, 255, 0.15) 0%, rgba(59, 130, 246, 0.10) 100%);
+  border: 1px solid rgba(124, 107, 255, 0.3);
+  border-radius: var(--dz-r-sm);
+  margin: var(--dz-s4) 0;
+}
+.dz-promo-banner__title { flex: 1 1 auto; font-weight: 500; }
+.dz-promo-banner__percent {
+  font: 900 2rem var(--dz-font-display);
+  color: var(--dz-amber);
+}
+.dz-promo-banner__cap { color: var(--dz-text-dim, inherit); white-space: nowrap; }
+.dz-promo-banner__cta {
+  padding: 0.5rem 1.25rem;
+  background: var(--dz-amber);
+  color: #fff;
+  border-radius: var(--dz-r-sm);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.dz-promo-banner__cta:hover { background: var(--dz-amber-hot); }
+
+@media (max-width: 640px) {
+  .dz-promo-banner { flex-wrap: wrap; gap: var(--dz-s3); padding: var(--dz-s3) var(--dz-s4); }
+  .dz-promo-banner__title { flex-basis: 100%; }
+  .dz-promo-banner__cta { margin-left: auto; }
+}

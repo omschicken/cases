@@ -4,6 +4,7 @@ import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import type { LedgerEntryDto, PaymentRail, WalletDto } from "../lib/types";
 import { PageHeader, Readout } from "../components/dz/PageHeader";
+import { PromoFirstDeposit } from "../components/PromoFirstDeposit";
 
 export function WalletPage() {
   const { t } = useTranslation();
@@ -73,6 +74,7 @@ export function WalletPage() {
 
   return (
     <div className="wallet-page">
+      <PromoFirstDeposit />
       <PageHeader
         kicker="DROPZONE / WALLET"
         title={t("wallet.title")}

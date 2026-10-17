@@ -13,6 +13,7 @@ import "./styles/dz-item.css";
 import "./styles/dz-page.css";
 import "./styles/dz-game.css";
 import "./styles/dz-nav.css";
+import "./styles/dz-promo.css";
 import "./styles/dz-redesign.css";
 import "./i18n";
 import App from "./App";
