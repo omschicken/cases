@@ -13288,3 +13288,32 @@ button:not([disabled]):not(.menu-toggle):not(.account-menu-trigger):active,
   opacity: 1 !important;
   letter-spacing: .25em !important;
 }
+
+/* ── GLOW BOOST v2.1 — stronger rarity bloom ─────────────────────── */
+.case-card-editorial:hover {
+  transform: translateY(-10px) !important;
+  border-color: color-mix(in srgb, var(--rarity-color, var(--accent)) 80%, transparent) !important;
+  box-shadow:
+    0 32px 64px rgba(0,0,0,.6),
+    0 0 0 1px color-mix(in srgb, var(--rarity-color, var(--accent)) 50%, transparent),
+    0 0 80px -8px var(--rarity-color, var(--accent)),
+    0 0 30px -4px color-mix(in srgb, var(--rarity-color, var(--accent)) 60%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.08) !important;
+  background: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--rarity-color, var(--accent)) 10%, rgba(22,28,32,.99)) 0%,
+    rgba(12,15,18,.99) 60%
+  ) !important;
+}
+
+.case-card-art-glow {
+  width: 80% !important;
+  height: 30% !important;
+  opacity: .3 !important;
+  filter: blur(24px) !important;
+}
+
+.case-card-editorial:hover .case-card-art-glow {
+  opacity: .65 !important;
+  filter: blur(36px) !important;
+}
