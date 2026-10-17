@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../lib/api";
+import { CaseMiniArt } from "./CaseCard";
 import { formatMinor } from "../../lib/money";
 import { rarityColor } from "../../lib/rarity";
 import type { RecentDropDto } from "../../lib/types";
@@ -55,6 +56,14 @@ function casesWord(n: number) {
 }
 
 /** Landing hero: centred statement, two actions, three micro-facts. */
+/** Same logic as CaseCard.hasPicture — show generated art when no real case image exists. */
+function hasCaseArt(url: string | undefined): boolean {
+  if (!url) return false;
+  return /^https?:\/\//.test(url) &&
+    !/placehold(er)?\.co/i.test(url) &&
+    !/steamstatic\.com/i.test(url);
+}
+
 export function DropHero({ caseCount, showcase = [] }: DropHeroProps) {
   const { t } = useTranslation();
   const n = caseCount ?? 0;
@@ -99,7 +108,11 @@ export function DropHero({ caseCount, showcase = [] }: DropHeroProps) {
               tabIndex={-1}
               className={`hero-v3__case hero-v3__case--${["center", "left", "right"][i]}`}
             >
-              <img src={c.imageUrl} alt="" loading="lazy" />
+              {hasCaseArt(c.imageUrl) ? (
+                <img src={c.imageUrl} alt="" loading="lazy" />
+              ) : (
+                <CaseMiniArt caseName={c.name} caseSlug={c.slug} />
+              )}
             </Link>
           ))}
         </div>

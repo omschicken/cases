@@ -20,7 +20,7 @@ interface CaseCardProps {
 
 /** Lightweight case box art — designed specifically for the grid card.
  *  Does NOT use CaseChest (which is built for the detail/opening page).  */
-function CaseMiniArt({ caseName, caseSlug }: { caseName: string; caseSlug: string }) {
+export function CaseMiniArt({ caseName, caseSlug }: { caseName: string; caseSlug: string }) {
   const { variant, hue } = caseVisualIdentity(caseSlug);
   const mark = caseName.replace(/\s*case$/i, "").slice(0, 3).toUpperCase();
   const label = caseName.replace(/\s*case$/i, "").toUpperCase();
@@ -77,7 +77,8 @@ export function CaseCard({ caseDto, index, tiers, tier, priceLabel }: CaseCardPr
   // A real remote picture beats the generated art; exclude placeholder/dummy URLs.
   const hasPicture =
     /^https?:\/\//.test(caseDto.imageUrl ?? "") &&
-    !/placehold(er)?\.co/i.test(caseDto.imageUrl ?? "");
+    !/placehold(er)?\.co/i.test(caseDto.imageUrl ?? "") &&
+    !/steamstatic\.com/i.test(caseDto.imageUrl ?? "");
 
   return (
     <Link
