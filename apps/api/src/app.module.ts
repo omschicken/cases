@@ -16,6 +16,7 @@ import { HealthController } from "./health/health.controller";
 import { GamesModule } from "./games/games.module";
 import { BonusesModule } from "./bonuses/bonuses.module";
 import { LeaderboardModule } from "./leaderboard/leaderboard.module";
+import { StatsModule } from "./stats/stats.module";
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { LeaderboardModule } from "./leaderboard/leaderboard.module";
     GamesModule,
     BonusesModule,
     LeaderboardModule,
+    StatsModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

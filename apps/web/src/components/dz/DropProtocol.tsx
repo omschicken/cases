@@ -43,6 +43,15 @@ interface DropProtocolProps {
  * Presentation only. The result arrives already decided; this component
  * cannot influence it, and intentionally offers no near-miss effect.
  */
+/** Eight twinkling dots around the item, for the top two tiers. */
+function Sparkles() {
+  return (
+    <span className="dz-sparkles" aria-hidden="true">
+      {Array.from({ length: 8 }, (_, i) => <i key={i} style={{ "--i": i } as CSSProperties} />)}
+    </span>
+  );
+}
+
 /** "AWP | Asiimov (Field-Tested)" -> name and exterior shown apart. */
 function splitCondition(name: string) {
   const m = name.match(/^(.*?)\s*\((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)\s*$/);
@@ -173,6 +182,7 @@ export function DropProtocol({
                 {Array.from({ length: 14 }, (_, i) => <i key={i} style={{ "--i": i } as CSSProperties} />)}
               </div>
               <div className="dz-protocol__item-art dz-protocol__item-art--apex">
+                {isApex && <Sparkles />}
                 <img src={item.imageUrl} alt={item.name} />
               </div>
               <div className="dz-protocol__item">
@@ -211,6 +221,7 @@ export function DropProtocol({
                 hudRight={t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}
               >
                 <div className={`dz-protocol__item-art${isHighRarity ? " dz-protocol__item-art--high" : ""}`}>
+                {isApex && <Sparkles />}
                   <img src={item.imageUrl} alt={item.name} />
                 </div>
               </DropChamber>

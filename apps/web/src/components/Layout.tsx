@@ -14,6 +14,8 @@ import { PagesBar } from "./PagesBar";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { OnboardingModal } from "./OnboardingModal";
 import { CursorTrail } from "./CursorTrail";
+import { LiveDropFeed } from "./LiveDropFeed";
+import { SiteStatsBar } from "./SiteStatsBar";
 
 export function Layout() {
   const { t } = useTranslation();
@@ -104,6 +106,7 @@ export function Layout() {
       </header>
 
       <PagesBar />
+      <SiteStatsBar />
 
       <div className="dz-body">
         <Sidebar />
@@ -124,6 +127,7 @@ export function Layout() {
 
       <BottomNav />
       <CursorTrail />
+      <LiveDropFeed />
       <OnboardingModal />
     </div>
   );
