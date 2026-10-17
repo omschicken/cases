@@ -74,8 +74,10 @@ function CaseMiniArt({ caseName, caseSlug }: { caseName: string; caseSlug: strin
  *  Presentation only: no fetches, no state, so a 90-card grid is one render. */
 export function CaseCard({ caseDto, index, tiers, tier, priceLabel }: CaseCardProps) {
   const { hue } = caseVisualIdentity(caseDto.slug);
-  // A real remote picture beats the generated art; generated data: SVGs don't count.
-  const hasPicture = /^https?:\/\//.test(caseDto.imageUrl ?? "");
+  // A real remote picture beats the generated art; exclude placeholder/dummy URLs.
+  const hasPicture =
+    /^https?:\/\//.test(caseDto.imageUrl ?? "") &&
+    !/placehold(er)?\.co/i.test(caseDto.imageUrl ?? "");
 
   return (
     <Link
