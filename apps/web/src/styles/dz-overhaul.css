@@ -897,3 +897,197 @@ h4 { font-weight: 700 !important; letter-spacing: 0.04em; }
   .upgrade-roll__zone { animation: none; width: var(--chance); }
   .upgrade-roll.is-won, .upgrade-roll.is-lost { animation: none; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   CARD GRID OVERHAUL v2 — caser.gg level redesign
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Grid: single column on mobile (like caser.gg) ─────────── */
+@media (max-width: 640px) {
+  .dz-case-grid {
+    grid-template-columns: 1fr !important;
+    gap: .875rem !important;
+  }
+}
+
+/* ── Card: reset and elevate ────────────────────────────────── */
+.dzc {
+  border-radius: 16px !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  background: linear-gradient(175deg, #111825 0%, #0a0f18 100%) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.45) !important;
+  overflow: hidden !important;
+}
+.dzc:hover, .dzc:focus-visible {
+  transform: translateY(-6px) !important;
+  border-color: rgba(139, 92, 246, 0.55) !important;
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(139,92,246,0.35),
+    0 0 70px -8px rgba(99,102,241,0.5) !important;
+}
+
+/* ── Top art zone: bigger so image dominates ────────────────── */
+.dzc__top {
+  min-height: 220px !important;
+  padding: 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Atmospheric glow — fills the top zone */
+.dzc__top::before {
+  background: radial-gradient(ellipse 100% 80% at 50% 80%,
+    hsl(var(--hue) 68% 50% / .18), transparent 72%) !important;
+}
+
+/* ── Chest (art container): bigger ─────────────────────────── */
+.dzc__chest {
+  height: 220px !important;
+  min-height: unset !important;
+  padding: 0 !important;
+}
+
+/* Real image: bigger, more impactful */
+.dzc__img {
+  width: 82% !important;
+  max-height: 200px !important;
+  filter: drop-shadow(0 10px 28px hsl(var(--hue) 70% 50% / .55)) !important;
+}
+
+.dzc:hover .dzc__img {
+  transform: translateY(-8px) scale(1.07) !important;
+  filter: drop-shadow(0 18px 40px hsl(var(--hue) 80% 55% / .75)) !important;
+}
+
+/* ── CaseMiniArt: scale up to fill the bigger zone ─────────── */
+.dzc-art {
+  width: 100% !important;
+  height: 210px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.dzc-art__glow {
+  width: 180px !important;
+  height: 180px !important;
+}
+
+.dzc-art__box {
+  width: 60% !important;
+  max-width: 155px !important;
+}
+
+.dzc-art__lid {
+  height: 44px !important;
+}
+
+.dzc-art__lid-mark {
+  font-size: .82rem !important;
+}
+
+.dzc-art__body {
+  height: 116px !important;
+}
+
+.dzc-art__glyph-wrap {
+  width: 64px !important;
+  height: 64px !important;
+}
+
+.dzc-art__glyph-wrap .case-chest-glyph {
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.dzc-art__lock {
+  height: 22px !important;
+}
+
+/* ── Serial and dots: remove clutter ───────────────────────── */
+.dzc__serial {
+  display: none !important;
+}
+
+.dzc__dots {
+  display: none !important;
+}
+
+/* ── Tier chip: still visible, repositioned ─────────────────── */
+.dzc__chip {
+  top: .75rem !important;
+  right: .75rem !important;
+  font-size: .6rem !important;
+  padding: .22rem .5rem !important;
+}
+
+/* ── Body: name only, no dots ───────────────────────────────── */
+.dzc__body {
+  padding: .7rem .85rem .3rem !important;
+  border-top: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+.dzc__meta {
+  display: block !important;
+}
+
+.dzc__name {
+  font-size: clamp(.9rem, 3vw, 1.05rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: .01em !important;
+  -webkit-line-clamp: 1 !important;
+  line-clamp: 1 !important;
+  color: #e8f0ff !important;
+  text-transform: none !important;
+  min-height: unset !important;
+}
+
+/* ── Footer: vertical stack — price then full-width button ──── */
+.dzc__foot {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: .55rem !important;
+  padding: .5rem .85rem .85rem !important;
+  border-top: none !important;
+}
+
+.dzc__price {
+  flex-direction: row !important;
+  align-items: baseline !important;
+  gap: .45rem !important;
+}
+
+.dzc__price-label {
+  font-size: .62rem !important;
+  color: rgba(140,160,200,0.65) !important;
+}
+
+.dzc__price > :last-child {
+  font-size: 1.1rem !important;
+  color: #e8b84a !important;
+}
+
+/* ОТКРЫТЬ — full-width, bold CTA */
+.dzc__open {
+  width: 100% !important;
+  text-align: center !important;
+  padding: .72rem 1rem !important;
+  font-size: .8rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .18em !important;
+  border-radius: 10px !important;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #3b82f6 100%) !important;
+  box-shadow: 0 3px 18px rgba(99,102,241,0.4) !important;
+}
+
+.dzc:hover .dzc__open {
+  box-shadow: 0 6px 32px rgba(99,102,241,0.7) !important;
+  filter: brightness(1.12) !important;
+}
+
+/* ── Skeleton: same size as the new cards ───────────────────── */
+.dzc--skeleton {
+  min-height: 350px !important;
+}
+
