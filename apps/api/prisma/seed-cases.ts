@@ -4,111 +4,117 @@
  *   pnpm --filter @cs2-cases/api seed:cases:db -- --dry-run     # plan + RTP table, writes nothing
  *   pnpm --filter @cs2-cases/api seed:cases:db                  # write (uses DATABASE_URL / DIRECT_URL)
  *
- * Flags
- *   --dry-run          print the plan and RTP per case, touch nothing
- *   --accept-low-rtp   write even if a case would return under MIN_RTP of its price
- *   --retire-others    hide (isActive=false) every case that is not one of these ten
+ * Flags: --dry-run (touch nothing), --retire-others (hide every case that is not one of these ten).
  *
- * Money is kopecks. A drop's weight is its tier's share of the roll divided by
- * the number of items in the tier (0.7992 / 4 = 0.1998 for consumer); the weights
- * only matter relative to each other. Item values sit inside the ranges of the
- * brief, scaled per case so the case returns about TARGET_RTP of its price —
- * where the brief's ranges allow it (see the RTP table printed on every run).
+ * Money is kopecks. Three player profiles (entry / mid / premium) fix the odds
+ * per tier and the *relative* value of each drop. Each case then scales those
+ * values so it returns TARGET_RTP of its own price; the script refuses to write
+ * unless every case lands in [MIN_RTP, MAX_RTP]. The Static Case uses the brief's
+ * explicit per-tier value ranges instead of a scale factor.
  *
- * Images: the real Steam hashes in prisma/cs2-items.json, plus
- * prisma/cs2-images-extra.json for skins that file lacks. A skin with no real
- * image stops the run instead of getting someone else's picture.
+ * Images come from prisma/cs2-items.json and prisma/cs2-images-extra.json (real
+ * Steam hashes). A skin with no real image stops the run instead of borrowing
+ * someone else's picture.
  */
 import { ItemRarity, PrismaClient } from "@prisma/client";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-type Tier = "CONSUMER" | "INDUSTRIAL" | "MIL_SPEC" | "RESTRICTED" | "CLASSIFIED" | "COVERT" | "KNIFE";
+const TARGET_RTP = 0.8;
+const MIN_RTP = 0.72;
+const MAX_RTP = 0.88;
 
-/** Share of all rolls, and the value range (kopecks), per tier. */
-const TIER: Record<"CONSUMER" | "INDUSTRIAL" | "MILSPEC_RESTRICTED" | "CLASSIFIED" | "COVERT" | "KNIFE", { share: number; lo: number; hi: number }> = {
-  CONSUMER: { share: 0.7992, lo: 3_000, hi: 15_000 },
-  INDUSTRIAL: { share: 0.16, lo: 8_000, hi: 40_000 },
-  MILSPEC_RESTRICTED: { share: 0.032, lo: 30_000, hi: 150_000 },
-  CLASSIFIED: { share: 0.0064, lo: 100_000, hi: 500_000 },
-  COVERT: { share: 0.0013, lo: 300_000, hi: 3_000_000 },
-  KNIFE: { share: 0.0026, lo: 2_000_000, hi: 15_000_000 },
+type TierKey = "CONSUMER" | "INDUSTRIAL" | "MIL_SPEC" | "RESTRICTED" | "CLASSIFIED" | "COVERT" | "KNIFE";
+const RARITY: Record<TierKey, ItemRarity> = {
+  CONSUMER: "CONSUMER", INDUSTRIAL: "INDUSTRIAL", MIL_SPEC: "MIL_SPEC",
+  RESTRICTED: "RESTRICTED", CLASSIFIED: "CLASSIFIED", COVERT: "COVERT", KNIFE: "GOLD",
 };
 
-const TARGET_RTP = 0.88;
-const MIN_RTP = 0.6;
-
-interface CaseSpec {
-  name: string;
-  slug: string;
-  priceMinor: number;
-  color: string;
-  tier: "entry" | "mid" | "premium";
-  consumer: string[]; // 4
-  industrial: string[]; // 3
-  milspec: [string, string]; // 2 MIL_SPEC
-  restricted: string; // 1 RESTRICTED
-  classified: string[]; // 2
-  covert: string[]; // 1-2
-  knives: string[]; // 2
+type Pool = [name: string, baseValueMinor: number][];
+interface Profile {
+  /** Share of all rolls per tier; consumer takes whatever is left. */
+  rates: Record<Exclude<TierKey, "CONSUMER">, number>;
+  tiers: Record<Exclude<TierKey, "CONSUMER" | "INDUSTRIAL">, Pool>;
+  /** "Various" tiers: each case takes `count` items from the pool, starting at its own offset. */
+  industrial: { pool: Pool; count: number };
+  consumer: { pool: Pool; count: number };
+  /** Stated value range of the knives; scaling can leave it (reported, not an error). */
+  knifeRange: [number, number];
 }
 
-const STARTER_KNIVES = ["★ Gut Knife | Fade", "★ Flip Knife | Slaughter"];
-const MID_KNIVES = ["★ M9 Bayonet | Doppler", "★ Karambit | Vanilla"];
-const PREMIUM_KNIVES = ["★ Karambit | Fade", "★ Butterfly Knife | Marble Fade"];
-const STARTER_COVERT = ["AK-47 | Asiimov", "M4A1-S | Player Two"];
+// ENTRY — brief: "MP7 | Fade" does not exist in CS2, MP7 | Skulls stands in for it.
+const ENTRY: Profile = {
+  rates: { KNIFE: 0.005, COVERT: 0.0008, CLASSIFIED: 0.0032, RESTRICTED: 0.02, MIL_SPEC: 0.1, INDUSTRIAL: 0.25 },
+  tiers: {
+    KNIFE: [["★ Gut Knife | Fade", 1_200_000], ["★ Flip Knife | Marble Fade", 2_500_000]],
+    COVERT: [["AK-47 | Asiimov", 550_000], ["M4A1-S | Printstream", 480_000]],
+    CLASSIFIED: [["AWP | Electric Hive", 180_000], ["AK-47 | Slate", 120_000]],
+    // brief: "MP9 | Wild Lily" has no Steam image available; AWP | Atheris stands in.
+    RESTRICTED: [["M4A4 | Neo-Noir", 90_000], ["AWP | Atheris", 60_000]],
+    MIL_SPEC: [["P250 | Asiimov", 18_000], ["FAMAS | Mecha Industries", 12_000]],
+  },
+  industrial: { pool: [["UMP-45 | Labyrinth", 6_000], ["P90 | Storm", 4_500]], count: 2 },
+  consumer: { pool: [["MP7 | Skulls", 2_000], ["Glock-18 | Sand Dune", 1_500]], count: 2 },
+  knifeRange: [1_000_000, 3_000_000],
+};
+
+const MID: Profile = {
+  rates: { KNIFE: 0.015, COVERT: 0.001, CLASSIFIED: 0.005, RESTRICTED: 0.03, MIL_SPEC: 0.12, INDUSTRIAL: 0.28 },
+  tiers: {
+    KNIFE: [["★ M9 Bayonet | Doppler", 4_000_000], ["★ Karambit | Vanilla", 7_500_000]],
+    COVERT: [["AWP | Asiimov", 1_200_000], ["AK-47 | Fire Serpent", 3_500_000]],
+    CLASSIFIED: [["M4A4 | Asiimov", 800_000]], // brief: "M4A4 | Howl clone" -> M4A4 | Asiimov
+    RESTRICTED: [["AK-47 | Neon Rider", 250_000], ["AWP | Hyper Beast", 200_000]],
+    MIL_SPEC: [["M4A1-S | Basilisk", 45_000], ["SG 553 | Aerial", 35_000]],
+  },
+  industrial: { pool: [["MP5-SD | Phosphor", 12_000], ["UMP-45 | Crime Scene", 9_000]], count: 2 },
+  consumer: {
+    pool: [["P250 | Sand Dune", 3_000], ["Five-SeveN | Forest Night", 3_200], ["MP9 | Sand Dashed", 3_500], ["SG 553 | Army Sheen", 4_000], ["Nova | Predator", 4_500], ["Galil AR | Sage Spray", 5_000]],
+    count: 4,
+  },
+  knifeRange: [4_000_000, 8_000_000],
+};
+
+const PREMIUM: Profile = {
+  rates: { KNIFE: 0.035, COVERT: 0.0015, CLASSIFIED: 0.008, RESTRICTED: 0.04, MIL_SPEC: 0.15, INDUSTRIAL: 0.3 },
+  tiers: {
+    KNIFE: [["★ Karambit | Fade", 15_000_000], ["★ Butterfly Knife | Marble Fade", 35_000_000]],
+    // brief: Dragon Lore / Wild Lotus / Medusa have no Steam image available; these stand in.
+    COVERT: [["AWP | Lightning Strike", 25_000_000], ["AK-47 | Fire Serpent", 18_000_000]], // Dragon Lore / Wild Lotus
+    CLASSIFIED: [["AK-47 | Case Hardened", 8_000_000]],
+    RESTRICTED: [["AWP | Neo-Noir", 2_000_000], ["M4A4 | Poseidon", 1_500_000]], // Medusa / Poseidon
+    MIL_SPEC: [["AK-47 | Vulcan", 250_000], ["AWP | Asiimov", 400_000]],
+  },
+  industrial: {
+    pool: [["MP9 | Hypnotic", 40_000], ["CZ75-Auto | Tigris", 50_000], ["Glock-18 | Water Elemental", 60_000], ["AUG | Torque", 70_000], ["UMP-45 | Labyrinth", 80_000]],
+    count: 3,
+  },
+  consumer: {
+    pool: [["MAC-10 | Silver", 10_000], ["MP9 | Storm", 16_000], ["P90 | Storm", 14_000], ["UMP-45 | Carbon Fiber", 18_000], ["Tec-9 | Urban DDPAT", 21_000], ["P2000 | Granite Marbleized", 25_000]],
+    count: 4,
+  },
+  knifeRange: [15_000_000, 40_000_000],
+};
+
+/** The Static Case's own value ranges (kopecks), used instead of scaling the entry profile. */
+const STATIC_RANGES: Record<TierKey, [number, number]> = {
+  CONSUMER: [800, 1_500], INDUSTRIAL: [2_000, 4_000], MIL_SPEC: [5_000, 12_000], RESTRICTED: [25_000, 60_000],
+  CLASSIFIED: [80_000, 200_000], COVERT: [300_000, 600_000], KNIFE: [500_000, 1_500_000],
+};
+
+interface CaseSpec { name: string; slug: string; priceMinor: number; color: string; profile: Profile; offset: number; staticRanges?: boolean }
 
 const CASES: CaseSpec[] = [
-  { name: "Static Case", slug: "static-case", priceMinor: 27_900, color: "#4a6fa5", tier: "entry",
-    consumer: ["MP9 | Setting Sun", "P250 | Sand Dune", "Glock-18 | Sand Dune", "FAMAS | Valence"],
-    industrial: ["UMP-45 | Labyrinth", "MP7 | Skulls", "Galil AR | Eco"],
-    milspec: ["AK-47 | Slate", "M4A1-S | Basilisk"], restricted: "AWP | Electric Hive",
-    classified: ["AK-47 | Neon Rider", "M4A4 | Neo-Noir"], covert: STARTER_COVERT, knives: STARTER_KNIVES },
-  { name: "Neon Rush Case", slug: "neon-rush-case", priceMinor: 39_900, color: "#00ff88", tier: "entry",
-    consumer: ["MAC-10 | Silver", "Nova | Predator", "SG 553 | Army Sheen", "MP9 | Sand Dashed"],
-    industrial: ["MAC-10 | Heat", "Five-SeveN | Monkey Business", "AUG | Torque"],
-    milspec: ["AK-47 | Redline", "M4A4 | Radiation Hazard"], restricted: "M4A1-S | Cyrex",
-    classified: ["AK-47 | Neon Rider", "AWP | Asiimov"], covert: STARTER_COVERT, knives: STARTER_KNIVES },
-  { name: "Phantom Case", slug: "phantom-case", priceMinor: 54_900, color: "#8888aa", tier: "entry",
-    consumer: ["P90 | Storm", "Five-SeveN | Forest Night", "Galil AR | Sage Spray", "Tec-9 | Urban DDPAT"],
-    industrial: ["P250 | Muertos", "Tec-9 | Isaac", "SSG 08 | Slashed"],
-    milspec: ["AK-47 | Elite Build", "USP-S | Guardian"], restricted: "AWP | Atheris",
-    classified: ["M4A1-S | Hyper Beast", "USP-S | Neo-Noir"], covert: STARTER_COVERT, knives: STARTER_KNIVES },
-  { name: "Ignition Case", slug: "ignition-case", priceMinor: 65_600, color: "#ff6b35", tier: "mid",
-    consumer: ["MP9 | Storm", "P2000 | Granite Marbleized", "UMP-45 | Carbon Fiber", "Glock-18 | Sand Dune"],
-    industrial: ["Glock-18 | Water Elemental", "MP9 | Hypnotic", "CZ75-Auto | Tigris"],
-    milspec: ["AK-47 | Slate", "Desert Eagle | Blaze"], restricted: "M4A1-S | Cyrex",
-    classified: ["AK-47 | Fuel Injector", "AK-47 | Vulcan"], covert: ["AK-47 | Neon Revolution"], knives: MID_KNIVES },
-  { name: "Tidal Case", slug: "tidal-case", priceMinor: 89_900, color: "#00bfff", tier: "mid",
-    consumer: ["P250 | Sand Dune", "MP9 | Setting Sun", "SG 553 | Army Sheen", "Galil AR | Sage Spray"],
-    industrial: ["MP7 | Urban Hazard", "UMP-45 | Labyrinth", "Five-SeveN | Monkey Business"],
-    milspec: ["M4A1-S | Basilisk", "AWP | Atheris"], restricted: "AWP | Electric Hive",
-    classified: ["AWP | Asiimov", "M4A1-S | Hyper Beast"], covert: ["AWP | Man-o'-war"], knives: MID_KNIVES },
-  { name: "Overdrive Case", slug: "overdrive-case", priceMinor: 37_100, color: "#ff8c00", tier: "mid",
-    consumer: ["MAC-10 | Silver", "P90 | Storm", "FAMAS | Valence", "Nova | Predator"],
-    industrial: ["MAC-10 | Heat", "AUG | Torque", "Galil AR | Eco"],
-    milspec: ["AK-47 | Redline", "AK-47 | Elite Build"], restricted: "P90 | Asiimov",
-    classified: ["M4A4 | The Emperor", "AK-47 | Fuel Injector"], covert: ["M4A4 | Buzz Kill"], knives: MID_KNIVES },
-  { name: "Sovereign Case", slug: "sovereign-case", priceMinor: 129_700, color: "#9b59b6", tier: "mid",
-    consumer: ["Glock-18 | Sand Dune", "P250 | Sand Dune", "MP9 | Sand Dashed", "Tec-9 | Urban DDPAT"],
-    industrial: ["P250 | Muertos", "USP-S | Guardian", "SSG 08 | Slashed"],
-    milspec: ["M4A4 | Radiation Hazard", "M4A1-S | Basilisk"], restricted: "Desert Eagle | Blaze",
-    classified: ["M4A4 | Neo-Noir", "USP-S | Neo-Noir"], covert: ["AK-47 | The Empress"], knives: MID_KNIVES },
-  { name: "Dragon Case", slug: "dragon-case", priceMinor: 199_000, color: "#dc143c", tier: "premium",
-    consumer: ["MP9 | Setting Sun", "Five-SeveN | Forest Night", "P2000 | Granite Marbleized", "MAC-10 | Silver"],
-    industrial: ["UMP-45 | Labyrinth", "CZ75-Auto | Tigris", "Glock-18 | Water Elemental"],
-    milspec: ["AK-47 | Redline", "M4A1-S | Cyrex"], restricted: "AWP | Atheris",
-    classified: ["AK-47 | Vulcan", "AWP | Asiimov"], covert: ["AWP | Lightning Strike", "AK-47 | Fire Serpent"], knives: PREMIUM_KNIVES },
-  { name: "Blacklight Case", slug: "blacklight-case", priceMinor: 329_700, color: "#7b2fff", tier: "premium",
-    consumer: ["P90 | Storm", "MP9 | Storm", "UMP-45 | Carbon Fiber", "Nova | Predator"],
-    industrial: ["MP9 | Hypnotic", "AUG | Torque", "Tec-9 | Isaac"],
-    milspec: ["AK-47 | Slate", "AK-47 | Elite Build"], restricted: "AWP | Electric Hive",
-    classified: ["M4A1-S | Hyper Beast", "M4A4 | Neo-Noir"], covert: ["AWP | Neo-Noir", "M4A4 | Poseidon"], knives: PREMIUM_KNIVES },
-  { name: "Aurora Case", slug: "aurora-case", priceMinor: 599_900, color: "#00ffcc", tier: "premium",
-    consumer: ["P250 | Sand Dune", "Glock-18 | Sand Dune", "SG 553 | Army Sheen", "MP9 | Sand Dashed"],
-    industrial: ["MP7 | Skulls", "Galil AR | Eco", "MAC-10 | Heat"],
-    milspec: ["M4A1-S | Basilisk", "M4A4 | Radiation Hazard"], restricted: "Desert Eagle | Blaze",
-    classified: ["AK-47 | Neon Rider", "M4A1-S | Hyper Beast"], covert: ["AWP | Containment Breach", "AK-47 | Bloodsport"], knives: PREMIUM_KNIVES },
+  { name: "Static Case", slug: "static-case", priceMinor: 10_000, color: "#4a6fa5", profile: ENTRY, offset: 0, staticRanges: true },
+  { name: "Neon Rush Case", slug: "neon-rush-case", priceMinor: 19_900, color: "#00ff88", profile: ENTRY, offset: 0 },
+  { name: "Phantom Case", slug: "phantom-case", priceMinor: 39_900, color: "#8888aa", profile: ENTRY, offset: 0 },
+  { name: "Ignition Case", slug: "ignition-case", priceMinor: 59_900, color: "#ff6b35", profile: MID, offset: 0 },
+  { name: "Tidal Case", slug: "tidal-case", priceMinor: 79_900, color: "#00bfff", profile: MID, offset: 1 },
+  { name: "Overdrive Case", slug: "overdrive-case", priceMinor: 99_900, color: "#ff8c00", profile: MID, offset: 2 },
+  { name: "Sovereign Case", slug: "sovereign-case", priceMinor: 149_900, color: "#9b59b6", profile: MID, offset: 3 },
+  { name: "Dragon Case", slug: "dragon-case", priceMinor: 199_000, color: "#dc143c", profile: PREMIUM, offset: 0 },
+  { name: "Blacklight Case", slug: "blacklight-case", priceMinor: 299_900, color: "#7b2fff", profile: PREMIUM, offset: 1 },
+  { name: "Aurora Case", slug: "aurora-case", priceMinor: 449_900, color: "#00ffcc", profile: PREMIUM, offset: 2 },
 ];
 
 // ── images ──────────────────────────────────────────────────────────────
@@ -135,71 +141,89 @@ function caseImage(color: string, name: string): string {
 }
 
 // ── drops ───────────────────────────────────────────────────────────────
-interface Drop { name: string; rarity: ItemRarity; weight: number; lo: number; hi: number; u: number }
+interface Drop { name: string; tier: TierKey; weight: number; base: number }
 
-/** Deterministic 0..1 spread so items in a tier don't all sit at the same point of the range. */
+function rotate<T>(pool: T[], count: number, offset: number): T[] {
+  return Array.from({ length: Math.min(count, pool.length) }, (_, i) => pool[(offset + i) % pool.length]);
+}
+
+function dropsFor(spec: CaseSpec): Drop[] {
+  const { profile, offset } = spec;
+  const out: Drop[] = [];
+  const add = (tier: TierKey, pool: Pool, share: number) => {
+    for (const [name, base] of pool) out.push({ name, tier, weight: share / pool.length, base });
+  };
+  const used = Object.values(profile.rates).reduce((a, b) => a + b, 0);
+  add("CONSUMER", rotate(profile.consumer.pool, profile.consumer.count, offset), 1 - used);
+  add("INDUSTRIAL", rotate(profile.industrial.pool, profile.industrial.count, offset), profile.rates.INDUSTRIAL);
+  for (const tier of ["MIL_SPEC", "RESTRICTED", "CLASSIFIED", "COVERT", "KNIFE"] as const) add(tier, profile.tiers[tier], profile.rates[tier]);
+  return out;
+}
+
+/** Deterministic 0..1 spread so items of one tier don't sit at the same point of a range. */
 function spread(name: string): number {
   let h = 7;
   for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
   return 0.25 + (h % 750) / 1000;
 }
 
-function dropsFor(spec: CaseSpec): Drop[] {
-  const out: Drop[] = [];
-  const add = (names: string[], rarity: ItemRarity, t: keyof typeof TIER, shareOfTier = 1, n = names.length) => {
-    for (const name of names) {
-      out.push({ name, rarity, weight: (TIER[t].share * shareOfTier) / n, lo: TIER[t].lo, hi: TIER[t].hi, u: spread(name) });
-    }
-  };
-  add(spec.consumer, "CONSUMER", "CONSUMER");
-  add(spec.industrial, "INDUSTRIAL", "INDUSTRIAL");
-  // the 3.2% mil-spec/restricted share is split evenly over the three items
-  add(spec.milspec, "MIL_SPEC", "MILSPEC_RESTRICTED", 1, 3);
-  add([spec.restricted], "RESTRICTED", "MILSPEC_RESTRICTED", 1, 3);
-  add(spec.classified, "CLASSIFIED", "CLASSIFIED");
-  add(spec.covert, "COVERT", "COVERT");
-  add(spec.knives, "GOLD", "KNIFE");
-  return out;
-}
-
-const expected = (drops: Drop[], s: number) => {
+const evOf = (drops: Drop[], valueOf: (d: Drop) => number) => {
   const total = drops.reduce((a, d) => a + d.weight, 0);
-  return drops.reduce((a, d) => a + d.weight * Math.round(d.lo + (d.hi - d.lo) * Math.min(1, d.u * s)), 0) / total;
+  return drops.reduce((a, d) => a + d.weight * valueOf(d), 0) / total;
 };
 
-/** Pick the range position (0..1) that makes the case return TARGET_RTP, or the nearest the ranges allow. */
-function solveScale(drops: Drop[], priceMinor: number): number {
-  const target = priceMinor * TARGET_RTP;
-  if (expected(drops, 0) >= target) return 0;
-  if (expected(drops, 1 / Math.min(...drops.map((d) => d.u))) <= target) return 1 / Math.min(...drops.map((d) => d.u));
-  let lo = 0, hi = 1 / Math.min(...drops.map((d) => d.u));
-  for (let i = 0; i < 60; i++) {
+function bisect(fn: (x: number) => number, target: number, lo: number, hi: number): number {
+  for (let i = 0; i < 80; i++) {
     const mid = (lo + hi) / 2;
-    if (expected(drops, mid) > target) hi = mid; else lo = mid;
+    if (fn(mid) > target) hi = mid; else lo = mid;
   }
-  return lo;
+  return (lo + hi) / 2;
 }
 
-interface Planned { spec: CaseSpec; items: { name: string; imageUrl: string; rarity: ItemRarity; weight: number; valueMinor: number }[]; rtp: number }
+interface Planned {
+  spec: CaseSpec;
+  items: { name: string; imageUrl: string; rarity: ItemRarity; weight: number; valueMinor: number }[];
+  rtp: number;
+  /** Scale applied to the profile's stated values (1 = as stated); null for the range-based Static Case. */
+  scale: number | null;
+  notes: string[];
+}
 
 function plan(images: Map<string, string>): { planned: Planned[]; noImage: string[] } {
   const noImage = new Set<string>();
-  const planned = CASES.map((spec) => {
+  const planned = CASES.map((spec): Planned => {
     const drops = dropsFor(spec);
-    const s = solveScale(drops, spec.priceMinor);
+    const target = spec.priceMinor * TARGET_RTP;
+    let valueOf: (d: Drop) => number;
+    let scale: number | null = null;
+    if (spec.staticRanges) {
+      const at = (s: number) => (d: Drop) => { const [lo, hi] = STATIC_RANGES[d.tier]; return Math.round(lo + (hi - lo) * Math.min(1, spread(d.name) * s)); };
+      const s = bisect((x) => evOf(drops, at(x)), target, 0, 1 / 0.25);
+      valueOf = at(s);
+    } else {
+      scale = bisect((k) => evOf(drops, (d) => d.base * k), target, 0, 1_000);
+      valueOf = (d) => Math.max(1, Math.round(d.base * scale!));
+    }
     const items = drops.map((d) => {
       const imageUrl = images.get(IMAGE_ALIAS[d.name] ?? d.name);
       if (!imageUrl) noImage.add(d.name);
-      return {
-        name: d.name, imageUrl: imageUrl ?? "", rarity: d.rarity, weight: Number(d.weight.toFixed(6)),
-        valueMinor: Math.round(d.lo + (d.hi - d.lo) * Math.min(1, d.u * s)),
-      };
+      return { name: d.name, imageUrl: imageUrl ?? "", rarity: RARITY[d.tier], weight: Number(d.weight.toFixed(6)), valueMinor: valueOf(d) };
     });
     const total = items.reduce((a, i) => a + i.weight, 0);
-    const ev = items.reduce((a, i) => a + i.weight * i.valueMinor, 0) / total;
-    return { spec, items, rtp: ev / spec.priceMinor };
+    const rtp = items.reduce((a, i) => a + i.weight * i.valueMinor, 0) / total / spec.priceMinor;
+    const notes: string[] = [];
+    if (!spec.staticRanges) {
+      const [klo, khi] = spec.profile.knifeRange;
+      const knives = items.filter((i) => i.rarity === "GOLD").map((i) => i.valueMinor);
+      if (Math.min(...knives) < klo || Math.max(...knives) > khi) notes.push(`knives ${Math.min(...knives) / 100}–${Math.max(...knives) / 100} ₽, stated range ${klo / 100}–${khi / 100} ₽`);
+    }
+    return { spec, items, rtp, scale, notes };
   });
   return { planned, noImage: [...noImage] };
+}
+
+function group(priceMinor: number): string {
+  return priceMinor < 50_000 ? "СТАРТ" : priceMinor <= 150_000 ? "ИМПУЛЬС" : "ПРЕДЕЛ";
 }
 
 async function main() {
@@ -207,23 +231,23 @@ async function main() {
   const dry = args.has("--dry-run");
   const { planned, noImage } = plan(loadImages());
 
-  console.log("case              price ₽   items  expected payout  RTP");
+  console.log("case             group     price ₽  items  value scale  payout ₽   RTP");
   for (const p of planned) {
-    const ev = p.rtp * p.spec.priceMinor;
-    console.log(`${p.spec.slug.padEnd(16)} ${(p.spec.priceMinor / 100).toFixed(0).padStart(8)} ${String(p.items.length).padStart(6)} ${(ev / 100).toFixed(0).padStart(14)} ₽  ${(p.rtp * 100).toFixed(1).padStart(5)}%`);
+    const payout = p.rtp * p.spec.priceMinor;
+    console.log(
+      `${p.spec.slug.padEnd(16)} ${group(p.spec.priceMinor).padEnd(8)} ${(p.spec.priceMinor / 100).toFixed(0).padStart(8)} ${String(p.items.length).padStart(6)} ` +
+      `${(p.scale === null ? "ranges" : `×${p.scale.toFixed(3)}`).padStart(11)} ${(payout / 100).toFixed(1).padStart(9)} ${(p.rtp * 100).toFixed(1).padStart(6)}%`,
+    );
+  }
+  for (const p of planned) if (p.notes.length) console.log(`  note ${p.spec.slug}: ${p.notes.join("; ")}`);
+
+  const bad = planned.filter((p) => p.rtp < MIN_RTP || p.rtp > MAX_RTP);
+  if (bad.length) {
+    throw new Error(`RTP outside ${MIN_RTP}–${MAX_RTP}: ${bad.map((p) => `${p.spec.slug}=${(p.rtp * 100).toFixed(1)}%`).join(", ")}`);
   }
   if (noImage.length) {
     console.error(`\nNo real image for: ${noImage.join(", ")}\nAdd the Steam URL to prisma/cs2-images-extra.json or change the skin.`);
     process.exit(1);
-  }
-  const low = planned.filter((p) => p.rtp < MIN_RTP);
-  if (low.length) {
-    console.warn(`\n⚠ ${low.length} case(s) would return under ${MIN_RTP * 100}% of their price: ${low.map((p) => p.spec.slug).join(", ")}.`);
-    console.warn("  Players pay the price but the brief's item values cap the payout. Raise the knife/covert odds or lower the price.");
-    if (!dry && !args.has("--accept-low-rtp")) {
-      console.error("  Refusing to write. Re-run with --accept-low-rtp if that is really what you want.");
-      process.exit(1);
-    }
   }
   if (dry) { console.log("\n--dry-run: nothing written."); return; }
 

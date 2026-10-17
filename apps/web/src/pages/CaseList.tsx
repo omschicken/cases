@@ -70,14 +70,18 @@ export function CaseListPage() {
     return sorted;
   }, [cases, sort]);
 
+  // Groups follow the price: under 500 ₽ СТАРТ, 500–1 500 ₽ ИМПУЛЬС, above ПРЕДЕЛ.
+  // A group nobody falls into is left out rather than shown empty.
   const collections = useMemo(() => {
     const byPrice = [...cases].sort((a, b) => Number(a.priceMinor) - Number(b.priceMinor));
-    return COLLECTIONS.map((id, index) => {
-      const start = Math.floor((index * byPrice.length) / 3);
-      const end = Math.floor(((index + 1) * byPrice.length) / 3);
-      const members = byPrice.slice(start, end);
+    const groupOf = (priceMinor: string) => {
+      const kopecks = Number(priceMinor);
+      return kopecks < 50_000 ? "entry" : kopecks <= 150_000 ? "core" : "apex";
+    };
+    return COLLECTIONS.map((id) => {
+      const members = byPrice.filter((c) => groupOf(c.priceMinor) === id);
       return { id, members, representative: members[Math.floor(members.length / 2)], minimum: members[0] };
-    });
+    }).filter((group) => group.members.length > 0);
   }, [cases]);
 
   const filteredCases = useMemo(() => {
@@ -137,7 +141,7 @@ export function CaseListPage() {
                   aria-pressed={collection === group.id}
                   disabled={!group.members.length}
                 >
-                  <span className="collection-route-index">0{index + 1} / 0{COLLECTIONS.length}</span>
+                  <span className="collection-route-index">0{index + 1} / 0{collections.length}</span>
                   {representative && (
                     <span className="collection-route-art">
                       <CaseChest caseName={representative.name} caseSlug={representative.slug} itemImageUrl={highlight?.imageUrl} />
