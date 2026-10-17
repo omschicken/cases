@@ -13743,18 +13743,19 @@ button:not([disabled]):not(.menu-toggle):not(.account-menu-trigger):active,
   font: 800 1rem/1 var(--font-display);
 }
 .dzc__open {
-  padding: .38rem .8rem;
-  border-radius: 6px;
-  background: hsl(var(--hue) 60% 40% / .35);
-  border: 1px solid hsl(var(--hue) 60% 50% / .5);
-  color: hsl(var(--hue) 55% 80%);
-  font: 700 .72rem var(--font-display); letter-spacing: .04em;
-  transition: background .18s, color .18s, border-color .18s;
+  padding: .42rem 1rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 55%, #3b82f6 100%);
+  border: 1px solid rgba(139, 92, 246, 0.45);
+  color: #fff;
+  font: 700 .72rem var(--font-display); letter-spacing: .1em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 14px rgba(99, 102, 241, 0.38);
+  transition: box-shadow .2s, filter .2s;
 }
 .dzc:hover .dzc__open {
-  background: hsl(var(--hue) 65% 44% / .6);
-  border-color: hsl(var(--hue) 68% 60%);
-  color: #fff;
+  box-shadow: 0 4px 26px rgba(99, 102, 241, 0.65);
+  filter: brightness(1.15);
 }
 
 /* ── Skeleton ─────────────────────────────────────────────────── */
