@@ -24,13 +24,6 @@ function rarityTiers(c: CaseDto): string[] {
   return RARITY_RANK.filter((tier) => present.has(tier));
 }
 
-function featuredItem(c: CaseDto): CaseDto["items"][number] | undefined {
-  return c.items.reduce<CaseDto["items"][number] | undefined>((best, item) => {
-    if (!best) return item;
-    const rarityDiff = RARITY_RANK.indexOf(item.rarity) - RARITY_RANK.indexOf(best.rarity);
-    return rarityDiff < 0 || (rarityDiff === 0 && BigInt(item.valueMinor) > BigInt(best.valueMinor)) ? item : best;
-  }, undefined);
-}
 
 export function CaseListPage() {
   const { t } = useTranslation();
@@ -128,7 +121,6 @@ export function CaseListPage() {
           <div className="collection-route-grid">
             {collections.map((group, index) => {
               const representative = group.representative;
-              const highlight = representative && featuredItem(representative);
               return (
                 <button
                   key={group.id}
@@ -144,7 +136,7 @@ export function CaseListPage() {
                   <span className="collection-route-index">0{index + 1} / 0{collections.length}</span>
                   {representative && (
                     <span className="collection-route-art">
-                      <CaseChest caseName={representative.name} caseSlug={representative.slug} itemImageUrl={highlight?.imageUrl} />
+                      <CaseChest caseName={representative.name} caseSlug={representative.slug} />
                     </span>
                   )}
                   <span className="collection-route-bottom">
