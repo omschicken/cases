@@ -140,7 +140,7 @@ export function ChestOpeningOverlay({
     // the actual opacity timing, consistent with the rest of this file.
     function crackFlash() {
       navigator.vibrate?.([15, 50, 80]);
-      gsap.fromTo(flashRef.current, { opacity: 0 }, { opacity: 0.35, duration: 0.05, yoyo: true, repeat: 1, ease: "power1.inOut" });
+      gsap.fromTo(flashRef.current, { opacity: 0 }, { opacity: 0.35, duration: 0.09, yoyo: true, repeat: 1, ease: "power1.inOut" });
       stageRef.current?.classList.add("case-chest-is-cracking");
       window.setTimeout(() => stageRef.current?.classList.remove("case-chest-is-cracking"), 100);
     }
@@ -208,7 +208,8 @@ export function ChestOpeningOverlay({
         { opacity: 0.8, scale: 0.1 },
         { opacity: 0, scale: 7, duration: 0.65, ease: "power2.out" },
         "eruption")
-      .to(flashRef.current, { opacity: 0.9, duration: 0.1, yoyo: true, repeat: 1 }, "eruption+=0.2")
+      .to(flashRef.current, { opacity: 0.55, duration: 0.12, ease: "power2.out" }, "eruption+=0.2")
+      .to(flashRef.current, { opacity: 0, duration: 0.6, ease: "power2.inOut" }, "eruption+=0.32")
       .to(chestRef.current, { scale: 1.02, duration: 0.35, ease: "power1.out" }, "eruption")
       .to(shadowRef.current, { scaleX: 0.7, opacity: 0.25, duration: 0.35 }, "eruption")
       // Lets the glow linger through the rest of the eruption window

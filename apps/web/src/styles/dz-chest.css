@@ -380,7 +380,7 @@
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: #fff;
+  background: #e8f0ff;
   opacity: 0;
   pointer-events: none;
 }
