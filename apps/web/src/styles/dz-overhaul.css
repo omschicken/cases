@@ -1091,3 +1091,249 @@ h4 { font-weight: 700 !important; letter-spacing: 0.04em; }
   min-height: 350px !important;
 }
 
+
+/* ══════════════════════════════════════════════════════════════
+   SECTION UPGRADE v3 — full-page premium pass
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Desktop grid: max 4 big cards per row ─────────────────── */
+@media (min-width: 640px) {
+  .dz-case-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+    gap: 1.25rem !important;
+  }
+}
+@media (min-width: 1024px) {
+  .dz-case-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+    gap: 1.5rem !important;
+    margin-top: 1.75rem !important;
+  }
+}
+@media (min-width: 1400px) {
+  .dz-case-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* ── КОЛЛЕКЦИИ section header ──────────────────────────────── */
+.dz-page-header {
+  padding: 2rem 0 .5rem !important;
+  border-bottom: none !important;
+}
+.dz-page-header__kicker {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .68rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .35em !important;
+  text-transform: uppercase !important;
+  color: var(--ov-violet) !important;
+}
+.dz-page-header__kicker::before {
+  background: var(--ov-violet) !important;
+  opacity: .7 !important;
+}
+.dz-page-header__title {
+  font-family: var(--ov-font-display) !important;
+  font-size: clamp(2.2rem, 5vw, 3.6rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: .04em !important;
+  color: #fff !important;
+  line-height: .95 !important;
+  margin: .4rem 0 0 !important;
+}
+.dz-page-header__lede {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .85rem !important;
+  color: rgba(140,160,200,.65) !important;
+  margin: .6rem 0 0 !important;
+  letter-spacing: .02em !important;
+}
+
+/* ── Toolbar + search field ────────────────────────────────── */
+.dz-toolbar {
+  align-items: stretch !important;
+  gap: .75rem !important;
+  margin-top: 1.25rem !important;
+}
+
+/* Search field row */
+.dz-field--row {
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  border-radius: 10px !important;
+  padding: 0 .9rem !important;
+  transition: border-color .18s, background .18s !important;
+}
+.dz-field--row:focus-within {
+  border-color: rgba(139,92,246,.5) !important;
+  background: rgba(139,92,246,.06) !important;
+  box-shadow: 0 0 0 3px rgba(139,92,246,.12) !important;
+}
+.dz-field--row svg {
+  color: rgba(140,160,200,.55) !important;
+  width: 15px !important;
+  height: 15px !important;
+}
+.dz-field--row input {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .85rem !important;
+  font-weight: 500 !important;
+  color: #d0daf0 !important;
+  min-height: 42px !important;
+}
+.dz-field--row input::placeholder {
+  color: rgba(140,160,200,.4) !important;
+}
+
+/* Sort dropdown */
+.dz-field {
+  gap: .35rem !important;
+}
+.dz-field > span {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .62rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .2em !important;
+  color: rgba(140,160,200,.5) !important;
+}
+.dz-field select {
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  border-radius: 10px !important;
+  color: #d0daf0 !important;
+  font-family: var(--ov-font-ui) !important;
+  font-size: .85rem !important;
+  font-weight: 600 !important;
+  padding: 0 .9rem !important;
+  min-height: 42px !important;
+  cursor: pointer !important;
+  appearance: auto !important;
+}
+.dz-field select:hover {
+  border-color: rgba(139,92,246,.4) !important;
+}
+.dz-field select:focus-visible {
+  outline: none !important;
+  border-color: rgba(139,92,246,.6) !important;
+  box-shadow: 0 0 0 3px rgba(139,92,246,.12) !important;
+}
+
+/* ── Filter chips ──────────────────────────────────────────── */
+.dz-chips {
+  gap: .5rem !important;
+  flex-wrap: wrap !important;
+  margin-top: .85rem !important;
+}
+.dz-chips button {
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  border-radius: 8px !important;
+  color: rgba(180,200,230,.7) !important;
+  font-family: var(--ov-font-ui) !important;
+  font-size: .78rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  padding: .45rem .9rem !important;
+  gap: .5rem !important;
+  transition: all .18s !important;
+}
+.dz-chips button b {
+  background: rgba(139,92,246,.2) !important;
+  color: rgba(180,160,255,.9) !important;
+  font-size: .68rem !important;
+  padding: .1rem .38rem !important;
+  border-radius: 4px !important;
+  min-width: unset !important;
+}
+.dz-chips button:hover {
+  background: rgba(139,92,246,.1) !important;
+  border-color: rgba(139,92,246,.4) !important;
+  color: #e0e8ff !important;
+}
+.dz-chips button[aria-pressed="true"] {
+  background: rgba(139,92,246,.18) !important;
+  border-color: rgba(139,92,246,.7) !important;
+  color: #fff !important;
+  box-shadow: 0 0 16px rgba(139,92,246,.25), inset 0 0 12px rgba(139,92,246,.08) !important;
+}
+.dz-chips button[aria-pressed="true"] b {
+  background: rgba(139,92,246,.4) !important;
+  color: #c4b5fd !important;
+}
+
+/* ── Collection-discovery section ──────────────────────────── */
+.collection-discovery {
+  margin: 2rem 0 0 !important;
+  gap: 1.25rem !important;
+}
+.collection-discovery-head h2 {
+  font-family: var(--ov-font-display) !important;
+  font-size: clamp(1.8rem, 4vw, 3rem) !important;
+  font-weight: 400 !important;
+  letter-spacing: .04em !important;
+  color: #fff !important;
+  text-transform: uppercase !important;
+}
+.collection-discovery-head p {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .82rem !important;
+  color: rgba(140,160,200,.6) !important;
+  letter-spacing: .02em !important;
+  line-height: 1.55 !important;
+}
+
+/* ── Load-more button ──────────────────────────────────────── */
+.dz-btn {
+  font-family: var(--ov-font-ui) !important;
+  font-weight: 700 !important;
+  font-size: .82rem !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase !important;
+  border: 1px solid rgba(139,92,246,.45) !important;
+  border-radius: 10px !important;
+  background: rgba(139,92,246,.08) !important;
+  color: rgba(180,170,255,.9) !important;
+  padding: .9rem 1.5rem !important;
+  transition: all .2s !important;
+}
+.dz-btn:hover {
+  background: rgba(139,92,246,.18) !important;
+  border-color: rgba(139,92,246,.7) !important;
+  color: #fff !important;
+  box-shadow: 0 0 22px rgba(139,92,246,.3) !important;
+}
+
+/* ── Empty state ───────────────────────────────────────────── */
+.dz-empty {
+  padding: 4rem 1rem !important;
+  text-align: center !important;
+}
+.dz-empty__mark {
+  font-size: 2.4rem !important;
+  color: rgba(139,92,246,.3) !important;
+}
+.dz-empty__title {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .9rem !important;
+  color: rgba(140,160,200,.5) !important;
+  letter-spacing: .06em !important;
+  margin-top: .75rem !important;
+}
+
+/* ── Skeleton cards: match new card height ─────────────────── */
+.dz-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.03) 25%,
+    rgba(255,255,255,0.07) 50%,
+    rgba(255,255,255,0.03) 75%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: skeleton-sweep 1.5s ease-in-out infinite !important;
+}
+@keyframes skeleton-sweep {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
