@@ -897,3 +897,83 @@ h4 { font-weight: 700 !important; letter-spacing: 0.04em; }
   .upgrade-roll__zone { animation: none; width: var(--chance); }
   .upgrade-roll.is-won, .upgrade-roll.is-lost { animation: none; }
 }
+
+/* ── PATCH: card open-button gradient (overrides hsl(--hue) from index.css) */
+.dzc__open {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 55%, #3b82f6 100%) !important;
+  border: 1px solid rgba(139, 92, 246, 0.45) !important;
+  border-radius: 8px !important;
+  color: #fff !important;
+  padding: 0.42rem 1rem !important;
+  box-shadow: 0 2px 14px rgba(99, 102, 241, 0.38) !important;
+  font-family: var(--ov-font-ui) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  font-size: 0.72rem !important;
+  transition: box-shadow 0.2s ease, filter 0.2s ease !important;
+}
+.dzc:hover .dzc__open {
+  box-shadow: 0 4px 26px rgba(99, 102, 241, 0.65) !important;
+  filter: brightness(1.15) !important;
+}
+
+/* ── PATCH: filter chips (collection selector) */
+.dz-chips button {
+  border: 1px solid rgba(100, 90, 220, 0.22) !important;
+  border-radius: 999px !important;
+  background: rgba(10, 12, 24, 0.7) !important;
+  color: rgba(200, 200, 255, 0.55) !important;
+  font-family: var(--ov-font-ui) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  font-size: 0.75rem !important;
+  padding: 0.4rem 1rem !important;
+  transition: all 0.18s ease !important;
+}
+.dz-chips button:hover {
+  border-color: rgba(139, 92, 246, 0.65) !important;
+  background: rgba(99, 102, 241, 0.12) !important;
+  color: #d8d6ff !important;
+}
+.dz-chips button[aria-pressed="true"] {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.28) 0%, rgba(59, 130, 246, 0.18) 100%) !important;
+  border-color: rgba(139, 92, 246, 0.7) !important;
+  color: #fff !important;
+  box-shadow: 0 0 14px rgba(139, 92, 246, 0.3) !important;
+}
+.dz-chips button b {
+  color: rgba(176, 148, 255, 0.7) !important;
+}
+.dz-chips button[aria-pressed="true"] b {
+  color: #b094ff !important;
+}
+
+/* ── PATCH: card name — make Barlow Condensed obvious */
+.dzc__name {
+  font-family: var(--ov-font-ui) !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  color: #e8eaf6 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* ── PATCH: card price — gold accent */
+.dzc__price .dz-figure,
+.dzc__price-label + .dz-figure {
+  color: var(--ov-gold-hot, #ffd966) !important;
+  font-weight: 800 !important;
+}
+
+/* ── PATCH: card footer layout */
+.dzc__foot {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.5rem !important;
+  padding: 0.55rem 0.7rem !important;
+}
