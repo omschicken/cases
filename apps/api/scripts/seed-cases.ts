@@ -42,6 +42,9 @@ const CURRENCY = "RUB";
 
 /** Real Steam CDN URLs for skins the bundled catalog doesn't have, keyed by base name (no exterior). */
 const IMAGE_OVERRIDES: Record<string, string> = {
+  "FAMAS | Valence": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3n5vh7h1a_s2oaalsM8-QAWmEzvtkj-xsSyCmmFN25TmEyo7_eHLFbQF2XpMlROVct0PtwIG1M-7k51bcjYMWzS7_hitM8G81tAmdCZI8/360fx270f",
+  "Glock-18 | Synth Leaf": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1T9s2ibaVrH_KfG2KvzOtyufRkAXDikUt_tzzQyYqtcyqUag8jAsFzF7QD5Bntl4W1ZOPg5QSNjYpBnHrgznQeiI6gWCw/360fx270f",
+  "P90 | Vent Rush": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhx8bf-jFk_6v-V7BsLvefC2OvzOtyufRkAS2wzRkit2-EyIqvcHKRawR2DpImTeYDs0W6k9eyN-Pr4ATY3d5HzS3gznQedIwTnmE/360fx270f",
   "AWP | Acheron": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf9Ttk4eetZKFsMs-ABXKczf1JouRtTSWmkCIqtjmMj4K3eH-QPw4gW5shRu5csxS_moGxMr7h4w3f390Unn7823xLu3o-4rlQV71lpPPqq3txRw/360fx270f",
   "MP9 | Bulldozer": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8js_f7i1k9veiZKt6H_2WCm6FzKBz5OU4TS-ykU1_tmWEn9r6dXOUawQkApp5FOcL4RnqmtTuYu-2tQeIlcsbmjeGmfSA/360fx270f",
   "Glock-18 | Reactor": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1a4s2gfadhJfGBMXeR1fpzou84cC6_mh4sjDCAnobsLGWRblJ1A8dyRbRYtES4xNbhNLjqtVeIi45CzSqv2i9B7S1v4u5UUPYh5OSJ2Ogs2lKT/360fx270f",
@@ -81,7 +84,7 @@ const CASES: CaseSpec[] = [
   {
     slug: "ignition-case", name: "Ignition Case", floorRub: 500,
     drops: {
-      CONSUMER: [["FAMAS | Doodle Lore", "FT", 100], ["MAC-10 | Tatter", "FT", 80]],
+      CONSUMER: [["FAMAS | Valence", "FT", 100], ["MAC-10 | Tatter", "FT", 80]],
       INDUSTRIAL: [["MP7 | Abyssal Apparition", "FT", 200], ["PP-Bizon | Forest Leaves", "FT", 150]],
       MIL_SPEC: [["SG 553 | Colony IV", "FT", 600], ["CZ75-Auto | Tigris", "FT", 500]],
       RESTRICTED: [["AWP | Mortis", "FT", 1500], ["M4A1-S | Nightmare", "FT", 1200]],
@@ -93,7 +96,7 @@ const CASES: CaseSpec[] = [
   {
     slug: "blacklight-case", name: "Blacklight Case", floorRub: 1000,
     drops: {
-      CONSUMER: [["Glock-18 | Vaporwave", "FT", 200], ["P90 | Facility Draft", "FT", 150]],
+      CONSUMER: [["Glock-18 | Synth Leaf", "FT", 200], ["P90 | Vent Rush", "FT", 150]],
       INDUSTRIAL: [["MP5-SD | Phosphor", "FT", 400], ["MAG-7 | Heat", "FT", 300]],
       MIL_SPEC: [["M4A4 | Cyber Security", "FT", 1200], ["AK-47 | Uncharted", "FT", 1000]],
       RESTRICTED: [["USP-S | Printstream", "FT", 3000], ["AWP | Exoskeleton", "FT", 2000]],
