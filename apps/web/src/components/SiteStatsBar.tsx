@@ -10,6 +10,8 @@ interface SiteStats {
 }
 
 const REFRESH_MS = 5 * 60_000;
+// A payload missing a field must not take the whole page down with it.
+const FALLBACK: SiteStats = { totalOpenings: 0, bestDrop: null, playerCount: 0 };
 
 /** Thin strip under the page nav with real, server-cached site numbers. */
 export function SiteStatsBar() {
@@ -21,7 +23,7 @@ export function SiteStatsBar() {
     const load = () =>
       api
         .get<SiteStats>("/stats")
-        .then((s) => !stopped && setStats(s))
+        .then((s) => !stopped && setStats({ ...FALLBACK, ...s }))
         .catch(() => undefined);
     load();
     const id = setInterval(load, REFRESH_MS);

@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { Layout } from "./components/Layout";
 import { ProtectedRoute, AdminRoute } from "./components/ProtectedRoute";
@@ -42,6 +42,7 @@ export default function App() {
 
             <Route path="/battles" element={<BattlesPage />} />
             <Route path="/upgrader" element={<UpgraderPage />} />
+            <Route path="/upgrade" element={<Navigate to="/upgrader" replace />} />
             <Route path="/contracts" element={<ContractsPage />} />
             <Route path="/cards" element={<CardsPage />} />
             <Route path="/prizes" element={<PrizesPage />} />

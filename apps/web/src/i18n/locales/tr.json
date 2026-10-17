@@ -499,6 +499,14 @@
     "step_3_body": "Eşyalar kalıcı olarak kullanılacak."
   },
   "upgrader": {
+    "ux": {
+      "yourItem": "Eşyan",
+      "targetItem": "Hedef eşya",
+      "pickBoth": "İki eşyayı da seç",
+      "upgrade": "YÜKSELT",
+      "rolling": "Zar atılıyor…",
+      "retry": "Tekrar dene"
+    },
     "kicker": "LABORATUVAR / CANLI",
     "title": "YÜKSELTMELİ",
     "lede": "Eşyanı ve daha pahalı bir hedef seç. Şans onaydan önce hesaplanır, %75 ile sınırlıdır.",

@@ -493,3 +493,77 @@ h1, h2, h3, h4 { font-weight: 600 !important; letter-spacing: 0.02em; }
 }
 @media (min-width: 768px) and (prefers-reduced-motion: reduce) { .hero-v3__case img { animation: none; } }
 @media (max-width: 767px) { .hero-v3__showcase { display: none; } }
+
+/* ════ Upgrade: three-column layout, core panel, roll overlay ═ */
+.upgrade-layout { grid-template-columns: minmax(0, 1fr) minmax(220px, 260px) minmax(0, 1fr) !important; gap: 1.25rem !important; align-items: start; }
+.upgrade-layout .dz-pick-grid { max-height: 560px; overflow: auto; padding-right: 4px; }
+.upgrade-selected {
+  --dz-rarity: #4b69ff;
+  display: grid; justify-items: center; gap: 4px;
+  margin: 0 0 var(--dz-s3);
+  padding: 14px;
+  border: 1px solid var(--dz-rarity);
+  border-radius: 12px;
+  background: linear-gradient(160deg, rgba(15, 22, 41, 0.9), rgba(7, 11, 20, 0.9));
+  box-shadow: 0 0 24px color-mix(in srgb, var(--dz-rarity) 30%, transparent);
+  text-align: center;
+}
+.upgrade-selected img { width: 120px; max-width: 70%; filter: drop-shadow(0 0 16px var(--dz-rarity)); }
+.upgrade-selected strong { font: 600 1rem var(--ov-font); }
+.upgrade-selected span { color: var(--ov-gold); font: 700 1.1rem var(--ov-font); }
+
+.upgrade-core { position: sticky; top: 120px; display: grid; justify-items: center; gap: 8px; padding: 20px 14px; text-align: center; }
+.upgrade-core__arrow { font-size: 3.2rem; line-height: 1; color: var(--ov-violet-hot); animation: upgrade-arrow 1.4s ease-in-out infinite; }
+@keyframes upgrade-arrow { 0%, 100% { transform: translateX(-6px); opacity: 0.7; } 50% { transform: translateX(8px); opacity: 1; } }
+.upgrade-core__chance { font: 700 3rem var(--ov-font); line-height: 1; background: linear-gradient(135deg, #a78bfa, #60a5fa); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.upgrade-core__mult { font: 600 1.3rem var(--ov-font); color: #8fa0c4; }
+.upgrade-core__note { margin: 0; font-size: 0.72rem; color: #5a6783; }
+.upgrade-core__btn {
+  width: 100%;
+  padding: 16px 28px;
+  background: linear-gradient(135deg, #7c6af7 0%, #4a90d9 100%);
+  border: none; border-radius: 8px;
+  font: 700 18px var(--ov-font); letter-spacing: 0.15em; text-transform: uppercase; color: #fff;
+  box-shadow: 0 4px 24px rgba(124, 106, 247, 0.4);
+  cursor: pointer; transition: all 0.2s ease;
+}
+.upgrade-core__btn:hover:not(:disabled) { box-shadow: 0 8px 40px rgba(124, 106, 247, 0.6); transform: translateY(-2px); }
+.upgrade-core__btn:active:not(:disabled) { transform: scale(0.97); }
+.upgrade-core__btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+@media (max-width: 850px) {
+  .upgrade-layout { grid-template-columns: 1fr !important; }
+  .upgrade-core { position: static; }
+  .upgrade-core__arrow { transform: rotate(90deg); animation: none; }
+}
+@media (prefers-reduced-motion: reduce) { .upgrade-core__arrow { animation: none; } }
+
+.upgrade-roll { position: fixed; inset: 0; z-index: 9000; display: grid; place-items: center; padding: 16px; background: rgba(4, 7, 14, 0.88); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.upgrade-roll.is-won  { animation: roll-flash-win 0.7s ease-out; box-shadow: inset 0 0 160px rgba(52, 211, 153, 0.35); }
+.upgrade-roll.is-lost { animation: roll-flash-lose 0.7s ease-out; box-shadow: inset 0 0 160px rgba(239, 68, 68, 0.35); }
+@keyframes roll-flash-win  { 0% { background: rgba(52, 211, 153, 0.55); } 100% { background: rgba(4, 7, 14, 0.88); } }
+@keyframes roll-flash-lose { 0% { background: rgba(239, 68, 68, 0.55); } 100% { background: rgba(4, 7, 14, 0.88); } }
+.upgrade-roll__panel { position: relative; display: grid; justify-items: center; gap: 14px; width: min(520px, 100%); padding: 32px 24px; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; background: linear-gradient(160deg, #0f1629, #0a0f1e); text-align: center; }
+.upgrade-roll__label { font: 600 0.9rem var(--ov-font); letter-spacing: 0.3em; text-transform: uppercase; color: #7c6af7; }
+.upgrade-roll__bar { position: relative; width: 100%; height: 22px; border-radius: 11px; background: #1a1f35; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.08); }
+.upgrade-roll__zone { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: linear-gradient(90deg, #34d399, #60a5fa); animation: roll-fill 0.7s ease-out forwards; }
+@keyframes roll-fill { to { width: var(--chance); } }
+.upgrade-roll__marker { position: absolute; top: -3px; bottom: -3px; left: 0; width: 4px; margin-left: -2px; border-radius: 2px; background: #fff; box-shadow: 0 0 12px #fff; animation: roll-land 1.5s cubic-bezier(0.2, 0.85, 0.25, 1) 0.6s forwards; }
+@keyframes roll-land { 0% { left: 0; } 35% { left: 92%; } 60% { left: 18%; } 85% { left: calc(var(--roll) + 4%); } 100% { left: var(--roll); } }
+.upgrade-roll__pct { font: 700 2.4rem var(--ov-font); color: #fff; }
+.upgrade-roll__verdict { font: 700 1.8rem var(--ov-font); letter-spacing: 0.08em; }
+.is-won .upgrade-roll__verdict { color: #34d399; }
+.is-lost .upgrade-roll__verdict { color: #ef4444; }
+.upgrade-roll__item { display: grid; place-items: center; min-height: 150px; }
+.upgrade-roll__item img { width: 180px; max-width: 60vw; }
+.upgrade-roll__win { filter: drop-shadow(0 0 30px rgba(52, 211, 153, 0.7)); animation: roll-slide-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+@keyframes roll-slide-in { from { opacity: 0; transform: translateX(120px) scale(0.8); } to { opacity: 1; transform: none; } }
+.upgrade-roll__shatter { filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.6)); animation: roll-shatter 1s ease-in 0.2s forwards; }
+@keyframes roll-shatter { 0% { transform: scale(1); opacity: 1; } 25% { transform: scale(1.08) rotate(-3deg); } 100% { transform: scale(0) rotate(14deg); opacity: 0; } }
+.upgrade-roll__name { font: 600 1.2rem var(--ov-font); }
+.upgrade-roll__meta { font: 400 0.75rem monospace; color: #6b7a99; }
+.upgrade-roll .dz-confetti { top: 36%; }
+@media (prefers-reduced-motion: reduce) {
+  .upgrade-roll__marker { animation: none; left: var(--roll); }
+  .upgrade-roll__zone { animation: none; width: var(--chance); }
+  .upgrade-roll.is-won, .upgrade-roll.is-lost { animation: none; }
+}

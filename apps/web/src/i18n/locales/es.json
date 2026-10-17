@@ -499,6 +499,14 @@
     "step_3_body": "Los objetos se usarán permanentemente."
   },
   "upgrader": {
+    "ux": {
+      "yourItem": "Tu objeto",
+      "targetItem": "Objeto objetivo",
+      "pickBoth": "Elige ambos objetos",
+      "upgrade": "MEJORAR",
+      "rolling": "Tirando…",
+      "retry": "Intentar de nuevo"
+    },
     "kicker": "LABORATORIO / LIVE",
     "title": "MEJORA",
     "lede": "Elige tu objeto y un objetivo más caro. La probabilidad se calcula antes de confirmar, limitada al 75%.",

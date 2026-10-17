@@ -534,6 +534,14 @@
     "step_3_body": "After confirming, items will be used and the result will appear in your inventory."
   },
   "upgrader": {
+    "ux": {
+      "yourItem": "Your item",
+      "targetItem": "Target item",
+      "pickBoth": "Pick both items",
+      "upgrade": "UPGRADE",
+      "rolling": "Rolling…",
+      "retry": "Try again"
+    },
     "kicker": "LABORATORY / LIVE",
     "title": "UPGRADER",
     "lede": "Choose your item and a more expensive target. The chance is calculated before confirmation and capped at 75%.",

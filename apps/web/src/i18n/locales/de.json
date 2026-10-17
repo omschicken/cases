@@ -499,6 +499,14 @@
     "step_3_body": "Gegenstände werden dauerhaft verwendet."
   },
   "upgrader": {
+    "ux": {
+      "yourItem": "Dein Item",
+      "targetItem": "Zielitem",
+      "pickBoth": "Wähle beide Items",
+      "upgrade": "UPGRADE",
+      "rolling": "Wurf läuft…",
+      "retry": "Nochmal versuchen"
+    },
     "kicker": "LABOR / LIVE",
     "title": "UPGRADE",
     "lede": "Wähle deinen Gegenstand und ein teureres Ziel. Die Chance wird vor der Bestätigung berechnet, max. 75%.",

@@ -499,6 +499,14 @@
     "step_3_body": "Os itens serão usados permanentemente."
   },
   "upgrader": {
+    "ux": {
+      "yourItem": "Seu item",
+      "targetItem": "Item alvo",
+      "pickBoth": "Escolha os dois itens",
+      "upgrade": "UPGRADE",
+      "rolling": "Rolando…",
+      "retry": "Tentar de novo"
+    },
     "kicker": "LABORATÓRIO / LIVE",
     "title": "UPGRADE",
     "lede": "Escolha seu item e um alvo mais caro. A chance é calculada antes da confirmação, limitada a 75%.",
