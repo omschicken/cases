@@ -13810,3 +13810,183 @@ button:not([disabled]):not(.menu-toggle):not(.account-menu-trigger):active,
   opacity: 1;
   filter: blur(20px);
 }
+
+/* ================================================================
+   DZC-ART — lightweight self-contained case box for grid cards
+   Uses --art-hue (0-360) set on the wrapper.
+   ================================================================ */
+
+.dzc-art {
+  --h: var(--art-hue, 260);
+  position: relative;
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Atmospheric radial glow behind the box */
+.dzc-art__glow {
+  position: absolute; inset: -20% -10%;
+  background: radial-gradient(ellipse 70% 60% at 50% 55%,
+    hsl(var(--h) 70% 50% / .22), transparent 70%);
+  filter: blur(8px);
+  pointer-events: none;
+  transition: opacity .3s;
+}
+.dzc:hover .dzc-art__glow { opacity: 1.6; }
+
+/* The actual box: lid + body + lock stacked vertically */
+.dzc-art__box {
+  position: relative;
+  width: 72%; max-width: 130px;
+  display: flex; flex-direction: column;
+  filter: drop-shadow(0 6px 18px hsl(var(--h) 70% 45% / .45));
+  transition: transform .32s cubic-bezier(.2,.88,.2,1), filter .32s;
+}
+.dzc:hover .dzc-art__box {
+  transform: translateY(-6px) scale(1.04);
+  filter: drop-shadow(0 14px 28px hsl(var(--h) 80% 55% / .65));
+}
+
+/* ── Lid ──────────────────────────────────────────────────────── */
+.dzc-art__lid {
+  position: relative;
+  height: 28px;
+  border-radius: 5px 5px 0 0;
+  background: linear-gradient(180deg,
+    hsl(var(--h) 50% 28%),
+    hsl(var(--h) 45% 20%));
+  border: 1px solid hsl(var(--h) 60% 40% / .7);
+  border-bottom: none;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.dzc-art__lid-stripe {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    transparent 5%,
+    hsl(var(--h) 65% 55% / .15) 30%,
+    hsl(var(--h) 65% 70% / .25) 50%,
+    hsl(var(--h) 65% 55% / .15) 70%,
+    transparent 95%);
+}
+.dzc-art__lid-mark {
+  position: relative; z-index: 1;
+  color: hsl(var(--h) 75% 75%);
+  font: 800 .5rem/1 var(--font-display, sans-serif);
+  letter-spacing: .2em;
+  text-shadow: 0 0 8px hsl(var(--h) 80% 65% / .8);
+}
+
+/* ── Body ─────────────────────────────────────────────────────── */
+.dzc-art__body {
+  position: relative;
+  height: 72px;
+  border-radius: 0 0 5px 5px;
+  background: linear-gradient(170deg,
+    hsl(var(--h) 30% 15%),
+    hsl(var(--h) 20% 10%));
+  border: 1px solid hsl(var(--h) 45% 30% / .6);
+  border-top: 1px solid hsl(var(--h) 55% 45% / .5);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+
+/* Corner L-brackets */
+.dzc-art__corner {
+  position: absolute;
+  width: 9px; height: 9px;
+  pointer-events: none;
+}
+.dzc-art__corner::before,
+.dzc-art__corner::after {
+  content: "";
+  position: absolute;
+  background: hsl(var(--h) 65% 60%);
+  box-shadow: 0 0 4px hsl(var(--h) 70% 60% / .6);
+}
+.dzc-art__corner::before { width: 100%; height: 1.5px; top: 0; left: 0; }
+.dzc-art__corner::after  { width: 1.5px; height: 100%; top: 0; left: 0; }
+.dzc-art__corner--tl { top: 4px; left: 4px; }
+.dzc-art__corner--tr { top: 4px; right: 4px; transform: scaleX(-1); }
+.dzc-art__corner--bl { bottom: 4px; left: 4px; transform: scaleY(-1); }
+.dzc-art__corner--br { bottom: 4px; right: 4px; transform: scale(-1); }
+
+/* Glyph centre */
+.dzc-art__glyph-wrap {
+  position: relative;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.dzc-art__glyph-bg {
+  position: absolute; inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    hsl(var(--h) 70% 50% / .25),
+    transparent 70%);
+  animation: dzc-art-pulse 2.8s ease-in-out infinite;
+}
+@keyframes dzc-art-pulse {
+  0%, 100% { opacity: .5; transform: scale(.9); }
+  50%       { opacity: 1;  transform: scale(1.1); }
+}
+/* Override CaseGlyph default sizing */
+.dzc-art__glyph-wrap .case-chest-glyph {
+  width: 32px; height: 32px;
+  color: hsl(var(--h) 72% 70%);
+  filter:
+    drop-shadow(0 0 6px hsl(var(--h) 80% 65% / .8))
+    drop-shadow(0 0 2px hsl(var(--h) 80% 65% / .5));
+  position: relative;
+  top: unset; left: unset; transform: none;
+}
+
+/* Name band */
+.dzc-art__band {
+  display: flex; align-items: center; gap: 4px;
+  margin-top: 4px;
+  width: 88%;
+}
+.dzc-art__band-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg,
+    transparent, hsl(var(--h) 55% 50% / .5), transparent);
+}
+.dzc-art__band-text {
+  color: hsl(var(--h) 65% 68%);
+  font: 700 .42rem/1 var(--font-display, sans-serif);
+  letter-spacing: .16em;
+  text-shadow: 0 0 6px hsl(var(--h) 75% 60% / .6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 72px;
+}
+
+/* ── Lock clasp (small accent between lid & body) ─────────────── */
+.dzc-art__lock {
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  top: 24px; /* sits at the lid/body seam */
+  z-index: 3;
+  width: 14px; height: 10px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.dzc-art__lock-body {
+  width: 14px; height: 7px;
+  border-radius: 2px;
+  background: linear-gradient(180deg,
+    hsl(var(--h) 40% 35%),
+    hsl(var(--h) 35% 22%));
+  border: 1px solid hsl(var(--h) 55% 45% / .7);
+}
+.dzc-art__lock-gem {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%,
+    hsl(var(--h) 85% 78%),
+    hsl(var(--h) 70% 45%));
+  box-shadow: 0 0 5px hsl(var(--h) 80% 65% / .8);
+  margin-top: -3px;
+}
