@@ -41,7 +41,16 @@ const TIERS = Object.keys(TIER_WEIGHT) as Rarity[];
 const CURRENCY = "RUB";
 
 /** Real Steam CDN URLs for skins the bundled catalog doesn't have, keyed by base name (no exterior). */
-const IMAGE_OVERRIDES: Record<string, string> = {};
+const IMAGE_OVERRIDES: Record<string, string> = {
+  "AWP | Acheron": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf9Ttk4eetZKFsMs-ABXKczf1JouRtTSWmkCIqtjmMj4K3eH-QPw4gW5shRu5csxS_moGxMr7h4w3f390Unn7823xLu3o-4rlQV71lpPPqq3txRw/360fx270f",
+  "MP9 | Bulldozer": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8js_f7i1k9veiZKt6H_2WCm6FzKBz5OU4TS-ykU1_tmWEn9r6dXOUawQkApp5FOcL4RnqmtTuYu-2tQeIlcsbmjeGmfSA/360fx270f",
+  "Glock-18 | Reactor": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1a4s2gfadhJfGBMXeR1fpzou84cC6_mh4sjDCAnobsLGWRblJ1A8dyRbRYtES4xNbhNLjqtVeIi45CzSqv2i9B7S1v4u5UUPYh5OSJ2Ogs2lKT/360fx270f",
+  "AWP | Fade": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_CNk7uW-V6JsJPWsAm6Xyfo45-c5GXDnwB534DuEwtuoIHOfaAYiAsYjF-QItUaxmoC0MO_h5ALcjJUFk3sEzfdk4w/360fx270f",
+  "PP-Bizon | Forest Leaves": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLzl4zv8x1I_82ibaV7JeOsAm6Xyfo45bU-Hi_gkRl-t2mAw937Iy3FPQF2DJpxQOADsBawloC0Yr_m41GIiJUFk3v_uUXI3A/360fx270f",
+  "P250 | Apep's Curse": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhzMOwwiVI0OL8PfRSIeCWHlicyOl-pK87HCjkxR9ztj-Dzdv8di2TPFchDptyTbEIthTsl9znY77r5Qzc2YwR02yg2XoGglyv/360fx270f",
+  "M4A1-S | Welcome to the Jungle": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9Jo-9oRCyMnRgmpSTLy9igc3PDbVcnDZd3R-de5hHpl4CxZO6z4gLWjt5Dzyv8iCJA6C5j5vFCD_ThScH7Ig/360fx270f",
+  "AK-47 | Gold Arabesque": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiVI0POlPPNSJ_-fCliR0-90tfJ4WiyMmBgjuiiI1Nn4cXjEbwMlDsR4RrVfsRK4wdPgPrjh4wKNg49Cyn__2iNI6ihi5O8cEf1yNgAZ7yU/360fx270f",
+};
 const PLACEHOLDER_IMAGE = "https://placehold.co/256x192/0F1120/6B7089?text=CS2";
 
 const CASES: CaseSpec[] = [
