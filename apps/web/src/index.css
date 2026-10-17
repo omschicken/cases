@@ -13317,3 +13317,460 @@ button:not([disabled]):not(.menu-toggle):not(.account-menu-trigger):active,
   opacity: .65 !important;
   filter: blur(36px) !important;
 }
+
+/* ================================================================
+   CASECHEST V3 — CSS for the rewritten component (2026-10)
+   New classes have no existing rules; these bring them to life.
+   ================================================================ */
+
+/* Secondary atmospheric glow ring */
+.case-chest-atmosphere {
+  position: absolute; inset: 12% 5% 2%;
+  border-radius: 42%;
+  background: radial-gradient(ellipse 85% 65% at 50% 65%,
+    hsl(var(--chest-hue) 72% 54% / .2), transparent 68%);
+  filter: blur(16px);
+  pointer-events: none;
+  animation: dz-atmosphere-breathe 4.5s ease-in-out infinite alternate;
+}
+@keyframes dz-atmosphere-breathe {
+  from { opacity: .5; transform: scale(.9); }
+  to   { opacity: 1;  transform: scale(1.1); }
+}
+
+/* Orbital ring container + dot particles */
+.case-orbit-ring {
+  position: absolute; z-index: 1;
+  left: 50%; top: 44%;
+  border: 1px solid hsl(var(--chest-hue) 60% 55% / .22);
+  border-radius: 50%;
+  width: calc(var(--orbit-r) * 2);
+  height: calc(var(--orbit-r) * 2);
+  transform: translate(-50%, -50%);
+  animation: dz-orbit-ring-spin 18s linear infinite;
+  animation-delay: calc(var(--orbit-delay) * 1s);
+}
+.case-orbit-ring + .case-orbit-ring { animation-direction: reverse; animation-duration: 26s; }
+@keyframes dz-orbit-ring-spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+.case-orbit-dot {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 4px; height: 4px; margin: -2px -2px;
+  border-radius: 50%;
+  background: hsl(var(--chest-hue) 82% 68%);
+  box-shadow: 0 0 6px 1px hsl(var(--chest-hue) 82% 68%);
+  transform:
+    translate(-50%, -50%)
+    rotate(calc(360deg / var(--orbit-count) * var(--dot-i)))
+    translateY(calc(-1 * var(--orbit-r)));
+  animation: dz-dot-glow 2.4s ease-in-out infinite alternate;
+  animation-delay: calc(var(--dot-i) * 0.32s);
+}
+@keyframes dz-dot-glow {
+  from { opacity: .2; }
+  to   { opacity: .9; }
+}
+
+/* Interior light floods out when chest is opened */
+.case-chest-interior-light {
+  position: absolute; z-index: 2;
+  left: 10%; right: 10%; top: 34%; height: 24%;
+  background: radial-gradient(ellipse at 50% 100%,
+    hsl(var(--chest-hue) 88% 70% / .85), transparent 62%);
+  filter: blur(7px);
+  pointer-events: none;
+}
+
+/* ── Lid inner layout ─────────────────────────────────────────── */
+.case-chest-lid-inner {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.case-chest-lid-stripe {
+  position: absolute; left: 6%; right: 6%; top: 16%; height: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    hsl(var(--chest-hue) 65% 64% / .65) 30%,
+    hsl(var(--chest-hue) 65% 64% / .65) 70%,
+    transparent);
+}
+.case-chest-lid-mark {
+  position: relative; z-index: 2;
+  color: hsl(var(--chest-hue) 70% 72%);
+  font: 900 clamp(.68rem, 1.7vw, .98rem)/1 var(--font-display);
+  letter-spacing: -.04em;
+  text-shadow: 0 0 14px hsl(var(--chest-hue) 80% 65% / .85),
+               0 0 4px  hsl(var(--chest-hue) 80% 65% / .6);
+}
+.case-chest-lid-serial {
+  position: absolute; right: 9%; bottom: 13%;
+  color: hsl(var(--chest-hue) 40% 58% / .6);
+  font: 700 .27rem var(--font-display); letter-spacing: .2em;
+}
+.case-chest-lid-edge {
+  position: absolute; bottom: 0; left: 4%; right: 4%;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 2%,
+    hsl(var(--chest-hue) 72% 64% / .85) 22%,
+    hsl(var(--chest-hue) 72% 64% / .85) 78%,
+    transparent 98%);
+  box-shadow: 0 1px 8px hsl(var(--chest-hue) 72% 64% / .5);
+}
+
+/* ── Lock sub-elements ────────────────────────────────────────── */
+.case-chest-lock-body {
+  position: absolute; inset: 0;
+  background: linear-gradient(130deg,
+    hsl(var(--chest-hue) 25% 36%), hsl(var(--chest-hue) 22% 14%));
+}
+.case-chest-lock-shackle {
+  position: absolute;
+  left: 18%; right: 18%; top: 8%; height: 38%;
+  border: 2px solid hsl(var(--chest-hue) 65% 64%);
+  border-bottom: none; border-radius: 50% 50% 0 0;
+  box-shadow: 0 0 8px hsl(var(--chest-hue) 75% 62% / .5),
+              inset 0 0 4px hsl(var(--chest-hue) 75% 62% / .2);
+}
+.case-chest-lock-gem {
+  position: absolute; left: 33%; right: 33%; top: 47%; height: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    #fff 0 16%, hsl(var(--chest-hue) 82% 74%) 28%, hsl(var(--chest-hue) 62% 44%));
+  box-shadow: 0 0 14px hsl(var(--chest-hue) 82% 68%),
+              0 0 28px hsl(var(--chest-hue) 70% 56% / .45);
+}
+
+/* ── Body decorative overlays ─────────────────────────────────── */
+.case-chest-body-shine {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(128deg, rgba(255,255,255,.06) 0 22%, transparent 22%);
+}
+.case-chest-body-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg,
+      hsl(var(--chest-hue) 52% 55% / .07) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(0deg,
+      hsl(var(--chest-hue) 52% 55% / .07) 0 1px, transparent 1px 22px);
+}
+
+/* ── Corner L-bracket accents ─────────────────────────────────── */
+.case-chest-corner {
+  position: absolute; z-index: 5;
+  width: 9px; height: 9px; pointer-events: none;
+}
+.case-chest-corner::before,
+.case-chest-corner::after {
+  content: ""; position: absolute;
+  background: hsl(var(--chest-hue) 72% 68%);
+  box-shadow: 0 0 6px hsl(var(--chest-hue) 72% 68% / .65);
+}
+.case-chest-corner::before { width: 100%; height: 2px; top: 0; left: 0; }
+.case-chest-corner::after  { width: 2px; height: 100%; top: 0; left: 0; }
+.case-chest-corner-tl { top: 8%;    left: 7%;  }
+.case-chest-corner-tr { top: 8%;    right: 7%; transform: scaleX(-1); }
+.case-chest-corner-bl { bottom: 18%; left: 7%;  transform: scaleY(-1); }
+.case-chest-corner-br { bottom: 18%; right: 7%; transform: scale(-1,-1); }
+
+/* ── HERO glyph — the visual centrepiece of each case ────────── */
+.case-chest-glyph-wrap {
+  position: absolute; z-index: 3;
+  inset: 5% 8% 22%;
+  display: flex; align-items: center; justify-content: center;
+}
+.case-chest-glyph-bg {
+  position: absolute; inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    hsl(var(--chest-hue) 78% 58% / .5) 0%, transparent 62%);
+  filter: blur(14px);
+  animation: dz-glyph-bg-breathe 3s ease-in-out infinite alternate;
+}
+@keyframes dz-glyph-bg-breathe {
+  from { opacity: .5;  transform: scale(.78); }
+  to   { opacity: 1;   transform: scale(1.14); }
+}
+/* Override old absolute position so glyph fills the wrap */
+.case-chest-glyph-wrap .case-chest-glyph {
+  position: relative; z-index: 1;
+  left: auto; top: auto; width: 64%; height: 74%;
+  transform: none;
+  opacity: 1;
+  filter:
+    drop-shadow(0 0 20px hsl(var(--chest-hue) 84% 68% / .9))
+    drop-shadow(0 0 8px  hsl(var(--chest-hue) 84% 68% / .6))
+    drop-shadow(0 2px 5px rgba(0,0,0,.6));
+}
+/* Variant tweaks for glyph inside wrap */
+.case-chest-v2 .case-chest-glyph-wrap .case-chest-glyph { width: 58%; height: 64%; }
+.case-chest-v3 .case-chest-glyph-wrap .case-chest-glyph { transform: rotate(-12deg); }
+.case-chest-v4 .case-chest-glyph-wrap .case-chest-glyph { width: 55%; height: 68%; }
+
+/* ── Name band ────────────────────────────────────────────────── */
+.case-chest-nameband {
+  position: absolute; z-index: 4;
+  left: 7%; right: 7%; bottom: 6%;
+  display: flex; align-items: center; gap: 5px;
+}
+.case-chest-nameband-line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg,
+    transparent, hsl(var(--chest-hue) 52% 58% / .65));
+}
+.case-chest-nameband-text ~ .case-chest-nameband-line {
+  background: linear-gradient(270deg,
+    transparent, hsl(var(--chest-hue) 52% 58% / .65));
+}
+.case-chest-nameband-text {
+  flex-shrink: 0;
+  color: hsl(var(--chest-hue) 20% 86%);
+  font: 800 clamp(.27rem, .88vw, .54rem)/1 var(--font-display);
+  letter-spacing: .22em;
+  text-shadow: 0 0 10px hsl(var(--chest-hue) 78% 64% / .45);
+}
+
+/* Gap light (detail page: visible seam between lid & body) */
+.case-chest-gap-light {
+  position: absolute; z-index: 5;
+  left: 10%; right: 10%;
+  top: calc(var(--lid-rest) + 18%);
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 3%,
+    hsl(var(--chest-hue) 80% 68% / .9) 25%,
+    hsl(var(--chest-hue) 80% 68% / .9) 75%,
+    transparent 97%);
+  filter: blur(2px);
+  box-shadow: 0 0 14px 4px hsl(var(--chest-hue) 80% 68% / .55);
+}
+
+/* Aura boost — make the breathing glow much stronger on card hover */
+.case-card-editorial:hover .case-chest-aura,
+.case-card-editorial:hover .case-chest-atmosphere {
+  opacity: 1 !important;
+  filter: blur(28px) !important;
+}
+.case-card-editorial:hover .case-chest-glyph-bg {
+  animation-duration: 1.6s !important;
+  opacity: 1 !important;
+}
+.case-card-editorial:hover .case-chest-glyph-wrap .case-chest-glyph {
+  filter:
+    drop-shadow(0 0 28px hsl(var(--chest-hue) 88% 72% / 1))
+    drop-shadow(0 0 12px hsl(var(--chest-hue) 88% 72% / .75))
+    drop-shadow(0 3px 8px rgba(0,0,0,.65)) !important;
+}
+
+/* ================================================================
+   DZ CASE GRID + CARD (dzc) — new card component, no layout shift
+   ================================================================ */
+
+/* Grid wrapper */
+.dz-case-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+@media (min-width: 640px)  { .dz-case-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); } }
+@media (min-width: 1024px) { .dz-case-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); } }
+
+/* Filter chip row */
+.dz-chips {
+  display: flex; gap: .5rem; flex-wrap: wrap;
+}
+.dz-chips button {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .45rem .8rem;
+  border: 1px solid #2a3340;
+  border-radius: 6px;
+  background: #111820;
+  color: #9aaab8;
+  font: 700 .8rem var(--font-display);
+  cursor: pointer;
+  transition: color .18s, border-color .18s, background .18s;
+}
+.dz-chips button b {
+  display: inline-block; min-width: 1.4ch;
+  color: #667788; font-size: .72rem;
+}
+.dz-chips button[aria-pressed="true"],
+.dz-chips button:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, #111820);
+  color: #d6d8ff;
+}
+.dz-chips button[aria-pressed="true"] b { color: var(--accent); }
+
+/* ── dzc: the card ──────────────────────────────────────────────── */
+.dzc {
+  --hue: var(--chest-hue, 220);
+  position: relative;
+  display: flex; flex-direction: column;
+  border-radius: 12px;
+  border: 1px solid hsl(var(--hue) 28% 22%);
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 15%,
+      hsl(var(--hue) 55% 40% / .12), transparent 60%),
+    linear-gradient(170deg, #131b22, #0c1116);
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform .28s cubic-bezier(.2,.88,.2,1),
+    border-color .22s ease,
+    box-shadow .28s ease;
+  will-change: transform;
+}
+.dzc:hover, .dzc:focus-visible {
+  transform: translateY(-8px);
+  border-color: hsl(var(--hue) 65% 55%);
+  box-shadow:
+    0 24px 48px rgba(0,0,0,.55),
+    0 0 0 1px hsl(var(--hue) 60% 45% / .35),
+    0 0 60px -10px hsl(var(--hue) 72% 55%);
+  outline: none;
+}
+.dzc:focus-visible { outline: 2px solid hsl(var(--hue) 65% 55%); }
+
+/* ── Top art zone ─────────────────────────────────────────────── */
+.dzc__top {
+  position: relative;
+  padding: .7rem .7rem .4rem;
+  min-height: 148px;
+  display: flex; flex-direction: column;
+}
+/* Tinted glow fills the art zone background */
+.dzc__top::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 90% 70% at 50% 70%,
+    hsl(var(--hue) 68% 50% / .14), transparent 70%);
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+.dzc:hover .dzc__top::before { opacity: 2; }
+
+.dzc__serial {
+  position: relative; z-index: 2;
+  align-self: flex-start;
+  color: hsl(var(--hue) 45% 60% / .65);
+  font: 700 .62rem var(--font-display); letter-spacing: .18em;
+}
+.dzc__chip {
+  position: absolute; top: .65rem; right: .7rem; z-index: 2;
+  padding: .18rem .48rem;
+  border-radius: 4px;
+  background: hsl(var(--hue) 55% 35% / .45);
+  border: 1px solid hsl(var(--hue) 65% 55% / .5);
+  color: hsl(var(--hue) 65% 78%);
+  font: 800 .56rem var(--font-display); letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+/* Chest area — fills remaining top space */
+.dzc__chest {
+  flex: 1;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100px;
+}
+.dzc__img {
+  width: 90%; max-height: 130px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px hsl(var(--hue) 70% 50% / .5));
+  transition: transform .32s cubic-bezier(.2,.88,.2,1),
+              filter .32s ease;
+}
+.dzc:hover .dzc__img {
+  transform: translateY(-6px) scale(1.05);
+  filter: drop-shadow(0 14px 28px hsl(var(--hue) 80% 55% / .7));
+}
+/* CaseChest inside the card */
+.dzc__chest-art {
+  width: 100%; height: 100%;
+}
+
+/* ── Body — name row ─────────────────────────────────────────── */
+.dzc__body {
+  padding: .5rem .75rem .35rem;
+  border-top: 1px solid hsl(var(--hue) 25% 20%);
+}
+.dzc__meta {
+  display: flex; align-items: center; justify-content: space-between; gap: .4rem;
+}
+.dzc__name {
+  margin: 0;
+  font: 700 clamp(.72rem, 1.5vw, .85rem)/1.2 var(--font-display);
+  color: #dce6f4;
+  letter-spacing: .01em;
+  /* truncate to 2 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dzc__dots {
+  display: flex; gap: 3px; flex-shrink: 0; align-self: flex-start; margin-top: .1rem;
+}
+.dzc__dots i {
+  display: block; width: 7px; height: 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px currentColor;
+  flex-shrink: 0;
+}
+
+/* ── Foot — price + open ─────────────────────────────────────── */
+.dzc__foot {
+  display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+  padding: .5rem .75rem .65rem;
+}
+.dzc__price {
+  display: flex; flex-direction: column;
+  line-height: 1.1;
+}
+.dzc__price-label {
+  color: #667788;
+  font: 500 .6rem var(--font-display); letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.dzc__price > :last-child {
+  color: #e0b84a;
+  font: 800 1rem/1 var(--font-display);
+}
+.dzc__open {
+  padding: .38rem .8rem;
+  border-radius: 6px;
+  background: hsl(var(--hue) 60% 40% / .35);
+  border: 1px solid hsl(var(--hue) 60% 50% / .5);
+  color: hsl(var(--hue) 55% 80%);
+  font: 700 .72rem var(--font-display); letter-spacing: .04em;
+  transition: background .18s, color .18s, border-color .18s;
+}
+.dzc:hover .dzc__open {
+  background: hsl(var(--hue) 65% 44% / .6);
+  border-color: hsl(var(--hue) 68% 60%);
+  color: #fff;
+}
+
+/* ── Skeleton ─────────────────────────────────────────────────── */
+.dzc--skeleton {
+  min-height: 260px;
+  pointer-events: none;
+}
+@keyframes dz-shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+.dz-skeleton {
+  background: linear-gradient(
+    90deg,
+    #131b22 25%, #1c2a36 50%, #131b22 75%
+  );
+  background-size: 200% 100%;
+  animation: dz-shimmer 1.8s ease-in-out infinite;
+}
