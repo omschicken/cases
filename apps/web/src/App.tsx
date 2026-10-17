@@ -20,6 +20,7 @@ import { CardsPage } from "./pages/Cards";
 import { PrizesPage } from "./pages/Prizes";
 import { BonusesPage } from "./pages/Bonuses";
 import { FAQPage } from "./pages/FAQ";
+import { FairPage } from "./pages/Fair";
 import { NotFoundPage } from "./pages/NotFound";
 import { SteamCallbackPage } from "./pages/SteamCallback";
 import { SteamCompletePage } from "./pages/SteamComplete";
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="/prizes" element={<PrizesPage />} />
             <Route path="/bonuses" element={<BonusesPage />} />
             <Route path="/faq" element={<FAQPage />} />
+            <Route path="/fair" element={<FairPage />} />
             <Route path="*" element={<NotFoundPage />} />
 
             <Route element={<ProtectedRoute />}>

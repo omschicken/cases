@@ -31,3 +31,14 @@
   .dz-promo-banner__title { flex-basis: 100%; }
   .dz-promo-banner__cta { margin-left: auto; }
 }
+
+/* /fair page */
+.fair-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--dz-s4); margin: var(--dz-s5) 0; }
+.fair-step { padding: var(--dz-s4); border: 1px solid rgba(124, 107, 255, 0.25); border-radius: var(--dz-r-sm); background: rgba(124, 107, 255, 0.06); }
+.fair-step__icon { font-size: 1.75rem; }
+.fair-step h3 { margin: var(--dz-s3) 0 var(--dz-s2, 0.5rem); }
+.fair-step p { margin: 0; line-height: 1.55; opacity: 0.85; }
+.fair-calc { display: grid; gap: var(--dz-s4); }
+.fair-calc > h2 { margin: 0; }
+.fair-calc code { word-break: break-all; }
+.fair-history-link { margin: var(--dz-s5) 0; }

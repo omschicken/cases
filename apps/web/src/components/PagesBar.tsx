@@ -5,6 +5,7 @@ const PAGES = [
   { to: "/referral", key: "referral" },
   { to: "/prizes", key: "prizes" },
   { to: "/bonuses", key: "bonuses" },
+  { to: "/fair", key: "fair" },
   { to: "/faq", key: "faq" },
 ] as const;
 
