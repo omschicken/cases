@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @cs2-cases/api prisma:generate && pnpm --filter @cs2-cases/shared build && pnpm --filter @cs2-cases/api build && pnpm --filter @cs2-cases/web build",
+  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @cs2-cases/api prisma:generate && pnpm --filter @cs2-cases/shared build && pnpm --filter @cs2-cases/api build && pnpm --filter @cs2-cases/web build && (pnpm --filter @cs2-cases/api exec tsx prisma/fix-item-images.ts 2>&1 | tail -5 || echo 'fix-item-images skipped (no DB at build time)')",
   "outputDirectory": "dist",
   "functions": {
     "api/**/*.ts": {
