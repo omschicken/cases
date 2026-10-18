@@ -70,15 +70,29 @@ export function CaseMiniArt({ caseName, caseSlug }: { caseName: string; caseSlug
   );
 }
 
+/** Returns true for a usable image URL (not a placeholder, not blank). */
+function isRealUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  return /^https?:\/\//.test(url) && !/placehold(er)?\.co/i.test(url);
+}
+
+/** Best weapon preview image from the case items (highest rarity first). */
+function bestItemImage(caseDto: CaseCardProps["caseDto"], tiers: ItemRarity[]): string | null {
+  for (const tier of tiers) {
+    const hit = caseDto.items.find((i) => i.rarity === tier && isRealUrl(i.imageUrl));
+    if (hit?.imageUrl) return hit.imageUrl;
+  }
+  return null;
+}
+
 /** Case card, 240x300. Top 60% the chest, bottom 40% name, price, action.
  *  Presentation only: no fetches, no state, so a 90-card grid is one render. */
 export function CaseCard({ caseDto, index, tiers, tier, priceLabel }: CaseCardProps) {
   const { hue } = caseVisualIdentity(caseDto.slug);
-  // A real remote picture beats the generated art; exclude placeholder/dummy URLs.
-  const hasPicture =
-    /^https?:\/\//.test(caseDto.imageUrl ?? "") &&
-    !/placehold(er)?\.co/i.test(caseDto.imageUrl ?? "") &&
-    !/steamstatic\.com/i.test(caseDto.imageUrl ?? "");
+  // Prefer a real case box image; then use the best item skin as preview; else CSS art.
+  const caseImgUrl = isRealUrl(caseDto.imageUrl) ? caseDto.imageUrl : null;
+  const itemPreviewUrl = caseImgUrl ? null : bestItemImage(caseDto, tiers);
+  const showArt = !caseImgUrl && !itemPreviewUrl;
 
   return (
     <Link
@@ -90,8 +104,10 @@ export function CaseCard({ caseDto, index, tiers, tier, priceLabel }: CaseCardPr
         <span className="dzc__serial">DZ-{String(index + 1).padStart(3, "0")}</span>
         {tier && <span className="dzc__chip">{tier}</span>}
         <div className="dzc__chest">
-          {hasPicture ? (
-            <img className="dzc__img" src={caseDto.imageUrl} alt="" loading="lazy" />
+          {caseImgUrl ? (
+            <img className="dzc__img" src={caseImgUrl} alt="" loading="lazy" />
+          ) : itemPreviewUrl ? (
+            <img className="dzc__img dzc__img--weapon" src={itemPreviewUrl} alt="" loading="lazy" />
           ) : (
             <CaseMiniArt caseName={caseDto.name} caseSlug={caseDto.slug} />
           )}
