@@ -323,7 +323,9 @@ export function ChestOpeningOverlay({
 
         <div className="chest-burst-item" ref={itemRef}>
           <span className="chest-burst-item-glow" aria-hidden="true" />
-          {itemImageUrl && <img ref={itemImgRef} src={itemImageUrl} alt={itemName ?? ""} />}
+          {itemImageUrl && !itemImageUrl.includes("i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhW") && (
+            <img ref={itemImgRef} src={itemImageUrl} alt={itemName ?? ""} />
+          )}
         </div>
 
         {itemName && (

@@ -35,10 +35,14 @@ function loadImages(): Map<string, string> {
   return images;
 }
 
+/** The hallucinated Steam CDN hash used in every fake/AI-generated imageUrl. */
+const FAKE_HASH_PREFIX = "i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhW";
+
 function needsFix(url: string | null | undefined): boolean {
   if (!url || url.trim() === "") return true;
   if (/placehold(er)?\.co/i.test(url)) return true;
   if (url.startsWith("data:")) return true;
+  if (url.includes(FAKE_HASH_PREFIX)) return true;
   return false;
 }
 

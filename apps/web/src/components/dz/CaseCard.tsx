@@ -70,10 +70,17 @@ export function CaseMiniArt({ caseName, caseSlug }: { caseName: string; caseSlug
   );
 }
 
-/** Returns true for a usable image URL (not a placeholder, not blank). */
+/** The hallucinated Steam CDN hash used in every AI-generated fake imageUrl. */
+const FAKE_HASH = "i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhW";
+
+/** Returns true for a usable image URL (not a placeholder, not blank, not a known fake). */
 function isRealUrl(url: string | null | undefined): boolean {
   if (!url) return false;
-  return /^https?:\/\//.test(url) && !/placehold(er)?\.co/i.test(url);
+  return (
+    /^https?:\/\//.test(url) &&
+    !/placehold(er)?\.co/i.test(url) &&
+    !url.includes(FAKE_HASH)
+  );
 }
 
 /** Best weapon preview image from the case items (highest rarity first). */
