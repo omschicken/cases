@@ -1437,3 +1437,324 @@ h4 { font-weight: 700 !important; letter-spacing: 0.04em; }
   min-height: 360px !important;
   height: auto !important;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   VISUAL ELEVATION v5 — bigger case art, 5-col grid, premium
+   hover, card shine, case-opening page overhaul
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 1. CASE ART: much bigger box, dramatic glow ────────────── */
+
+/* Widen box to nearly fill the art zone */
+.dzc-art__box {
+  width: 90% !important;
+  max-width: 220px !important;
+}
+
+/* Taller lid with metallic shine stripe */
+.dzc-art__lid {
+  height: 56px !important;
+  border-radius: 8px 8px 0 0 !important;
+  background: linear-gradient(
+    180deg,
+    hsl(var(--h) 55% 38%) 0%,
+    hsl(var(--h) 48% 22%) 100%
+  ) !important;
+  border: 1px solid hsl(var(--h) 65% 48% / .75) !important;
+  border-bottom: none !important;
+}
+
+/* Diagonal shine on lid */
+.dzc-art__lid-stripe {
+  background: linear-gradient(
+    125deg,
+    transparent 20%,
+    hsl(var(--h) 80% 85% / .22) 40%,
+    hsl(var(--h) 90% 95% / .48) 50%,
+    hsl(var(--h) 80% 85% / .22) 60%,
+    transparent 80%
+  ) !important;
+}
+
+/* Bigger lid monogram */
+.dzc-art__lid-mark {
+  font-size: .85rem !important;
+  letter-spacing: .25em !important;
+  text-shadow: 0 0 12px hsl(var(--h) 90% 70% / .9) !important;
+}
+
+/* Taller body */
+.dzc-art__body {
+  height: 128px !important;
+  border-radius: 0 0 8px 8px !important;
+  background: linear-gradient(
+    170deg,
+    hsl(var(--h) 32% 17%),
+    hsl(var(--h) 22% 10%)
+  ) !important;
+  border: 1px solid hsl(var(--h) 48% 32% / .65) !important;
+  border-top: 1px solid hsl(var(--h) 58% 44% / .55) !important;
+}
+
+/* Diagonal gloss/reflection overlay on body */
+.dzc-art__body::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 0 0 8px 8px !important;
+  background: linear-gradient(
+    140deg,
+    transparent 35%,
+    hsl(var(--h) 70% 80% / .055) 48%,
+    hsl(var(--h) 90% 96% / .09) 53%,
+    transparent 68%
+  ) !important;
+  pointer-events: none !important;
+}
+
+/* Bigger glyph icon */
+.dzc-art__glyph-wrap {
+  width: 72px !important;
+  height: 72px !important;
+}
+.dzc-art__glyph-wrap .case-chest-glyph {
+  width: 56px !important;
+  height: 56px !important;
+}
+
+/* Band text: slightly wider */
+.dzc-art__band-text {
+  max-width: 110px !important;
+  font-size: .46rem !important;
+}
+
+/* Bigger lock clasp */
+.dzc-art__lock {
+  height: 28px !important;
+}
+.dzc-art__lock-body {
+  width: 18px !important;
+  height: 9px !important;
+}
+.dzc-art__lock-gem {
+  width: 7px !important;
+  height: 7px !important;
+}
+
+/* Atmospheric glow: bigger area, stronger colors */
+.dzc-art__glow {
+  width: 260px !important;
+  height: 260px !important;
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 65%,
+    hsl(var(--h) 80% 58% / .38),
+    hsl(var(--h) 68% 45% / .18) 45%,
+    transparent 72%
+  ) !important;
+  filter: blur(18px) !important;
+}
+
+/* On hover: box floats dramatically, glow explodes */
+.dzc:hover .dzc-art__box {
+  transform: translateY(-12px) scale(1.07) !important;
+  filter:
+    drop-shadow(0 0 22px hsl(var(--h) 85% 62% / .9))
+    drop-shadow(0 24px 48px hsl(var(--h) 78% 50% / .7)) !important;
+}
+.dzc:hover .dzc-art__glow {
+  opacity: 2.2 !important;
+}
+
+/* Card itself: subtle 3D lift on hover */
+.dzc:hover {
+  transform: translateY(-8px) !important;
+  border-color: rgba(139, 92, 246, 0.6) !important;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.7),
+    0 0 0 1px rgba(139,92,246,0.4),
+    0 0 80px -6px rgba(99,102,241,0.55),
+    inset 0 0 30px -10px rgba(139,92,246,0.08) !important;
+}
+
+/* ── 2. GRID: 5 columns at wide screens ──────────────────────── */
+@media (min-width: 1440px) {
+  .dz-case-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 1.1rem !important;
+  }
+}
+@media (min-width: 1200px) and (max-width: 1439px) {
+  .dz-case-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 1.25rem !important;
+  }
+}
+
+/* ── 3. CASE OPENING PAGE ──────────────────────────────────────
+   Classes: .case-detail .dza-head .dza-arena .dza-arena__stage
+            .dza-arena__panel .dza-open .dza-demo .dza-hint
+   ─────────────────────────────────────────────────────────────── */
+
+/* Arena: full-bleed dark backdrop */
+.dza-arena {
+  background: radial-gradient(ellipse 120% 80% at 50% 0%,
+    rgba(99,102,241,.07), transparent 65%) !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255,255,255,0.05) !important;
+  overflow: hidden !important;
+}
+
+/* Stage: taller so the chest has room to breathe */
+.dza-arena__stage {
+  min-height: 340px !important;
+  padding: 48px 24px 36px !important;
+  background: radial-gradient(ellipse 90% 70% at 50% 60%,
+    rgba(99,102,241,.09), transparent 70%) !important;
+  position: relative !important;
+}
+
+/* Stage: subtle glow ring at the bottom */
+.dza-arena__stage::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 70% !important;
+  height: 1px !important;
+  background: linear-gradient(90deg,
+    transparent, rgba(139,92,246,.5), transparent) !important;
+}
+
+/* Panel: more breathing room */
+.dza-arena__panel {
+  padding: 24px 28px 32px !important;
+  gap: 16px !important;
+  border-top: 1px solid rgba(139,92,246,.18) !important;
+  background: linear-gradient(180deg, rgba(139,92,246,.04), transparent) !important;
+}
+
+/* Price display */
+.dza-arena__price {
+  align-items: center !important;
+}
+.dza-arena__price .dz-figure {
+  font-family: var(--ov-font-ui) !important;
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;
+  color: #f0c040 !important;
+}
+.dza-arena__label {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .65rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .2em !important;
+  color: rgba(140,160,210,.5) !important;
+}
+
+/* Main open button — even more premium */
+.dza-open {
+  border-radius: 12px !important;
+  padding: 18px 48px !important;
+  font-size: 1rem !important;
+  letter-spacing: .22em !important;
+  box-shadow:
+    0 4px 32px rgba(99,102,241,.55),
+    0 0 0 1px rgba(139,92,246,.3),
+    inset 0 1px 0 rgba(255,255,255,.15) !important;
+}
+.dza-open:hover:not(:disabled) {
+  box-shadow:
+    0 8px 56px rgba(99,102,241,.75),
+    0 0 0 1px rgba(139,92,246,.5),
+    inset 0 1px 0 rgba(255,255,255,.2) !important;
+}
+
+/* Demo button */
+.dza-demo {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .8rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .15em !important;
+  text-transform: uppercase !important;
+  border-radius: 10px !important;
+  padding: .85rem 1.5rem !important;
+  background: rgba(139,92,246,.1) !important;
+  border: 1px solid rgba(139,92,246,.3) !important;
+  color: rgba(196,181,253,.85) !important;
+  transition: all .2s !important;
+}
+.dza-demo:hover:not(:disabled) {
+  background: rgba(139,92,246,.2) !important;
+  border-color: rgba(139,92,246,.5) !important;
+  color: #e9d5ff !important;
+  box-shadow: 0 0 24px rgba(139,92,246,.3) !important;
+}
+
+/* Hint text under buttons */
+.dza-hint {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .78rem !important;
+  color: rgba(140,160,200,.5) !important;
+  letter-spacing: .02em !important;
+}
+.dza-hint a {
+  color: #a78bfa !important;
+  text-decoration: none !important;
+}
+.dza-hint a:hover {
+  color: #c4b5fd !important;
+  text-decoration: underline !important;
+}
+
+/* ── 4. CASE DETAIL COLLECTION ITEMS ────────────────────────── */
+
+/* Skin group cards in the collection listing */
+.dz-skin-group,
+.case-skin-group,
+[class*="skin-group"],
+[class*="item-group"] {
+  border-radius: 12px !important;
+  background: linear-gradient(160deg, rgba(17,24,37,.95), rgba(10,15,24,.95)) !important;
+  border: 1px solid rgba(255,255,255,0.055) !important;
+  transition: all .2s !important;
+}
+.dz-skin-group:hover,
+.case-skin-group:hover,
+[class*="skin-group"]:hover,
+[class*="item-group"]:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(139,92,246,0.35) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.45), 0 0 32px -8px rgba(139,92,246,0.35) !important;
+}
+
+/* ── 5. IMPROVED CARD NAME TYPOGRAPHY ───────────────────────── */
+.dzc__name {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .88rem !important;
+  font-weight: 700 !important;
+  color: #e8eeff !important;
+  letter-spacing: .03em !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
+}
+
+/* Chip: color by tier */
+.dzc__chip[class*="entry"],
+.dzc__chip:contains("entry") {
+  background: rgba(80,160,80,.18) !important;
+  color: #6ee86e !important;
+  border: 1px solid rgba(80,200,80,.3) !important;
+}
+.dzc__chip[class*="core"] {
+  background: rgba(99,102,241,.18) !important;
+  color: #a5b4fc !important;
+  border: 1px solid rgba(99,102,241,.35) !important;
+}
+.dzc__chip[class*="apex"] {
+  background: rgba(245,158,11,.15) !important;
+  color: #fcd34d !important;
+  border: 1px solid rgba(245,158,11,.35) !important;
+}
