@@ -196,7 +196,7 @@ export function CaseDetailPage() {
   }
 
   async function openCase() {
-    if (!theCase || openingLockRef.current) return;
+    if (!theCase || !theCase.isActive || openingLockRef.current) return;
     openingLockRef.current = true;
     requestPendingRef.current = true;
     skipRequestedRef.current = false;
@@ -309,7 +309,7 @@ export function CaseDetailPage() {
           onSkip={skipAnimation}
           onClose={() => setProtocolDismissed(true)}
           onOpenAgain={openCase}
-          canOpenAgain={Boolean(user) && !isPreview}
+          canOpenAgain={Boolean(user) && !isPreview && theCase.isActive}
         />
       )}
       {isPreview && (
@@ -334,14 +334,12 @@ export function CaseDetailPage() {
 
       <section id="opening-station" className="dza-arena dze-product" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
         <div className="dza-arena__stage dze-studio">
-          <div className="dze-studio__meta"><span>OBJECT / {theCase.slug.toUpperCase()}</span><span>STUDIO / COLLECTION</span></div>
           <img className="dze-studio__art" src={EDITORIAL_CASE_ART[theCase.slug] ?? theCase.imageUrl} alt={theCase.name} />
-          <div className="dze-studio__floor"><span>DROPZONE / EDITORIAL</span><span>01 — 04</span></div>
         </div>
 
         <div className="dza-arena__panel dze-product__info">
           <span className="dze-eyebrow">● {t("caseDetail.crumbCases", { defaultValue: "Кейсы" })} / {theCase.slug.replace(/-/g, " ")}</span>
-          <h1 className="dze-title">{theCase.name.replace(/\s*case$/i, "")}<span>Case.</span></h1>
+          <h1 className="dze-title">{theCase.name.replace(/\s*case$/i, "")} <span>Case.</span></h1>
           <p className="dze-description">{t("caseDetail.editorialDescription", { defaultValue: "Изучи содержимое коллекции, реальные шансы и выбери свой следующий предмет." })}</p>
           <div className="dze-meta"><div><small>{t("caseDetail.status", { defaultValue: "СТАТУС" })}</small><strong>{theCase.isActive ? t("caseDetail.available", { defaultValue: "Доступен" }) : t("caseDetail.unavailable", { defaultValue: "Недоступен" })}</strong></div><div><small>{t("caseDetail.mode", { defaultValue: "РЕЖИМ" })}</small><strong>{t("caseDetail.openingStation", { defaultValue: "Открытие кейса" })}</strong></div></div>
           <div className="dza-arena__price">
@@ -352,8 +350,8 @@ export function CaseDetailPage() {
 
           {user && !isPreview ? (
             <>
-              <button onClick={openCase} disabled={opening} className="dza-open">
-                {opening ? t("caseDetail.rolling") : t("caseDetail.open", { defaultValue: "Открыть" })}
+              <button onClick={openCase} disabled={opening || !theCase.isActive} className="dza-open">
+                {!theCase.isActive ? t("caseDetail.unavailable", { defaultValue: "Недоступен" }) : opening ? t("caseDetail.rolling") : t("caseDetail.open", { defaultValue: "Открыть" })}
               </button>
               <button onClick={demoSpin} disabled={opening} className="dza-demo">
                 {t("caseDetail.demoSpin")}

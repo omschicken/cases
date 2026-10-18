@@ -6,7 +6,7 @@ import ignitionImage from "../assets/editorial-kit/ignition-case.webp";
 import tidalImage from "../assets/editorial-kit/tidal-case.webp";
 import phantomImage from "../assets/editorial-kit/phantom-case.webp";
 import promoImage from "../assets/editorial-kit/promo.webp";
-import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { EditorialHeader, EditorialSidebar } from "../components/editorial/EditorialShell";
 import "../styles/design-lab.css";
 
 // Isolated design-lab preview values. Production prices remain API-owned.
@@ -15,16 +15,6 @@ const previewCases = [
   { name: "Ignition Case", price: "599,00 ₽", tag: "Популярный", image: ignitionImage, category: "popular" },
   { name: "Tidal Case", price: "799,00 ₽", tag: "Новинка", image: tidalImage, category: "new" },
   { name: "Phantom Case", price: "1 299,00 ₽", tag: "Эксклюзивный", image: phantomImage, category: "exclusive" },
-] as const;
-
-const nav = [
-  ["Кейсы", "/"], ["Сражения", "/battles"], ["Контракты", "/contracts"],
-  ["Апгрейд", "/upgrader"], ["Инвентарь", "/inventory"], ["Рефералы", "/referral"],
-] as const;
-
-const sidebar = [
-  ["▣", "Кейсы", "/"], ["⚔", "Сражения", "/battles"], ["◇", "Контракты", "/contracts"],
-  ["↥", "Апгрейд", "/upgrader"], ["□", "Инвентарь", "/inventory"], ["♧", "Рефералы", "/referral"],
 ] as const;
 
 export function DesignLabPage() {
@@ -37,28 +27,10 @@ export function DesignLabPage() {
 
   return (
     <div className="fidelity-page">
-      <header className="fidelity-header">
-        <Link className="fidelity-logo" to="/">DROPZONE</Link>
-        <nav className="fidelity-topnav" aria-label="Основная навигация">
-          {nav.map(([label, to], index) => <Link className={index === 0 ? "active" : ""} key={to} to={to}>{label}</Link>)}
-          <span aria-hidden="true">•••</span>
-        </nav>
-        <div className="fidelity-account">
-          <label className="fidelity-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Поиск" aria-label="Поиск кейсов" /></label>
-          <Link className="fidelity-wallet" to="/wallet"><span aria-hidden="true">▤</span> 0,00 ₽</Link>
-          <Link className="fidelity-plus" to="/wallet" aria-label="Пополнить баланс">+</Link>
-          <Link className="fidelity-profile" to="/login" aria-label="Войти в профиль">DZ</Link>
-          <LanguageSwitcher />
-        </div>
-      </header>
+      <EditorialHeader searchValue={query} onSearchChange={setQuery} activeSection="cases" />
 
       <div className="fidelity-shell">
-        <aside className="fidelity-rail">
-          <nav aria-label="Разделы">
-            {sidebar.map(([icon, label, to], index) => <Link className={index === 0 ? "active" : ""} key={`${label}-${to}`} to={to}><span>{icon}</span>{label}</Link>)}
-          </nav>
-          <Link className="fidelity-reward" to="/bonuses"><span>♙</span><b>Ежедневные<br />награды</b><i>↗</i></Link>
-        </aside>
+        <EditorialSidebar activeSection="cases" />
 
         <main className="fidelity-main">
           <section className="fidelity-hero" aria-labelledby="fidelity-title">

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import { CaseChest } from "../components/CaseChest";
 import { api } from "../lib/api";
 import { formatMinor } from "../lib/money";
@@ -27,12 +28,13 @@ function rarityTiers(c: CaseDto): string[] {
 
 export function CaseListPage() {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
   const [cases, setCases] = useState<CaseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [requestId, setRequestId] = useState(0);
   const [sort, setSort] = useState<SortMode>("default");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const [collection, setCollection] = useState<CollectionMode>("all");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
