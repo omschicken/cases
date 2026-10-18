@@ -2095,3 +2095,33 @@ h4 { font-weight: 700 !important; letter-spacing: 0.04em; }
   font-weight: 700 !important;
 }
 
+
+/* ── CASE STAGE: CSS art mode (when case has no real image) ──────────── */
+/* The CaseMiniArt in the stage needs to be scaled up significantly. */
+.case-stage__css-art {
+  position: relative !important;
+  z-index: 1 !important;
+  /* Scale up the mini art — it's designed for 130×200px cards */
+  transform: scale(2.4) !important;
+  transform-origin: center center !important;
+  /* Floating animation matching .case-stage__case */
+  animation: float 4.5s ease-in-out infinite !important;
+  /* Give it breathing room after scale */
+  margin: 60px 0 !important;
+}
+
+/* Boost the glow of the art box when shown in stage */
+.case-stage__css-art .dzc-art__glow {
+  width: 360px !important;
+  height: 360px !important;
+  opacity: 1.4 !important;
+  filter: blur(28px) !important;
+}
+
+/* Enhance box shadow in stage mode */
+.case-stage__css-art .dzc-art__box {
+  filter:
+    drop-shadow(0 0 28px hsl(var(--art-hue, var(--h, 250)) 80% 58% / .85))
+    drop-shadow(0 18px 48px rgba(0,0,0,.75)) !important;
+}
+
