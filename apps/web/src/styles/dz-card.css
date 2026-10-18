@@ -1,462 +1,119 @@
-/* ═══════════════════════════════════════════════════════════════════════
-   DROP SIGNATURE — DROPZONE signature #2
+/* BLACK ARCHIVE / discovery, toolbar and active catalog card. */
+.black-archive-home .collection-discovery { margin:0 0 clamp(4rem,8vw,7rem); }
+.black-archive-home .collection-discovery-head { display:grid; grid-template-columns:minmax(0,1fr) minmax(260px,500px); align-items:end; gap:32px; padding-bottom:28px; border-bottom:1px solid var(--archive-rule); }
+.black-archive-home .collection-discovery-head h2 { max-width:780px; margin:0; color:var(--dz-text-1); font:800 clamp(2.4rem,5vw,5.6rem)/.9 var(--dz-font-display); letter-spacing:-.055em; text-transform:uppercase; }
+.black-archive-home .collection-discovery-head p { margin:0 0 4px; color:var(--dz-text-3); font:400 .95rem/1.65 var(--dz-font-interface); }
+.black-archive-home .black-archive-kicker { margin-bottom:15px; }
+.black-archive-home .collection-route-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; margin-top:1px; background:var(--archive-rule); border:1px solid var(--archive-rule); }
+.black-archive-home .collection-route { --route-accent:var(--dz-amber); position:relative; display:grid; grid-template-rows:auto minmax(170px,1fr) auto; min-width:0; min-height:390px; overflow:hidden; padding:18px; border:0; border-radius:0; background:#0b0c09; color:var(--dz-text-1); text-align:left; cursor:pointer; transition:background var(--dz-d-micro),transform var(--dz-d-micro) var(--dz-e-exit); }
+.black-archive-home .collection-route::before { content:""; position:absolute; inset:0; opacity:0; background:linear-gradient(135deg,rgba(255,255,255,.035),transparent 40%),radial-gradient(circle at 50% 48%,color-mix(in srgb,var(--route-accent) 9%,transparent),transparent 55%); transition:opacity var(--dz-d-micro); }
+.black-archive-home .collection-route:hover,.black-archive-home .collection-route:focus-visible,.black-archive-home .collection-route.is-active { z-index:1; background:#11120e; transform:translateY(-3px); }
+.black-archive-home .collection-route:hover::before,.black-archive-home .collection-route:focus-visible::before,.black-archive-home .collection-route.is-active::before { opacity:1; }
+.black-archive-home .collection-route:focus-visible { outline:2px solid var(--route-accent); outline-offset:-3px; }
+.black-archive-home .collection-route-entry { --route-accent:#b9a064; }
+.black-archive-home .collection-route-core { --route-accent:#d7a83a; }
+.black-archive-home .collection-route-apex { --route-accent:#e6c773; }
+.black-archive-home .collection-route-index { position:relative; z-index:2; color:var(--dz-text-4); font:600 .58rem var(--dz-font-technical); letter-spacing:.18em; }
+.black-archive-home .collection-route-art { position:relative; z-index:1; display:grid; place-items:center; min-height:180px; pointer-events:none; }
+.black-archive-home .collection-route-art::before { content:""; position:absolute; width:60%; aspect-ratio:1; border:1px solid color-mix(in srgb,var(--route-accent) 18%,transparent); border-radius:50%; }
+.black-archive-home .collection-route-art .case-chest { width:min(100%,260px); height:165px; filter:saturate(.68) contrast(1.05); transition:transform var(--dz-d-move) var(--dz-e-exit),filter var(--dz-d-move); }
+.black-archive-home .collection-route:hover .case-chest { transform:translateY(-6px) scale(1.025); filter:saturate(.85) contrast(1.08); }
+.black-archive-home .collection-route-bottom { position:relative; z-index:2; display:flex; align-items:flex-end; justify-content:space-between; gap:14px; padding-top:16px; border-top:1px solid var(--archive-rule); }
+.black-archive-home .collection-route-bottom>span:first-child { display:grid; gap:5px; }
+.black-archive-home .collection-route-bottom strong { color:var(--dz-text-1); font:750 clamp(1.25rem,2vw,1.8rem)/1 var(--dz-font-display); letter-spacing:-.025em; text-transform:uppercase; }
+.black-archive-home .collection-route-bottom small { color:var(--dz-text-4); font:.68rem var(--dz-font-interface); }
+.black-archive-home .collection-route-meta { color:var(--dz-text-4); font:500 .58rem var(--dz-font-technical); letter-spacing:.08em; text-align:right; white-space:nowrap; }
+.black-archive-home .collection-route-meta b { color:var(--route-accent); font-size:.8rem; }
+.black-archive-home .collection-route-meta em { display:block; margin-top:5px; color:var(--dz-text-2); font:.7rem var(--dz-font-interface); font-style:normal; letter-spacing:0; }
 
-   Every case in the catalog is presented as a specimen in its own cell:
-   a shallow chamber, a plate with its designation, and a scanning light
-   that reads the object on hover.
+.black-archive-home #collections { scroll-margin-top:110px; }
+.black-archive-home .black-archive-catalog-head { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; padding-bottom:11px; border-bottom:1px solid var(--archive-rule); color:var(--dz-text-4); font:600 .59rem var(--dz-font-technical); letter-spacing:.18em; }
+.black-archive-home .page-header { padding-block:10px 28px; border:0; }
+.black-archive-home .page-header h1,.black-archive-home .page-header h2 { color:var(--dz-text-1); font-size:clamp(2.8rem,5vw,5.4rem); letter-spacing:-.055em; line-height:.9; }
+.black-archive-home .dz-toolbar { display:flex; align-items:flex-end; gap:12px; padding:14px; border:1px solid var(--archive-rule); border-radius:2px; background:#0b0c09; }
+.black-archive-home .dz-field { color:var(--dz-text-4); }
+.black-archive-home .dz-field input,.black-archive-home .dz-field select { border-color:var(--archive-rule); border-radius:2px; background:#080906; color:var(--dz-text-2); }
+.black-archive-home .dz-field input:focus,.black-archive-home .dz-field select:focus { border-color:var(--dz-amber); outline:none; }
+.black-archive-home .dz-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.black-archive-home .dz-chip { display:flex; align-items:center; gap:8px; padding:9px 12px; border:1px solid var(--archive-rule); border-radius:2px; background:#0b0c09; color:var(--dz-text-3); font:600 .65rem var(--dz-font-interface); letter-spacing:.08em; }
+.black-archive-home .dz-chip b { color:var(--dz-text-4); font:500 .61rem var(--dz-font-technical); }
+.black-archive-home .dz-chip:hover,.black-archive-home .dz-chip[aria-pressed="true"] { border-color:var(--dz-amber); background:rgba(215,168,58,.07); color:var(--dz-text-1); }
 
-   Deliberately NOT the full DropChamber. A 90-card grid cannot carry 90
-   preserve-3d stages — each one is a separate stacking and compositing
-   context. This is a 2.5D reduction: stacked planes, lit the same way,
-   with no preserve-3d and no per-card 3D stage. The chamber language
-   survives; the cost does not.
+.black-archive-home .dz-case-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(230px,100%),1fr)); gap:12px; margin-top:26px; }
+.black-archive-home .dzc { --h:var(--chest-hue,42); position:relative; display:flex; min-width:0; min-height:348px; flex-direction:column; overflow:hidden; border:1px solid var(--archive-rule); border-radius:3px; background:linear-gradient(160deg,#11120e,#090a07 72%); color:inherit; text-decoration:none; box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 14px 26px rgba(0,0,0,.18); transition:transform var(--dz-d-move) var(--dz-e-exit),border-color var(--dz-d-micro),box-shadow var(--dz-d-move); }
+.black-archive-home .dzc::after { content:""; position:absolute; inset:0; pointer-events:none; opacity:0; background:linear-gradient(125deg,rgba(255,255,255,.045),transparent 28%,transparent 70%,rgba(215,168,58,.035)); transition:opacity var(--dz-d-micro); }
+.black-archive-home .dzc:hover,.black-archive-home .dzc:focus-visible { z-index:1; transform:translateY(-7px); border-color:rgba(215,168,58,.42); box-shadow:0 2px 0 rgba(255,255,255,.035) inset,0 25px 52px rgba(0,0,0,.46),0 0 0 1px rgba(215,168,58,.06); outline:none; }
+.black-archive-home .dzc:hover::after,.black-archive-home .dzc:focus-visible::after { opacity:1; }
+.black-archive-home .dzc:focus-visible { outline:2px solid var(--dz-amber); outline-offset:3px; }
+.black-archive-home .dzc__top { position:relative; display:flex; min-height:220px; flex-direction:column; padding:16px; border-bottom:1px solid var(--archive-rule); background:radial-gradient(circle at 50% 66%,hsl(var(--h) 32% 42%/.10),transparent 48%); }
+.black-archive-home .dzc__top::before { content:""; position:absolute; left:14px; right:14px; bottom:12px; height:10px; border-radius:50%; background:rgba(0,0,0,.62); filter:blur(9px); }
+.black-archive-home .dzc__serial { position:relative; z-index:2; color:var(--dz-text-4); font:500 .57rem var(--dz-font-technical); letter-spacing:.14em; }
+.black-archive-home .dzc__chip { position:absolute; z-index:2; top:13px; right:14px; padding:3px 6px; border:1px solid rgba(215,168,58,.25); border-radius:1px; background:rgba(215,168,58,.06); color:var(--dz-amber); font:600 .52rem var(--dz-font-technical); letter-spacing:.12em; text-transform:uppercase; }
+.black-archive-home .dzc__chest { position:relative; z-index:1; display:flex; flex:1; align-items:center; justify-content:center; height:178px; min-height:0; }
+.black-archive-home .dzc__img { display:block; width:88%; max-height:170px; object-fit:contain; filter:saturate(.75) contrast(1.04) drop-shadow(0 18px 16px rgba(0,0,0,.55)); transition:transform var(--dz-d-move) var(--dz-e-exit),filter var(--dz-d-move); }
+.black-archive-home .dzc__img--weapon { width:96%; }
+.black-archive-home .dzc:hover .dzc__img { transform:translateY(-8px) scale(1.035); filter:saturate(.92) contrast(1.06) drop-shadow(0 24px 20px rgba(0,0,0,.6)); }
+.black-archive-home .dzc__body { padding:17px 16px 8px; }
+.black-archive-home .dzc__meta { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+.black-archive-home .dzc__name { display:-webkit-box; overflow:hidden; margin:0; color:var(--dz-text-1); font:650 1rem/1.2 var(--dz-font-interface); letter-spacing:-.015em; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+.black-archive-home .dzc__dots { display:flex; flex:none; gap:3px; padding-top:4px; }
+.black-archive-home .dzc__dots i { width:5px; height:5px; border-radius:50%; }
+.black-archive-home .dzc__contents { display:block; margin-top:7px; color:var(--dz-text-4); font:500 .59rem var(--dz-font-technical); letter-spacing:.08em; text-transform:uppercase; }
+.black-archive-home .dzc__foot { display:flex; align-items:flex-end; justify-content:space-between; gap:10px; margin-top:auto; padding:9px 16px 17px; }
+.black-archive-home .dzc__price { display:flex; flex-direction:column; gap:4px; padding:0; border:0; background:none; box-shadow:none; }
+.black-archive-home .dzc__price-label { color:var(--dz-text-4); font:500 .56rem var(--dz-font-technical); letter-spacing:.1em; text-transform:uppercase; }
+.black-archive-home .dzc__price>:last-child { color:var(--dz-text-1); font:750 1.18rem/1 var(--dz-font-interface); font-variant-numeric:tabular-nums; }
+.black-archive-home .dzc__open { position:relative; width:auto; padding:0 0 3px; border:0; border-radius:0; background:none; box-shadow:none; color:var(--dz-amber); font:650 .67rem var(--dz-font-interface); letter-spacing:.08em; text-align:left; text-transform:uppercase; }
+.black-archive-home .dzc__open::after { content:""; position:absolute; left:0; right:100%; bottom:0; height:1px; background:currentColor; transition:right var(--dz-d-micro); }
+.black-archive-home .dzc:hover .dzc__open::after { right:0; }
+.black-archive-home .dzc--skeleton { min-height:348px; background:linear-gradient(110deg,#0c0d0a 25%,#171811 45%,#0c0d0a 65%); background-size:220% 100%; animation:archive-shimmer 1.8s ease-in-out infinite; }
+@keyframes archive-shimmer { to { background-position:-220% 0; } }
 
-   Hover rules enforced here:
-    - transform and opacity only, so hovering never reflows the grid
-    - the card never changes size, so neighbours never shift
-    - every hover state has a :focus-visible twin for keyboard users
-    - on coarse pointers the resting state is already complete
-   ═══════════════════════════════════════════════════════════════════════ */
+/* CSS fallback case object: restrained metal, locally tinted by identity. */
+.black-archive-home .dzc-art { --h:var(--art-hue,42); position:relative; display:flex; width:100%; height:100%; align-items:center; justify-content:center; }
+.black-archive-home .dzc-art__glow { position:absolute; inset:15%; background:radial-gradient(circle,hsl(var(--h) 45% 48%/.14),transparent 68%); }
+.black-archive-home .dzc-art__box { position:relative; display:flex; width:min(72%,142px); flex-direction:column; filter:drop-shadow(0 16px 16px rgba(0,0,0,.6)); transition:transform var(--dz-d-move) var(--dz-e-exit); }
+.black-archive-home .dzc:hover .dzc-art__box { transform:translateY(-7px) rotate(-1deg); }
+.black-archive-home .dzc-art__lid { position:relative; display:flex; height:30px; align-items:center; justify-content:center; overflow:hidden; border:1px solid #45463c; border-bottom:0; border-radius:3px 3px 0 0; background:linear-gradient(#33342c,#20211c); }
+.black-archive-home .dzc-art__lid-stripe { position:absolute; inset:0; background:linear-gradient(100deg,transparent 32%,rgba(255,255,255,.08),transparent 62%); }
+.black-archive-home .dzc-art__lid-mark { position:relative; color:var(--dz-amber); font:650 .48rem var(--dz-font-technical); letter-spacing:.18em; }
+.black-archive-home .dzc-art__body { position:relative; display:flex; height:86px; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; border:1px solid #37382f; background:linear-gradient(145deg,#272820,#12130f 70%); }
+.black-archive-home .dzc-art__corner { position:absolute; width:8px; height:8px; border-color:rgba(215,168,58,.52); }
+.black-archive-home .dzc-art__corner--tl { top:5px; left:5px; border-top:1px solid; border-left:1px solid; }.black-archive-home .dzc-art__corner--tr { top:5px; right:5px; border-top:1px solid; border-right:1px solid; }.black-archive-home .dzc-art__corner--bl { bottom:5px; left:5px; border-bottom:1px solid; border-left:1px solid; }.black-archive-home .dzc-art__corner--br { right:5px; bottom:5px; border-right:1px solid; border-bottom:1px solid; }
+.black-archive-home .dzc-art__glyph-wrap { position:relative; display:grid; width:42px; height:42px; place-items:center; color:var(--dz-amber); }
+.black-archive-home .dzc-art__glyph-bg { position:absolute; inset:1px; border:1px solid rgba(215,168,58,.18); border-radius:50%; }
+.black-archive-home .dzc-art__glyph-wrap .case-chest-glyph { position:static; width:28px; height:28px; transform:none; color:currentColor; filter:none; }
+.black-archive-home .dzc-art__band { display:flex; width:80%; align-items:center; gap:5px; margin-top:5px; }.black-archive-home .dzc-art__band-line { flex:1; height:1px; background:rgba(215,168,58,.2); }.black-archive-home .dzc-art__band-text { max-width:72px; overflow:hidden; color:var(--dz-text-3); font:500 .4rem var(--dz-font-technical); letter-spacing:.13em; text-overflow:ellipsis; white-space:nowrap; }
+.black-archive-home .dzc-art__lock { position:absolute; z-index:3; top:26px; left:50%; width:13px; transform:translateX(-50%); }.black-archive-home .dzc-art__lock-body { height:8px; border:1px solid #555548; border-radius:1px; background:#292a22; }.black-archive-home .dzc-art__lock-gem { width:4px; height:4px; margin:-6px auto 0; border-radius:50%; background:var(--dz-amber); }
 
-/* ── Grid ────────────────────────────────────────────────────────────────
-   auto-fill with a min track, so the catalog reflows by itself from 320px
-   to 1920px without a breakpoint per step. */
-.dz-case-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
-  gap: var(--dz-s4);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+@media (max-width:900px) {
+  .black-archive-home .collection-discovery-head { grid-template-columns:1fr; gap:12px; }
+  .black-archive-home .collection-route-grid { grid-template-columns:1fr; }
+  .black-archive-home .collection-route { grid-template-columns:1fr 180px; grid-template-rows:auto 1fr; min-height:190px; }
+  .black-archive-home .collection-route-index { grid-column:1/-1; }
+  .black-archive-home .collection-route-art { grid-column:2; grid-row:2; min-height:130px; }
+  .black-archive-home .collection-route-bottom { grid-column:1; grid-row:2; flex-direction:column; align-items:flex-start; justify-content:center; border-top:0; }
+  .black-archive-home .collection-route-meta { text-align:left; }
 }
-
-@media (max-width: 520px) {
-  .dz-case-grid {
-    grid-template-columns: repeat(auto-fill, minmax(min(155px, 100%), 1fr));
-    gap: var(--dz-s3);
-  }
+@media (max-width:560px) {
+  .black-archive-home .collection-route { grid-template-columns:1fr 128px; padding:14px; }
+  .black-archive-home .collection-route-art .case-chest { height:120px; }
+  .black-archive-home .collection-route-bottom strong { font-size:1.15rem; }
+  .black-archive-home .dz-toolbar { align-items:stretch; flex-direction:column; }
+  .black-archive-home .dz-case-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .black-archive-home .dzc { min-height:294px; }
+  .black-archive-home .dzc__top { min-height:176px; padding:11px; }
+  .black-archive-home .dzc__chest { height:138px; }
+  .black-archive-home .dzc__chip { top:9px; right:9px; }
+  .black-archive-home .dzc__body { padding:13px 11px 6px; }
+  .black-archive-home .dzc__name { font-size:.84rem; }
+  .black-archive-home .dzc__foot { padding:8px 11px 13px; }
+  .black-archive-home .dzc__price>:last-child { font-size:1rem; }
+  .black-archive-home .dzc__open { font-size:0; }
+  .black-archive-home .dzc__open::before { content:"↗"; font-size:.9rem; }
+  .black-archive-home .dzc__serial { font-size:.49rem; }
 }
-
-/* ── The card ──────────────────────────────────────────────────────────── */
-.dz-case-card {
-  --dz-px: 0;
-  --dz-py: 0;
-
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  isolation: isolate;
-  overflow: hidden;
-  border-radius: var(--dz-r-lg);
-  border: 1px solid var(--dz-edge);
-  background: linear-gradient(180deg, var(--dz-surface-1), var(--dz-surface-0));
-  box-shadow: var(--dz-shadow-near);
-  text-decoration: none;
-  color: inherit;
-  transition:
-    transform var(--dz-d-micro) var(--dz-e-exit),
-    border-color var(--dz-d-micro) var(--dz-e-enter),
-    box-shadow var(--dz-d-micro) var(--dz-e-enter);
-}
-
-/* Lift. translate3d keeps it on the compositor; no size change, so the
-   grid never reflows and neighbours never move. */
-.dz-case-card:hover,
-.dz-case-card:focus-visible {
-  transform: translate3d(0, -4px, 0);
-  border-color: var(--dz-edge-lit);
-  box-shadow: var(--dz-shadow-lifted);
-}
-
-.dz-case-card:focus-visible {
-  outline: 2px solid var(--dz-amber);
-  outline-offset: 2px;
-}
-
-.dz-case-card:active {
-  transform: translate3d(0, -1px, 0);
-  transition-duration: var(--dz-d-instant);
-}
-
-/* ── Header plate ──────────────────────────────────────────────────────── */
-.dz-case-card__plate {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--dz-s2);
-  padding: var(--dz-s3) var(--dz-s3) var(--dz-s2);
-  font-family: var(--dz-font-technical);
-  font-size: var(--dz-type-tech);
-  letter-spacing: var(--dz-tracking-tech);
-  text-transform: uppercase;
-  color: var(--dz-text-4);
-}
-
-.dz-case-card__tier {
-  padding: 2px var(--dz-s2);
-  border: 1px solid var(--dz-edge-strong);
-  border-radius: var(--dz-r-sm);
-  color: var(--dz-text-3);
-}
-
-.dz-case-card__tier--apex {
-  border-color: var(--dz-edge-lit);
-  color: var(--dz-amber);
-}
-
-/* ── The cell ────────────────────────────────────────────────────────────
-   Shallow chamber. Fixed aspect-ratio reserves the box before the art
-   loads, which is what keeps CLS at zero on a catalog of this size. */
-.dz-case-card__cell {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  margin: 0 var(--dz-s3);
-  border-radius: var(--dz-r-md);
-  background:
-    radial-gradient(ellipse 72% 52% at 50% 4%,
-      color-mix(in srgb, var(--dz-rarity) 20%, transparent), transparent 72%),
-    radial-gradient(ellipse 50% 34% at 50% 0%, var(--dz-light-rim), transparent 64%),
-    linear-gradient(180deg, var(--dz-surface-3), var(--dz-surface-1) 54%, var(--dz-void));
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.55) inset;
-}
-
-/* Back-wall ribbing, same material as the full chamber. */
-.dz-case-card__cell::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    0deg, transparent 0 9px, rgba(0, 0, 0, 0.45) 9px 10px
-  );
-  opacity: 0.45;
-  mask-image: radial-gradient(ellipse 75% 65% at 50% 32%, #000 18%, transparent 82%);
-  pointer-events: none;
-}
-
-/* Floor pool — the light the object stands in. */
-.dz-case-card__cell::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -14%;
-  width: 70%;
-  height: 34%;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse at center,
-    color-mix(in srgb, var(--dz-rarity) 16%, transparent),
-    transparent 68%
-  );
-  pointer-events: none;
-  transition: opacity var(--dz-d-quick) var(--dz-e-enter);
-}
-
-/* ── The object ────────────────────────────────────────────────────────── */
-.dz-case-card__object {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 7% 9% 11%;
-  transform:
-    translate3d(calc(var(--dz-px) * 5px), calc(var(--dz-py) * 3px), 0)
-    scale(1);
-  transition: transform var(--dz-d-move) var(--dz-e-exit);
-  will-change: transform;
-}
-
-.dz-case-card__object > * {
-  max-width: 100%;
-  max-height: 100%;
-  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.65));
-}
-
-/* Case art: contain, never stretch. A case image at the wrong aspect ratio
-   is the single most common way these grids look cheap. */
-.dz-case-card__object img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.dz-case-card:hover .dz-case-card__object,
-.dz-case-card:focus-visible .dz-case-card__object {
-  transform:
-    translate3d(calc(var(--dz-px) * 7px), calc(var(--dz-py) * 4px - 3px), 0)
-    scale(1.055);
-}
-
-/* Ceiling fixture — the hardware the key light comes from. Without it the
-   light has no visible source and the cell reads as an empty gradient. */
-.dz-case-card__fixture {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 38%;
-  height: 3px;
-  transform: translateX(-50%);
-  border-radius: 0 0 2px 2px;
-  background: linear-gradient(180deg, var(--dz-metal-edge), var(--dz-metal));
-  box-shadow: 0 0 10px color-mix(in srgb, var(--dz-rarity) 55%, transparent);
-  pointer-events: none;
-  transition: box-shadow var(--dz-d-quick) var(--dz-e-enter);
-}
-
-.dz-case-card:hover .dz-case-card__fixture,
-.dz-case-card:focus-visible .dz-case-card__fixture {
-  box-shadow: 0 0 18px color-mix(in srgb, var(--dz-rarity) 90%, transparent);
-}
-
-/* ── THE SCAN — the DROP SIGNATURE itself ────────────────────────────────
-   A light bar travels down the cell and reads the specimen. It is the one
-   gesture every case in the catalog shares, and the thing a screenshot of
-   a single card carries. Runs once per hover, not on a loop: a 90-card grid
-   with 90 looping scans would be noise, and a single pass reads as the
-   scanner responding to *you*. */
-.dz-case-card__scan {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 36%;
-  top: -36%;
-  pointer-events: none;
-  opacity: 0;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    color-mix(in srgb, var(--dz-rarity) 10%, transparent) 42%,
-    color-mix(in srgb, var(--dz-rarity) 60%, transparent) 88%,
-    color-mix(in srgb, var(--dz-rarity) 85%, transparent) 97%,
-    transparent
-  );
-}
-
-.dz-case-card:hover .dz-case-card__scan,
-.dz-case-card:focus-visible .dz-case-card__scan {
-  animation: dz-scan-pass var(--dz-d-cine) var(--dz-e-enter);
-}
-
-@keyframes dz-scan-pass {
-  0%   { top: -36%; opacity: 0; }
-  12%  { opacity: 1; }
-  88%  { opacity: 1; }
-  100% { top: 100%; opacity: 0; }
-}
-
-/* Cell responds to the scan: light rises with it. */
-.dz-case-card:hover .dz-case-card__cell::after,
-.dz-case-card:focus-visible .dz-case-card__cell::after {
-  opacity: 1.6;
-}
-
-/* ── Corner brackets ───────────────────────────────────────────────────── */
-.dz-case-card__bracket {
-  position: absolute;
-  width: 11px;
-  height: 11px;
-  border: 1.5px solid var(--dz-metal-edge);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--dz-d-quick) var(--dz-e-enter);
-}
-.dz-case-card__bracket--tl { top: 6px;    left: 6px;  border-right: 0; border-bottom: 0; }
-.dz-case-card__bracket--br { bottom: 6px; right: 6px; border-left: 0;  border-top: 0;    }
-
-.dz-case-card:hover .dz-case-card__bracket,
-.dz-case-card:focus-visible .dz-case-card__bracket {
-  opacity: 0.9;
-}
-
-/* ── Copy ──────────────────────────────────────────────────────────────── */
-.dz-case-card__copy {
-  padding: var(--dz-s3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--dz-s2);
-}
-
-.dz-case-card__rarity {
-  display: flex;
-  align-items: center;
-  gap: var(--dz-s2);
-  font-family: var(--dz-font-technical);
-  font-size: var(--dz-type-tech);
-  letter-spacing: var(--dz-tracking-tech);
-  text-transform: uppercase;
-  color: var(--dz-rarity);
-}
-
-.dz-case-card__dots {
-  display: flex;
-  gap: 3px;
-  margin-left: auto;
-}
-
-.dz-case-card__dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--dz-dot, var(--dz-text-4));
-  opacity: 0.55;
-  transition: opacity var(--dz-d-quick) var(--dz-e-enter);
-}
-
-/* Dots ignite in sequence on hover — the cell "reading" each tier it holds.
-   --dz-dot-i is set per dot in the component. */
-.dz-case-card:hover .dz-case-card__dot,
-.dz-case-card:focus-visible .dz-case-card__dot {
-  opacity: 1;
-  box-shadow: 0 0 7px var(--dz-dot, var(--dz-text-4));
-  transition-delay: calc(var(--dz-dot-i, 0) * 55ms);
-}
-
-/* Case name. Clamped to 2 lines so a long Russian name cannot push the
-   price out of alignment with the rest of the row. */
-.dz-case-card__name {
-  margin: 0;
-  font-family: var(--dz-font-display);
-  /* Item names are proper nouns from Steam. Legacy ancestors set
-     text-transform:uppercase and it inherits, which rendered
-     "AK-47 | Slate (Field-Tested)" as shouting; reset explicitly so no
-     surrounding page can case-transform a name. */
-  text-transform: none;
-  font-size: var(--dz-type-md);
-  font-weight: 700;
-  letter-spacing: var(--dz-tracking-display);
-  line-height: 1.25;
-  color: var(--dz-text-1);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  min-height: 2.5em;
-}
-
-/* ── Foot: price + action ──────────────────────────────────────────────── */
-.dz-case-card__foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--dz-s2);
-  margin-top: auto;
-  padding: var(--dz-s3);
-  border-top: 1px solid var(--dz-edge);
-  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.3));
-}
-
-.dz-case-card__price {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-}
-
-.dz-case-card__price span {
-  font-family: var(--dz-font-technical);
-  font-size: var(--dz-type-tech);
-  letter-spacing: var(--dz-tracking-tech);
-  text-transform: uppercase;
-  color: var(--dz-text-4);
-}
-
-.dz-case-card__price strong {
-  font-family: var(--dz-font-display);
-  font-size: var(--dz-type-lg);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: var(--dz-tracking-display);
-  color: var(--dz-text-1);
-  white-space: nowrap;
-}
-
-/* The open affordance. 36px tall at rest — comfortably past the 24px
-   minimum target, and it grows to a full 44px on coarse pointers below. */
-.dz-case-card__action {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--dz-r-md);
-  border: 1px solid var(--dz-edge-strong);
-  background: var(--dz-surface-2);
-  color: var(--dz-text-2);
-  font-size: var(--dz-type-sm);
-  transition:
-    background var(--dz-d-micro) var(--dz-e-enter),
-    border-color var(--dz-d-micro) var(--dz-e-enter),
-    color var(--dz-d-micro) var(--dz-e-enter),
-    transform var(--dz-d-micro) var(--dz-e-exit);
-}
-
-.dz-case-card:hover .dz-case-card__action,
-.dz-case-card:focus-visible .dz-case-card__action {
-  background: var(--dz-amber);
-  border-color: var(--dz-amber-hot);
-  color: var(--dz-void);
-  transform: translate3d(2px, -2px, 0);
-}
-
-/* ── Touch ───────────────────────────────────────────────────────────────
-   No hover on a phone, so the resting state carries everything: brackets
-   visible, dots lit, and a target big enough to hit. Nothing here depends
-   on a pointer the device does not have. */
-@media (hover: none) {
-  .dz-case-card__bracket { opacity: 0.6; }
-  .dz-case-card__dot     { opacity: 0.95; }
-  .dz-case-card__action  { width: 44px; height: 44px; }
-}
-
-/* ── Skeleton ────────────────────────────────────────────────────────────
-   Same box as a real card, so the grid does not jump when data lands. */
-.dz-case-card--skeleton {
-  pointer-events: none;
-  min-height: 330px;
-}
-
-.dz-case-card--skeleton .dz-case-card__cell {
-  background: var(--dz-surface-1);
-  overflow: hidden;
-}
-
-.dz-case-card--skeleton .dz-case-card__cell::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  border-radius: 0;
-  transform: none;
-  background: linear-gradient(
-    90deg, transparent, rgba(255, 255, 255, 0.045), transparent
-  );
-  animation: dz-skeleton 1.5s var(--dz-e-enter) infinite;
-}
-
-@keyframes dz-skeleton {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(100%); }
-}
-
-/* Chest component inside a case card — scaled to fit the cell */
-.dz-case-card__chest {
-  width: 82%;
-  height: 82%;
-  max-width: 160px;
-}
-
-.dz-case-card__chest .case-chest-assembly { transform: scale(0.72); transform-origin: center bottom; }
-.dz-case-card__chest .case-chest-aura,
-.dz-case-card__chest .case-orbit-ring { display: none; }
-
-@media (prefers-reduced-motion: reduce) {
-  .dz-case-card--skeleton .dz-case-card__cell::after,
-  .dz-case-card:hover .dz-case-card__scan,
-  .dz-case-card:focus-visible .dz-case-card__scan {
-    animation: none;
-  }
-  /* Without the sweep the scan must not sit frozen across the art. */
-  .dz-case-card__scan { display: none; }
+@media (prefers-reduced-motion:reduce) {
+  .black-archive-home .dzc,.black-archive-home .dzc__img,.black-archive-home .dzc-art__box,.black-archive-home .collection-route { transition-duration:1ms; }
+  .black-archive-home .dzc--skeleton { animation:none; }
 }

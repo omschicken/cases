@@ -12,53 +12,53 @@
      Graphite, not pure black. The reference language is a dark industrial
      room: shadows carry a cold blue-green cast, lit faces go warm. Pure
      #000 kills that and flattens every object placed on it. */
-  --dz-void: #05060A;
-  --dz-surface-0: #05060A;
-  --dz-surface-1: #0A0C14;
-  --dz-surface-2: #0F1120;
-  --dz-surface-3: #161929;
-  --dz-surface-4: #1E2236;
+  --dz-void: #050604;
+  --dz-surface-0: #070806;
+  --dz-surface-1: #0d0e0b;
+  --dz-surface-2: #12130f;
+  --dz-surface-3: #191a15;
+  --dz-surface-4: #22231c;
 
   /* Metal the chamber is built from — reads as brushed steel under amber. */
-  --dz-metal: #1E2236;
-  --dz-metal-lit: #2B3050;
-  --dz-metal-edge: #3A4068;
+  --dz-metal: #1c1d18;
+  --dz-metal-lit: #292a22;
+  --dz-metal-edge: #414238;
 
   /* ── Light ─────────────────────────────────────────────────────────────
      Light is a first-class material here, not a glow filter. Each token is
      a real lighting role so surfaces can be lit consistently. */
-  --dz-light-ambient: rgba(168, 197, 255, 0.04);
-  --dz-light-key:     rgba(124, 107, 255, 0.22);
-  --dz-light-rim:     rgba(165, 148, 255, 0.40);
-  --dz-light-bounce:  rgba(124, 107, 255, 0.07);
-  --dz-light-spec:    rgba(232, 234, 242, 0.85);
+  --dz-light-ambient: rgba(241, 240, 232, 0.035);
+  --dz-light-key:     rgba(215, 168, 58, 0.2);
+  --dz-light-rim:     rgba(235, 207, 137, 0.34);
+  --dz-light-bounce:  rgba(215, 168, 58, 0.065);
+  --dz-light-spec:    rgba(246, 242, 226, 0.82);
 
   /* ── Accent — warm metallic amber ──────────────────────────────────── */
-  --dz-amber:        #7C6BFF;
-  --dz-amber-hot:    #A594FF;
-  --dz-amber-deep:   #5A49D8;
-  --dz-amber-ember:  #A594FF;
+  --dz-amber:        #d7a83a;
+  --dz-amber-hot:    #f0c760;
+  --dz-amber-deep:   #98701d;
+  --dz-amber-ember:  #c98a27;
 
   /* ── Cold technical counterpoint ───────────────────────────────────── */
-  --dz-ice: #A594FF;
-  --dz-ice-dim: #6B7089;
+  --dz-ice: #d8d5c8;
+  --dz-ice-dim: #77796f;
 
   /* ── Text ──────────────────────────────────────────────────────────────
      Four steps. --dz-text-4 is the floor for anything a user must read;
      anything dimmer is decorative only and must not carry meaning. */
-  --dz-text-1: #E8EAF2;
-  --dz-text-2: #B4B8CC;
-  --dz-text-3: #8A8FA8;
-  --dz-text-4: #6B7089;
+  --dz-text-1: #f1f0e8;
+  --dz-text-2: #c6c4ba;
+  --dz-text-3: #96978f;
+  --dz-text-4: #6f716a;
 
   /* ── State ─────────────────────────────────────────────────────────── */
   --dz-danger: #FF3D57;
   --dz-success: #2FD480;
 
   /* ── Borders ───────────────────────────────────────────────────────── */
-  --dz-edge: rgba(255, 255, 255, 0.06);
-  --dz-edge-strong: rgba(255, 255, 255, 0.15);
-  --dz-edge-lit:    rgba(124, 107, 255, 0.34);
+  --dz-edge: rgba(241, 240, 232, 0.075);
+  --dz-edge-strong: rgba(241, 240, 232, 0.17);
+  --dz-edge-lit:    rgba(215, 168, 58, 0.48);
 
   /* ── Typography ────────────────────────────────────────────────────────
      Three roles, as the brief requires:

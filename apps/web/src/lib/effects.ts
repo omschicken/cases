@@ -32,16 +32,16 @@ export function initEffects(): () => void {
 
   // ── 3D tilt on case cards ──────────────────────────────────────────────────
   function onMove(e: MouseEvent) {
-    const target = (e.target as HTMLElement).closest<HTMLElement>(
+    const target = e.target instanceof Element ? e.target.closest<HTMLElement>(
       ".case-card-editorial, .collection-route, .inventory-card, .battle-case"
-    );
+    ) : null;
     if (!target) return;
     applyTilt(target, e.clientX, e.clientY);
   }
   function onLeave(e: MouseEvent) {
-    const target = (e.target as HTMLElement).closest<HTMLElement>(
+    const target = e.target instanceof Element ? e.target.closest<HTMLElement>(
       ".case-card-editorial, .collection-route, .inventory-card, .battle-case"
-    );
+    ) : null;
     if (target) resetTilt(target);
   }
 

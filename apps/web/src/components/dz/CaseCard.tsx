@@ -108,7 +108,7 @@ export function CaseCard({ caseDto, index, tiers, tier, priceLabel }: CaseCardPr
       style={{ "--chest-hue": hue } as CSSProperties}
     >
       <div className="dzc__top">
-        <span className="dzc__serial">DZ-{String(index + 1).padStart(3, "0")}</span>
+        <span className="dzc__serial">ARCHIVE / {String(index + 1).padStart(3, "0")}</span>
         {tier && <span className="dzc__chip">{tier}</span>}
         <div className="dzc__chest">
           {caseImgUrl ? (
@@ -130,6 +130,7 @@ export function CaseCard({ caseDto, index, tiers, tier, priceLabel }: CaseCardPr
             ))}
           </span>
         </div>
+        <span className="dzc__contents">{caseDto.items.length} предметов</span>
       </div>
 
       <div className="dzc__foot">

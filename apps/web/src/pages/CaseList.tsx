@@ -98,7 +98,7 @@ export function CaseListPage() {
   }, [collections]);
 
   return (
-    <div>
+    <div className="black-archive-home">
       <PromoFirstDeposit />
       <DropHero
         caseCount={cases.length}
@@ -114,6 +114,7 @@ export function CaseListPage() {
         <section className="collection-discovery" aria-labelledby="collection-discovery-heading">
           <div className="collection-discovery-head">
             <div>
+              <span className="black-archive-kicker">ARCHIVE / SELECTED SERIES</span>
               <h2 id="collection-discovery-heading">{t("home.discoveryHeading")}</h2>
             </div>
             <p>{t("home.discoveryIntro")}</p>
@@ -158,6 +159,10 @@ export function CaseListPage() {
 
       {/* ── Catalog toolbar ───────────────────────────────────────────────── */}
       <div id="collections">
+        <div className="black-archive-catalog-head" aria-hidden="true">
+          <span>BLACK ARCHIVE</span>
+          <span>{String(filteredCases.length).padStart(2, "0")} OBJECTS</span>
+        </div>
         <PageHeader
           kicker="DROPZONE / COLLECTIONS"
           title={t("home.casesHeading")}

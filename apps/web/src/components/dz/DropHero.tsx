@@ -69,19 +69,27 @@ export function DropHero({ caseCount, showcase = [] }: DropHeroProps) {
       <LiveFeed />
       <div className="hero-v3__inner">
         <div className="hero-v3__content">
+          <span className="hero-v3__eyebrow">BLACK ARCHIVE / SERIES 01</span>
           <h1 id="dz-hero-title" className="hero-v3__title">
-            DROP<span className="hero-v3__brand-accent">ZONE</span>
+            <span>COLLECT</span>
+            <span className="hero-v3__brand-accent">THE RARE.</span>
           </h1>
           <p className="hero-v3__sub">
-            {n > 0 ? `${n} ${casesWord(n)} · ` : ""}Честные шансы · Мгновенный результат
+            {n > 0 ? `${n} ${casesWord(n)} в архиве. ` : ""}Выбери объект, открой контейнер и пополни личную коллекцию.
           </p>
           <a href="#collections" className="hero-v3__btn hero-v3__btn--primary">
-            ОТКРЫТЬ КЕЙС
+            ИССЛЕДОВАТЬ АРХИВ
+            <span aria-hidden="true">↘</span>
           </a>
+          <div className="hero-v3__proof" aria-label="Особенности платформы">
+            <span><i />Server-side result</span>
+            <span><i />Instant reveal</span>
+          </div>
         </div>
 
         {showcase.length > 0 && (
           <div className="hero-v3__showcase" aria-hidden="true">
+            <span className="hero-v3__object-label">FEATURED OBJECT / 01</span>
             <span className="hero-v3__showcase-glow" />
             {showcase.slice(0, 3).map((c, i) => (
               <Link
@@ -97,6 +105,8 @@ export function DropHero({ caseCount, showcase = [] }: DropHeroProps) {
                 )}
               </Link>
             ))}
+            <span className="hero-v3__axis hero-v3__axis--x" />
+            <span className="hero-v3__axis hero-v3__axis--y" />
           </div>
         )}
       </div>
