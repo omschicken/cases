@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { Layout } from "./components/Layout";
@@ -26,11 +27,21 @@ import { NotFoundPage } from "./pages/NotFound";
 import { SteamCallbackPage } from "./pages/SteamCallback";
 import { SteamCompletePage } from "./pages/SteamComplete";
 
+const DesignLabPage = import.meta.env.DEV
+  ? lazy(() => import("./pages/DesignLab").then((module) => ({ default: module.DesignLabPage })))
+  : null;
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          {DesignLabPage && (
+            <Route
+              path="/design-lab"
+              element={<Suspense fallback={null}><DesignLabPage /></Suspense>}
+            />
+          )}
           <Route element={<Layout />}>
             <Route path="/" element={<CaseListPage />} />
             <Route path="/cases/:slug" element={<CaseDetailPage />} />
