@@ -1,20 +1,17 @@
-# Editorial Light — temporary asset replacement list
+# Editorial Light — asset status
 
-The current images are crops from a single AI mockup. They remain suitable only for layout validation on the dev-only `/design-lab` page and must not be treated as production source art.
+## Replaced with standalone V2 originals
 
-| File | Current size | Current use | Required replacement |
-| --- | ---: | --- | --- |
-| `hero.webp` | 738×320 | Desktop and mobile Hero | Original uncropped Hero panorama at least 2400×1040 px, without baked UI or text; preserve the current 738:320 composition. |
-| `static.webp` | 902×522 | Static Case card | Standalone original case render at least 1804×1044 px, same 902:522 framing, clean background, no baked labels/UI. |
-| `ignition.webp` | 902×522 | Ignition Case card | Standalone original case render at least 1804×1044 px, same framing and lighting, no baked labels/UI. |
-| `tidal.webp` | 902×522 | Tidal Case card | Standalone original case render at least 1804×1044 px, same framing and lighting, no baked labels/UI. |
-| `phantom.webp` | 902×522 | Phantom Case card | Standalone original case render at least 1804×1044 px, same framing and lighting, no baked labels/UI. |
-| `promo.webp` | 766×110 | Collection banner | Original banner panorama at least 1532×220 px, without baked button/text; preserve the current 383:55 composition. |
+| File | Size | Use |
+| --- | ---: | --- |
+| `hero-editorial.webp` | 1916×821 | Desktop and mobile Hero scene |
+| `static-case.webp` | 1402×1122 | Static Case card |
+| `ignition-case.webp` | 1402×1122 | Ignition Case card |
+| `tidal-case.webp` | 1402×1122 | Tidal Case card |
+| `phantom-case.webp` | 1402×1122 | Phantom Case card |
 
-## Technical rendering until replacement
+All case images use `object-fit: contain`, keep the source ratio `1402:1122`, and have no CSS scale transform. Hero uses `object-fit: contain` and the source ratio `1916:821` on mobile. The images are illustrative custom artwork, not verified official CS2 assets.
 
-- Hero is capped at its native 738 px width on desktop and uses `object-fit: contain`.
-- Case artwork uses its native 902:522 aspect ratio and `object-fit: contain`.
-- Promo is capped at its native 766×110 display size and uses `object-fit: contain`.
-- Image hover scaling has been removed.
-- The four-column desktop grid is unchanged.
+## Still temporary
+
+- `promo.webp` remains the previous 766×110 crop because the V2 archive does not include a replacement. It should eventually be replaced with an original banner scene without baked text or controls.

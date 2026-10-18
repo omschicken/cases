@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import heroImage from "../assets/editorial-kit/hero.webp";
-import staticImage from "../assets/editorial-kit/static.webp";
-import ignitionImage from "../assets/editorial-kit/ignition.webp";
-import tidalImage from "../assets/editorial-kit/tidal.webp";
-import phantomImage from "../assets/editorial-kit/phantom.webp";
+import heroImage from "../assets/editorial-kit/hero-editorial.webp";
+import staticImage from "../assets/editorial-kit/static-case.webp";
+import ignitionImage from "../assets/editorial-kit/ignition-case.webp";
+import tidalImage from "../assets/editorial-kit/tidal-case.webp";
+import phantomImage from "../assets/editorial-kit/phantom-case.webp";
 import promoImage from "../assets/editorial-kit/promo.webp";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import "../styles/design-lab.css";
