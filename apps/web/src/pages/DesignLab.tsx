@@ -1,8 +1,14 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import staticCase from "../assets/armory/static-case.png";
 import ignitionCase from "../assets/armory/ignition-case.png";
 import dragonCase from "../assets/armory/dragon-case.png";
-import ak47 from "../assets/ak47.png";
+import heroScene from "../assets/editorial/hero-static-case-v2.jpg";
+import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { useAuth } from "../context/AuthContext";
+import { api } from "../lib/api";
+import { formatMinor } from "../lib/money";
+import type { WalletDto } from "../lib/types";
 import "../styles/design-lab.css";
 
 const cases = [
@@ -18,18 +24,32 @@ const modes = [
 ] as const;
 
 export function DesignLabPage() {
+  const { user } = useAuth();
+  const [balanceMinor, setBalanceMinor] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    if (!user) return setBalanceMinor(null);
+    api.get<WalletDto>("/wallet/me").then((wallet) => setBalanceMinor(wallet.balanceMinor)).catch(() => setBalanceMinor(null));
+  }, [user]);
+
+  const visibleCases = useMemo(() => {
+    const needle = query.trim().toLocaleLowerCase("ru");
+    return needle ? cases.filter((item) => item.name.toLocaleLowerCase("ru").includes(needle)) : cases;
+  }, [query]);
+
   return (
     <div className="editorial-lab">
       <header className="editorial-nav">
         <Link className="editorial-brand" to="/" aria-label="DROPZONE"><b>D</b><span>Dropzone</span></Link>
         <nav className="editorial-links" aria-label="Навигация Design Lab">
-          <a className="is-active" href="#catalog">Кейсы</a><a href="#modes">Сражения</a><a href="#modes">Контракты</a><a href="#modes">Апгрейд</a><a href="#about">Коллекции</a>
+          <a className="is-active" href="#catalog">Кейсы</a><Link to="/battles">Сражения</Link><Link to="/contracts">Контракты</Link><Link to="/upgrader">Апгрейд</Link><Link to="/cards">Коллекции</Link>
         </nav>
         <div className="editorial-tools">
-          <button className="editorial-search" type="button" aria-label="Поиск">⌕</button>
-          <button className="editorial-balance" type="button">0,00 ₽</button>
-          <button className="editorial-login" type="button">Войти</button>
-          <button className="editorial-lang" type="button" aria-label="Язык">RU</button>
+          <label className="editorial-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Найти кейс" aria-label="Поиск кейсов" /></label>
+          {user && <Link className="editorial-balance" to="/wallet">{balanceMinor === null ? "—" : formatMinor(balanceMinor)}</Link>}
+          <Link className="editorial-login" to={user ? "/profile" : "/login"}>{user ? "Профиль" : "Войти"}</Link>
+          <LanguageSwitcher />
         </div>
       </header>
 
@@ -37,29 +57,25 @@ export function DesignLabPage() {
         <aside className="editorial-sidebar" aria-label="Разделы">
           <nav>
             <a className="is-active" href="#catalog"><span>▣</span>Кейсы</a>
-            <a href="#modes"><span>⚔</span>Сражения</a>
-            <a href="#modes"><span>◇</span>Контракты</a>
-            <a href="#modes"><span>↥</span>Апгрейд</a>
-            <a href="#about"><span>□</span>Инвентарь</a>
+            <Link to="/battles"><span>⚔</span>Сражения</Link>
+            <Link to="/contracts"><span>◇</span>Контракты</Link>
+            <Link to="/upgrader"><span>↥</span>Апгрейд</Link>
+            <Link to="/inventory"><span>□</span>Инвентарь</Link>
           </nav>
-          <a className="editorial-reward" href="#about"><span>♙</span><b>Ежедневные<br />награды</b><i>↗</i></a>
+          <Link className="editorial-reward" to="/bonuses"><span>♙</span><b>Ежедневные<br />награды</b><i>↗</i></Link>
         </aside>
         <main className="editorial-main">
         <section className="editorial-hero" aria-labelledby="editorial-title">
           <div className="editorial-hero__copy">
-            <p className="editorial-eyebrow">Новая коллекция · 2026</p>
-            <h1 id="editorial-title">Предметы,<br />которые хочется<br /><em>сохранить.</em></h1>
-            <p className="editorial-hero__lead">Авторские коллекции кейсов и реальные предметы CS2. Честный результат, ясные правила и спокойный интерфейс без лишнего шума.</p>
+            <p className="editorial-eyebrow">Коллекция · Counter-Strike 2</p>
+            <h1 id="editorial-title">Предметы<br />с характером.</h1>
+            <p className="editorial-hero__lead">Открывай кейсы, собирай редкие скины и формируй собственную коллекцию.</p>
             <div className="editorial-actions">
-              <a className="editorial-primary" href="#catalog">Смотреть кейсы <span>↗</span></a>
-              <span className="editorial-caption">18+ · Играйте ответственно</span>
+              <a className="editorial-primary" href="#catalog">Открыть кейсы <span>→</span></a>
             </div>
           </div>
-          <div className="editorial-product" aria-label="Static Case и AK-47">
-            <span className="editorial-product__wash" />
-            <img className="editorial-product__weapon" src={ak47} alt="AK-47" />
-            <img className="editorial-product__case" src={staticCase} alt="Static Case" />
-            <div className="editorial-product__label"><span>Коллекция 01</span><strong>Static Case</strong><small>От 29,00 ₽</small></div>
+          <div className="editorial-product">
+            <img className="editorial-product__scene" src={heroScene} alt="Static Case в светлом архитектурном пространстве" />
           </div>
         </section>
 
@@ -71,7 +87,7 @@ export function DesignLabPage() {
             </div>
           </header>
           <div className="editorial-grid">
-            {cases.map((item) => (
+            {visibleCases.map((item) => (
               <article className={`editorial-card editorial-card--${item.tone}`} key={item.name} tabIndex={0}>
                 <div className="editorial-card__visual"><img src={item.image} alt={item.name} /><span /></div>
                 <div className="editorial-card__body">
@@ -80,6 +96,7 @@ export function DesignLabPage() {
                 </div>
               </article>
             ))}
+            {visibleCases.length === 0 && <p className="editorial-empty">По вашему запросу кейсов не найдено.</p>}
           </div>
         </section>
 
