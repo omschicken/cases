@@ -56,12 +56,10 @@ function casesWord(n: number) {
 }
 
 /** Landing hero: centred statement, two actions, three micro-facts. */
-/** Same logic as CaseCard.hasPicture — show generated art when no real case image exists. */
+/** Returns true for a usable case image URL (not a placeholder, not blank). */
 function hasCaseArt(url: string | undefined): boolean {
   if (!url) return false;
-  return /^https?:\/\//.test(url) &&
-    !/placehold(er)?\.co/i.test(url) &&
-    !/steamstatic\.com/i.test(url);
+  return /^https?:\/\//.test(url) && !/placehold(er)?\.co/i.test(url);
 }
 
 export function DropHero({ caseCount, showcase = [] }: DropHeroProps) {
