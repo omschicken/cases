@@ -1758,3 +1758,340 @@ h4 { font-weight: 700 !important; letter-spacing: 0.04em; }
   color: #fcd34d !important;
   border: 1px solid rgba(245,158,11,.35) !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   VISUAL ELEVATION v6 — Items Grid, Rarity Tiers, Card Polish
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. ITEMS SECTION CONTAINER ──────────────────────────────────────── */
+.dza-items {
+  padding: 48px 0 40px !important;
+  background: linear-gradient(180deg,
+    rgba(10,12,20,0) 0%,
+    rgba(8,10,18,0.6) 100%) !important;
+}
+
+.dza-items__head {
+  padding: 0 24px 20px !important;
+  align-items: center !important;
+}
+
+.dza-items__head h2 {
+  font-family: var(--ov-font-ui) !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .25em !important;
+  text-transform: uppercase !important;
+  color: rgba(180,200,255,.55) !important;
+  margin: 0 !important;
+}
+
+.dza-items__count {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .72rem !important;
+  font-weight: 600 !important;
+  color: rgba(140,160,210,.35) !important;
+  letter-spacing: .1em !important;
+  background: rgba(255,255,255,.04) !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(255,255,255,.06) !important;
+}
+
+/* ── 2. RARITY TIER HEADERS ──────────────────────────────────────────── */
+.dza-tier {
+  padding: 24px 0 8px !important;
+}
+
+.dza-tier__title {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .65rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .25em !important;
+  text-transform: uppercase !important;
+  padding: 0 24px 14px !important;
+  gap: 14px !important;
+  color: var(--rc) !important;
+  filter: brightness(1.4) !important;
+}
+
+.dza-tier__title i {
+  height: 1px !important;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--rc) 35%, transparent),
+    transparent 80%) !important;
+}
+
+.dza-tier__title b {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .62rem !important;
+  font-weight: 700 !important;
+  color: rgba(140,160,210,.45) !important;
+  background: rgba(255,255,255,.04) !important;
+  padding: 2px 7px !important;
+  border-radius: 5px !important;
+  border: 1px solid rgba(255,255,255,.06) !important;
+}
+
+/* ── 3. ITEMS GRID — convert horizontal scroll to proper grid ─────────── */
+.dza-items__rail {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
+  gap: 12px !important;
+  padding: 0 24px 16px !important;
+  overflow-x: unset !important;
+  scroll-snap-type: unset !important;
+}
+
+@media (min-width: 900px) {
+  .dza-items__rail {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+    gap: 14px !important;
+  }
+}
+
+/* ── 4. INDIVIDUAL ITEM CARDS ─────────────────────────────────────────── */
+.dza-item {
+  position: relative !important;
+  flex: unset !important;
+  width: unset !important;
+  background: linear-gradient(160deg,
+    rgba(17,22,35,.92),
+    rgba(10,14,22,.95)) !important;
+  border: 1px solid rgba(255,255,255,.06) !important;
+  border-top-color: rgba(255,255,255,.09) !important;
+  border-radius: 12px !important;
+  padding: 12px 10px 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease !important;
+  overflow: hidden !important;
+}
+
+/* Rarity top-edge accent */
+.dza-item::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 12% !important;
+  right: 12% !important;
+  height: 2px !important;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--rc),
+    transparent) !important;
+  border-radius: 0 0 2px 2px !important;
+  opacity: .7 !important;
+}
+
+/* Subtle inner rarity glow at top */
+.dza-item::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 60px !important;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--rc) 8%, transparent),
+    transparent) !important;
+  border-radius: 12px 12px 0 0 !important;
+  pointer-events: none !important;
+}
+
+.dza-item:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+  border-color: color-mix(in srgb, var(--rc) 55%, transparent) !important;
+  box-shadow:
+    0 12px 32px rgba(0,0,0,.6),
+    0 0 32px -8px var(--rc) !important;
+}
+
+/* Weapon image — bigger and higher contrast */
+.dza-item img {
+  width: 100% !important;
+  height: 110px !important;
+  object-fit: contain !important;
+  transition: filter .18s, transform .18s !important;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.5)) !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.dza-item:hover img {
+  filter:
+    drop-shadow(0 0 8px var(--rc))
+    drop-shadow(0 4px 12px rgba(0,0,0,.6)) !important;
+  transform: scale(1.05) translateY(-2px) !important;
+}
+
+/* Chance badge */
+.dza-item__chance {
+  position: absolute !important;
+  top: 9px !important;
+  right: 9px !important;
+  font-family: var(--ov-font-ui) !important;
+  font-size: .58rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .05em !important;
+  color: rgba(180,200,255,.5) !important;
+  background: rgba(0,0,0,.35) !important;
+  padding: 2px 5px !important;
+  border-radius: 4px !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* Item name */
+.dza-item__name {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .72rem !important;
+  font-weight: 700 !important;
+  color: #dde5ff !important;
+  text-align: center !important;
+  letter-spacing: .02em !important;
+  line-height: 1.25 !important;
+  margin: 0 !important;
+  z-index: 1 !important;
+}
+
+/* Price value */
+.dza-item__value {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .72rem !important;
+  font-weight: 800 !important;
+  color: #f0c040 !important;
+  letter-spacing: .03em !important;
+  z-index: 1 !important;
+}
+
+/* Wear badges */
+.dza-item__wear {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .55rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .12em !important;
+  color: rgba(140,160,210,.4) !important;
+  text-transform: uppercase !important;
+  z-index: 1 !important;
+}
+
+/* ── 5. RESULT CARD AFTER OPENING ─────────────────────────────────────── */
+.dz-record {
+  display: flex !important;
+  align-items: center !important;
+  gap: 28px !important;
+  padding: 28px 32px !important;
+  margin: 0 !important;
+  background: linear-gradient(135deg,
+    rgba(17,22,35,.98),
+    rgba(10,14,26,.98)) !important;
+  border-top: 1px solid rgba(255,255,255,.06) !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.dz-record::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: radial-gradient(ellipse 80% 120% at 0% 50%,
+    color-mix(in srgb, var(--dz-rarity, #8b5cf6) 12%, transparent),
+    transparent 65%) !important;
+  pointer-events: none !important;
+}
+
+.dz-record__art {
+  width: 160px !important;
+  height: 120px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+  filter:
+    drop-shadow(0 0 20px var(--dz-rarity, #8b5cf6))
+    drop-shadow(0 8px 24px rgba(0,0,0,.6)) !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.dz-record__label {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .62rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
+  color: var(--dz-rarity, #8b5cf6) !important;
+  filter: brightness(1.4) !important;
+  display: block !important;
+  margin-bottom: 8px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.dz-record__name {
+  font-family: var(--ov-font-ui) !important;
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+  color: #eef2ff !important;
+  margin: 0 0 6px !important;
+  line-height: 1.15 !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.dz-record__value {
+  font-family: var(--ov-font-ui) !important;
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+  color: #f0c040 !important;
+  margin: 0 0 16px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.dz-record__actions {
+  display: flex !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* ── 6. BREADCRUMB & HEAD REFINEMENT ─────────────────────────────────── */
+.dza-head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 16px 24px !important;
+  border-bottom: 1px solid rgba(255,255,255,.04) !important;
+  background: rgba(8,10,18,.6) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.dza-crumb {
+  font-family: var(--ov-font-ui) !important;
+  font-size: .72rem !important;
+  font-weight: 600 !important;
+  color: rgba(140,160,210,.5) !important;
+  letter-spacing: .04em !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.dza-crumb a {
+  color: rgba(140,160,210,.5) !important;
+  text-decoration: none !important;
+  transition: color .15s !important;
+}
+
+.dza-crumb a:hover {
+  color: #a5b4fc !important;
+}
+
+.dza-crumb [aria-current="page"] {
+  color: #c4b5fd !important;
+  font-weight: 700 !important;
+}
+
