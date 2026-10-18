@@ -912,6 +912,9 @@ h4 { font-weight: 700 !important; letter-spacing: 0.04em; }
 
 /* ── Card: reset and elevate ────────────────────────────────── */
 .dzc {
+  height: auto !important;
+  max-width: none !important;
+  width: 100% !important;
   border-radius: 16px !important;
   border: 1px solid rgba(255,255,255,0.07) !important;
   background: linear-gradient(175deg, #111825 0%, #0a0f18 100%) !important;
@@ -1336,4 +1339,101 @@ h4 { font-weight: 700 !important; letter-spacing: 0.04em; }
 @keyframes skeleton-sweep {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CARD FINAL v4 — price label fix, rarity dots, full-height fix
+   ══════════════════════════════════════════════════════════════ */
+
+/* Fix: show the price "ОТКРЫТЬ ЗА" label */
+.dzc__price-label {
+  display: inline !important;
+  font-family: var(--ov-font-ui) !important;
+  font-size: .58rem !important;
+  font-weight: 600 !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase !important;
+  color: rgba(140,160,210,0.6) !important;
+}
+
+/* Fix: price amount use gold */
+.dzc__price .dz-figure,
+.dzc__price > *:not(.dzc__price-label) {
+  color: #f0c040 !important;
+  font-family: var(--ov-font-ui) !important;
+  font-weight: 800 !important;
+  font-size: 1.1rem !important;
+}
+
+/* Rarity dots: bring back subtly, row at bottom of name block */
+.dzc__dots {
+  display: flex !important;
+  gap: 4px !important;
+  margin-top: 5px !important;
+}
+.dzc__dots i {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  opacity: 0.8 !important;
+}
+
+/* Card body: tight but visible */
+.dzc__body {
+  padding: .65rem .85rem .25rem !important;
+  border-top: 1px solid rgba(255,255,255,0.05) !important;
+}
+
+/* Gradient divider between art and name */
+.dzc__body::before {
+  content: none !important;
+}
+
+/* Footer: ensure button is always visible */
+.dzc__foot {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: .5rem !important;
+  padding: .45rem .85rem .9rem !important;
+  border-top: 1px solid rgba(255,255,255,0.04) !important;
+}
+
+/* ОТКРЫТЬ button: wider padding, better contrast */
+.dzc__open {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  padding: .78rem 1rem !important;
+  font-family: var(--ov-font-ui) !important;
+  font-size: .82rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
+  border-radius: 10px !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #3b82f6 100%) !important;
+  box-shadow: 0 3px 18px rgba(99,102,241,0.45) !important;
+  transition: box-shadow .2s, filter .2s !important;
+}
+
+.dzc:hover .dzc__open {
+  box-shadow: 0 6px 32px rgba(99,102,241,0.75) !important;
+  filter: brightness(1.14) !important;
+}
+
+/* Tier chip: style by tier */
+.dzc__chip {
+  font-family: var(--ov-font-ui) !important;
+  font-weight: 800 !important;
+  font-size: .6rem !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase !important;
+  border-radius: 5px !important;
+  padding: .2rem .52rem !important;
+}
+
+/* Skeleton uses auto height too */
+.dzc--skeleton {
+  min-height: 360px !important;
+  height: auto !important;
 }
