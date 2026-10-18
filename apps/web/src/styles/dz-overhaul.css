@@ -2434,3 +2434,15 @@ h4 { font-weight: 700 !important; letter-spacing: 0.04em; }
   background: rgba(12, 16, 26, .85) !important;
 }
 
+
+/* ── Weapon skin preview on case card ──────────────────────────── */
+.dzc__img--weapon {
+  width: 90% !important;
+  max-height: 185px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 8px 24px hsl(var(--chest-hue, 260) 70% 50% / .5)) !important;
+}
+.dzc:hover .dzc__img--weapon {
+  transform: translateY(-6px) scale(1.05) !important;
+  filter: drop-shadow(0 14px 36px hsl(var(--chest-hue, 260) 80% 55% / .7)) !important;
+}
