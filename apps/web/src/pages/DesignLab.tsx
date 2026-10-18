@@ -23,7 +23,7 @@ export function DesignLabPage() {
       <header className="editorial-nav">
         <Link className="editorial-brand" to="/" aria-label="DROPZONE"><b>D</b><span>Dropzone</span></Link>
         <nav className="editorial-links" aria-label="Навигация Design Lab">
-          <a href="#catalog">Кейсы</a><a href="#modes">Режимы</a><a href="#about">О проекте</a>
+          <a className="is-active" href="#catalog">Кейсы</a><a href="#modes">Сражения</a><a href="#modes">Контракты</a><a href="#modes">Апгрейд</a><a href="#about">Коллекции</a>
         </nav>
         <div className="editorial-tools">
           <button className="editorial-search" type="button" aria-label="Поиск">⌕</button>
@@ -33,7 +33,18 @@ export function DesignLabPage() {
         </div>
       </header>
 
-      <main>
+      <div className="editorial-layout">
+        <aside className="editorial-sidebar" aria-label="Разделы">
+          <nav>
+            <a className="is-active" href="#catalog"><span>▣</span>Кейсы</a>
+            <a href="#modes"><span>⚔</span>Сражения</a>
+            <a href="#modes"><span>◇</span>Контракты</a>
+            <a href="#modes"><span>↥</span>Апгрейд</a>
+            <a href="#about"><span>□</span>Инвентарь</a>
+          </nav>
+          <a className="editorial-reward" href="#about"><span>♙</span><b>Ежедневные<br />награды</b><i>↗</i></a>
+        </aside>
+        <main className="editorial-main">
         <section className="editorial-hero" aria-labelledby="editorial-title">
           <div className="editorial-hero__copy">
             <p className="editorial-eyebrow">Новая коллекция · 2026</p>
@@ -87,7 +98,8 @@ export function DesignLabPage() {
             {modes.map(([number, title, text]) => <article key={number}><span>{number}</span><h3>{title}</h3><p>{text}</p></article>)}
           </div>
         </section>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
