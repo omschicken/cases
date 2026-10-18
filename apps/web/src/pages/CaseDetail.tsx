@@ -8,8 +8,11 @@ import { RARITY_LABELS, RARITY_RANK, rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
 import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol";
 import { Money } from "../components/Money";
-import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
-import { CaseStage } from "../components/CaseStage";
+import staticCaseArt from "../assets/case-detail-editorial/static-case-cutout.webp";
+import ignitionCaseArt from "../assets/case-detail-editorial/ignition-case.webp";
+import tidalCaseArt from "../assets/case-detail-editorial/tidal-case.webp";
+import phantomCaseArt from "../assets/case-detail-editorial/phantom-case.webp";
+import "../styles/case-detail-editorial.css";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
 
 const EXTERIOR_PATTERN = / \((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
@@ -93,6 +96,13 @@ function weightedSample(items: CaseItem[]): CaseItem {
 
 const PREVIEW_ART = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 420'%3E%3Crect width='640' height='420' fill='%23151b2d'/%3E%3Cpath d='M80 300 220 100l140 200 90-120 110 120' fill='none' stroke='%23b86bff' stroke-width='10'/%3E%3C/svg%3E";
 
+const EDITORIAL_CASE_ART: Record<string, string> = {
+  "static-case": staticCaseArt,
+  "ignition-case": ignitionCaseArt,
+  "tidal-case": tidalCaseArt,
+  "phantom-case": phantomCaseArt,
+};
+
 function previewCase(slug: string): CaseDto {
   const names: Record<string, [string, string]> = {
     "ignition-case": ["Ignition Case", "14900"],
@@ -128,6 +138,8 @@ export function CaseDetailPage() {
   // panel, so closing it never hides the provably-fair record.
   const [protocolDismissed, setProtocolDismissed] = useState(false);
   const openingLockRef = useRef(false);
+  const requestPendingRef = useRef(false);
+  const skipRequestedRef = useRef(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -176,16 +188,18 @@ export function CaseDetailPage() {
       .catch(() => undefined);
   }, [user]);
 
-  /** Fires once the chest's own burst/reveal overlay has settled on the item. */
-  function handleChestRevealed() {
+  function finishOpening() {
     setOpening(false);
     setRevealed(true);
     openingLockRef.current = false;
+    skipRequestedRef.current = false;
   }
 
   async function openCase() {
     if (!theCase || openingLockRef.current) return;
     openingLockRef.current = true;
+    requestPendingRef.current = true;
+    skipRequestedRef.current = false;
     setError(null);
     setOpening(true);
     setRevealed(false);
@@ -198,10 +212,14 @@ export function CaseDetailPage() {
       // holds its own reveal step until this resolves and winningItem is set.
       const response = await api.post<OpenCaseResult>("/cases/open", { caseId: theCase.id });
       setResult(response);
+      requestPendingRef.current = false;
+      if (skipRequestedRef.current) finishOpening();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotOpenCase"));
       setOpening(false);
+      requestPendingRef.current = false;
       openingLockRef.current = false;
+      skipRequestedRef.current = false;
     }
   }
 
@@ -211,6 +229,8 @@ export function CaseDetailPage() {
   function demoSpin() {
     if (!theCase || openingLockRef.current) return;
     openingLockRef.current = true;
+    requestPendingRef.current = false;
+    skipRequestedRef.current = false;
     setError(null);
     setResult(null);
     setRevealed(false);
@@ -218,6 +238,20 @@ export function CaseDetailPage() {
     setOpening(true);
     setDemoItem(weightedSample(theCase.items));
   }
+
+  const winningItem = result?.item ?? demoItem;
+
+  useEffect(() => {
+    if (!opening || !winningItem || requestPendingRef.current || skipRequestedRef.current) return;
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 1100;
+    const timer = window.setTimeout(() => {
+      setOpening(false);
+      setRevealed(true);
+      openingLockRef.current = false;
+      skipRequestedRef.current = false;
+    }, duration);
+    return () => window.clearTimeout(timer);
+  }, [opening, winningItem]);
 
   if (error && !theCase) return (
     <div className="case-load-error" role="alert">
@@ -234,18 +268,6 @@ export function CaseDetailPage() {
       <span className="loading-line loading-line-button" />
     </div>
   );
-
-  const winningItem = result?.item ?? demoItem;
-
-  // The "chase" item teased above the closed chest: the rarest one in the
-  // case that has a real picture (not a generated placeholder).
-  const chaseItem = [...theCase.items]
-    .filter((item) => item.imageUrl && !item.imageUrl.startsWith("data:") && !item.imageUrl.includes("placehold.co"))
-    .sort(
-      (a, b) =>
-        RARITY_RANK.indexOf(a.rarity) - RARITY_RANK.indexOf(b.rarity) ||
-        Number(BigInt(b.valueMinor) - BigInt(a.valueMinor)),
-    )[0];
 
   // Phase is derived, never stored, so it cannot drift from the opening
   // state it describes. A failed request leaves opening false with no item,
@@ -264,9 +286,8 @@ export function CaseDetailPage() {
    *  the first frame, so this just cuts the chest overlay's own choreography
    *  short and shows what already dropped — it never re-rolls. */
   function skipAnimation() {
-    setOpening(false);
-    setRevealed(true);
-    openingLockRef.current = false;
+    skipRequestedRef.current = true;
+    if (!requestPendingRef.current && winningItem) finishOpening();
   }
   const skinGroups = groupCaseItems(theCase.items);
   const totalWeight = theCase.items.reduce((total, item) => total + item.weight, 0);
@@ -284,19 +305,7 @@ export function CaseDetailPage() {
           result={result}
           oddsPercent={winningItem ? dropChancePercent(winningItem, theCase.items) : undefined}
           isOpening={opening}
-          itemRarity={winningItem?.rarity}
-          caseChest={
-            <CaseChest
-              className="case-chest-detail"
-              caseName={theCase.name}
-              caseSlug={theCase.slug}
-              opening={opening}
-              itemImageUrl={winningItem?.imageUrl}
-              itemName={winningItem?.name}
-              itemRarity={winningItem?.rarity}
-              onRevealed={handleChestRevealed}
-            />
-          }
+          caseImageUrl={EDITORIAL_CASE_ART[theCase.slug] ?? theCase.imageUrl}
           onSkip={skipAnimation}
           onClose={() => setProtocolDismissed(true)}
           onOpenAgain={openCase}
@@ -309,7 +318,7 @@ export function CaseDetailPage() {
           <button type="button" className="catalog-retry" onClick={() => setRequestId((id) => id + 1)}>{t("common.retry", { defaultValue: "Retry" })}</button>
         </div>
       )}
-      {/* ZONE 1 — slim header */}
+      {/* Editorial detail header */}
       <header className="dza-head">
         <Link to="/" className="dza-back" aria-label={t("caseDetail.backToCases", { defaultValue: "Назад к кейсам" })}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -323,19 +332,18 @@ export function CaseDetailPage() {
         </nav>
       </header>
 
-      {/* ZONE 2 — arena */}
-      <section id="opening-station" className="dza-arena" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
-        <div className="dza-arena__stage">
-          <CaseStage
-            caseName={theCase.name}
-            caseSlug={theCase.slug}
-            caseImageUrl={theCase.imageUrl}
-            chase={chaseItem ? { name: chaseItem.name, imageUrl: chaseItem.imageUrl, rarity: chaseItem.rarity } : undefined}
-            hidden={opening}
-          />
+      <section id="opening-station" className="dza-arena dze-product" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
+        <div className="dza-arena__stage dze-studio">
+          <div className="dze-studio__meta"><span>OBJECT / {theCase.slug.toUpperCase()}</span><span>STUDIO / COLLECTION</span></div>
+          <img className="dze-studio__art" src={EDITORIAL_CASE_ART[theCase.slug] ?? theCase.imageUrl} alt={theCase.name} />
+          <div className="dze-studio__floor"><span>DROPZONE / EDITORIAL</span><span>01 — 04</span></div>
         </div>
 
-        <div className="dza-arena__panel">
+        <div className="dza-arena__panel dze-product__info">
+          <span className="dze-eyebrow">● {t("caseDetail.crumbCases", { defaultValue: "Кейсы" })} / {theCase.slug.replace(/-/g, " ")}</span>
+          <h1 className="dze-title">{theCase.name.replace(/\s*case$/i, "")}<span>Case.</span></h1>
+          <p className="dze-description">{t("caseDetail.editorialDescription", { defaultValue: "Изучи содержимое коллекции, реальные шансы и выбери свой следующий предмет." })}</p>
+          <div className="dze-meta"><div><small>{t("caseDetail.status", { defaultValue: "СТАТУС" })}</small><strong>{theCase.isActive ? t("caseDetail.available", { defaultValue: "Доступен" }) : t("caseDetail.unavailable", { defaultValue: "Недоступен" })}</strong></div><div><small>{t("caseDetail.mode", { defaultValue: "РЕЖИМ" })}</small><strong>{t("caseDetail.openingStation", { defaultValue: "Открытие кейса" })}</strong></div></div>
           <div className="dza-arena__price">
             <span className="dza-arena__label">{t("caseDetail.casePrice", { defaultValue: "Цена" })}</span>
             <Money minor={theCase.priceMinor} currency={theCase.currency} />
