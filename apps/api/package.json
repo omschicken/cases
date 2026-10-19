@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "build": "nest build",
-    "postbuild": "tsx prisma/fix-item-images.ts || echo 'fix-item-images: skipped (no DB)'",
     "dev": "nest start --watch",
     "start": "node dist/main.js",
     "lint": "eslint \"src/**/*.ts\"",
