@@ -16,6 +16,7 @@ import { OnboardingModal } from "./OnboardingModal";
 import { CursorTrail } from "./CursorTrail";
 import { LiveDropFeed } from "./LiveDropFeed";
 import { SiteStatsBar } from "./SiteStatsBar";
+import { CaseCrowLogo } from "./CaseCrowLogo";
 
 export function Layout() {
   const { t } = useTranslation();
@@ -48,7 +49,7 @@ export function Layout() {
 
       <header className="dz-topbar">
         <NavLink to="/" className="dz-brand">
-          <span className="dz-brand__word">DZ</span>
+          <CaseCrowLogo />
         </NavLink>
 
         <div className="dz-topbar__right">
@@ -119,7 +120,7 @@ export function Layout() {
 
       <footer className="dz-footer">
         <div className="dz-footer__heading">
-          <strong className="dz-footer__brand">DZ</strong>
+          <strong className="dz-footer__brand"><CaseCrowLogo /></strong>
           <span className="dz-footer__age">18+</span>
         </div>
         <p>{t("nav.footer")}</p>

@@ -7,7 +7,7 @@ export function FAQPage() {
 
   return (
     <div className="faq-page">
-      <span className="section-kicker">DROPZONE / KNOWLEDGE BASE</span>
+      <span className="section-kicker">CASECROW / KNOWLEDGE BASE</span>
       <h1>{t("faq.title")}</h1>
       <div className="faq-list">
         {FAQ_KEYS.map((key) => (

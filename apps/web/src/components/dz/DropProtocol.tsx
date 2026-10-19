@@ -76,7 +76,7 @@ export function DropProtocol({
     <div ref={rootRef} className="dze-opening" role="dialog" aria-modal="true" aria-label={t("caseDetail.openingStation", { defaultValue: "Открытие кейса" })} style={{ "--dze-accent": accent } as CSSProperties}>
       <div className="dze-opening__dialog">
         <header className="dze-opening__head">
-          <span>DROPZONE / OPENING</span>
+          <span>CASECROW / OPENING</span>
           {phase === "reveal" && <button type="button" onClick={onClose} aria-label={t("common.close", { defaultValue: "Закрыть" })}>×</button>}
         </header>
         <div className={`dze-opening__visual ${phase === "reveal" ? "is-result" : "is-opening"}`}>

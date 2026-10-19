@@ -20,6 +20,7 @@ import "./styles/dz-overhaul.css";
 import "./styles/dz-nav.css";
 import "./styles/dz-card.css";
 import "./styles/dz-hero.css";
+import "./styles/casecrow-brand.css";
 import "./i18n";
 import App from "./App";
 

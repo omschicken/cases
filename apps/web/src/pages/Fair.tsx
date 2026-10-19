@@ -75,7 +75,7 @@ export function FairPage() {
   return (
     <div className="fair-page">
       <PageHeader
-        kicker="DROPZONE / PROVABLY FAIR"
+        kicker="CASECROW / PROVABLY FAIR"
         title={t("fair.title", { defaultValue: "Честная игра" })}
         lede={t("fair.lede", {
           defaultValue: "Результат каждого открытия можно проверить самостоятельно — без доверия к нам на слово.",

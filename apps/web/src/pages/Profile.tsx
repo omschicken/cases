@@ -116,7 +116,7 @@ export function ProfilePage() {
   return (
     <div className="profile-page">
       <PageHeader
-        kicker="DROPZONE / ACCOUNT"
+        kicker="CASECROW / ACCOUNT"
         title={user?.displayName ?? t("profile.title")}
         lede={user?.email}
         aside={<>
@@ -132,7 +132,7 @@ export function ProfilePage() {
       </nav>
 
       <section className="dz-panel" aria-label={t("profile.title")}>
-        <div className="dz-panel__label"><span>{t("profile.dashboard")}</span><span>DROPZONE / LIVE DATA</span></div>
+        <div className="dz-panel__label"><span>{t("profile.dashboard")}</span><span>CASECROW / LIVE DATA</span></div>
         {overviewError && <div className="catalog-notice" role="alert"><span>{t("profile.overviewError")}</span><button type="button" className="catalog-retry" onClick={loadOverview}>{t("common.retry")}</button></div>}
         <div className="dz-stat-grid" aria-busy={overviewLoading}>
           <Link to="/wallet" className="dz-stat"><span className="dz-stat__label">{t("wallet.title")}</span><span className="dz-stat__value">{wallet ? formatMinor(wallet.balanceMinor) : overviewLoading ? "…" : "—"}</span><span className="dz-stat__arrow" aria-hidden="true">↗</span></Link>

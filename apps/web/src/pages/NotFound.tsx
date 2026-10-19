@@ -6,7 +6,7 @@ export function NotFoundPage() {
 
   return (
     <main className="not-found-page" role="status">
-      <span className="section-kicker">DROPZONE / 404</span>
+      <span className="section-kicker">CASECROW / 404</span>
       <h1>{t("common.pageNotFound")}</h1>
       <p>{t("common.pageNotFoundHint")}</p>
       <Link to="/" className="open-button">{t("common.backToCatalog")}</Link>

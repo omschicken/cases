@@ -33,7 +33,7 @@
       "faq": "SSS",
       "fair": "Adil oyun"
     },
-    "footer": "DROPZONE — yalnızca 18 yaş ve üzeri. Kumar bağımlılık yapabilir. Sorumlu oynayın. Her kasa sonucu bağımsız olarak doğrulanabilir. Lisans durumu ve yasal belgeler gerçek ödemeler başlamadan önce yayımlanacaktır."
+    "footer": "CaseCrow — yalnızca 18 yaş ve üzeri. Kumar bağımlılık yapabilir. Sorumlu oynayın. Her kasa sonucu bağımsız olarak doğrulanabilir. Lisans durumu ve yasal belgeler gerçek ödemeler başlamadan önce yayımlanacaktır."
   },
   "dropsTicker": {
     "label": "Canlı düşenler",
@@ -597,7 +597,7 @@
     "claimError": "Bonus alınamadı",
     "promoBody": "Bakiyeye bonus almak için promosyon kodu gir.",
     "promoLabel": "Promosyon kodu",
-    "promoPlaceholder": "DROPZONE2024",
+    "promoPlaceholder": "CASECROW2024",
     "promoActivated": "Promosyon kodu aktifleştirildi",
     "promoAnother": "Başka bir kod gir",
     "promoError": "Promosyon kodu aktifleştirilemedi",

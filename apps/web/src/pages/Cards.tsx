@@ -46,7 +46,7 @@ export function CardsPage() {
 
   if (!user) return (
     <Gate
-      kicker="DROPZONE / CARDS"
+      kicker="CASECROW / CARDS"
       title={t("cards.title")}
       body={t("cards.authBody")}
       action={<Link to="/login" className="dz-commit">{t("nav.signIn")} <span aria-hidden="true">↗</span></Link>}

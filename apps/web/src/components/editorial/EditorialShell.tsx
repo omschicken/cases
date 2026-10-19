@@ -8,6 +8,7 @@ import type { WalletDto } from "../../lib/types";
 import { LanguageSwitcher } from "../LanguageSwitcher";
 import { Money } from "../Money";
 import { mainNavItems } from "../navIcons";
+import { CaseCrowLogo } from "../CaseCrowLogo";
 import "../../styles/design-lab.css";
 
 const topNav = mainNavItems.slice(0, 4);
@@ -49,7 +50,7 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
 
   return (
     <header className="fidelity-header">
-      <NavLink className="fidelity-logo" to="/">DROPZONE</NavLink>
+      <NavLink className="fidelity-logo" to="/" aria-label="CaseCrow"><CaseCrowLogo /></NavLink>
       <nav className="fidelity-topnav" aria-label={t("nav.main", { defaultValue: "Основная навигация" })}>
         {topNav.map(({ to, key, end }) => (
           <NavLink key={to} to={to} end={end} className={({ isActive }) => isActive || (activeSection === "cases" && key === "cases") ? "active" : undefined}>
@@ -84,7 +85,7 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
         ) : (
           <>
             <a className="fidelity-steam" href={`${API_URL}/auth/steam`}>{t("nav.logInSteam")}</a>
-            <NavLink className="fidelity-profile" to="/login" aria-label={t("nav.profile")}>DZ</NavLink>
+            <NavLink className="fidelity-profile" to="/login" aria-label={t("nav.profile")}><CaseCrowLogo compact /></NavLink>
           </>
         )}
         <LanguageSwitcher />

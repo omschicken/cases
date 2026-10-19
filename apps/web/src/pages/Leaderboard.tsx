@@ -57,7 +57,7 @@ export function LeaderboardPage() {
   return (
     <div className="lb-page">
       <PageHeader
-        kicker="DROPZONE / TOP"
+        kicker="CASECROW / TOP"
         title="LEADERBOARD"
         lede={t("leaderboard.lede", { defaultValue: "Лучшие игроки по сумме выигрышей из кейсов." })}
         aside={

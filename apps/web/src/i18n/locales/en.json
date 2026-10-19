@@ -33,7 +33,7 @@
       "faq": "FAQ",
       "fair": "Fair play"
     },
-    "footer": "DROPZONE — 18+ only. Gambling can be addictive. Play responsibly. Every case result can be independently verified. Licence status and legal documents will be published before real payments launch."
+    "footer": "CaseCrow — 18+ only. Gambling can be addictive. Play responsibly. Every case result can be independently verified. Licence status and legal documents will be published before real payments launch."
   },
   "dropsTicker": {
     "label": "Live drops",
@@ -632,7 +632,7 @@
     "claimError": "Failed to claim bonus",
     "promoBody": "Enter a promo code to get a balance bonus. Each code can be used once.",
     "promoLabel": "Promo code",
-    "promoPlaceholder": "DROPZONE2024",
+    "promoPlaceholder": "CASECROW2024",
     "promoActivated": "Promo code activated",
     "promoAnother": "Enter another one",
     "promoError": "Promo code not activated",

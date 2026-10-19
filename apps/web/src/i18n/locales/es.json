@@ -33,7 +33,7 @@
       "faq": "FAQ",
       "fair": "Juego limpio"
     },
-    "footer": "DROPZONE — solo mayores de 18 años. El juego puede causar adicción. Juega con responsabilidad. Cada resultado puede comprobarse de forma independiente. El estado de la licencia y los documentos legales se publicarán antes de habilitar pagos reales."
+    "footer": "CaseCrow — solo mayores de 18 años. El juego puede causar adicción. Juega con responsabilidad. Cada resultado puede comprobarse de forma independiente. El estado de la licencia y los documentos legales se publicarán antes de habilitar pagos reales."
   },
   "dropsTicker": {
     "label": "Drops en vivo",
@@ -597,7 +597,7 @@
     "claimError": "No se pudo recibir el bono",
     "promoBody": "Ingresa un código promo para recibir un bono en el saldo.",
     "promoLabel": "Código promo",
-    "promoPlaceholder": "DROPZONE2024",
+    "promoPlaceholder": "CASECROW2024",
     "promoActivated": "Código promo activado",
     "promoAnother": "Ingresar otro",
     "promoError": "Código promo no activado",

@@ -56,7 +56,7 @@ export function WalletPage() {
     <div className="wallet-page">
       <PromoFirstDeposit />
       <PageHeader
-        kicker="DROPZONE / WALLET"
+        kicker="CASECROW / WALLET"
         title={t("wallet.title")}
         lede={t("wallet.lede", { defaultValue: "Пополнение, вывод и полная история операций по счёту." })}
         aside={<Readout label={t("wallet.balance", { defaultValue: "Баланс" })} value={wallet ? formatMinor(wallet.balanceMinor) : "…"} />}
