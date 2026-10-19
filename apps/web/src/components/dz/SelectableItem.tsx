@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { rarityColor } from "../../lib/rarity";
 import type { ItemRarity } from "../../lib/types";
+import { EditorialItemImage } from "../editorial/EditorialItemImage";
 
 interface SelectableItemProps {
   name: string;
@@ -42,9 +43,7 @@ export function SelectableItem({
     >
       <span className="dz-pick__tick" aria-hidden="true">✓</span>
       {note && <span className="dz-pick__rarity">{note}</span>}
-      {imageUrl
-        ? <img className="dz-pick__art" src={imageUrl} alt="" loading="lazy" decoding="async" />
-        : <span className="dz-pick__art" aria-hidden="true" />}
+      <EditorialItemImage className="dz-pick__art" name={name} imageUrl={imageUrl} decorative />
       {rarityLabel && <span className="dz-pick__rarity">{rarityLabel}</span>}
       <span className="dz-pick__name">{name}</span>
       <span className="dz-pick__value">{value}</span>
@@ -95,9 +94,7 @@ export function Outcome({
 }) {
   return (
     <section className={`dz-outcome dz-outcome--${won ? "won" : "lost"}`} role="status" aria-live="polite">
-      {imageUrl
-        ? <img className="dz-outcome__art" src={imageUrl} alt="" />
-        : <span className="dz-outcome__art" aria-hidden="true" />}
+      <EditorialItemImage className="dz-outcome__art" name={name} imageUrl={imageUrl} decorative loading="eager" />
       <div>
         <span className="dz-outcome__label">{label}</span>
         <h2 className="dz-outcome__name">{name}</h2>

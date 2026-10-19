@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { formatMinor } from "../../lib/money";
 import { RARITY_LABELS, rarityColor } from "../../lib/rarity";
 import type { CaseItem, OpenCaseResult } from "../../lib/types";
+import { EditorialItemImage } from "../editorial/EditorialItemImage";
 
 export type ProtocolPhase = "arming" | "reveal";
 
@@ -81,7 +82,7 @@ export function DropProtocol({
         <div className={`dze-opening__visual ${phase === "reveal" ? "is-result" : "is-opening"}`}>
           <span className="dze-opening__ring" aria-hidden="true" />
           {phase === "reveal" && item
-            ? <img className="dze-opening__item" src={item.imageUrl} alt={item.name} />
+            ? <EditorialItemImage className="dze-opening__item" name={item.name} imageUrl={item.imageUrl} loading="eager" />
             : <img className="dze-opening__case" src={caseImageUrl} alt={caseName} />}
         </div>
         <div className="dze-opening__bottom">

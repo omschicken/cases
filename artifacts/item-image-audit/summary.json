@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-10-19T09:01:15.196Z",
+  "apiUrl": "https://cases-x18t.vercel.app/api/cases",
+  "activeCases": 15,
+  "items": 137,
+  "currentReachable": 137,
+  "placeholders": 80,
+  "exactOfficialMatches": 135,
+  "officialReplacements": 135,
+  "fallbacksRequired": 2,
+  "slugIssues": [],
+  "brokenCurrentItemUrls": 0,
+  "brokenCaseImageUrls": 0
+}

@@ -7,6 +7,8 @@ import { formatMinor } from "../lib/money";
 import { RARITY_LABELS, RARITY_RANK, rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
 import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol";
+import { EditorialItemImage } from "../components/editorial/EditorialItemImage";
+import { resolveItemImage } from "../lib/itemImages";
 import { Money } from "../components/Money";
 import staticCaseArt from "../assets/case-detail-editorial/static-case-cutout.webp";
 import ignitionCaseArt from "../assets/case-detail-editorial/ignition-case.webp";
@@ -55,7 +57,7 @@ function groupCaseItems(items: CaseItem[]): SkinGroup[] {
     return {
       name,
       rarity: variants[0].rarity,
-      imageUrl: byPrice[byPrice.length - 1].imageUrl,
+      imageUrl: resolveItemImage(name, byPrice[byPrice.length - 1].imageUrl).url ?? "",
       items: byWear,
       totalWeight: variants.reduce((sum, item) => sum + item.weight, 0),
       minValueMinor: byPrice[0].valueMinor,
@@ -346,7 +348,7 @@ export function CaseDetailPage() {
           aria-live="polite"
           style={{ "--dz-rarity": rarityColor(winningItem.rarity) } as CSSProperties}
         >
-          <img className="dz-record__art" src={winningItem.imageUrl} alt="" />
+          <EditorialItemImage className="dz-record__art" name={winningItem.name} imageUrl={winningItem.imageUrl} decorative loading="eager" />
           <div>
             <span className="dz-record__label">
               {result
@@ -426,7 +428,7 @@ export function CaseDetailPage() {
                 {groups.map((group) => (
                   <article key={group.name} className="dza-item" style={{ "--rc": rarityColor(group.rarity) } as CSSProperties}>
                     <span className="dza-item__chance">{groupChancePercent(group, totalWeight)}%</span>
-                    <img src={group.imageUrl} alt={group.name} loading="lazy" />
+                    <EditorialItemImage name={group.name} imageUrl={group.imageUrl} />
                     <h4 className="dza-item__name">{group.name}</h4>
                     <span className="dza-item__value">
                       {group.minValueMinor === group.maxValueMinor

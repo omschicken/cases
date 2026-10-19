@@ -164,6 +164,8 @@
 .case-detail .dza-item::after { content: ""; position: absolute; inset: auto 16px 0; height: 3px; background: var(--rc); }
 .case-detail .dza-item__chance { position: absolute; top: 14px; right: 14px; color: #8b9089; font-size: 10px; font-weight: 700; }
 .case-detail .dza-item img { width: 100%; height: 150px; margin: 10px 0 6px; object-fit: contain; }
+.dze-opening__item.dze-item-fallback { z-index: 1; width: min(68%, 560px); height: 300px; border-color: color-mix(in srgb, var(--dze-accent) 30%, #d8d8d1); }
+.dz-record__art.dze-item-fallback { flex: 0 0 auto; height: 180px; }
 .case-detail .dza-item__name { margin: 0 0 8px; color: var(--dze-ink); font-size: 14px; line-height: 1.3; }
 .case-detail .dza-item__value { display: block; color: var(--dze-ink); font-size: 13px; font-weight: 700; }
 .case-detail .dza-item__wear { display: block; margin-top: 8px; color: #969b94; font-size: 9px; letter-spacing: .09em; }
