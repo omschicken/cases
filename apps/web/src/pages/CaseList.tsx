@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import heroImage from "../assets/editorial-kit/hero-editorial.webp";
+import heroImage from "../assets/casecrow-approved/cases/webp/case_01.webp";
 import staticImage from "../assets/editorial-kit/static-case.webp";
 import ignitionImage from "../assets/editorial-kit/ignition-case.webp";
 import tidalImage from "../assets/editorial-kit/tidal-case.webp";
@@ -100,17 +100,14 @@ export function CaseListPage() {
         <div className="fidelity-hero-copy">
           <p>Коллекции&nbsp; / &nbsp;Counter-Strike 2</p>
           <h1 id="fidelity-title">Предметы<br />с <span>характером.</span></h1>
-          <div className="fidelity-mobile-art"><img src={heroImage} alt="Светлый коллекционный кейс и винтовка" /></div>
+          <div className="fidelity-mobile-art"><img src={heroImage} alt="Коллекционный кейс CaseCrow" /></div>
           <div className="fidelity-hero-bottom">
             <p>Открывай кейсы, собирай редкие скины<br />и формируй собственную коллекцию.</p>
             <a href="#catalog">Открыть кейсы <span>→</span></a>
           </div>
         </div>
         <div className="fidelity-hero-art">
-          <img src={heroImage} alt="Светлый коллекционный кейс и винтовка" />
-          <span>Качество<br />Стиль<br />Коллекции<br />Твой выбор</span>
-          <b>01&nbsp; / &nbsp;03</b>
-          <div className="fidelity-hero-arrows" aria-hidden="true"><i>‹</i><i>›</i></div>
+          <img src={heroImage} alt="Коллекционный кейс CaseCrow" />
         </div>
       </section>
 
