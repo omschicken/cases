@@ -67,7 +67,11 @@ export function CaseListPage() {
       .catch((caught: unknown) => {
         if (!active) return;
         setCases([]);
-        setError(caught instanceof ApiError ? caught.message : "Не удалось загрузить каталог");
+        setError(
+          caught instanceof ApiError && caught.status === 0
+            ? "Каталог временно недоступен. Проверьте подключение и попробуйте ещё раз."
+            : "Не удалось загрузить каталог. Попробуйте повторить запрос.",
+        );
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -113,7 +117,7 @@ export function CaseListPage() {
 
       <section className="fidelity-catalog" id="catalog" aria-labelledby="catalog-title">
         <div className="fidelity-catalog-head">
-          <h2 id="catalog-title">Коллекции <small>{cases.length}</small></h2>
+          <h2 id="catalog-title">Коллекции <small>{loading || error ? "—" : cases.length}</small></h2>
           <div className="fidelity-filters" aria-label="Фильтры каталога">
             {FILTERS.map((item) => (
               <button className={filter === item.value ? "active" : ""} onClick={() => setFilter(item.value)} type="button" key={item.value}>{item.label}</button>
@@ -144,7 +148,9 @@ export function CaseListPage() {
               </div>
             </article>
           ))}
-          {!loading && visibleCases.length === 0 && !error && <p className="fidelity-empty">Кейсы не найдены</p>}
+          {!loading && visibleCases.length === 0 && !error && (
+            <p className="fidelity-empty">{cases.length === 0 ? "Активных кейсов пока нет" : "По вашему запросу кейсы не найдены"}</p>
+          )}
         </div>
       </section>
 
