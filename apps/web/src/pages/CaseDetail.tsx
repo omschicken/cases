@@ -94,38 +94,22 @@ function weightedSample(items: CaseItem[]): CaseItem {
   return items[items.length - 1];
 }
 
-const PREVIEW_ART = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 420'%3E%3Crect width='640' height='420' fill='%23151b2d'/%3E%3Cpath d='M80 300 220 100l140 200 90-120 110 120' fill='none' stroke='%23b86bff' stroke-width='10'/%3E%3C/svg%3E";
-
 const EDITORIAL_CASE_ART: Record<string, string> = {
+  static: staticCaseArt,
+  ignition: ignitionCaseArt,
+  tidal: tidalCaseArt,
+  phantom: phantomCaseArt,
   "static-case": staticCaseArt,
   "ignition-case": ignitionCaseArt,
   "tidal-case": tidalCaseArt,
   "phantom-case": phantomCaseArt,
 };
 
-function previewCase(slug: string): CaseDto {
-  const names: Record<string, [string, string]> = {
-    "ignition-case": ["Ignition Case", "14900"],
-    "static-case": ["Static Case", "29900"],
-    "overdrive-case": ["Overdrive Case", "59900"],
-  };
-  const [name, priceMinor] = names[slug] ?? ["Preview Case", "14900"];
-  return {
-    id: `preview-${slug}`, slug, name, priceMinor, currency: "RUB", imageUrl: PREVIEW_ART, isActive: true,
-    items: [
-      { id: `${slug}-common`, name: "USP-S | Printstream", imageUrl: PREVIEW_ART, weight: 60, valueMinor: "9900", currency: "RUB", rarity: "RESTRICTED" },
-      { id: `${slug}-rare`, name: "AK-47 | Slate", imageUrl: PREVIEW_ART, weight: 30, valueMinor: "29900", currency: "RUB", rarity: "CLASSIFIED" },
-      { id: `${slug}-gold`, name: "★ Нож | Aurora", imageUrl: PREVIEW_ART, weight: 10, valueMinor: "129900", currency: "RUB", rarity: "GOLD" },
-    ],
-  };
-}
-
 export function CaseDetailPage() {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
   const [theCase, setTheCase] = useState<CaseDto | null>(null);
-  const [isPreview, setIsPreview] = useState(false);
   const [seedHash, setSeedHash] = useState<string | null>(null);
   const [clientSeed, setClientSeed] = useState<string | null>(null);
   const [opening, setOpening] = useState(false);
@@ -146,7 +130,6 @@ export function CaseDetailPage() {
     let active = true;
     setTheCase(null);
     setError(null);
-    setIsPreview(false);
     setResult(null);
     setDemoItem(null);
     setRevealed(false);
@@ -155,7 +138,6 @@ export function CaseDetailPage() {
       .then((data) => {
         if (!active) return;
         setTheCase(data);
-        setIsPreview(false);
       })
       .catch((err: unknown) => {
         if (!active) return;
@@ -164,15 +146,7 @@ export function CaseDetailPage() {
           return;
         }
 
-        // Only known demo slugs may use the explicitly labeled offline preview.
-        // An arbitrary URL must never become a plausible-looking case.
-        const knownPreviewSlugs = ["ignition-case", "static-case", "overdrive-case"];
-        if (knownPreviewSlugs.includes(slug)) {
-          setTheCase(previewCase(slug));
-          setIsPreview(true);
-        } else {
-          setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotLoadCase", { defaultValue: "Не удалось загрузить кейс" }));
-        }
+        setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotLoadCase", { defaultValue: "Не удалось загрузить кейс" }));
       });
     return () => { active = false; };
   }, [slug, t, requestId]);
@@ -309,14 +283,8 @@ export function CaseDetailPage() {
           onSkip={skipAnimation}
           onClose={() => setProtocolDismissed(true)}
           onOpenAgain={openCase}
-          canOpenAgain={Boolean(user) && !isPreview && theCase.isActive}
+          canOpenAgain={Boolean(user) && theCase.isActive}
         />
-      )}
-      {isPreview && (
-        <div id="catalog-preview-notice" className="catalog-notice" role="status" aria-live="polite">
-          <span>{t("caseDetail.previewNotice", { defaultValue: "Demo mode: the item service is currently unavailable. Real openings and deductions are disabled." })}</span>
-          <button type="button" className="catalog-retry" onClick={() => setRequestId((id) => id + 1)}>{t("common.retry", { defaultValue: "Retry" })}</button>
-        </div>
       )}
       {/* Editorial detail header */}
       <header className="dza-head">
@@ -345,10 +313,10 @@ export function CaseDetailPage() {
           <div className="dza-arena__price">
             <span className="dza-arena__label">{t("caseDetail.casePrice", { defaultValue: "Цена" })}</span>
             <Money minor={theCase.priceMinor} currency={theCase.currency} />
-            <span className="dza-arena__label">{isPreview ? t("caseDetail.demoOnly", { defaultValue: "DEMO ONLY" }) : t("caseDetail.provablyFair")}</span>
+            <span className="dza-arena__label">{t("caseDetail.provablyFair")}</span>
           </div>
 
-          {user && !isPreview ? (
+          {user ? (
             <>
               <button onClick={openCase} disabled={opening || !theCase.isActive} className="dza-open">
                 {!theCase.isActive ? t("caseDetail.unavailable", { defaultValue: "Недоступен" }) : opening ? t("caseDetail.rolling") : t("caseDetail.open", { defaultValue: "Открыть" })}
@@ -359,13 +327,11 @@ export function CaseDetailPage() {
             </>
           ) : (
             <>
-              <button onClick={demoSpin} disabled={opening} className="dza-open" aria-describedby={isPreview ? "catalog-preview-notice" : undefined}>
+              <button onClick={demoSpin} disabled={opening} className="dza-open">
                 {opening ? t("caseDetail.rolling") : t("caseDetail.demoSpin")}
               </button>
               <p className="dza-hint">
-                {isPreview
-                  ? t("caseDetail.previewHint")
-                  : <>{t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link></>}
+                <>{t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link></>
               </p>
             </>
           )}

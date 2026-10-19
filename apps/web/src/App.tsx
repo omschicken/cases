@@ -37,17 +37,17 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {DesignLabPage && (
-            <Route
-              path="/design-lab"
-              element={<Suspense fallback={null}><DesignLabPage /></Suspense>}
-            />
-          )}
           <Route element={<EditorialLayout />}>
+            <Route path="/" element={<CaseListPage />} />
             <Route path="/cases/:slug" element={<CaseDetailPage />} />
+            {DesignLabPage && (
+              <Route
+                path="/design-lab"
+                element={<Suspense fallback={null}><DesignLabPage /></Suspense>}
+              />
+            )}
           </Route>
           <Route element={<Layout />}>
-            <Route path="/" element={<CaseListPage />} />
             <Route path="/verify/:openEventId" element={<VerifyPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
