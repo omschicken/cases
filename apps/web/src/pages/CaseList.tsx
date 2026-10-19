@@ -1,24 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import heroImage from "../assets/casecrow-approved/cases/webp/case_01.webp";
-import staticImage from "../assets/editorial-kit/static-case.webp";
-import ignitionImage from "../assets/editorial-kit/ignition-case.webp";
-import tidalImage from "../assets/editorial-kit/tidal-case.webp";
-import phantomImage from "../assets/editorial-kit/phantom-case.webp";
 import promoImage from "../assets/editorial-kit/promo.webp";
 import { api, ApiError } from "../lib/api";
+import { caseVersionLabel, resolveCaseArt } from "../lib/caseArt";
 import { formatMinor } from "../lib/money";
 import type { CaseDto } from "../lib/types";
 
 type SortMode = "default" | "priceAsc" | "priceDesc" | "name";
 type PriceFilter = "all" | "entry" | "core" | "apex";
-
-const EDITORIAL_ART: Record<string, string> = {
-  static: staticImage,
-  ignition: ignitionImage,
-  tidal: tidalImage,
-  phantom: phantomImage,
-};
 
 const FILTERS: Array<{ value: PriceFilter; label: string }> = [
   { value: "all", label: "Все кейсы" },
@@ -33,10 +23,6 @@ function belongsToFilter(item: CaseDto, filter: PriceFilter): boolean {
   if (filter === "entry") return price < 50_000;
   if (filter === "core") return price >= 50_000 && price <= 150_000;
   return price > 150_000;
-}
-
-function caseArt(item: CaseDto): string {
-  return EDITORIAL_ART[item.slug] ?? item.imageUrl;
 }
 
 export function CaseListPage() {
@@ -136,18 +122,22 @@ export function CaseListPage() {
 
         <div className="fidelity-card-grid" aria-busy={loading}>
           {loading && Array.from({ length: 8 }, (_, index) => <div className="fidelity-card fidelity-card-skeleton" key={index}><div className="fidelity-card-art" /><div className="fidelity-card-info" /></div>)}
-          {!loading && visibleCases.map((item) => (
-            <article className="fidelity-card" key={item.id}>
-              <Link className="fidelity-card-art" to={`/cases/${item.slug}`} aria-label={`Открыть страницу ${item.name}`}>
-                <img src={caseArt(item)} alt={item.name} loading="lazy" />
-                <span>{item.isActive ? "Доступен" : "Недоступен"}</span>
-              </Link>
-              <div className="fidelity-card-info">
-                <div><h3>{item.name}</h3><strong>{formatMinor(item.priceMinor, item.currency)}</strong></div>
-                <Link to={`/cases/${item.slug}`}>Открыть <span>→</span></Link>
-              </div>
-            </article>
-          ))}
+          {!loading && visibleCases.map((item) => {
+            const version = caseVersionLabel(item.slug);
+            return (
+              <article className="fidelity-card" key={item.id}>
+                <Link className="fidelity-card-art" to={`/cases/${item.slug}`} aria-label={`Открыть страницу ${item.name}`}>
+                  <img src={resolveCaseArt(item.slug, item.imageUrl)} alt={item.name} loading="lazy" />
+                  <span>{item.isActive ? "Доступен" : "Недоступен"}</span>
+                  {version ? <em className="fidelity-card-version">{version}</em> : null}
+                </Link>
+                <div className="fidelity-card-info">
+                  <div><h3>{item.name}</h3><strong>{formatMinor(item.priceMinor, item.currency)}</strong></div>
+                  <Link to={`/cases/${item.slug}`}>Открыть <span>→</span></Link>
+                </div>
+              </article>
+            );
+          })}
           {!loading && visibleCases.length === 0 && !error && (
             <p className="fidelity-empty">{cases.length === 0 ? "Активных кейсов пока нет" : "По вашему запросу кейсы не найдены"}</p>
           )}
