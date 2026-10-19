@@ -1,6 +1,8 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { Layout } from "./components/Layout";
+import { EditorialLayout } from "./components/editorial/EditorialShell";
 import { ProtectedRoute, AdminRoute } from "./components/ProtectedRoute";
 import { LoginPage } from "./pages/Login";
 import { RegisterPage } from "./pages/Register";
@@ -26,14 +28,26 @@ import { NotFoundPage } from "./pages/NotFound";
 import { SteamCallbackPage } from "./pages/SteamCallback";
 import { SteamCompletePage } from "./pages/SteamComplete";
 
+const DesignLabPage = import.meta.env.DEV
+  ? lazy(() => import("./pages/DesignLab").then((module) => ({ default: module.DesignLabPage })))
+  : null;
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route element={<Layout />}>
+          <Route element={<EditorialLayout />}>
             <Route path="/" element={<CaseListPage />} />
             <Route path="/cases/:slug" element={<CaseDetailPage />} />
+            {DesignLabPage && (
+              <Route
+                path="/design-lab"
+                element={<Suspense fallback={null}><DesignLabPage /></Suspense>}
+              />
+            )}
+          </Route>
+          <Route element={<Layout />}>
             <Route path="/verify/:openEventId" element={<VerifyPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />

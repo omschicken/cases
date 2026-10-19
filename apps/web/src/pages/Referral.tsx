@@ -31,7 +31,7 @@ export function ReferralPage() {
 
   if (failed && !stats) return (
     <div className="referral-page">
-      <PageHeader kicker="DROPZONE / REFERRAL" title={t("referral.title")} lede={t("referral.description")} />
+      <PageHeader kicker="CASECROW / REFERRAL" title={t("referral.title")} lede={t("referral.description")} />
       <div className="dz-empty" role="alert">
         <span className="dz-empty__mark" aria-hidden="true">!</span>
         <h2 className="dz-empty__title">{t("common.error", { defaultValue: "Не удалось загрузить" })}</h2>
@@ -44,7 +44,7 @@ export function ReferralPage() {
 
   if (!stats) return (
     <div className="referral-page">
-      <PageHeader kicker="DROPZONE / REFERRAL" title={t("referral.title")} lede={t("referral.description")} />
+      <PageHeader kicker="CASECROW / REFERRAL" title={t("referral.title")} lede={t("referral.description")} />
       <p aria-busy="true">{t("common.loading")}</p>
     </div>
   );
@@ -53,7 +53,7 @@ export function ReferralPage() {
 
   return (
     <div className="referral-page">
-      <PageHeader kicker="DROPZONE / REFERRAL" title={t("referral.title")} lede={t("referral.description")} />
+      <PageHeader kicker="CASECROW / REFERRAL" title={t("referral.title")} lede={t("referral.description")} />
       <div className="referral-link-panel">
         <span>LINK / SHARE</span>
         <code>{link}</code>

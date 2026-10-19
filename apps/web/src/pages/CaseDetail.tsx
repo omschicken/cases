@@ -7,9 +7,14 @@ import { formatMinor } from "../lib/money";
 import { RARITY_LABELS, RARITY_RANK, rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
 import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol";
+import { EditorialItemImage } from "../components/editorial/EditorialItemImage";
+import { resolveItemImage } from "../lib/itemImages";
 import { Money } from "../components/Money";
-import { CaseChest, caseVisualIdentity } from "../components/CaseChest";
-import { CaseStage } from "../components/CaseStage";
+import staticCaseArt from "../assets/case-detail-editorial/static-case-cutout.webp";
+import ignitionCaseArt from "../assets/case-detail-editorial/ignition-case.webp";
+import tidalCaseArt from "../assets/case-detail-editorial/tidal-case.webp";
+import phantomCaseArt from "../assets/case-detail-editorial/phantom-case.webp";
+import "../styles/case-detail-editorial.css";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
 
 const EXTERIOR_PATTERN = / \((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
@@ -52,7 +57,7 @@ function groupCaseItems(items: CaseItem[]): SkinGroup[] {
     return {
       name,
       rarity: variants[0].rarity,
-      imageUrl: byPrice[byPrice.length - 1].imageUrl,
+      imageUrl: resolveItemImage(name, byPrice[byPrice.length - 1].imageUrl).url ?? "",
       items: byWear,
       totalWeight: variants.reduce((sum, item) => sum + item.weight, 0),
       minValueMinor: byPrice[0].valueMinor,
@@ -91,31 +96,22 @@ function weightedSample(items: CaseItem[]): CaseItem {
   return items[items.length - 1];
 }
 
-const PREVIEW_ART = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 420'%3E%3Crect width='640' height='420' fill='%23151b2d'/%3E%3Cpath d='M80 300 220 100l140 200 90-120 110 120' fill='none' stroke='%23b86bff' stroke-width='10'/%3E%3C/svg%3E";
-
-function previewCase(slug: string): CaseDto {
-  const names: Record<string, [string, string]> = {
-    "ignition-case": ["Ignition Case", "14900"],
-    "static-case": ["Static Case", "29900"],
-    "overdrive-case": ["Overdrive Case", "59900"],
-  };
-  const [name, priceMinor] = names[slug] ?? ["Preview Case", "14900"];
-  return {
-    id: `preview-${slug}`, slug, name, priceMinor, currency: "RUB", imageUrl: PREVIEW_ART, isActive: true,
-    items: [
-      { id: `${slug}-common`, name: "USP-S | Printstream", imageUrl: PREVIEW_ART, weight: 60, valueMinor: "9900", currency: "RUB", rarity: "RESTRICTED" },
-      { id: `${slug}-rare`, name: "AK-47 | Slate", imageUrl: PREVIEW_ART, weight: 30, valueMinor: "29900", currency: "RUB", rarity: "CLASSIFIED" },
-      { id: `${slug}-gold`, name: "★ Нож | Aurora", imageUrl: PREVIEW_ART, weight: 10, valueMinor: "129900", currency: "RUB", rarity: "GOLD" },
-    ],
-  };
-}
+const EDITORIAL_CASE_ART: Record<string, string> = {
+  static: staticCaseArt,
+  ignition: ignitionCaseArt,
+  tidal: tidalCaseArt,
+  phantom: phantomCaseArt,
+  "static-case": staticCaseArt,
+  "ignition-case": ignitionCaseArt,
+  "tidal-case": tidalCaseArt,
+  "phantom-case": phantomCaseArt,
+};
 
 export function CaseDetailPage() {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
   const [theCase, setTheCase] = useState<CaseDto | null>(null);
-  const [isPreview, setIsPreview] = useState(false);
   const [seedHash, setSeedHash] = useState<string | null>(null);
   const [clientSeed, setClientSeed] = useState<string | null>(null);
   const [opening, setOpening] = useState(false);
@@ -128,13 +124,14 @@ export function CaseDetailPage() {
   // panel, so closing it never hides the provably-fair record.
   const [protocolDismissed, setProtocolDismissed] = useState(false);
   const openingLockRef = useRef(false);
+  const requestPendingRef = useRef(false);
+  const skipRequestedRef = useRef(false);
 
   useEffect(() => {
     if (!slug) return;
     let active = true;
     setTheCase(null);
     setError(null);
-    setIsPreview(false);
     setResult(null);
     setDemoItem(null);
     setRevealed(false);
@@ -143,7 +140,6 @@ export function CaseDetailPage() {
       .then((data) => {
         if (!active) return;
         setTheCase(data);
-        setIsPreview(false);
       })
       .catch((err: unknown) => {
         if (!active) return;
@@ -152,15 +148,7 @@ export function CaseDetailPage() {
           return;
         }
 
-        // Only known demo slugs may use the explicitly labeled offline preview.
-        // An arbitrary URL must never become a plausible-looking case.
-        const knownPreviewSlugs = ["ignition-case", "static-case", "overdrive-case"];
-        if (knownPreviewSlugs.includes(slug)) {
-          setTheCase(previewCase(slug));
-          setIsPreview(true);
-        } else {
-          setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotLoadCase", { defaultValue: "Не удалось загрузить кейс" }));
-        }
+        setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotLoadCase", { defaultValue: "Не удалось загрузить кейс" }));
       });
     return () => { active = false; };
   }, [slug, t, requestId]);
@@ -176,16 +164,18 @@ export function CaseDetailPage() {
       .catch(() => undefined);
   }, [user]);
 
-  /** Fires once the chest's own burst/reveal overlay has settled on the item. */
-  function handleChestRevealed() {
+  function finishOpening() {
     setOpening(false);
     setRevealed(true);
     openingLockRef.current = false;
+    skipRequestedRef.current = false;
   }
 
   async function openCase() {
-    if (!theCase || openingLockRef.current) return;
+    if (!theCase || !theCase.isActive || openingLockRef.current) return;
     openingLockRef.current = true;
+    requestPendingRef.current = true;
+    skipRequestedRef.current = false;
     setError(null);
     setOpening(true);
     setRevealed(false);
@@ -198,10 +188,14 @@ export function CaseDetailPage() {
       // holds its own reveal step until this resolves and winningItem is set.
       const response = await api.post<OpenCaseResult>("/cases/open", { caseId: theCase.id });
       setResult(response);
+      requestPendingRef.current = false;
+      if (skipRequestedRef.current) finishOpening();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotOpenCase"));
       setOpening(false);
+      requestPendingRef.current = false;
       openingLockRef.current = false;
+      skipRequestedRef.current = false;
     }
   }
 
@@ -211,6 +205,8 @@ export function CaseDetailPage() {
   function demoSpin() {
     if (!theCase || openingLockRef.current) return;
     openingLockRef.current = true;
+    requestPendingRef.current = false;
+    skipRequestedRef.current = false;
     setError(null);
     setResult(null);
     setRevealed(false);
@@ -218,6 +214,20 @@ export function CaseDetailPage() {
     setOpening(true);
     setDemoItem(weightedSample(theCase.items));
   }
+
+  const winningItem = result?.item ?? demoItem;
+
+  useEffect(() => {
+    if (!opening || !winningItem || requestPendingRef.current || skipRequestedRef.current) return;
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 1100;
+    const timer = window.setTimeout(() => {
+      setOpening(false);
+      setRevealed(true);
+      openingLockRef.current = false;
+      skipRequestedRef.current = false;
+    }, duration);
+    return () => window.clearTimeout(timer);
+  }, [opening, winningItem]);
 
   if (error && !theCase) return (
     <div className="case-load-error" role="alert">
@@ -234,18 +244,6 @@ export function CaseDetailPage() {
       <span className="loading-line loading-line-button" />
     </div>
   );
-
-  const winningItem = result?.item ?? demoItem;
-
-  // The "chase" item teased above the closed chest: the rarest one in the
-  // case that has a real picture (not a generated placeholder).
-  const chaseItem = [...theCase.items]
-    .filter((item) => item.imageUrl && !item.imageUrl.startsWith("data:") && !item.imageUrl.includes("placehold.co"))
-    .sort(
-      (a, b) =>
-        RARITY_RANK.indexOf(a.rarity) - RARITY_RANK.indexOf(b.rarity) ||
-        Number(BigInt(b.valueMinor) - BigInt(a.valueMinor)),
-    )[0];
 
   // Phase is derived, never stored, so it cannot drift from the opening
   // state it describes. A failed request leaves opening false with no item,
@@ -264,9 +262,8 @@ export function CaseDetailPage() {
    *  the first frame, so this just cuts the chest overlay's own choreography
    *  short and shows what already dropped — it never re-rolls. */
   function skipAnimation() {
-    setOpening(false);
-    setRevealed(true);
-    openingLockRef.current = false;
+    skipRequestedRef.current = true;
+    if (!requestPendingRef.current && winningItem) finishOpening();
   }
   const skinGroups = groupCaseItems(theCase.items);
   const totalWeight = theCase.items.reduce((total, item) => total + item.weight, 0);
@@ -284,32 +281,14 @@ export function CaseDetailPage() {
           result={result}
           oddsPercent={winningItem ? dropChancePercent(winningItem, theCase.items) : undefined}
           isOpening={opening}
-          itemRarity={winningItem?.rarity}
-          caseChest={
-            <CaseChest
-              className="case-chest-detail"
-              caseName={theCase.name}
-              caseSlug={theCase.slug}
-              opening={opening}
-              itemImageUrl={winningItem?.imageUrl}
-              itemName={winningItem?.name}
-              itemRarity={winningItem?.rarity}
-              onRevealed={handleChestRevealed}
-            />
-          }
+          caseImageUrl={EDITORIAL_CASE_ART[theCase.slug] ?? theCase.imageUrl}
           onSkip={skipAnimation}
           onClose={() => setProtocolDismissed(true)}
           onOpenAgain={openCase}
-          canOpenAgain={Boolean(user) && !isPreview}
+          canOpenAgain={Boolean(user) && theCase.isActive}
         />
       )}
-      {isPreview && (
-        <div id="catalog-preview-notice" className="catalog-notice" role="status" aria-live="polite">
-          <span>{t("caseDetail.previewNotice", { defaultValue: "Demo mode: the item service is currently unavailable. Real openings and deductions are disabled." })}</span>
-          <button type="button" className="catalog-retry" onClick={() => setRequestId((id) => id + 1)}>{t("common.retry", { defaultValue: "Retry" })}</button>
-        </div>
-      )}
-      {/* ZONE 1 — slim header */}
+      {/* Editorial detail header */}
       <header className="dza-head">
         <Link to="/" className="dza-back" aria-label={t("caseDetail.backToCases", { defaultValue: "Назад к кейсам" })}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -323,29 +302,26 @@ export function CaseDetailPage() {
         </nav>
       </header>
 
-      {/* ZONE 2 — arena */}
-      <section id="opening-station" className="dza-arena" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
-        <div className="dza-arena__stage">
-          <CaseStage
-            caseName={theCase.name}
-            caseSlug={theCase.slug}
-            caseImageUrl={theCase.imageUrl}
-            chase={chaseItem ? { name: chaseItem.name, imageUrl: chaseItem.imageUrl, rarity: chaseItem.rarity } : undefined}
-            hidden={opening}
-          />
+      <section id="opening-station" className="dza-arena dze-product" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
+        <div className="dza-arena__stage dze-studio">
+          <img className="dze-studio__art" src={EDITORIAL_CASE_ART[theCase.slug] ?? theCase.imageUrl} alt={theCase.name} />
         </div>
 
-        <div className="dza-arena__panel">
+        <div className="dza-arena__panel dze-product__info">
+          <span className="dze-eyebrow">● {t("caseDetail.crumbCases", { defaultValue: "Кейсы" })} / {theCase.slug.replace(/-/g, " ")}</span>
+          <h1 className="dze-title">{theCase.name.replace(/\s*case$/i, "")} <span>Case.</span></h1>
+          <p className="dze-description">{t("caseDetail.editorialDescription", { defaultValue: "Изучи содержимое коллекции, реальные шансы и выбери свой следующий предмет." })}</p>
+          <div className="dze-meta"><div><small>{t("caseDetail.status", { defaultValue: "СТАТУС" })}</small><strong>{theCase.isActive ? t("caseDetail.available", { defaultValue: "Доступен" }) : t("caseDetail.unavailable", { defaultValue: "Недоступен" })}</strong></div><div><small>{t("caseDetail.mode", { defaultValue: "РЕЖИМ" })}</small><strong>{t("caseDetail.openingStation", { defaultValue: "Открытие кейса" })}</strong></div></div>
           <div className="dza-arena__price">
             <span className="dza-arena__label">{t("caseDetail.casePrice", { defaultValue: "Цена" })}</span>
             <Money minor={theCase.priceMinor} currency={theCase.currency} />
-            <span className="dza-arena__label">{isPreview ? t("caseDetail.demoOnly", { defaultValue: "DEMO ONLY" }) : t("caseDetail.provablyFair")}</span>
+            <span className="dza-arena__label">{t("caseDetail.provablyFair")}</span>
           </div>
 
-          {user && !isPreview ? (
+          {user ? (
             <>
-              <button onClick={openCase} disabled={opening} className="dza-open">
-                {opening ? t("caseDetail.rolling") : t("caseDetail.open", { defaultValue: "Открыть" })}
+              <button onClick={openCase} disabled={opening || !theCase.isActive} className="dza-open">
+                {!theCase.isActive ? t("caseDetail.unavailable", { defaultValue: "Недоступен" }) : opening ? t("caseDetail.rolling") : t("caseDetail.open", { defaultValue: "Открыть" })}
               </button>
               <button onClick={demoSpin} disabled={opening} className="dza-demo">
                 {t("caseDetail.demoSpin")}
@@ -353,13 +329,11 @@ export function CaseDetailPage() {
             </>
           ) : (
             <>
-              <button onClick={demoSpin} disabled={opening} className="dza-open" aria-describedby={isPreview ? "catalog-preview-notice" : undefined}>
+              <button onClick={demoSpin} disabled={opening} className="dza-open">
                 {opening ? t("caseDetail.rolling") : t("caseDetail.demoSpin")}
               </button>
               <p className="dza-hint">
-                {isPreview
-                  ? t("caseDetail.previewHint")
-                  : <>{t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link></>}
+                <>{t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link></>
               </p>
             </>
           )}
@@ -374,7 +348,7 @@ export function CaseDetailPage() {
           aria-live="polite"
           style={{ "--dz-rarity": rarityColor(winningItem.rarity) } as CSSProperties}
         >
-          <img className="dz-record__art" src={winningItem.imageUrl} alt="" />
+          <EditorialItemImage className="dz-record__art" name={winningItem.name} imageUrl={winningItem.imageUrl} decorative loading="eager" />
           <div>
             <span className="dz-record__label">
               {result
@@ -454,7 +428,7 @@ export function CaseDetailPage() {
                 {groups.map((group) => (
                   <article key={group.name} className="dza-item" style={{ "--rc": rarityColor(group.rarity) } as CSSProperties}>
                     <span className="dza-item__chance">{groupChancePercent(group, totalWeight)}%</span>
-                    <img src={group.imageUrl} alt={group.name} loading="lazy" />
+                    <EditorialItemImage name={group.name} imageUrl={group.imageUrl} />
                     <h4 className="dza-item__name">{group.name}</h4>
                     <span className="dza-item__value">
                       {group.minValueMinor === group.maxValueMinor

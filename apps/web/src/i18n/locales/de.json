@@ -33,7 +33,7 @@
       "faq": "FAQ",
       "fair": "Faires Spiel"
     },
-    "footer": "DROPZONE — nur für Personen ab 18 Jahren. Glücksspiel kann süchtig machen. Spiele verantwortungsbewusst. Jedes Case-Ergebnis kann unabhängig überprüft werden. Lizenzstatus und rechtliche Dokumente werden vor dem Start echter Zahlungen veröffentlicht."
+    "footer": "CaseCrow — nur für Personen ab 18 Jahren. Glücksspiel kann süchtig machen. Spiele verantwortungsbewusst. Jedes Case-Ergebnis kann unabhängig überprüft werden. Lizenzstatus und rechtliche Dokumente werden vor dem Start echter Zahlungen veröffentlicht."
   },
   "dropsTicker": {
     "label": "Live-Drops",
@@ -597,7 +597,7 @@
     "claimError": "Bonus konnte nicht erhalten werden",
     "promoBody": "Gib einen Promo-Code ein, um einen Guthabenbonus zu erhalten.",
     "promoLabel": "Promo-Code",
-    "promoPlaceholder": "DROPZONE2024",
+    "promoPlaceholder": "CASECROW2024",
     "promoActivated": "Promo-Code aktiviert",
     "promoAnother": "Noch einen eingeben",
     "promoError": "Promo-Code nicht aktiviert",

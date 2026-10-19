@@ -41,7 +41,7 @@ export function RegisterPage() {
 
   return (
     <div className="auth-page">
-      <span className="auth-kicker">DROPZONE / NEW ACCOUNT</span>
+      <span className="auth-kicker">CASECROW / NEW ACCOUNT</span>
       <h1>{t("register.title")}</h1>
       <form onSubmit={onSubmit} className="auth-form">
         <label>

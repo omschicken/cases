@@ -2,34 +2,34 @@
   color-scheme: dark;
 
   /* ── Surfaces ──────────────────────────────────────────────── */
-  --bg: #05060A;
-  --panel: #0A0C14;
-  --panel-2: #0F1120;
-  --panel-3: #161929;
+  --bg: #050604;
+  --panel: #0d0e0b;
+  --panel-2: #12130f;
+  --panel-3: #191a15;
 
   /* ── Borders ─────────────────────────────────────────────────  */
   --border: rgba(255, 255, 255, 0.06);
   --border-strong: rgba(255, 255, 255, 0.15);
-  --border-active: rgba(124, 107, 255, 0.32);
+  --border-active: rgba(215, 168, 58, 0.34);
 
   /* ── Typography ──────────────────────────────────────────────  */
-  --text: #E8EAF2;
-  --text-dim: #6B7089;
+  --text: #f1f0e8;
+  --text-dim: #77796f;
 
   /* ── Brand accent — amber/gold ───────────────────────────────  */
-  --accent:        #7C6BFF;
-  --accent-strong: #A594FF;
-  --accent-soft:   rgba(124, 107, 255, 0.12);
-  --accent-glow:   rgba(124, 107, 255, 0.18);
+  --accent:        #d7a83a;
+  --accent-strong: #f0c760;
+  --accent-soft:   rgba(215, 168, 58, 0.12);
+  --accent-glow:   rgba(215, 168, 58, 0.18);
 
   /* ── Secondary accent — ice blue ─────────────────────────────  */
-  --info: #A594FF;
-  --info-strong: #A594FF;
-  --info-soft:  rgba(168, 197, 255, 0.10);
+  --info: #d8d5c8;
+  --info-strong: #ebe8dc;
+  --info-soft:  rgba(216, 213, 200, 0.1);
 
   /* ── Value / money ───────────────────────────────────────────  */
-  --cta:        #7C6BFF;
-  --cta-strong: #6A58F0;
+  --cta:        #d7a83a;
+  --cta-strong: #f0c760;
 
   /* ── State ───────────────────────────────────────────────────  */
   --danger: #FF3D57;

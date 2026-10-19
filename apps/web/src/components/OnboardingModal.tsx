@@ -60,7 +60,7 @@ export function OnboardingModal() {
   const current = STEPS[step];
 
   return (
-    <div className="onboarding-backdrop" role="dialog" aria-modal="true" aria-label="Добро пожаловать в DROPZONE">
+    <div className="onboarding-backdrop" role="dialog" aria-modal="true" aria-label="Добро пожаловать в CaseCrow">
       <div className="onboarding-modal">
         <button type="button" className="onboarding-close" onClick={dismiss} aria-label="Закрыть">✕</button>
 

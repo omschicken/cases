@@ -376,6 +376,25 @@
   background: var(--dz-surface-0);
 }
 
+/* Shared image failure state. It keeps the item's exact name visible without
+   pretending a different skin is the requested one. */
+.dze-item-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 82px;
+  padding: 14px;
+  border: 1px solid #d8d8d1;
+  background: linear-gradient(145deg, #f4f2eb, #e7e5dc);
+  color: #252722;
+  text-align: center;
+}
+.dze-item-fallback span { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #777b73; }
+.dze-item-fallback strong { margin-top: 5px; font-size: 13px; line-height: 1.25; }
+
 .dz-record__label {
   display: block;
   font-family: var(--dz-font-technical);

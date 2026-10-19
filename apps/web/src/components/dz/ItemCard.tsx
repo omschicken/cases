@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { rarityColor } from "../../lib/rarity";
 import type { ItemRarity } from "../../lib/types";
+import { EditorialItemImage } from "../editorial/EditorialItemImage";
 
 interface ItemCardProps {
   name: string;
@@ -34,14 +35,14 @@ export function ItemCard({
     >
       {/* Premium inspection popup — pure CSS, no JS state */}
       <div className="dz-item-card__inspect" aria-hidden="true">
-        <img src={imageUrl} alt="" />
+        <EditorialItemImage name={name} imageUrl={imageUrl} decorative />
         <span className="dz-item-card__inspect-rarity">{rarityLabel}</span>
         <span className="dz-item-card__inspect-name">{name}</span>
         <span className="dz-item-card__inspect-value">{value}</span>
       </div>
 
       <div className="dz-item-card__cell">
-        <img src={imageUrl} alt={name} loading="lazy" decoding="async" />
+        <EditorialItemImage name={name} imageUrl={imageUrl} />
         {badge && <span className="dz-item-card__badge">{badge}</span>}
       </div>
       <div className="dz-item-card__body">

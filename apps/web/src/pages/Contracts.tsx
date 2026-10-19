@@ -68,7 +68,7 @@ export function ContractsPage() {
 
   if (!user) return (
     <Gate
-      kicker="DROPZONE / CONTRACTS"
+      kicker="CASECROW / CONTRACTS"
       title={t("contracts.title")}
       body={t("contracts.authBody")}
       action={<Link to="/login" className="dz-commit">{t("nav.signIn")} <span aria-hidden="true">↗</span></Link>}

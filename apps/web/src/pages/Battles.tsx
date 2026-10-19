@@ -52,7 +52,7 @@ export function BattlesPage() {
 
   if (!user) return (
     <Gate
-      kicker="DROPZONE / BATTLES"
+      kicker="CASECROW / BATTLES"
       title={t("battles.title")}
       body={t("battles.authBody")}
       action={<Link to="/login" className="dz-commit">{t("nav.signIn")} <span aria-hidden="true">↗</span></Link>}
