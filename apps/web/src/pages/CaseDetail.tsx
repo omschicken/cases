@@ -13,6 +13,7 @@ import { Money } from "../components/Money";
 import "../styles/case-detail-editorial.css";
 import "../styles/case-reel.css";
 import "../styles/case-opening-scene.css";
+import "../styles/casecrow-polish.css";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
 import { clearOpening, loadOpening, saveOpening } from "../lib/openingRecovery";
 
