@@ -27,6 +27,11 @@ function belongsToFilter(item: CaseDto, filter: PriceFilter): boolean {
 export function CaseListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("q") ?? "";
+  useEffect(() => {
+    if (window.location.hash !== "#catalog") return;
+    const frame = window.requestAnimationFrame(() => document.getElementById("catalog")?.scrollIntoView({ block: "start" }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [searchQuery]);
   const [cases, setCases] = useState<CaseDto[]>([]);
   const [query, setQuery] = useState(searchQuery);
   const [filter, setFilter] = useState<PriceFilter>("all");
