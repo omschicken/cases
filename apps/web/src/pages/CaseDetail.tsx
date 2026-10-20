@@ -230,9 +230,9 @@ export function CaseDetailPage() {
       <CaseOpeningScene theCase={theCase} winner={winningItem} opening={opening} onComplete={finishOpening} onSkip={skipAnimation}
         actions={<>
           <div className="cc-opening-controls" aria-label="Параметры открытия">
-            <div className="cc-opening-multipliers" role="group" aria-label="Количество кейсов">
+            {user && <div className="cc-opening-multipliers" role="group" aria-label="Количество кейсов">
               {([1, 3, 5] as const).map(count => <button key={count} type="button" className={openCount === count ? "is-active" : ""} disabled={opening || recoveryPending} aria-pressed={openCount === count} onClick={() => setOpenCount(count)}>×{count}</button>)}
-            </div>
+            </div>}
             <label className="cc-fast-toggle"><input type="checkbox" checked={fastOpen} onChange={event => setFastOpen(event.target.checked)} disabled={opening} />Быстро</label>
           </div>
           <span className="cc-case-price"><Money minor={(BigInt(theCase.priceMinor) * BigInt(openCount)).toString()} currency={theCase.currency} /></span>
