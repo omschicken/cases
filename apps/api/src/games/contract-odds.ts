@@ -1,7 +1,7 @@
 /**
  * Transparent two-outcome contract reward construction.
  * The average return targets 90% of submitted item value, NOT a maximum prize.
- * Every contract has a possible profitable outcome. Selection is determined
+ * Every contract has a possible profitable outcome.\n * Reward price targets favour roughly 35% / 140% of stake when available;\n * actual payout odds remain exactly displayed and averaged to 90%. Selection is determined
  * only by the precommitted roll, never by account history or prior losses.
  */
 export function selectContractOutcomes<T extends { id: string; valueMinor: bigint }>(
@@ -10,11 +10,11 @@ export function selectContractOutcomes<T extends { id: string; valueMinor: bigin
   if (stake <= 0n) return null;
   const target = stake * 90n / 100n;
   const pool = [...items].filter(i => i.valueMinor > 0n).sort((a,b) => a.valueMinor === b.valueMinor ? a.id.localeCompare(b.id) : a.valueMinor < b.valueMinor ? -1 : 1);
-  const lows = pool.filter(i => i.valueMinor < target && i.valueMinor >= stake * 25n / 100n);
-  const highs = pool.filter(i => i.valueMinor > stake && i.valueMinor <= stake * 5n);
+  const lows = pool.filter(i => i.valueMinor < target && i.valueMinor >= stake * 20n / 100n);
+  const highs = pool.filter(i => i.valueMinor > stake && i.valueMinor <= stake * 4n);
   if (!lows.length || !highs.length) return null;
-  const lowTarget = stake * 60n / 100n;
-  const highTarget = stake * 2n;
+  const lowTarget = stake * 35n / 100n;
+  const highTarget = stake * 14n / 10n;
   const abs = (x: bigint) => x < 0n ? -x : x;
   const low = lows.reduce((best,item) => abs(item.valueMinor-lowTarget) < abs(best.valueMinor-lowTarget) ? item : best);
   const high = highs.reduce((best,item) => abs(item.valueMinor-highTarget) < abs(best.valueMinor-highTarget) ? item : best);
