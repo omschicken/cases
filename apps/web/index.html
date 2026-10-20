@@ -8,6 +8,7 @@
           var pref = localStorage.getItem("casecrow:theme");
           var dark = pref === "dark" || (pref !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
           document.documentElement.dataset.casecrowTheme = dark ? "dark" : "light";
+          document.documentElement.style.backgroundColor = dark ? "#101210" : "#f7f5f0";
         } catch (error) {
           document.documentElement.dataset.casecrowTheme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         }
@@ -36,17 +37,7 @@
     <meta property="og:site_name" content="CaseCrow" />
     <meta property="og:type" content="website" />
     <meta name="theme-color" content="#f5f2ea" />
-    <script>
-      (function () {
-        try {
-          var setting = localStorage.getItem('casecrow:theme') || 'light';
-          var dark = setting === 'dark' || (setting === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-          document.documentElement.dataset.casecrowTheme = dark ? 'dark' : 'light';
-          document.documentElement.style.backgroundColor = dark ? '#101210' : '#f7f5f0';
-          document.querySelector('meta[name="theme-color"]').content = dark ? '#101210' : '#f5f2ea';
-        } catch (e) { document.documentElement.dataset.casecrowTheme = 'light'; }
-      })();
-    </script>
+
     <title>CaseCrow — CS2-кейсы с характером</title>
   </head>
   <body>
