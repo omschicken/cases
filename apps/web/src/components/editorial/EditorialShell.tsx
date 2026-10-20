@@ -178,6 +178,7 @@ type EditorialAppShellProps = { children: ReactNode; activeSection?: "cases"; se
 
 export function EditorialAppShell({ children, activeSection, sections }: EditorialAppShellProps) {
   return <div className={`fidelity-page editorial-production${sections ? " editorial-sections" : ""}`}>
+    {import.meta.env.VITE_CASECROW_AUDIT === "1" && <div className="cc-audit-banner" role="status">Тестовый preview · баланс и предметы вымышлены · без платежей и боевой базы <button type="button" onClick={() => { void import("../../lib/auditSandbox").then(module => module.resetAuditSandbox()); }}>Сбросить тестовые данные</button></div>}
     <EditorialHeader activeSection={activeSection} />
     <div className="fidelity-shell">
       <EditorialSidebar activeSection={activeSection} sections={sections} />

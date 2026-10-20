@@ -12,6 +12,7 @@ export function BottomNav() {
       {[...mainNavItems.slice(0, 4), { to: "/inventory", key: "inventory", icon: IconInventory, end: false }].map(({ to, key, icon: Icon, end }) => (
         <NavLink key={to} to={to} end={end} className="bottom-nav-link" aria-label={t(`nav.sidebar.${key}`)}>
           <Icon />
+          <span>{t(`nav.sidebar.${key}`)}</span>
         </NavLink>
       ))}
     </nav>

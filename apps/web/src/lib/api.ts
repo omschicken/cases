@@ -33,6 +33,10 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, options: RequestInit = {}, retry = true): Promise<T> {
+  if (import.meta.env.VITE_CASECROW_AUDIT === "1") {
+    const { auditRequest } = await import("./auditSandbox");
+    return auditRequest(path, options) as Promise<T>;
+  }
   const token = getAccessToken();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",

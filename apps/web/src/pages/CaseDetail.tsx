@@ -9,7 +9,6 @@ import { useAuth } from "../context/AuthContext";
 import { CaseOpeningScene } from "../components/CaseOpeningScene";
 import { EditorialItemImage } from "../components/editorial/EditorialItemImage";
 
-import { Money } from "../components/Money";
 import "../styles/case-detail-editorial.css";
 import "../styles/case-reel.css";
 import "../styles/case-opening-scene.css";
@@ -37,6 +36,7 @@ function exteriorLabel(item: CaseItem): string {
 }
 
 function formatChance(value: number): string {
+  if (value > 0 && value < .01) return "<0.01";
   const decimals = value < 1 ? 2 : 1;
   return value.toFixed(decimals).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
 }
@@ -162,7 +162,7 @@ export function CaseDetailPage() {
         setResult(response.results[0]);
         setBatchResults(response.results);
         requestPendingRef.current = false;
-        finishOpening();
+        if (fastOpen || skipRequestedRef.current) finishOpening();
       }
     } catch (err) {
       const uncertain = !(err instanceof ApiError) || err.status === 0 || err.status >= 500;
@@ -235,7 +235,7 @@ export function CaseDetailPage() {
             </div>}
             <label className="cc-fast-toggle"><input type="checkbox" checked={fastOpen} onChange={event => setFastOpen(event.target.checked)} disabled={opening} />Быстро</label>
           </div>
-          <span className="cc-case-price"><Money minor={(BigInt(theCase.priceMinor) * BigInt(openCount)).toString()} currency={theCase.currency} /></span>
+          <span className="cc-case-price">{formatMinor((BigInt(theCase.priceMinor) * BigInt(openCount)).toString(), theCase.currency)}</span>
           {user ? (
             <>
               <button onClick={openCase} disabled={opening || recoveryPending || !theCase.isActive || theCase.canOpen === false} className="dza-open">
@@ -377,4 +377,3 @@ function dropChancePercent(item: CaseItem, pool: CaseItem[]): string {
   const pct = (item.weight / total) * 100;
   return formatChance(pct);
 }
-

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const STORAGE_KEY = "dz_onboarding_done";
 
@@ -26,21 +27,22 @@ const STEPS = [
     icon: "04",
     title: "Игры и апгрейды",
     body: "Используй предметы из инвентаря в Контрактах или Апгрейдах — обменивай несколько предметов на один дороже.",
-    action: <Link to="/#collections" className="feature-primary">К кейсам ↗</Link>,
+    action: <Link to="/#catalog" className="feature-primary">К кейсам ↗</Link>,
   },
 ];
 
 export function OnboardingModal() {
+  const { user } = useAuth();
   const [visible, setVisible] = useState(false);
   const [step, setStep] = useState(0);
 
   useEffect(() => {
     try {
-      if (!localStorage.getItem(STORAGE_KEY)) setVisible(true);
+      if (user && !localStorage.getItem(STORAGE_KEY)) setVisible(true);
     } catch {
       // private mode — skip
     }
-  }, []);
+  }, [user]);
 
   function dismiss() {
     try { localStorage.setItem(STORAGE_KEY, "1"); } catch { /* ignore */ }
@@ -55,7 +57,7 @@ export function OnboardingModal() {
     }
   }
 
-  if (!visible) return null;
+  if (!visible || !user) return null;
 
   const current = STEPS[step];
 
