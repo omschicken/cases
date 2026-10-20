@@ -13,7 +13,7 @@
  * explicit per-tier value ranges instead of a scale factor.
  *
  * Images come from prisma/cs2-items.json and prisma/cs2-images-extra.json (real
- * Steam hashes). A skin with no real image stops the run instead of borrowing
+ * Steam hashes; the open ByMykel/CSGO-API dataset supplies the rare ones). A skin with no real image stops the run instead of borrowing
  * someone else's picture.
  */
 import { ItemRarity, PrismaClient } from "@prisma/client";
@@ -49,8 +49,7 @@ const ENTRY: Profile = {
     KNIFE: [["★ Gut Knife | Fade", 1_200_000], ["★ Flip Knife | Marble Fade", 2_500_000]],
     COVERT: [["AK-47 | Asiimov", 550_000], ["M4A1-S | Printstream", 480_000]],
     CLASSIFIED: [["AWP | Electric Hive", 180_000], ["AK-47 | Slate", 120_000]],
-    // brief: "MP9 | Wild Lily" has no Steam image available; AWP | Atheris stands in.
-    RESTRICTED: [["M4A4 | Neo-Noir", 90_000], ["AWP | Atheris", 60_000]],
+    RESTRICTED: [["M4A4 | Neo-Noir", 90_000], ["MP9 | Wild Lily", 60_000]],
     MIL_SPEC: [["P250 | Asiimov", 18_000], ["FAMAS | Mecha Industries", 12_000]],
   },
   industrial: { pool: [["UMP-45 | Labyrinth", 6_000], ["P90 | Storm", 4_500]], count: 2 },
@@ -79,10 +78,9 @@ const PREMIUM: Profile = {
   rates: { KNIFE: 0.035, COVERT: 0.0015, CLASSIFIED: 0.008, RESTRICTED: 0.04, MIL_SPEC: 0.15, INDUSTRIAL: 0.3 },
   tiers: {
     KNIFE: [["★ Karambit | Fade", 15_000_000], ["★ Butterfly Knife | Marble Fade", 35_000_000]],
-    // brief: Dragon Lore / Wild Lotus / Medusa have no Steam image available; these stand in.
-    COVERT: [["AWP | Lightning Strike", 25_000_000], ["AK-47 | Fire Serpent", 18_000_000]], // Dragon Lore / Wild Lotus
+    COVERT: [["AWP | Dragon Lore", 25_000_000], ["AK-47 | Wild Lotus", 18_000_000]],
     CLASSIFIED: [["AK-47 | Case Hardened", 8_000_000]],
-    RESTRICTED: [["AWP | Neo-Noir", 2_000_000], ["M4A4 | Poseidon", 1_500_000]], // Medusa / Poseidon
+    RESTRICTED: [["AWP | Medusa", 2_000_000], ["M4A4 | Poseidon", 1_500_000]],
     MIL_SPEC: [["AK-47 | Vulcan", 250_000], ["AWP | Asiimov", 400_000]],
   },
   industrial: {
