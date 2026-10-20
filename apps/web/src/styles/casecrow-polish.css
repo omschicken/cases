@@ -110,3 +110,41 @@
 @media(prefers-reduced-motion:reduce){
  .fidelity-card,.edv2-panel{transition:none}
 }
+
+/* Keep item cards readable without forcing seven tiny columns. */
+.edv2 .edv2-items,.edv2 .edv2-inventory-cards{
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,155px),1fr));
+  gap:11px
+}
+.edv2 .edv2-item{min-height:179px;cursor:pointer}
+.edv2 .edv2-item-media{height:110px}
+.edv2 .edv2-item-body{padding:10px 11px}
+.edv2 .edv2-item-body b{font-size:12px}
+.edv2 .edv2-item-body p{font-size:10.5px}
+.edv2 .edv2-item-body strong{font-size:13px;font-variant-numeric:tabular-nums}
+.edv2 .edv2-item.is-selected{outline:2px solid #8b9c83;outline-offset:-2px}
+.edv2 .edv2-item:focus-visible{outline:3px solid #829e7c;outline-offset:2px}
+.cc-load-more{display:flex;align-items:center;justify-content:center;min-height:44px;margin:16px auto 22px;padding:0 24px;max-width:100%;font-size:12px}
+.edv2 .edv2-btn{min-height:35px}
+.edv2 .edv2-picker-tabs button{min-height:43px;cursor:pointer}
+.edv2 .edv2-upgrade-choice{height:auto;min-height:290px}
+.edv2 .edv2-upgrade-center{height:auto;min-height:290px}
+.edv2 .edv2-upgrade-choice b{overflow-wrap:anywhere}
+.edv2 .edv2-upgrade-art{height:clamp(112px,13vw,173px)}
+.edv2 .edv2-factors{gap:5px}
+.edv2 .edv2-factors button{min-width:40px;min-height:36px;cursor:pointer}
+.edv2 .edv2-heading{max-width:100%}
+.edv2 .edv2-heading h1{font-size:clamp(26px,3.2vw,39px)}
+@media(max-width:900px) {
+ .edv2 .edv2-items,.edv2 .edv2-inventory-cards{grid-template-columns:repeat(auto-fill,minmax(min(100%,142px),1fr))}
+}
+@media(max-width:600px){
+ .edv2 .edv2-upgrade-choice{min-height:235px}
+ .edv2 .edv2-upgrade-center{min-height:235px}
+ .edv2 .edv2-upgrade-art{height:99px}
+ .edv2 .edv2-items,.edv2 .edv2-inventory-cards{gap:9px}
+ .edv2 .edv2-item-media{height:95px}
+ .edv2 .edv2-item{min-height:166px}
+ .edv2 .edv2-item-body{padding:8px}
+ .edv2 .edv2-factors{flex-wrap:wrap}
+}
