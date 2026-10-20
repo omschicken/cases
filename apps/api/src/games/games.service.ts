@@ -1,4 +1,5 @@
 import { battleWinChance } from "./battle-odds";
+import { selectContractOutcomes } from "./contract-odds";
 import { assessCaseEconomics } from "../common/util/case-economics";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { computeRoll, pickWeightedItem } from "@cs2-cases/shared";
@@ -41,21 +42,17 @@ export class GamesService {
       if (inputs.some((item) => item.caseItem.currency !== "RUB")) throw new BadRequestException("Only RUB-priced items can be used");
 
       const total = inputs.reduce((sum, item) => sum + item.caseItem.valueMinor, 0n);
-      const minimum = (total * 60n) / 100n;
-      const maximum = (total * 90n) / 100n;
-      let candidates = await tx.caseItem.findMany({
-        where: { currency: "RUB", valueMinor: { gte: minimum, lte: maximum }, case: { isActive: true } },
-        orderBy: { id: "asc" },
+      const candidates = await tx.caseItem.findMany({
+        where: { currency: "RUB", valueMinor: { gte: total * 25n / 100n, lte: total * 5n }, case: { isActive: true } },
+        orderBy: [{ valueMinor: "asc" }, { id: "asc" }],
+        take: 5000,
       });
-      if (candidates.length === 0) {
-        const fallback = await tx.caseItem.findFirst({ where: { currency: "RUB", valueMinor: { lte: maximum }, case: { isActive: true } }, orderBy: { valueMinor: "desc" } });
-        if (!fallback) throw new BadRequestException("No contract reward is available for this value");
-        candidates = [fallback];
-      }
+      const quote = selectContractOutcomes(candidates, total);
+      if (!quote) throw new BadRequestException("Contract unavailable: no fair reward pair for this total; change selected items");
 
       const lockedSeed = await this.lockSeed(tx, seed.id);
       const roll = computeRoll(lockedSeed.serverSeed, lockedSeed.clientSeed, lockedSeed.nonce);
-      const output = candidates[Math.min(candidates.length - 1, Math.floor(roll * candidates.length))];
+      const output = roll < quote.highChance ? quote.high : quote.low;
       const claimed = await tx.inventoryItem.updateMany({
         where: { id: { in: uniqueIds }, userId, status: "IN_INVENTORY" },
         data: { status: "CONSUMED", resolvedAt: new Date() },
@@ -67,9 +64,39 @@ export class GamesService {
         userId, type: "CONTRACT", status: "WON", inputInventoryItemIds: uniqueIds,
         outputCaseItemId: output.id, outputInventoryItemId: created.id, roll, chance: 1,
         serverSeedHash: lockedSeed.serverSeedHash, clientSeed: lockedSeed.clientSeed, nonce: lockedSeed.nonce,
+        metadata: { lowCaseItemId: quote.low.id, highCaseItemId: quote.high.id, highChance: quote.highChance, inputValueMinor: total.toString(), expectedReturnMinor: quote.expectedReturnMinor.toString() },
       } });
-      return { operation, item: output, inventoryItemId: created.id, inputValueMinor: total };
+      return { operation, item: output, inventoryItemId: created.id, inputValueMinor: total, quote: { low: quote.low, high: quote.high, highChance: quote.highChance } };
     });
+  }
+
+  async quoteContract(userId: string, inventoryItemIds: string[]) {
+    const unique = [...new Set(inventoryItemIds)];
+    if (unique.length !== inventoryItemIds.length || unique.length < 3 || unique.length > 10) {
+      throw new BadRequestException("Select 3 to 10 distinct items");
+    }
+    const inputs = await this.prisma.inventoryItem.findMany({
+      where: { id: { in: unique }, userId, status: "IN_INVENTORY" },
+      include: { caseItem: true },
+    });
+    if (inputs.length !== unique.length || inputs.some(item => item.caseItem.currency !== "RUB")) {
+      throw new BadRequestException("Selected items are unavailable");
+    }
+    const total = inputs.reduce((sum, item) => sum + item.caseItem.valueMinor, 0n);
+    const candidates = await this.prisma.caseItem.findMany({
+      where: { currency: "RUB", valueMinor: { gte: total * 25n / 100n, lte: total * 5n }, case: { isActive: true } },
+      orderBy: [{ valueMinor: "asc" }, { id: "asc" }], take: 5000,
+    });
+    const quote = selectContractOutcomes(candidates, total);
+    if (!quote) return { available: false, inputValueMinor: total.toString() };
+    return {
+      available: true,
+      inputValueMinor: total.toString(),
+      expectedReturnMinor: quote.expectedReturnMinor.toString(),
+      low: { id: quote.low.id, name: quote.low.name, valueMinor: quote.low.valueMinor.toString(), imageUrl: quote.low.imageUrl },
+      high: { id: quote.high.id, name: quote.high.name, valueMinor: quote.high.valueMinor.toString(), imageUrl: quote.high.imageUrl },
+      highChance: quote.highChance,
+    };
   }
 
   async createUpgrade(userId: string, inventoryItemId: string, targetCaseItemId: string) {
