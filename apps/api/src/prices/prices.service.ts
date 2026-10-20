@@ -44,6 +44,10 @@ export interface CaseBalanceRow {
   priceMinor: string;
   rtp: number;
   itemCount: number;
+  /** Share of opens that return at least the case price. */
+  winShare: number;
+  /** Return (x price) that half of all opens reach. */
+  medianReturn: number;
 }
 
 export interface MarketItemQuery {
@@ -302,7 +306,7 @@ export class PricesService {
   /** Sets every active case's drop chances (and, when needed, price) so its RTP equals `targetRtp`.
    * Changing weights changes the odds that past opens were verified against, so this is a
    * deliberate admin action, not part of the minute sync. */
-  async rebalanceCases(targetRtp = 0.8): Promise<CaseBalanceRow[]> {
+  async rebalanceCases(targetRtp = 0.9): Promise<CaseBalanceRow[]> {
     const cases = await this.prisma.case.findMany({
       where: { isActive: true },
       include: { items: { orderBy: { valueMinor: "asc" } } },
@@ -332,6 +336,8 @@ export class PricesService {
         priceMinor: String(result.priceMinor),
         rtp: Number(result.rtp.toFixed(4)),
         itemCount: c.items.length,
+        winShare: Number(result.winShare.toFixed(3)),
+        medianReturn: Number(result.medianReturn.toFixed(2)),
       });
     }
     return rows;

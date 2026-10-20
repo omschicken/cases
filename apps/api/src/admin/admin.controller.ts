@@ -5,6 +5,7 @@ import { Roles } from "../common/decorators/roles.decorator";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import type { AuthenticatedUser } from "../auth/jwt.strategy";
 import { AdminService } from "./admin.service";
+import { RebalanceDto } from "./dto/rebalance.dto";
 import { AdjustBalanceDto } from "./dto/adjust-balance.dto";
 import { ReviewKycDto } from "./dto/review-kyc.dto";
 import { ReviewWithdrawalDto } from "../payments/dto/review-withdrawal.dto";
@@ -99,13 +100,13 @@ export class AdminController {
   }
 
   @Post("cases/rebalance")
-  rebalanceCases(@CurrentUser() admin: AuthenticatedUser) {
-    return this.adminService.rebalanceCases(admin.id);
+  rebalanceCases(@CurrentUser() admin: AuthenticatedUser, @Body() dto: RebalanceDto) {
+    return this.adminService.rebalanceCases(admin.id, false, dto.rtp);
   }
 
   @Post("cases/populate")
-  populateCases(@CurrentUser() admin: AuthenticatedUser) {
-    return this.adminService.rebalanceCases(admin.id, true);
+  populateCases(@CurrentUser() admin: AuthenticatedUser, @Body() dto: RebalanceDto) {
+    return this.adminService.rebalanceCases(admin.id, true, dto.rtp);
   }
 
   @Post("prices/sync")

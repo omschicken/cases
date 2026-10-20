@@ -13,6 +13,7 @@ export function AdminPrices() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [balancing, setBalancing] = useState(false);
+  const [rtpPercent, setRtpPercent] = useState("90");
   const [balance, setBalance] = useState<CaseBalanceRowDto[] | null>(null);
 
   function load() {
@@ -42,14 +43,19 @@ export function AdminPrices() {
   }
 
   async function rebalance(populate: boolean) {
+    const rtp = Number(rtpPercent.replace(",", ".")) / 100;
+    if (!(rtp >= 0.5 && rtp <= 0.99)) {
+      setError("Окупаемость должна быть от 50 до 99%");
+      return;
+    }
     const question = populate
-      ? "Добавить в кейсы предметы (до 24–28 штук) и пересчитать шансы под окупаемость 80%?"
-      : "Пересчитать шансы выпадения и цены всех активных кейсов под окупаемость 80%?";
+      ? `Добавить в кейсы предметы (до 24–28 штук) и пересчитать шансы под окупаемость ${rtpPercent}%?`
+      : `Пересчитать шансы выпадения всех активных кейсов под окупаемость ${rtpPercent}%?`;
     if (!window.confirm(question)) return;
     setError(null);
     setBalancing(true);
     try {
-      setBalance(await api.post<CaseBalanceRowDto[]>(populate ? "/admin/cases/populate" : "/admin/cases/rebalance"));
+      setBalance(await api.post<CaseBalanceRowDto[]>(populate ? "/admin/cases/populate" : "/admin/cases/rebalance", { rtp }));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Не удалось пересчитать кейсы");
     } finally {
@@ -111,15 +117,19 @@ export function AdminPrices() {
 
       <h2 style={{ marginTop: "2rem" }}>Окупаемость кейсов</h2>
       <p className="hint">
-        Подбирает шансы выпадения (и, если нужно, цену кейса), чтобы средняя выплата была 80% от цены. Меняет шансы у всех
+        Подбирает шансы выпадения (и, если нужно, цену кейса), чтобы средняя выплата равнялась заданной окупаемости, а баланс не сгорал резко: типичное открытие возвращает заметную часть цены. Меняет шансы у всех
         активных кейсов, поэтому запускай осознанно после обновления цен.
       </p>
-      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
+        <label>
+          Окупаемость, %{" "}
+          <input type="text" inputMode="decimal" value={rtpPercent} onChange={(e) => setRtpPercent(e.target.value)} style={{ width: "4rem" }} />
+        </label>
         <button onClick={() => rebalance(true)} disabled={balancing}>
-          {balancing ? "Работаю…" : "Наполнить кейсы и пересчитать (80%)"}
+          {balancing ? "Работаю…" : "Наполнить кейсы и пересчитать"}
         </button>
         <button onClick={() => rebalance(false)} disabled={balancing}>
-          Только пересчитать (80%)
+          Только пересчитать
         </button>
       </div>
       {balance && (
@@ -131,6 +141,8 @@ export function AdminPrices() {
               <th>Цена было</th>
               <th>Цена стало</th>
               <th>Окупаемость</th>
+              <th>Типичный возврат</th>
+              <th>Выигрыш ≥ цены</th>
             </tr>
           </thead>
           <tbody>
@@ -141,6 +153,8 @@ export function AdminPrices() {
                 <td>{money(r.oldPriceMinor)}</td>
                 <td className={r.priceMinor !== r.oldPriceMinor ? "positive" : undefined}>{money(r.priceMinor)}</td>
                 <td>{Math.round(r.rtp * 100)}%</td>
+                <td>{Math.round(r.medianReturn * 100)}% цены</td>
+                <td>{Math.round(r.winShare * 100)}% открытий</td>
               </tr>
             ))}
           </tbody>

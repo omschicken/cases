@@ -13,10 +13,11 @@ export interface Candidate {
 type Rarity = "CONSUMER" | "INDUSTRIAL" | "MIL_SPEC" | "RESTRICTED" | "CLASSIFIED" | "COVERT" | "GOLD";
 
 const BANDS: Array<{ lo: number; hi: number; share: number }> = [
-  { lo: 0.04, hi: 0.5, share: 0.4 },
-  { lo: 0.6, hi: 2.5, share: 0.3 },
-  { lo: 3, hi: 12, share: 0.2 },
-  { lo: 15, hi: 100, share: 0.1 },
+  { lo: 0.05, hi: 0.25, share: 0.08 },
+  { lo: 0.25, hi: 0.75, share: 0.34 },
+  { lo: 0.8, hi: 1.5, share: 0.24 },
+  { lo: 1.8, hi: 5.5, share: 0.22 },
+  { lo: 8, hi: 60, share: 0.12 },
 ];
 
 const DATASET_RARITY: Record<string, Rarity> = {

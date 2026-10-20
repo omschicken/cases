@@ -132,4 +132,6 @@ export interface CaseBalanceRowDto {
   priceMinor: string;
   rtp: number;
   itemCount: number;
+  winShare: number;
+  medianReturn: number;
 }

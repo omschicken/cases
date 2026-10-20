@@ -113,9 +113,9 @@ export class AdminService {
     return status;
   }
 
-  async rebalanceCases(adminUserId: string, populate = false) {
+  async rebalanceCases(adminUserId: string, populate = false, rtp = 0.9) {
     if (populate) await this.prices.populateCases();
-    const rows = await this.prices.rebalanceCases(0.8);
+    const rows = await this.prices.rebalanceCases(rtp);
     void this.audit(adminUserId, populate ? "CASES_POPULATE" : "CASES_REBALANCE", "Case", "all");
     return rows;
   }
