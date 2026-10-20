@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from "@nestjs/common";
+import { Controller, Get, Header, Query } from "@nestjs/common";
 import { PricesService } from "./prices.service";
 
 const num = (v?: string) => (v === undefined || v === "" ? undefined : Number(v));
@@ -9,6 +9,7 @@ export class MarketController {
 
   /** The full Market.CSGO catalog with live prices (minor units). */
   @Get("items")
+  @Header("Cache-Control", "public, s-maxage=20, stale-while-revalidate=40")
   items(
     @Query("q") q?: string,
     @Query("category") category?: string,

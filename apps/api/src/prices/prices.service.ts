@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { fetchMarketCsgoPrices } from "./market-csgo";
 import { fetchSkinMeta } from "./market-images";
+import { resolveMarketName } from "./market-names";
 
 /** A weapon skin / knife / glove name always ends with its wear. */
 const WEAR_RE = /\((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
@@ -169,6 +170,7 @@ export class PricesService {
       }
       await this.prisma.$executeRaw`UPDATE market_item SET listed = false WHERE listed AND updated_at < ${runAt}`;
 
+      const renamed = await this.repairCaseItemNames();
       const casesUpdated = await this.prisma.$executeRaw`
         UPDATE "CaseItem" ci
         SET "valueMinor" = CASE WHEN ci.currency = 'USD' THEN m.usd_minor ELSE m.rub_minor END
@@ -183,13 +185,39 @@ export class PricesService {
       await this.prisma.$executeRaw`
         UPDATE market_sync_state SET last_finished = now(), duration_ms = ${Date.now() - t0},
           items = ${names.length}, cases_updated = ${casesUpdated}, last_error = NULL WHERE id = 1`;
-      this.logger.log(`market sync: ${names.length} items, ${casesUpdated} case items repriced, ${Date.now() - t0} ms`);
+      this.logger.log(`market sync: ${names.length} items, ${casesUpdated} case items repriced (${renamed} renamed), ${Date.now() - t0} ms`);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.error(`market sync failed: ${message}`);
       await this.prisma.$executeRaw`UPDATE market_sync_state SET last_error = ${message.slice(0, 500)} WHERE id = 1`;
     }
     return this.getStatus();
+  }
+
+  /** Case items seeded with short names ("(FN)", knives without ★) never match the
+   * market. Rename them to the exact market_hash_name (and take its real image). */
+  private async repairCaseItemNames(): Promise<number> {
+    const rows = await this.prisma.$queryRaw<{ name: string }[]>`
+      SELECT DISTINCT ci.name FROM "CaseItem" ci JOIN "Case" c ON c.id = ci."caseId" AND c."isActive"
+      WHERE NOT EXISTS (SELECT 1 FROM market_item m WHERE m.name = ci.name AND m.listed)`;
+    if (rows.length === 0) return 0;
+    const listed = new Set((await this.prisma.$queryRaw<{ name: string }[]>`SELECT name FROM market_item WHERE listed`).map((r) => r.name));
+    const fixes = rows
+      .map((r) => ({ from: r.name, to: resolveMarketName(r.name, (n) => listed.has(n)) }))
+      .filter((f): f is { from: string; to: string } => f.to !== null && f.to !== f.from);
+    for (let i = 0; i < fixes.length; i += 10) {
+      await Promise.all(
+        fixes.slice(i, i + 10).map(
+          (f) => this.prisma.$executeRaw`
+            UPDATE "CaseItem" ci SET name = ${f.to}, "imageUrl" = COALESCE(m.image_url, ci."imageUrl")
+            FROM market_item m, "Case" c
+            WHERE m.name = ${f.to} AND ci.name = ${f.from} AND c.id = ci."caseId" AND c."isActive"`,
+        ),
+      );
+    }
+    const unresolved = rows.length - fixes.length;
+    if (unresolved > 0) this.logger.warn(`${unresolved} case item names have no market match`);
+    return fixes.length;
   }
 
   /** Fills image/rarity for skins that have none. Retried at most hourly. */
@@ -215,7 +243,8 @@ export class PricesService {
   }
 
   async listItems(query: MarketItemQuery): Promise<{ total: number; items: MarketItemDto[] }> {
-    await this.ensureFresh();
+    await this.ensureTables();
+    const fresh = this.ensureFresh();
     const currency: "USD" | "RUB" = query.currency?.toUpperCase() === "RUB" ? "RUB" : "USD";
     const col = Prisma.raw(currency === "RUB" ? "rub_minor" : "usd_minor");
     const where: Prisma.Sql[] = [Prisma.sql`listed`];
@@ -229,11 +258,13 @@ export class PricesService {
     const offset = Math.max(Math.floor(query.offset ?? 0), 0);
     const cond = Prisma.join(where, " AND ");
 
-    const [count] = await this.prisma.$queryRaw<{ n: bigint }[]>`SELECT count(*) AS n FROM market_item WHERE ${cond}`;
-    const rows = await this.prisma.$queryRaw<
+    const countQ = this.prisma.$queryRaw<{ n: bigint }[]>`SELECT count(*) AS n FROM market_item WHERE ${cond}`;
+    const rowsQ = this.prisma.$queryRaw<
       { name: string; category: string; price: bigint; volume: number; image_url: string | null; rarity: string | null }[]
     >`SELECT name, category, ${col} AS price, volume, image_url, rarity FROM market_item WHERE ${cond}
       ORDER BY ${order} LIMIT ${limit} OFFSET ${offset}`;
+    // Staleness check and both reads run together; a sync (rare) is awaited first.
+    const [, [count], rows] = await Promise.all([fresh, countQ, rowsQ]);
     return {
       total: Number(count?.n ?? 0),
       items: rows.map((r) => ({
