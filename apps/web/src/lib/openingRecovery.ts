@@ -3,6 +3,7 @@ import type { OpenCaseResult } from "./types";
 export interface OpeningReceipt {
   startedAt: number;
   result?: OpenCaseResult;
+  results?: OpenCaseResult[];
 }
 const key = (userId: string, caseId: string) => `casecrow.opening.v1:${userId}:${caseId}`;
 
@@ -16,15 +17,18 @@ export function loadOpening(userId: string, caseId: string): OpeningReceipt | nu
   try {
     const receipt = JSON.parse(sessionStorage.getItem(key(userId, caseId)) ?? "null");
     if (!receipt || typeof receipt.startedAt !== "number" || Date.now() - receipt.startedAt > 86_400_000) return null;
-    if (receipt.result) {
-      const r = receipt.result;
+    const valid = (r: OpenCaseResult) => {
       if (typeof r.openEventId !== "string" || typeof r.inventoryItemId !== "string" ||
           typeof r.roll !== "number" || typeof r.nonce !== "number" ||
           typeof r.serverSeedHash !== "string" || typeof r.clientSeed !== "string" ||
           typeof r.item?.id !== "string" || typeof r.item.name !== "string" ||
           typeof r.item.valueMinor !== "string" || !/^\d+$/.test(r.item.valueMinor) ||
-          typeof r.item.currency !== "string" || typeof r.item.rarity !== "string") return null;
-    }
+          typeof r.item.currency !== "string" || typeof r.item.rarity !== "string") return false;
+      return true;
+    };
+    if (receipt.result && !valid(receipt.result)) return null;
+    if (receipt.results && (!Array.isArray(receipt.results) || receipt.results.length > 5 ||
+       receipt.results.some((entry: OpenCaseResult) => !valid(entry)))) return null;
     return receipt;
   } catch { return null; }
 }
