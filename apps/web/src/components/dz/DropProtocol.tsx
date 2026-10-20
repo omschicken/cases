@@ -8,6 +8,7 @@ import { RARITY_LABELS, rarityColor } from "../../lib/rarity";
 import type { CaseItem, OpenCaseResult } from "../../lib/types";
 import { EditorialItemImage } from "../editorial/EditorialItemImage";
 import { CaseReel } from "../CaseReel";
+import { CaseCrowLogo } from "../CaseCrowLogo";
 
 export type ProtocolPhase = "arming" | "reveal";
 
@@ -21,6 +22,7 @@ interface DropProtocolProps {
   result: OpenCaseResult | null;
   oddsPercent?: string;
   isOpening?: boolean;
+  onComplete: () => void;
   onSkip: () => void;
   onClose: () => void;
   onOpenAgain?: () => void;
@@ -34,7 +36,7 @@ function splitCondition(name: string) {
 
 export function DropProtocol({
   phase, caseName, caseImageUrl, reelItems, item, result, oddsPercent, isOpening = false,
-  onSkip, onClose, onOpenAgain, canOpenAgain = false,
+  onComplete, onSkip, onClose, onOpenAgain, canOpenAgain = false,
 }: DropProtocolProps) {
   const { t } = useTranslation();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -74,34 +76,47 @@ export function DropProtocol({
   const isDemo = Boolean(item && !result);
   const accent = item ? rarityColor(item.rarity) : "#879184";
   const itemName = item ? splitCondition(item.name) : null;
+  const [weapon, ...finishParts] = (itemName?.base ?? "").replace(/^★ /, "").split(" | ");
+  const finish = finishParts.join(" | ");
+  const waiting = phase === "arming" && !item;
 
   return createPortal(
     <div ref={rootRef} className="dze-opening" role="dialog" aria-modal="true" aria-label={t("caseDetail.openingStation", { defaultValue: "Открытие кейса" })} style={{ "--dze-accent": accent } as CSSProperties}>
       <div className="dze-opening__dialog">
         <header className="dze-opening__head">
-          <span>CASECROW / OPENING</span>
+          <span className="dze-opening__signature"><CaseCrowLogo /><span>{phase === "reveal" ? "COLLECTION / 02" : "OPENING / 01"}</span></span>
           {phase === "reveal" && <button type="button" onClick={onClose} aria-label={t("common.close", { defaultValue: "Закрыть" })}>×</button>}
         </header>
         {(() => {
-          const reeling = phase === "arming" && item !== null && reelItems !== undefined && reelItems.length > 1;
+          const reeling = phase === "arming" && item !== null && reelItems !== undefined && reelItems.length > 0;
           return (
             <div className={`dze-opening__visual ${phase === "reveal" ? "is-result" : reeling ? "is-reel" : "is-opening"}`}>
               <span className="dze-opening__ring" aria-hidden="true" />
               {reeling
-                ? <CaseReel items={reelItems!} winner={item!} />
+                ? <CaseReel items={reelItems!} winner={item!} onComplete={onComplete} />
                 : phase === "reveal" && item
                   ? <EditorialItemImage className="dze-opening__item" name={item.name} imageUrl={item.imageUrl} loading="eager" />
-                  : <img className="dze-opening__case" src={caseImageUrl} alt={caseName} />}
+                  : <>
+                    <img className="dze-opening__case" src={caseImageUrl} alt={caseName} />
+                    {waiting && <span className="dze-opening__waiting" role="status"><i aria-hidden="true" />{t("caseDetail.confirmingOpening", { defaultValue: "Подтверждаем открытие…" })}</span>}
+                  </>}
             </div>
           );
         })()}
         <div className="dze-opening__bottom">
           <div>
             <small>{phase === "reveal" ? (isDemo ? t("caseDetail.demoResultLabel", { defaultValue: "ДЕМО — предмет не зачислен" }) : t("caseDetail.resultKicker", { defaultValue: "ПРЕДМЕТ ПОЛУЧЕН" })) : t("caseDetail.unlocking", { defaultValue: "ОТКРЫВАЕМ КЕЙС" })}</small>
-            <h2>{phase === "reveal" && itemName ? itemName.base : caseName}</h2>
+            {phase === "reveal" && itemName && <span className="dze-opening__weapon">{weapon}</span>}
+            <h2>{phase === "reveal" && itemName ? (finish || weapon) : caseName}</h2>
             {phase === "reveal" && item
-              ? <p>{itemName?.condition ? `${itemName.condition} · ` : ""}{RARITY_LABELS[item.rarity]} · {formatMinor(item.valueMinor, item.currency)}{oddsPercent ? ` · ${oddsPercent}%` : ""}</p>
-              : <p>{isOpening ? t("caseDetail.awaitingServer", { defaultValue: "Результат определяется сервером. Анимация не влияет на выигрыш." }) : t("caseDetail.unlocking", { defaultValue: "Открываем кейс" })}</p>}
+              ? <>
+                <p className="dze-opening__specs"><span className="dze-opening__rarity"><i aria-hidden="true" />{t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}</span>{itemName?.condition && <span>{itemName.condition}</span>}{oddsPercent && <span>{oddsPercent}%</span>}</p>
+                <p className="dze-opening__value">{formatMinor(item.valueMinor, item.currency)}</p>
+              </>
+              : <p role="status" aria-live="polite">{waiting
+                ? t("caseDetail.confirmingOpeningHint", { defaultValue: "Ожидаем подтверждение. Повторное нажатие не требуется." })
+                : isDemo ? t("caseDetail.demoMotionHint", { defaultValue: "Бесплатный показ. Предмет не зачисляется в инвентарь." })
+                : isOpening ? t("caseDetail.awaitingServer", { defaultValue: "Результат определяется сервером. Анимация не влияет на выигрыш." }) : t("caseDetail.unlocking", { defaultValue: "Открываем кейс" })}</p>}
           </div>
           <div className="dze-opening__actions">
             {phase === "reveal" ? <>
@@ -119,3 +134,4 @@ export function DropProtocol({
     document.body,
   );
 }
+

@@ -6,14 +6,15 @@ import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { RARITY_LABELS, rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
-import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol";
+import { CaseOpeningScene } from "../components/CaseOpeningScene";
 import { EditorialItemImage } from "../components/editorial/EditorialItemImage";
-import { caseVersionLabel, resolveCaseArt } from "../lib/caseArt";
+
 import { Money } from "../components/Money";
 import "../styles/case-detail-editorial.css";
 import "../styles/case-reel.css";
-import { REEL_MS } from "../components/CaseReel";
+import "../styles/case-opening-scene.css";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
+import { clearOpening, loadOpening, saveOpening } from "../lib/openingRecovery";
 
 const EXTERIOR_PATTERN = / \((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
 const EXTERIOR_SHORT: Record<string, string> = {
@@ -63,12 +64,24 @@ export function CaseDetailPage() {
   const [revealed, setRevealed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [requestId, setRequestId] = useState(0);
+  const [recoveryPending, setRecoveryPending] = useState(false);
   // The staged opening scene is dismissible; the page below keeps the result
   // panel, so closing it never hides the provably-fair record.
-  const [protocolDismissed, setProtocolDismissed] = useState(false);
+
   const openingLockRef = useRef(false);
   const requestPendingRef = useRef(false);
   const skipRequestedRef = useRef(false);
+
+  useEffect(() => {
+    if (!theCase || !user) return;
+    const receipt = loadOpening(user.id, theCase.id);
+    setRecoveryPending(Boolean(receipt && !receipt.result));
+    if (receipt?.result) {
+      setResult(receipt.result);
+      setRevealed(true);
+
+    }
+  }, [theCase, user]);
 
   useEffect(() => {
     if (!slug) return;
@@ -115,7 +128,7 @@ export function CaseDetailPage() {
   }
 
   async function openCase() {
-    if (!theCase || !theCase.isActive || openingLockRef.current) return;
+    if (!theCase || !user || !theCase.isActive || recoveryPending || openingLockRef.current) return;
     openingLockRef.current = true;
     requestPendingRef.current = true;
     skipRequestedRef.current = false;
@@ -124,16 +137,21 @@ export function CaseDetailPage() {
     setRevealed(false);
     setResult(null);
     setDemoItem(null);
-    setProtocolDismissed(false);
+
+    const startedAt = Date.now();
+    saveOpening(user.id, theCase.id, { startedAt });
     try {
-      // The result is fully determined here — the chest overlay below just
-      // animates toward it, it never influences the outcome. The overlay
-      // holds its own reveal step until this resolves and winningItem is set.
+      // Only the server decides the result. The reel mounts once this
+      // response arrives and presents that exact item.
       const response = await api.post<OpenCaseResult>("/cases/open", { caseId: theCase.id });
+      saveOpening(user.id, theCase.id, { startedAt, result: response });
       setResult(response);
       requestPendingRef.current = false;
       if (skipRequestedRef.current) finishOpening();
     } catch (err) {
+      const uncertain = !(err instanceof ApiError) || err.status === 0 || err.status >= 500;
+      if (uncertain) setRecoveryPending(true);
+      else clearOpening(user.id, theCase.id);
       setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotOpenCase"));
       setOpening(false);
       requestPendingRef.current = false;
@@ -142,35 +160,21 @@ export function CaseDetailPage() {
     }
   }
 
-  // No account, no money, no server call — just a client-side preview so
-  // visitors can see how it feels before logging in. The item is known
-  // immediately, so the chest overlay's reveal step never has to wait.
+  // A visual-only demo: no server request, balance change or inventory item.
   function demoSpin() {
-    if (!theCase || openingLockRef.current) return;
+    if (!theCase || !theCase.items.length || openingLockRef.current) return;
     openingLockRef.current = true;
     requestPendingRef.current = false;
     skipRequestedRef.current = false;
     setError(null);
     setResult(null);
     setRevealed(false);
-    setProtocolDismissed(false);
+
     setOpening(true);
     setDemoItem(weightedSample(theCase.items));
   }
 
   const winningItem = result?.item ?? demoItem;
-
-  useEffect(() => {
-    if (!opening || !winningItem || requestPendingRef.current || skipRequestedRef.current) return;
-    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : REEL_MS + 700;
-    const timer = window.setTimeout(() => {
-      setOpening(false);
-      setRevealed(true);
-      openingLockRef.current = false;
-      skipRequestedRef.current = false;
-    }, duration);
-    return () => window.clearTimeout(timer);
-  }, [opening, winningItem]);
 
   if (error && !theCase) return (
     <div className="case-load-error" role="alert">
@@ -188,83 +192,23 @@ export function CaseDetailPage() {
     </div>
   );
 
-  // Phase is derived, never stored, so it cannot drift from the opening
-  // state it describes. A failed request leaves opening false with no item,
-  // which resolves to null here and closes the scene on its own. The chest's
-  // own overlay owns the whole burst→reveal choreography now, so there's
-  // nothing left to stage between "arming" and "reveal".
-  const protocolPhase: ProtocolPhase | null = protocolDismissed
-    ? null
-    : opening
-      ? "arming"
-      : winningItem && revealed
-        ? "reveal"
-        : null;
-
-  /** Ends the animation early. The outcome was decided by the server before
-   *  the first frame, so this just cuts the chest overlay's own choreography
-   *  short and shows what already dropped — it never re-rolls. */
+  /** Skip presentation, never the pending server request or its fixed result. */
   function skipAnimation() {
     skipRequestedRef.current = true;
     if (!requestPendingRef.current && winningItem) finishOpening();
   }
   const sortedItems = [...theCase.items].sort((a, b) => Number(BigInt(b.valueMinor) - BigInt(a.valueMinor)));
-  const version = caseVersionLabel(theCase.slug);
+
 
   return (
     <div
       className="case-detail"
       data-rarity={revealed && winningItem ? winningItem.rarity : undefined}
     >
-      {protocolPhase && (
-        <DropProtocol
-          phase={protocolPhase}
-          caseName={theCase.name}
-          item={winningItem}
-          result={result}
-          oddsPercent={winningItem ? dropChancePercent(winningItem, theCase.items) : undefined}
-          isOpening={opening}
-          caseImageUrl={resolveCaseArt(theCase.slug, theCase.imageUrl)}
-          reelItems={theCase.items}
-          onSkip={skipAnimation}
-          onClose={() => setProtocolDismissed(true)}
-          onOpenAgain={openCase}
-          canOpenAgain={Boolean(user) && theCase.isActive}
-        />
-      )}
-      {/* Editorial detail header */}
-      <header className="dza-head">
-        <Link to="/" className="dza-back" aria-label={t("caseDetail.backToCases", { defaultValue: "Назад к кейсам" })}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </Link>
-        <nav className="dza-crumb" aria-label={t("caseDetail.breadcrumbLabel", { defaultValue: "Breadcrumb" })}>
-          <Link to="/#collections">{t("caseDetail.crumbCases", { defaultValue: "Кейсы" })}</Link>
-          <span aria-hidden="true">/</span>
-          <span aria-current="page">{theCase.name.replace(/\s*case$/i, "")}</span>
-        </nav>
-      </header>
-
-      <section id="opening-station" className="dza-arena dze-product" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
-        <div className="dza-arena__stage dze-studio">
-          <img className="dze-studio__art" src={resolveCaseArt(theCase.slug, theCase.imageUrl)} alt={theCase.name} />
-        </div>
-
-        <div className="dza-arena__panel dze-product__info">
-          <span className="dze-eyebrow">● {t("caseDetail.crumbCases", { defaultValue: "Кейсы" })}{version ? ` / ${version}` : ""}</span>
-          <h1 className="dze-title">{theCase.name.replace(/\s*case$/i, "")} <span>Case.</span></h1>
-          <p className="dze-description">{t("caseDetail.editorialDescription", { defaultValue: "Изучи содержимое коллекции, реальные шансы и выбери свой следующий предмет." })}</p>
-          <div className="dze-meta"><div><small>{t("caseDetail.status", { defaultValue: "СТАТУС" })}</small><strong>{theCase.isActive ? t("caseDetail.available", { defaultValue: "Доступен" }) : t("caseDetail.unavailable", { defaultValue: "Недоступен" })}</strong></div><div><small>{t("caseDetail.mode", { defaultValue: "РЕЖИМ" })}</small><strong>{t("caseDetail.openingStation", { defaultValue: "Открытие кейса" })}</strong></div></div>
-          <div className="dza-arena__price">
-            <span className="dza-arena__label">{t("caseDetail.casePrice", { defaultValue: "Цена" })}</span>
-            <Money minor={theCase.priceMinor} currency={theCase.currency} />
-            <span className="dza-arena__label">{t("caseDetail.provablyFair")}</span>
-          </div>
-
-          {user ? (
+      <CaseOpeningScene theCase={theCase} winner={winningItem} opening={opening} onComplete={finishOpening} onSkip={skipAnimation}
+        actions={<><span className="cc-case-price"><Money minor={theCase.priceMinor} currency={theCase.currency} /></span>          {user ? (
             <>
-              <button onClick={openCase} disabled={opening || !theCase.isActive} className="dza-open">
+              <button onClick={openCase} disabled={opening || recoveryPending || !theCase.isActive} className="dza-open">
                 {!theCase.isActive ? t("caseDetail.unavailable", { defaultValue: "Недоступен" }) : opening ? t("caseDetail.rolling") : t("caseDetail.open", { defaultValue: "Открыть" })}
               </button>
               <button onClick={demoSpin} disabled={opening} className="dza-demo">
@@ -281,11 +225,15 @@ export function CaseDetailPage() {
               </p>
             </>
           )}
-          {error && <p className="form-error">{error}</p>}
-        </div>
-      </section>
-
-      {revealed && winningItem && (
+          {error && <p className="form-error" role="alert">{error}</p>}
+          {recoveryPending && user && <div className="dze-recovery" role="status">
+            <p>{t("caseDetail.recoveryPending", { defaultValue: "Ответ на предыдущее открытие не получен. Проверь инвентарь перед новым открытием: предмет мог уже поступить." })}</p>
+            <Link to="/inventory">{t("caseDetail.claim", { defaultValue: "В инвентарь" })}</Link>
+            <button type="button" onClick={() => { clearOpening(user.id, theCase.id); setRecoveryPending(false); setError(null); }}>
+              {t("caseDetail.recoveryChecked", { defaultValue: "Я проверил инвентарь" })}
+            </button>
+          </div>} </>}
+        resultView={revealed && winningItem ? <>      {revealed && winningItem && (
         <section
           className="dz-record"
           role="status"
@@ -326,7 +274,8 @@ export function CaseDetailPage() {
             )}
           </div>
         </section>
-      )}
+      )}</> : null}
+      />
 
       {seedHash && (
         <div className="dz-panel">
@@ -347,7 +296,7 @@ export function CaseDetailPage() {
       )}
 
       {/* ZONE 3 — contents */}
-      <section className="dza-items" aria-labelledby="dza-items-title">
+      <section id="all-case-items" className="dza-items" aria-labelledby="dza-items-title">
         <div className="dza-items__head">
           <h2 id="dza-items-title">{t("caseDetail.itemsHeading")}</h2>
           <span className="dza-items__count">
@@ -384,3 +333,4 @@ function dropChancePercent(item: CaseItem, pool: CaseItem[]): string {
   const pct = (item.weight / total) * 100;
   return formatChance(pct);
 }
+
