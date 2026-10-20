@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { resolveItemImage } from "../../lib/itemImages";
+import { useState } from "react";
+import { resolveItemImageSources } from "../../lib/itemImages";
 
 interface EditorialItemImageProps {
   name: string;
@@ -16,12 +16,15 @@ export function EditorialItemImage({
   decorative = false,
   loading = "lazy",
 }: EditorialItemImageProps) {
-  const resolved = resolveItemImage(name, imageUrl);
-  const [failed, setFailed] = useState(false);
+  const sources = resolveItemImageSources(name, imageUrl);
+  const sourceKey = sources.map((source) => source.url).join("\\u0000");
+  const [failedSource, setFailedSource] = useState({ key: "", index: 0 });
+  // Changing the item synchronously resets the selected source without a
+  // one-frame blank state. Each image failure advances once to the next URL.
+  const index = failedSource.key === sourceKey ? failedSource.index : 0;
+  const active = sources[index];
 
-  useEffect(() => setFailed(false), [resolved.url]);
-
-  if (!resolved.url || failed) {
+  if (!active) {
     const [weapon, finish] = name.replace(/ \([^)]*\)$/, "").split(" | ");
     return (
       <div
@@ -40,13 +43,13 @@ export function EditorialItemImage({
   return (
     <img
       className={className}
-      src={resolved.url}
+      src={active.url}
       alt={decorative ? "" : name}
       aria-hidden={decorative || undefined}
       loading={loading}
       decoding="async"
-      onError={() => setFailed(true)}
-      data-image-source={resolved.status}
+      onError={() => setFailedSource({ key: sourceKey, index: index + 1 })}
+      data-image-source={active.status}
     />
   );
 }
