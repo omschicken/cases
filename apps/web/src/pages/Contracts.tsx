@@ -28,6 +28,7 @@ export function ContractsPage() {
   const [query, setQuery] = useState("");
   const [rarity, setRarity] = useState("");
   const [sort, setSort] = useState<ItemSort>("newest");
+  const [visibleLimit, setVisibleLimit] = useState(60);
   const [confirm, setConfirm] = useState(false);
   const [result, setResult] = useState<ContractResult | null>(null);
   const [quote, setQuote] = useState<ContractQuote | null>(null);
@@ -38,6 +39,7 @@ export function ContractsPage() {
   const total = selected.reduce((sum, value) => sum + BigInt(value.caseItem.valueMinor), 0n);
   const filtered = filterItems(available, (value) => value.caseItem, query, rarity, sort);
   const locked = operation.busy || !!operation.pending;
+  useEffect(() => setVisibleLimit(60), [query, rarity, sort]);
   useEffect(() => {
     if (!user || selected.length < 3 || selected.length > 10) {
       setQuote(null); setQuoteLoading(false); setQuoteError("");
@@ -77,7 +79,7 @@ export function ContractsPage() {
        </> : selected.length >= 3 ? <p>Для такой суммы нет подходящей пары наград. Измените состав контракта.</p> : <p>Выберите минимум три предмета для расчёта.</p>}
       </div><button className="edv2-btn edv2-primary" onClick={() => setConfirm(true)} disabled={!user || locked || selected.length < 3 || selected.length > 10 || quoteLoading || !quote?.available}><Check size={15} />Создать контракт</button><small>Минимум 3 предмета. После подтверждения выбранные скины будут использованы безвозвратно.</small></aside></div>
     {result && <div className="edv2-result" role="status"><div className="edv2-row edv2-between"><h2>Контракт выполнен</h2><Link className="edv2-btn edv2-xs" to="/inventory">В инвентарь →</Link></div><div className="edv2-result-items"><div className="edv2-result-item"><EditorialItemImage name={result.item.name} imageUrl={result.item.imageUrl} /><b>{result.item.name}</b><strong>{money(result.item.valueMinor)}</strong></div></div><small>Операция {result.operation.id} · результат сервера</small></div>}
-    <div className="edv2-available"><div className="edv2-sectionhead"><h2>Ваш инвентарь <span className="edv2-count">{available.length}</span></h2><span className="edv2-small">Выберите от 3 до 10 предметов</span></div>{!user ? <SignInState /> : <><ItemFilters query={query} setQuery={setQuery} rarity={rarity} setRarity={setRarity} sort={sort} setSort={setSort} /><DataState loading={inventory.loading} error={inventory.error} retry={inventory.refresh} empty={!inventory.loading && !inventory.error && !filtered.length ? (available.length ? "По этим фильтрам ничего не найдено" : "Нет доступных предметов для контракта") : undefined} /><div className="edv2-items">{filtered.map((value) => <ItemTile key={value.id} item={value.caseItem} selected={selectedIds.includes(value.id)} disabled={locked || (!selectedIds.includes(value.id) && selected.length >= 10)} onClick={() => toggle(value.id)} />)}</div></>}</div>
+    <div className="edv2-available"><div className="edv2-sectionhead"><h2>Ваш инвентарь <span className="edv2-count">{available.length}</span></h2><span className="edv2-small">Выберите от 3 до 10 предметов</span></div>{!user ? <SignInState /> : <><ItemFilters query={query} setQuery={setQuery} rarity={rarity} setRarity={setRarity} sort={sort} setSort={setSort} /><DataState loading={inventory.loading} error={inventory.error} retry={inventory.refresh} empty={!inventory.loading && !inventory.error && !filtered.length ? (available.length ? "По этим фильтрам ничего не найдено" : "Нет доступных предметов для контракта") : undefined} /><div className="edv2-items">{filtered.slice(0, visibleLimit).map((value) => <ItemTile key={value.id} item={value.caseItem} selected={selectedIds.includes(value.id)} disabled={locked || (!selectedIds.includes(value.id) && selected.length >= 10)} onClick={() => toggle(value.id)} />)}</div>{filtered.length > visibleLimit && <button type="button" className="edv2-btn cc-load-more" onClick={() => setVisibleLimit(v => v + 60)}>Показать ещё · {filtered.length - visibleLimit} предметов</button>}</>}</div>
     {confirm && <ConfirmDialog title="Подтвердить контракт" confirmLabel="Использовать предметы" onClose={() => setConfirm(false)} onConfirm={create} busy={operation.busy}><p><strong>{selected.length} предмета · {money(total)}</strong></p><p>Все выбранные предметы будут безвозвратно использованы. Результат будет выбран сервером по указанным шансам. После подтверждения исходные предметы не возвращаются.</p></ConfirmDialog>}
   </section>;
 }
