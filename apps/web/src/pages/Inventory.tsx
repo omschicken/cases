@@ -38,7 +38,7 @@ export function InventoryPage() {
   });
   const filtered = filterItems(classified, (item) => item.caseItem, query, rarity, sort);
   const locked = busy || !!pending;
-  const canSendToContract = selected.length > 0 && selected.length <= 10 && !locked;
+  const canSendToContract = selected.length >= 3 && selected.length <= 10 && !locked;
   useEffect(() => {
     const sync = () => { try { setPending(localStorage.getItem(key)); } catch { setError("Не удалось прочитать состояние продажи"); } };
     sync(); window.addEventListener("storage", sync); return () => window.removeEventListener("storage", sync);
