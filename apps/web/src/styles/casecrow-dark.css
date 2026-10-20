@@ -161,3 +161,17 @@
 @media(prefers-reduced-motion:reduce){
  .fidelity-page :is(button,a,input,select){transition:none!important}
 }
+
+/* Tight headers on phones: keep wallet and preferences usable without overflow. */
+@media(max-width:600px){
+ .fidelity-page .fidelity-header{grid-template-columns:minmax(0,1fr) auto;gap:8px;padding-inline:12px}
+ .fidelity-page .fidelity-logo{min-width:0}
+ .fidelity-page .fidelity-logo .casecrow-logo__lockup,
+ .editorial-sections .fidelity-logo .casecrow-logo__lockup{width:112px!important;max-width:100%}
+ .fidelity-page .fidelity-account{gap:6px;min-width:0}
+ .fidelity-page .fidelity-plus{display:none}
+ .fidelity-page .fidelity-profile{width:34px;height:34px;margin-left:0}
+ .editorial-sections .fidelity-wallet{width:38px;height:34px;min-width:38px;overflow:hidden;justify-content:flex-start;gap:0;padding:0 9px}
+ .editorial-sections .fidelity-wallet .dz-figure{display:none}
+ .fidelity-theme-select{width:68px;height:34px}
+}
