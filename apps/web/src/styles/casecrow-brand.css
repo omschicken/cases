@@ -1,1 +1,8 @@
 .casecrow-logo{display:inline-flex;align-items:center;line-height:1}.casecrow-logo__lockup{display:block;width:154px;height:auto}.casecrow-logo__mark{display:block;width:30px;height:30px;object-fit:contain}.casecrow-logo__mark--dark{display:none}.dz-brand .casecrow-logo__lockup,.dz-footer__brand .casecrow-logo__lockup{filter:brightness(0) invert(1)}.dz-brand .casecrow-logo__mark--light,.dz-footer__brand .casecrow-logo__mark--light{display:none}.dz-brand .casecrow-logo__mark--dark,.dz-footer__brand .casecrow-logo__mark--dark{display:block}.fidelity-logo .casecrow-logo__lockup{width:148px}@media(max-width:600px){.fidelity-logo .casecrow-logo__lockup{width:132px}.casecrow-logo__mark{width:26px;height:26px}}
+
+/* Admin tables sit on the light CaseCrow background: keep text readable. */
+.admin-table td { color: #171816; }
+.admin-table th { color: #686c65; }
+.admin-table tbody tr:hover { background: #efede7; }
+.admin-table .positive { color: #3f7a3c; }
+.admin-table .negative { color: #c0392b; }

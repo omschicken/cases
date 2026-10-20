@@ -167,6 +167,14 @@ export class PricesService {
       }));
     }
 
+    // Steam is ~1.5s per skin, so it is opt-in. By default a skin that no bulk
+    // source lists is simply skipped (and named in the log).
+    if (process.env.PRICE_STEAM_FALLBACK !== "1") {
+      summary.skipped += misses.length;
+      if (misses.length > 0) this.logger.warn(`no market listing for: ${misses.slice(0, 50).join(", ")}`);
+      misses = [];
+    }
+
     for (const name of misses) {
       try {
         const usdValueMinor = await this.fetchSteamPriceMinor(name);
