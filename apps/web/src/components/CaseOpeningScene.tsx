@@ -19,6 +19,10 @@ interface Props {
 
 export function CaseOpeningScene({ theCase, winner, opening, actions, resultView, onComplete, onSkip }: Props) {
   const [sound, setSound] = useState(false);
+  const stage = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (opening) stage.current?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+  }, [opening]);
   const audio = useRef<AudioContext | null>(null);
   useEffect(() => () => { void audio.current?.close(); }, []);
   function toggleSound() {
@@ -55,7 +59,7 @@ export function CaseOpeningScene({ theCase, winner, opening, actions, resultView
         {opening && <button type="button" className="cc-skip" onClick={onSkip}><SkipForward size={18} /><span>Пропустить</span></button>}
       </div>
     </header>
-    <section className="cc-opening-stage" aria-label="Открытие кейса" data-opening={opening}>
+    <section ref={stage} className="cc-opening-stage" aria-label="Открытие кейса" data-opening={opening}>
       {resultView || (opening && !winner
         ? <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера. Повторное нажатие не требуется.</p><button type="button" onClick={onSkip}>Показать результат без анимации</button></div>
         : theCase.items.length > 0 && <CaseReel key={opening ? "spin" : "preview"} items={theCase.items} winner={winner ?? theCase.items[0]} preview={!opening} onComplete={onComplete} onTick={tick} />)}

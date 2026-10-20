@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const loadMe = useCallback(async () => {
-    if (!getAccessToken()) {
+    if (!getAccessToken() && import.meta.env.VITE_CASECROW_AUDIT !== "1") {
       setUser(null);
       setLoading(false);
       return;
