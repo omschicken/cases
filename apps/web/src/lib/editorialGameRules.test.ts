@@ -7,7 +7,8 @@ describe("upgrade preview matches the audited server pricing rules", () => {
     expect(upgradeChance("10000", "30000")).toBe(0.3);
   });
   it("applies the server's lower and upper limits", () => {
-    expect(upgradeChance("1", "100000000000000000000")).toBe(0.01);
+    expect(upgradeChance("1", "90")).toBe(0.01);
+    expect(upgradeChance("1", "91")).toBeNull();
     expect(upgradeChance("10000", "10001")).toBe(0.75);
   });
   it("rejects an invalid source or a target that is not more valuable", () => {
