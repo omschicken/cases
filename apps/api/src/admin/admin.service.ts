@@ -109,6 +109,12 @@ export class AdminService {
     return status;
   }
 
+  async rebalanceCases(adminUserId: string) {
+    const rows = await this.prices.rebalanceCases(0.8);
+    void this.audit(adminUserId, "CASES_REBALANCE", "Case", "all");
+    return rows;
+  }
+
   listAuditLog(take = 100) {
     return this.prisma.adminAuditLog.findMany({
       orderBy: { createdAt: "desc" },

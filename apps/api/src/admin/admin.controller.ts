@@ -88,6 +88,11 @@ export class AdminController {
     return this.adminService.getPriceSyncStatus();
   }
 
+  @Post("cases/rebalance")
+  rebalanceCases(@CurrentUser() admin: AuthenticatedUser) {
+    return this.adminService.rebalanceCases(admin.id);
+  }
+
   @Post("prices/sync")
   triggerPriceSync(@CurrentUser() admin: AuthenticatedUser) {
     return this.adminService.triggerPriceSync(admin.id);

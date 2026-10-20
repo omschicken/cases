@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../../lib/api";
-import type { PriceSyncStatusDto } from "../../lib/types";
+import type { CaseBalanceRowDto, PriceSyncStatusDto } from "../../lib/types";
 
 // Prices refresh on their own every minute; this page only shows the state and
 // lets an admin force a refresh. The status is re-read every few seconds.
@@ -12,6 +12,8 @@ export function AdminPrices() {
   const [status, setStatus] = useState<PriceSyncStatusDto | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [balancing, setBalancing] = useState(false);
+  const [balance, setBalance] = useState<CaseBalanceRowDto[] | null>(null);
 
   function load() {
     api
@@ -39,6 +41,20 @@ export function AdminPrices() {
     }
   }
 
+  async function rebalance() {
+    if (!window.confirm("Пересчитать шансы выпадения и цены всех активных кейсов под окупаемость 80%?")) return;
+    setError(null);
+    setBalancing(true);
+    try {
+      setBalance(await api.post<CaseBalanceRowDto[]>("/admin/cases/rebalance"));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Не удалось пересчитать кейсы");
+    } finally {
+      setBalancing(false);
+    }
+  }
+
+  const money = (minor: string) => (Number(minor) / 100).toLocaleString();
   const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : "—");
 
   return (
@@ -86,6 +102,37 @@ export function AdminPrices() {
               <td>{t("admin.prices.failed")}</td>
               <td className={status.lastError ? "negative" : undefined}>{status.lastError ?? t("admin.prices.noErrors", { defaultValue: "нет" })}</td>
             </tr>
+          </tbody>
+        </table>
+      )}
+
+      <h2 style={{ marginTop: "2rem" }}>Окупаемость кейсов</h2>
+      <p className="hint">
+        Подбирает шансы выпадения (и, если нужно, цену кейса), чтобы средняя выплата была 80% от цены. Меняет шансы у всех
+        активных кейсов, поэтому запускай осознанно после обновления цен.
+      </p>
+      <button onClick={rebalance} disabled={balancing}>
+        {balancing ? "Пересчитываю…" : "Пересчитать кейсы (80%)"}
+      </button>
+      {balance && (
+        <table className="admin-table" style={{ marginTop: "1rem" }}>
+          <thead>
+            <tr>
+              <th>Кейс</th>
+              <th>Цена было</th>
+              <th>Цена стало</th>
+              <th>Окупаемость</th>
+            </tr>
+          </thead>
+          <tbody>
+            {balance.map((r) => (
+              <tr key={r.slug}>
+                <td>{r.slug}</td>
+                <td>{money(r.oldPriceMinor)}</td>
+                <td className={r.priceMinor !== r.oldPriceMinor ? "positive" : undefined}>{money(r.priceMinor)}</td>
+                <td>{Math.round(r.rtp * 100)}%</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       )}

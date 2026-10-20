@@ -4,6 +4,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { fetchMarketCsgoPrices } from "./market-csgo";
 import { fetchSkinMeta } from "./market-images";
 import { resolveMarketName } from "./market-names";
+import { balanceCase } from "./case-balance";
 
 /** A weapon skin / knife / glove name always ends with its wear. */
 const WEAR_RE = /\((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
@@ -33,6 +34,14 @@ export interface MarketItemDto {
   volume: number;
   imageUrl: string | null;
   rarity: string | null;
+}
+
+export interface CaseBalanceRow {
+  slug: string;
+  currency: string;
+  oldPriceMinor: string;
+  priceMinor: string;
+  rtp: number;
 }
 
 export interface MarketItemQuery {
@@ -240,6 +249,43 @@ export class PricesService {
         WHERE m.name = t.name`;
     }
     await this.prisma.$executeRaw`UPDATE market_item SET rarity = NULL WHERE rarity = ''`;
+  }
+
+  /** Sets every active case's drop chances (and, when needed, price) so its RTP equals `targetRtp`.
+   * Changing weights changes the odds that past opens were verified against, so this is a
+   * deliberate admin action, not part of the minute sync. */
+  async rebalanceCases(targetRtp = 0.8): Promise<CaseBalanceRow[]> {
+    const cases = await this.prisma.case.findMany({
+      where: { isActive: true },
+      include: { items: { orderBy: { valueMinor: "asc" } } },
+      orderBy: { displayOrder: "asc" },
+    });
+    const rows: CaseBalanceRow[] = [];
+    for (const c of cases) {
+      if (c.items.length === 0 || c.items.some((i) => i.currency !== c.currency)) continue;
+      const result = balanceCase(
+        {
+          priceMinor: Number(c.priceMinor),
+          valuesMinor: c.items.map((i) => Number(i.valueMinor)),
+          priceStepMinor: c.currency === "RUB" ? 1000 : 100,
+        },
+        targetRtp,
+      );
+      await this.prisma.$transaction([
+        this.prisma.case.update({ where: { id: c.id }, data: { priceMinor: BigInt(result.priceMinor) } }),
+        ...c.items.map((item, i) =>
+          this.prisma.caseItem.update({ where: { id: item.id }, data: { weight: Number((result.probabilities[i] * 100).toFixed(6)) } }),
+        ),
+      ]);
+      rows.push({
+        slug: c.slug,
+        currency: c.currency,
+        oldPriceMinor: c.priceMinor.toString(),
+        priceMinor: String(result.priceMinor),
+        rtp: Number(result.rtp.toFixed(4)),
+      });
+    }
+    return rows;
   }
 
   async listItems(query: MarketItemQuery): Promise<{ total: number; items: MarketItemDto[] }> {

@@ -124,3 +124,11 @@ export interface PriceSyncStatusDto {
   itemsTotal: number;
   withImages: number;
 }
+
+export interface CaseBalanceRowDto {
+  slug: string;
+  currency: string;
+  oldPriceMinor: string;
+  priceMinor: string;
+  rtp: number;
+}
