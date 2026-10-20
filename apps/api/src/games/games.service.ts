@@ -43,7 +43,7 @@ export class GamesService {
 
       const total = inputs.reduce((sum, item) => sum + item.caseItem.valueMinor, 0n);
       const candidates = await tx.caseItem.findMany({
-        where: { currency: "RUB", valueMinor: { gte: total * 25n / 100n, lte: total * 5n }, case: { isActive: true } },
+        where: { currency: "RUB", valueMinor: { gte: total * 20n / 100n, lte: total * 4n }, case: { isActive: true } },
         orderBy: [{ valueMinor: "asc" }, { id: "asc" }],
         take: 5000,
       });
@@ -84,7 +84,7 @@ export class GamesService {
     }
     const total = inputs.reduce((sum, item) => sum + item.caseItem.valueMinor, 0n);
     const candidates = await this.prisma.caseItem.findMany({
-      where: { currency: "RUB", valueMinor: { gte: total * 25n / 100n, lte: total * 5n }, case: { isActive: true } },
+      where: { currency: "RUB", valueMinor: { gte: total * 20n / 100n, lte: total * 4n }, case: { isActive: true } },
       orderBy: [{ valueMinor: "asc" }, { id: "asc" }], take: 5000,
     });
     const quote = selectContractOutcomes(candidates, total);
