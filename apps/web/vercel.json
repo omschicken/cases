@@ -7,9 +7,6 @@
       "maxDuration": 60
     }
   },
-  "crons": [
-    { "path": "/api/market/refresh", "schedule": "* * * * *" }
-  ],
   "rewrites": [
     {
       "source": "/api/:path((?!router(?:/|$)).*)",
