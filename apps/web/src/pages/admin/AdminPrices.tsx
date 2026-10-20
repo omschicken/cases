@@ -41,12 +41,15 @@ export function AdminPrices() {
     }
   }
 
-  async function rebalance() {
-    if (!window.confirm("Пересчитать шансы выпадения и цены всех активных кейсов под окупаемость 80%?")) return;
+  async function rebalance(populate: boolean) {
+    const question = populate
+      ? "Добавить в кейсы предметы (до 24–28 штук) и пересчитать шансы под окупаемость 80%?"
+      : "Пересчитать шансы выпадения и цены всех активных кейсов под окупаемость 80%?";
+    if (!window.confirm(question)) return;
     setError(null);
     setBalancing(true);
     try {
-      setBalance(await api.post<CaseBalanceRowDto[]>("/admin/cases/rebalance"));
+      setBalance(await api.post<CaseBalanceRowDto[]>(populate ? "/admin/cases/populate" : "/admin/cases/rebalance"));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Не удалось пересчитать кейсы");
     } finally {
@@ -111,14 +114,20 @@ export function AdminPrices() {
         Подбирает шансы выпадения (и, если нужно, цену кейса), чтобы средняя выплата была 80% от цены. Меняет шансы у всех
         активных кейсов, поэтому запускай осознанно после обновления цен.
       </p>
-      <button onClick={rebalance} disabled={balancing}>
-        {balancing ? "Пересчитываю…" : "Пересчитать кейсы (80%)"}
-      </button>
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+        <button onClick={() => rebalance(true)} disabled={balancing}>
+          {balancing ? "Работаю…" : "Наполнить кейсы и пересчитать (80%)"}
+        </button>
+        <button onClick={() => rebalance(false)} disabled={balancing}>
+          Только пересчитать (80%)
+        </button>
+      </div>
       {balance && (
         <table className="admin-table" style={{ marginTop: "1rem" }}>
           <thead>
             <tr>
               <th>Кейс</th>
+              <th>Предметов</th>
               <th>Цена было</th>
               <th>Цена стало</th>
               <th>Окупаемость</th>
@@ -128,6 +137,7 @@ export function AdminPrices() {
             {balance.map((r) => (
               <tr key={r.slug}>
                 <td>{r.slug}</td>
+                <td>{r.itemCount}</td>
                 <td>{money(r.oldPriceMinor)}</td>
                 <td className={r.priceMinor !== r.oldPriceMinor ? "positive" : undefined}>{money(r.priceMinor)}</td>
                 <td>{Math.round(r.rtp * 100)}%</td>

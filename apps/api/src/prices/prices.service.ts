@@ -5,6 +5,7 @@ import { fetchMarketCsgoPrices } from "./market-csgo";
 import { fetchSkinMeta } from "./market-images";
 import { resolveMarketName } from "./market-names";
 import { balanceCase } from "./case-balance";
+import { pickCaseItems, toItemRarity, type Candidate } from "./case-populate";
 
 /** A weapon skin / knife / glove name always ends with its wear. */
 const WEAR_RE = /\((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
@@ -42,6 +43,7 @@ export interface CaseBalanceRow {
   oldPriceMinor: string;
   priceMinor: string;
   rtp: number;
+  itemCount: number;
 }
 
 export interface MarketItemQuery {
@@ -251,6 +253,52 @@ export class PricesService {
     await this.prisma.$executeRaw`UPDATE market_item SET rarity = NULL WHERE rarity = ''`;
   }
 
+  /** Tops every active case up to 24–28 drops with real, priced skins from the market
+   * catalog. Existing drops are kept (opened items reference them); weights are set
+   * afterwards by rebalanceCases. */
+  async populateCases(): Promise<number> {
+    await this.ensureTables();
+    const cases = await this.prisma.case.findMany({
+      where: { isActive: true },
+      include: { items: { select: { name: true } } },
+      orderBy: { displayOrder: "asc" },
+    });
+    const rows = await this.prisma.$queryRaw<
+      { name: string; rub_minor: bigint; usd_minor: bigint; image_url: string; rarity: string | null }[]
+    >`SELECT name, rub_minor, usd_minor, image_url, rarity FROM market_item
+      WHERE listed AND category = 'skin' AND volume >= 3 AND image_url IS NOT NULL AND rub_minor >= 1000 AND name NOT LIKE 'Souvenir %' AND name NOT LIKE '%StatTrak%'`;
+
+    const taken = new Set<string>(cases.flatMap((c) => c.items.map((i) => i.name)));
+    let added = 0;
+    for (const c of cases) {
+      const target = 24 + (c.slug.length % 5);
+      const need = target - c.items.length;
+      if (need <= 0) continue;
+      const price = Number(c.priceMinor);
+      const candidates: Candidate[] = rows.map((r) => ({
+        name: r.name,
+        priceMinor: Number(c.currency === "USD" ? r.usd_minor : r.rub_minor),
+        imageUrl: r.image_url,
+        rarity: r.rarity,
+      }));
+      const picked = pickCaseItems(candidates, price, need, taken, Math.random);
+      if (picked.length === 0) continue;
+      await this.prisma.caseItem.createMany({
+        data: picked.map((p) => ({
+          caseId: c.id,
+          name: p.name,
+          imageUrl: p.imageUrl,
+          weight: 1,
+          valueMinor: BigInt(p.priceMinor),
+          currency: c.currency,
+          rarity: toItemRarity(p.rarity, p.priceMinor, price),
+        })),
+      });
+      added += picked.length;
+    }
+    return added;
+  }
+
   /** Sets every active case's drop chances (and, when needed, price) so its RTP equals `targetRtp`.
    * Changing weights changes the odds that past opens were verified against, so this is a
    * deliberate admin action, not part of the minute sync. */
@@ -283,6 +331,7 @@ export class PricesService {
         oldPriceMinor: c.priceMinor.toString(),
         priceMinor: String(result.priceMinor),
         rtp: Number(result.rtp.toFixed(4)),
+        itemCount: c.items.length,
       });
     }
     return rows;

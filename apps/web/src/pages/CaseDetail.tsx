@@ -4,14 +4,15 @@ import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
-import { RARITY_LABELS, RARITY_RANK, rarityColor } from "../lib/rarity";
+import { RARITY_LABELS, rarityColor } from "../lib/rarity";
 import { useAuth } from "../context/AuthContext";
 import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol";
 import { EditorialItemImage } from "../components/editorial/EditorialItemImage";
-import { resolveItemImage } from "../lib/itemImages";
 import { caseVersionLabel, resolveCaseArt } from "../lib/caseArt";
 import { Money } from "../components/Money";
 import "../styles/case-detail-editorial.css";
+import "../styles/case-reel.css";
+import { REEL_MS } from "../components/CaseReel";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
 
 const EXTERIOR_PATTERN = / \((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
@@ -22,59 +23,15 @@ const EXTERIOR_SHORT: Record<string, string> = {
   "Well-Worn": "WW",
   "Battle-Scarred": "BS",
 };
-const EXTERIOR_RANK = ["Factory New", "Minimal Wear", "Field-Tested", "Well-Worn", "Battle-Scarred"];
 
-interface SkinGroup {
-  name: string;
-  rarity: CaseItem["rarity"];
-  imageUrl: string;
-  items: CaseItem[];
-  totalWeight: number;
-  minValueMinor: string;
-  maxValueMinor: string;
-  currency: string;
-}
-
-function groupCaseItems(items: CaseItem[]): SkinGroup[] {
-  const groups = new Map<string, CaseItem[]>();
-  for (const item of items) {
-    const baseName = item.name.replace(EXTERIOR_PATTERN, "");
-    const group = groups.get(baseName);
-    if (group) group.push(item);
-    else groups.set(baseName, [item]);
-  }
-
-  return [...groups.entries()].map(([name, variants]) => {
-    const byPrice = [...variants].sort((a, b) => Number(BigInt(a.valueMinor) - BigInt(b.valueMinor)));
-    const byWear = [...variants].sort((a, b) => {
-      const aExterior = a.name.match(EXTERIOR_PATTERN)?.[1] ?? "";
-      const bExterior = b.name.match(EXTERIOR_PATTERN)?.[1] ?? "";
-      return EXTERIOR_RANK.indexOf(aExterior) - EXTERIOR_RANK.indexOf(bExterior);
-    });
-    return {
-      name,
-      rarity: variants[0].rarity,
-      imageUrl: resolveItemImage(name, byPrice[byPrice.length - 1].imageUrl).url ?? "",
-      items: byWear,
-      totalWeight: variants.reduce((sum, item) => sum + item.weight, 0),
-      minValueMinor: byPrice[0].valueMinor,
-      maxValueMinor: byPrice[byPrice.length - 1].valueMinor,
-      currency: variants[0].currency,
-    };
-  }).sort((a, b) => {
-    const rarityDifference = RARITY_RANK.indexOf(a.rarity) - RARITY_RANK.indexOf(b.rarity);
-    return rarityDifference || Number(BigInt(b.maxValueMinor) - BigInt(a.maxValueMinor));
-  });
+function splitName(name: string): { weapon: string; finish: string } {
+  const [weapon, ...rest] = name.replace(EXTERIOR_PATTERN, "").replace(/^★ /, "").split(" | ");
+  return { weapon, finish: rest.join(" | ") };
 }
 
 function exteriorLabel(item: CaseItem): string {
   const exterior = item.name.match(EXTERIOR_PATTERN)?.[1];
   return exterior ? EXTERIOR_SHORT[exterior] : "BASE";
-}
-
-function groupChancePercent(group: SkinGroup, totalWeight: number): string {
-  if (totalWeight <= 0) return "0";
-  return formatChance((group.totalWeight / totalWeight) * 100);
 }
 
 function formatChance(value: number): string {
@@ -205,7 +162,7 @@ export function CaseDetailPage() {
 
   useEffect(() => {
     if (!opening || !winningItem || requestPendingRef.current || skipRequestedRef.current) return;
-    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 1100;
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : REEL_MS + 700;
     const timer = window.setTimeout(() => {
       setOpening(false);
       setRevealed(true);
@@ -251,8 +208,7 @@ export function CaseDetailPage() {
     skipRequestedRef.current = true;
     if (!requestPendingRef.current && winningItem) finishOpening();
   }
-  const skinGroups = groupCaseItems(theCase.items);
-  const totalWeight = theCase.items.reduce((total, item) => total + item.weight, 0);
+  const sortedItems = [...theCase.items].sort((a, b) => Number(BigInt(b.valueMinor) - BigInt(a.valueMinor)));
   const version = caseVersionLabel(theCase.slug);
 
   return (
@@ -269,6 +225,7 @@ export function CaseDetailPage() {
           oddsPercent={winningItem ? dropChancePercent(winningItem, theCase.items) : undefined}
           isOpening={opening}
           caseImageUrl={resolveCaseArt(theCase.slug, theCase.imageUrl)}
+          reelItems={theCase.items}
           onSkip={skipAnimation}
           onClose={() => setProtocolDismissed(true)}
           onOpenAgain={openCase}
@@ -394,41 +351,26 @@ export function CaseDetailPage() {
         <div className="dza-items__head">
           <h2 id="dza-items-title">{t("caseDetail.itemsHeading")}</h2>
           <span className="dza-items__count">
-            {String(skinGroups.length).padStart(2, "0")} / {String(theCase.items.length).padStart(2, "0")}
+            {String(theCase.items.length).padStart(2, "0")}
           </span>
         </div>
-        {RARITY_RANK.map((rarity) => {
-          const groups = skinGroups.filter((g) => g.rarity === rarity);
-          if (groups.length === 0) return null;
-          return (
-            <div
-              key={rarity}
-              className="dza-tier"
-              style={{ "--rc": rarityColor(rarity) } as CSSProperties}
-            >
-              <h3 className="dza-tier__title">
-                <span>{t(`rarity.${rarity}`, { defaultValue: RARITY_LABELS[rarity] })}</span>
-                <i aria-hidden="true" />
-                <b>{String(groups.length).padStart(2, "0")}</b>
-              </h3>
-              <div className="dza-items__rail">
-                {groups.map((group) => (
-                  <article key={group.name} className="dza-item" style={{ "--rc": rarityColor(group.rarity) } as CSSProperties}>
-                    <span className="dza-item__chance">{groupChancePercent(group, totalWeight)}%</span>
-                    <EditorialItemImage name={group.name} imageUrl={group.imageUrl} />
-                    <h4 className="dza-item__name">{group.name}</h4>
-                    <span className="dza-item__value">
-                      {group.minValueMinor === group.maxValueMinor
-                        ? formatMinor(group.minValueMinor, group.currency)
-                        : `${formatMinor(group.minValueMinor, group.currency)} – ${formatMinor(group.maxValueMinor, group.currency)}`}
-                    </span>
-                    <span className="dza-item__wear">{group.items.map(exteriorLabel).join(" · ")}</span>
-                  </article>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+        <div className="dza-grid">
+          {sortedItems.map((item) => {
+            const { weapon, finish } = splitName(item.name);
+            return (
+              <article key={item.id} className="dza-tile" style={{ "--rc": rarityColor(item.rarity) } as CSSProperties}>
+                <div className="dza-tile__top">
+                  <span className="dza-tile__wear">{exteriorLabel(item)}</span>
+                  <span className="dza-tile__chance">{dropChancePercent(item, theCase.items)}%</span>
+                </div>
+                <EditorialItemImage name={item.name} imageUrl={item.imageUrl} />
+                <span className="dza-tile__weapon">{weapon}</span>
+                <h4 className="dza-tile__name">{finish || weapon}</h4>
+                <span className="dza-tile__value">{formatMinor(item.valueMinor, item.currency)}</span>
+              </article>
+            );
+          })}
+        </div>
       </section>
     </div>
   );

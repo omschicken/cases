@@ -7,6 +7,7 @@ import { formatMinor } from "../../lib/money";
 import { RARITY_LABELS, rarityColor } from "../../lib/rarity";
 import type { CaseItem, OpenCaseResult } from "../../lib/types";
 import { EditorialItemImage } from "../editorial/EditorialItemImage";
+import { CaseReel } from "../CaseReel";
 
 export type ProtocolPhase = "arming" | "reveal";
 
@@ -14,6 +15,8 @@ interface DropProtocolProps {
   phase: ProtocolPhase;
   caseName: string;
   caseImageUrl: string;
+  /** The case's drops, used as reel filler. */
+  reelItems?: CaseItem[];
   item: CaseItem | null;
   result: OpenCaseResult | null;
   oddsPercent?: string;
@@ -30,7 +33,7 @@ function splitCondition(name: string) {
 }
 
 export function DropProtocol({
-  phase, caseName, caseImageUrl, item, result, oddsPercent, isOpening = false,
+  phase, caseName, caseImageUrl, reelItems, item, result, oddsPercent, isOpening = false,
   onSkip, onClose, onOpenAgain, canOpenAgain = false,
 }: DropProtocolProps) {
   const { t } = useTranslation();
@@ -79,12 +82,19 @@ export function DropProtocol({
           <span>CASECROW / OPENING</span>
           {phase === "reveal" && <button type="button" onClick={onClose} aria-label={t("common.close", { defaultValue: "Закрыть" })}>×</button>}
         </header>
-        <div className={`dze-opening__visual ${phase === "reveal" ? "is-result" : "is-opening"}`}>
-          <span className="dze-opening__ring" aria-hidden="true" />
-          {phase === "reveal" && item
-            ? <EditorialItemImage className="dze-opening__item" name={item.name} imageUrl={item.imageUrl} loading="eager" />
-            : <img className="dze-opening__case" src={caseImageUrl} alt={caseName} />}
-        </div>
+        {(() => {
+          const reeling = phase === "arming" && item !== null && reelItems !== undefined && reelItems.length > 1;
+          return (
+            <div className={`dze-opening__visual ${phase === "reveal" ? "is-result" : reeling ? "is-reel" : "is-opening"}`}>
+              <span className="dze-opening__ring" aria-hidden="true" />
+              {reeling
+                ? <CaseReel items={reelItems!} winner={item!} />
+                : phase === "reveal" && item
+                  ? <EditorialItemImage className="dze-opening__item" name={item.name} imageUrl={item.imageUrl} loading="eager" />
+                  : <img className="dze-opening__case" src={caseImageUrl} alt={caseName} />}
+            </div>
+          );
+        })()}
         <div className="dze-opening__bottom">
           <div>
             <small>{phase === "reveal" ? (isDemo ? t("caseDetail.demoResultLabel", { defaultValue: "ДЕМО — предмет не зачислен" }) : t("caseDetail.resultKicker", { defaultValue: "ПРЕДМЕТ ПОЛУЧЕН" })) : t("caseDetail.unlocking", { defaultValue: "ОТКРЫВАЕМ КЕЙС" })}</small>

@@ -1,0 +1,119 @@
+/* Opening reel + case contents grid — CaseCrow editorial light */
+.dz-reel {
+  position: relative;
+  width: 100%;
+  height: 232px;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+}
+.dz-reel__track {
+  display: flex;
+  gap: 10px;
+  height: 100%;
+  align-items: center;
+  will-change: transform;
+}
+.dz-reel__card {
+  position: relative;
+  flex: 0 0 auto;
+  height: 196px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 10px 14px;
+  border: 1px solid #deddd5;
+  border-radius: 10px;
+  background:
+    radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--rc) 22%, transparent), transparent 70%),
+    #fffefa;
+  text-align: center;
+  transition: transform .35s cubic-bezier(.22, 1, .36, 1), border-color .35s, box-shadow .35s;
+}
+.dz-reel__card::after {
+  content: "";
+  position: absolute;
+  inset: auto 14px 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--rc);
+}
+.dz-reel__card img,
+.dz-reel__card .dze-item-fallback {
+  width: 100%;
+  height: 96px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+.dz-reel__card small { color: #8a9087; font-size: 10px; letter-spacing: .04em; }
+.dz-reel__card strong { margin-top: 2px; color: #20221f; font-size: 13px; line-height: 1.2; max-height: 32px; overflow: hidden; }
+.dz-reel__card em { margin-top: auto; color: #4f574d; font-size: 12px; font-style: normal; font-weight: 700; }
+.dz-reel__card.is-won {
+  transform: scale(1.07);
+  border-color: var(--rc);
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--rc) 32%, transparent);
+}
+.dz-reel__marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: #242621;
+  pointer-events: none;
+}
+.dz-reel__marker::before,
+.dz-reel__marker::after {
+  content: "";
+  position: absolute;
+  left: -6px;
+  border: 7px solid transparent;
+}
+.dz-reel__marker::before { top: 0; border-top-color: #242621; }
+.dz-reel__marker::after { bottom: 0; border-bottom-color: #242621; }
+
+.dze-opening__visual.is-reel { display: block; padding-top: 70px; background: radial-gradient(ellipse at 50% 52%, #f2f0eb, #e7e5de 72%); }
+.dze-opening__visual.is-reel .dze-opening__ring { display: none; }
+
+/* Case contents: every drop as its own tile, priciest first */
+.case-detail .dza-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  gap: 12px;
+}
+.case-detail .dza-tile {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px 16px;
+  border: 1px solid var(--dze-line);
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at 50% 92%, color-mix(in srgb, var(--rc) 18%, transparent), transparent 66%),
+    white;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.case-detail .dza-tile:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--rc) 55%, var(--dze-line));
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--rc) 16%, transparent);
+}
+.case-detail .dza-tile::after { content: ""; position: absolute; inset: auto 14px 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--rc); }
+.case-detail .dza-tile__top { display: flex; justify-content: space-between; align-items: center; min-height: 18px; }
+.case-detail .dza-tile__wear { padding: 2px 7px; border-radius: 99px; background: #f0efe9; color: #6c7369; font-size: 9px; font-weight: 750; letter-spacing: .08em; }
+.case-detail .dza-tile__chance { color: #8b9089; font-size: 11px; font-weight: 700; }
+.case-detail .dza-tile img,
+.case-detail .dza-tile .dze-item-fallback { width: 100%; height: 118px; margin: 6px 0 8px; object-fit: contain; }
+.case-detail .dza-tile__weapon { color: #8a9087; font-size: 11px; }
+.case-detail .dza-tile__name { margin: 2px 0 8px; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; text-transform: none; color: var(--dze-ink); font-size: 14px; font-weight: 700; line-height: 1.25; }
+.case-detail .dza-tile__value { margin-top: auto; color: var(--dze-ink); font-size: 14px; font-weight: 750; }
+
+@media (max-width: 520px) {
+  .dz-reel { height: 200px; }
+  .dz-reel__card { height: 170px; }
+  .dz-reel__card img, .dz-reel__card .dze-item-fallback { height: 78px; }
+  .case-detail .dza-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .case-detail .dza-tile img, .case-detail .dza-tile .dze-item-fallback { height: 92px; }
+}

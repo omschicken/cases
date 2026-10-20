@@ -131,4 +131,5 @@ export interface CaseBalanceRowDto {
   oldPriceMinor: string;
   priceMinor: string;
   rtp: number;
+  itemCount: number;
 }

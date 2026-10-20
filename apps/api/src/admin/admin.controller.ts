@@ -103,6 +103,11 @@ export class AdminController {
     return this.adminService.rebalanceCases(admin.id);
   }
 
+  @Post("cases/populate")
+  populateCases(@CurrentUser() admin: AuthenticatedUser) {
+    return this.adminService.rebalanceCases(admin.id, true);
+  }
+
   @Post("prices/sync")
   triggerPriceSync(@CurrentUser() admin: AuthenticatedUser) {
     return this.adminService.triggerPriceSync(admin.id);
