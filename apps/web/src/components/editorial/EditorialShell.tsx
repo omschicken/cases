@@ -10,8 +10,10 @@ import { Money } from "../Money";
 import { IconExternalLink, IconGift, IconInventory, IconProfile, IconSearch, IconWallet, mainNavItems } from "../navIcons";
 import { CaseCrowLogo } from "../CaseCrowLogo";
 import { BottomNav } from "../BottomNav";
+import { ThemeSwitcher } from "../ThemeSwitcher";
 import "../../styles/design-lab.css";
 import "../../styles/editorial-sections.css";
+import "../../styles/casecrow-dark.css";
 
 const topNav = mainNavItems.slice(0, 4);
 
@@ -100,6 +102,7 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
             <NavLink className="fidelity-profile" to="/login" aria-label={t("nav.profile")}><IconProfile /></NavLink>
           </>
         )}
+        <ThemeSwitcher />
         <LanguageSwitcher />
       </div>
     </header>
