@@ -10,7 +10,11 @@ export function assessCaseEconomics(items: readonly PricedDrop[], priceMinor: bi
   if (items.some((item) => !Number.isFinite(item.weight) || item.weight < 0 || item.valueMinor < 0n)) {
     return { canOpen: false, canBattle: false };
   }
-  const pool = items.map((item) => ({ value: item.valueMinor, weight: BigInt(Math.round(item.weight * 1_000_000)) }))
+  const SCALE = 1_000_000_000_000; // Supports rare drops without rounding them out of the model.
+  if (items.some((item) => item.weight > 0 && Math.round(item.weight * SCALE) === 0)) {
+    return { canOpen: false, canBattle: false };
+  }
+  const pool = items.map((item) => ({ value: item.valueMinor, weight: BigInt(Math.round(item.weight * SCALE)) }))
     .filter((item) => item.weight > 0n);
   const total = pool.reduce((sum, item) => sum + item.weight, 0n);
   if (total === 0n) return { canOpen: false, canBattle: false };
