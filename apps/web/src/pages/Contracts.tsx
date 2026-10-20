@@ -73,8 +73,10 @@ export function ContractsPage() {
     <aside className="edv2-panel edv2-contract-summary"><div className="edv2-row edv2-between"><span className="edv2-label">ВАШ КОНТРАКТ</span><span className="edv2-pill">{selected.length} предмета</span></div><div><div className="edv2-label">Общая стоимость</div><div className="edv2-summary-value">{money(total)}</div></div><div className="edv2-summary-rule"><span>Количество предметов</span><b>{selected.length} / 10</b></div><div className="edv2-summary-info"><b>Возможные результаты</b>
       {quoteLoading ? <p role="status">Рассчитываем варианты и шансы…</p> : quoteError ? <p role="alert">{quoteError}</p> :
        quote?.available && quote.low && quote.high && quote.highChance !== undefined ? <>
-        <p>Обычный предмет: <strong>{money(quote.low.valueMinor)}</strong>, шанс {((1 - quote.highChance) * 100).toFixed(1)}%</p>
-        <p>Редкий результат: <strong>{money(quote.high.valueMinor)}</strong>, шанс {(quote.highChance * 100).toFixed(1)}%</p>
+        <div className="cc-contract-prizes">
+          <div className="cc-contract-prize"><EditorialItemImage name={quote.low.name} imageUrl={quote.low.imageUrl} decorative /><span><b>{quote.low.name}</b><small>Базовый исход · {((1 - quote.highChance) * 100).toFixed(1)}%</small><strong>{money(quote.low.valueMinor)}</strong></span></div>
+          <div className="cc-contract-prize cc-contract-prize--high"><EditorialItemImage name={quote.high.name} imageUrl={quote.high.imageUrl} decorative /><span><b>{quote.high.name}</b><small>Прибыльный исход · {(quote.highChance * 100).toFixed(1)}%</small><strong>{money(quote.high.valueMinor)}</strong></span></div>
+        </div>
         <p>Средний возврат: {money(quote.expectedReturnMinor ?? "0")} (90% суммы). Редкий исход может быть прибыльным.</p>
        </> : selected.length >= 3 ? <p>Для такой суммы нет подходящей пары наград. Измените состав контракта.</p> : <p>Выберите минимум три предмета для расчёта.</p>}
       </div><button className="edv2-btn edv2-primary" onClick={() => setConfirm(true)} disabled={!user || locked || selected.length < 3 || selected.length > 10 || quoteLoading || !quote?.available}><Check size={15} />Создать контракт</button><small>Минимум 3 предмета. После подтверждения выбранные скины будут использованы безвозвратно.</small></aside></div>
