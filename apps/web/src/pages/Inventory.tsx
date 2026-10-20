@@ -1,139 +1,88 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { History, ShieldCheck } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 import { api, ApiError } from "../lib/api";
-import { formatMinor } from "../lib/money";
-import { RARITY_LABELS, RARITY_RANK } from "../lib/rarity";
-import { ItemCard, ItemCardSkeleton } from "../components/dz/ItemCard";
-import { PageHeader } from "../components/dz/PageHeader";
-import type { InventoryItemDto, ItemRarity } from "../lib/types";
-
-type SortMode = "newest" | "value-desc" | "value-asc";
+import { useEditorialData } from "../hooks/useEditorialData";
+import type { InventoryItemDto, LedgerEntryDto } from "../lib/types";
+import { ConfirmDialog, DataState, ItemFilters, ItemTile, SectionHeading, filterItems, money } from "../components/editorial/SectionUI";
+import type { ItemSort } from "../components/editorial/SectionUI";
 
 export function InventoryPage() {
-  const { t } = useTranslation();
-  const [items, setItems] = useState<InventoryItemDto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [sellingId, setSellingId] = useState<string | null>(null);
-  const [confirmId, setConfirmId] = useState<string | null>(null);
-  const [rarityFilter, setRarityFilter] = useState<ItemRarity | "all">("all");
-  const [sort, setSort] = useState<SortMode>("newest");
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const data = await api.get<InventoryItemDto[]>("/cases/inventory/me");
-      setItems(data);
-      setError(null);
-    } catch {
-      setError(t("inventory.couldNotLoad"));
-    } finally {
-      setLoading(false);
-    }
-  }, [t]);
-
-  useEffect(() => { void load(); }, [load]);
-
-  const availableRarities = useMemo(() => {
-    const present = new Set(items.map((item) => item.caseItem.rarity));
-    return RARITY_RANK.filter((rarity) => present.has(rarity));
-  }, [items]);
+  const { user } = useAuth();
+  const inventory = useEditorialData<InventoryItemDto[]>(user ? "/cases/inventory/me" : null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [query, setQuery] = useState("");
+  const [rarity, setRarity] = useState("");
+  const [sort, setSort] = useState<ItemSort>("newest");
+  const [category, setCategory] = useState("all");
+  const [confirm, setConfirm] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [pending, setPending] = useState<string | null>(null);
+  const running = useRef(false);
+  const key = "casecrow:inventory-sale:" + user?.id;
+  const all = inventory.data ?? [];
+  const available = all.filter((item) => item.status === "IN_INVENTORY" && item.caseItem.currency === "RUB");
+  const selected = available.filter((item) => selectedIds.includes(item.id));
+  const total = available.reduce((sum, item) => sum + BigInt(item.caseItem.valueMinor), 0n);
+  const selectedTotal = selected.reduce((sum, item) => sum + BigInt(item.caseItem.valueMinor), 0n);
+  const highest = available.reduce((best, item) => BigInt(item.caseItem.valueMinor) > best ? BigInt(item.caseItem.valueMinor) : best, 0n);
+  const classified = available.filter((item) => {
+    if (category === "all") return true;
+    const name = item.caseItem.name.toLowerCase();
+    const gloves = /gloves|wraps|перчат/.test(name);
+    const special = item.caseItem.name.startsWith("★");
+    return category === "gloves" ? gloves : category === "knives" ? special && !gloves : !special;
+  });
+  const filtered = filterItems(classified, (item) => item.caseItem, query, rarity, sort);
+  const locked = busy || !!pending;
+  const canSendToContract = selected.length > 0 && selected.length <= 10 && !locked;
   useEffect(() => {
-    if (rarityFilter !== "all" && !availableRarities.includes(rarityFilter)) setRarityFilter("all");
-  }, [availableRarities, rarityFilter]);
-
-  const visibleItems = useMemo(() => {
-    const filtered = rarityFilter === "all" ? items : items.filter((item) => item.caseItem.rarity === rarityFilter);
-    return [...filtered].sort((a, b) => {
-      if (sort === "value-desc") return Number(BigInt(b.caseItem.valueMinor) - BigInt(a.caseItem.valueMinor));
-      if (sort === "value-asc") return Number(BigInt(a.caseItem.valueMinor) - BigInt(b.caseItem.valueMinor));
-      return new Date(b.acquiredAt).getTime() - new Date(a.acquiredAt).getTime();
-    });
-  }, [items, rarityFilter, sort]);
-
-  async function sell(id: string) {
-    if (sellingId) return;
-    setSellingId(id);
-    setError(null);
+    const sync = () => { try { setPending(localStorage.getItem(key)); } catch { setError("Не удалось прочитать состояние продажи"); } };
+    sync(); window.addEventListener("storage", sync); return () => window.removeEventListener("storage", sync);
+  }, [key]);
+  useEffect(() => { if (inventory.data) setSelectedIds((ids) => ids.filter((id) => inventory.data!.some((item) => item.id === id && item.status === "IN_INVENTORY"))); }, [inventory.data]);
+  const toggle = (id: string) => { if (!locked) setSelectedIds((ids) => ids.includes(id) ? ids.filter((value) => value !== id) : [...ids, id]); };
+  const sell = async () => {
+    if (!selected.length || running.current) return;
+    running.current = true; setBusy(true); setConfirm(0); setError(""); setNotice("");
+    let count = 0;
     try {
-      await api.post(`/cases/inventory/${id}/sell`);
-      setItems((current) => current.filter((item) => item.id !== id));
-      setConfirmId(null);
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : t("inventory.couldNotSell"));
-    } finally {
-      setSellingId(null);
-    }
-  }
-
-  return (
-    <div className="inventory-page">
-      <PageHeader
-        kicker={t("inventory.kicker", { defaultValue: "YOUR LOADOUT" })}
-        title={t("inventory.title")}
-        lede={t("inventory.intro", { defaultValue: "Your opened items. Choose a rarity or sort by value." })}
-        aside={
-          <div className="dz-toolbar">
-            <label className="dz-field">
-              <span>{t("inventory.filter", { defaultValue: "Rarity" })}</span>
-              <select value={rarityFilter} onChange={(event) => setRarityFilter(event.target.value as ItemRarity | "all")}>
-                <option value="all">{t("inventory.all", { defaultValue: "All" })}</option>
-                {availableRarities.map((rarity) => <option key={rarity} value={rarity}>{t(`rarity.${rarity}`, { defaultValue: RARITY_LABELS[rarity] })}</option>)}
-              </select>
-            </label>
-            <label className="dz-field">
-              <span>{t("inventory.sort", { defaultValue: "Sort" })}</span>
-              <select value={sort} onChange={(event) => setSort(event.target.value as SortMode)}>
-                <option value="newest">{t("inventory.newest", { defaultValue: "Newest" })}</option>
-                <option value="value-desc">{t("inventory.valueDesc", { defaultValue: "Highest value" })}</option>
-                <option value="value-asc">{t("inventory.valueAsc", { defaultValue: "Lowest value" })}</option>
-              </select>
-            </label>
-          </div>
+      for (const item of selected) {
+        if (localStorage.getItem(key)) { setPending(localStorage.getItem(key)); break; }
+        localStorage.setItem(key, item.id); setPending(item.id);
+        try { await api.post("/cases/inventory/" + item.id + "/sell"); }
+        catch (reason) {
+          if (reason instanceof ApiError && reason.status >= 400 && reason.status < 500 && reason.status !== 408) { localStorage.removeItem(key); setPending(null); }
+          throw reason;
         }
-      />
-      {error && <div className="catalog-notice" role="alert"><span>{error}</span><button className="catalog-retry" type="button" onClick={() => void load()}>{t("common.retry")}</button></div>}
-      {loading && <div className="dz-item-grid" aria-busy="true">{Array.from({ length: 8 }, (_, index) => <ItemCardSkeleton key={index} />)}</div>}
-      {!loading && items.length === 0 && !error && (
-        <div className="dz-empty">
-          <span className="dz-empty__mark" aria-hidden="true">◇</span>
-          <h2 className="dz-empty__title">{t("inventory.emptyTitle", { defaultValue: "Your collection starts here" })}</h2>
-          <p className="dz-empty__body">{t("inventory.noItemsYet")}</p>
-          <Link to="/#collections" className="dz-hero__cta">{t("inventory.exploreCases", { defaultValue: "Explore cases" })}</Link>
-        </div>
-      )}
-      {!loading && items.length > 0 && visibleItems.length === 0 && <p className="hint">{t("inventory.noFilteredItems", { defaultValue: "No items match this filter." })}</p>}
-      {!loading && visibleItems.length > 0 && <div className="dz-item-grid">{visibleItems.map((inv) => {
-        const price = formatMinor(inv.caseItem.valueMinor, inv.caseItem.currency);
-        return (
-          <ItemCard
-            key={inv.id}
-            name={inv.caseItem.name}
-            imageUrl={inv.caseItem.imageUrl}
-            rarity={inv.caseItem.rarity}
-            rarityLabel={t(`rarity.${inv.caseItem.rarity}`, { defaultValue: RARITY_LABELS[inv.caseItem.rarity] })}
-            value={price}
-            actions={confirmId === inv.id ? (
-              <>
-                <p className="dz-item-card__confirm">
-                  {t("inventory.confirmSell", { price, defaultValue: "Sell this item for {{price}}?" })}
-                </p>
-                <button type="button" className="dz-danger" onClick={() => void sell(inv.id)} disabled={sellingId === inv.id}>
-                  {sellingId === inv.id ? t("inventory.selling") : t("inventory.confirm", { defaultValue: "Confirm sale" })}
-                </button>
-                <button type="button" onClick={() => setConfirmId(null)} disabled={sellingId === inv.id}>
-                  {t("inventory.cancel", { defaultValue: "Cancel" })}
-                </button>
-              </>
-            ) : (
-              <button type="button" onClick={() => setConfirmId(inv.id)} disabled={sellingId !== null}>
-                {t("inventory.sellForBalance")}
-              </button>
-            )}
-          />
-        );
-      })}</div>}
-    </div>
-  );
+        count++; localStorage.removeItem(key); setPending(null);
+        setSelectedIds((ids) => ids.filter((id) => id !== item.id));
+      }
+      if (count) setNotice("Продано предметов: " + count + ". Средства зачислены на баланс.");
+    } catch (reason) { setError((count ? "Продано " + count + " предметов. " : "") + (reason instanceof Error ? reason.message : "Не удалось выполнить продажу") + ". Оставшиеся предметы не отправляются повторно."); }
+    finally { running.current = false; setBusy(false); inventory.refresh(); window.dispatchEvent(new Event("casecrow:wallet-updated")); }
+  };
+  const checkSale = async () => {
+    if (!pending || running.current) return;
+    running.current = true; setBusy(true); setError("");
+    try {
+      const ledger = await api.get<LedgerEntryDto[]>("/wallet/me/ledger");
+      const entry = ledger.find((value) => value.reason === "ITEM_SELL" && value.referenceId === pending);
+      if (entry) { localStorage.removeItem(key); setPending(null); setNotice("Продажа подтверждена записью в истории баланса. Инвентарь обновлён."); inventory.refresh(); window.dispatchEvent(new Event("casecrow:wallet-updated")); }
+      else setError("Результат продажи пока не подтверждён. Повторная продажа заблокирована; проверьте историю баланса или обратитесь в поддержку.");
+    } catch { setError("Не удалось проверить продажу. Повторный запрос не отправлен."); }
+    finally { running.current = false; setBusy(false); }
+  };
+  return <section className="edv2">
+    <SectionHeading title="Инвентарь" description="Ваша коллекция скинов. Управляйте предметами и создавайте новые возможности." action={<div className="edv2-actions"><Link className="edv2-btn" to="/history"><History size={14} />История операций</Link></div>} />
+    <div className="edv2-stats"><div className="edv2-panel edv2-stat"><span className="edv2-label">Предметов в инвентаре</span><strong>{!inventory.data ? "—" : available.length}</strong><small>Доступны для действий</small></div><div className="edv2-panel edv2-stat"><span className="edv2-label">Стоимость коллекции</span><strong>{!inventory.data ? "—" : money(total)}</strong><small>По текущим ценам сервера</small></div><div className="edv2-panel edv2-stat"><span className="edv2-label">Выбрано предметов</span><strong>{selected.length}</strong><small>{money(selectedTotal)}</small></div><div className="edv2-panel edv2-stat"><span className="edv2-label">Самый ценный предмет</span><strong>{!inventory.data ? "—" : money(highest)}</strong><small>В доступной коллекции</small></div></div>
+    {error && <p className="edv2-error" role="alert">{error}</p>}{notice && <p className="edv2-toast" role="status">{notice}</p>}{pending && !busy && <div className="edv2-recovery"><ShieldCheck size={20} /><div><b>Проверяем предыдущую продажу</b><p>Ответ не подтверждён. Повторные запросы остановлены.</p></div><button className="edv2-btn" onClick={checkSale}>Проверить состояние</button></div>}{busy && <div className="edv2-operation" role="status"><span className="edv2-spinner" />Выполняем продажу. Оставьте страницу открытой.</div>}
+    <div className="edv2-inventory-toolbar"><div className="edv2-chips">{[["all", "Все предметы"], ["weapons", "Оружие"], ["knives", "Ножи"], ["gloves", "Перчатки"]].map(([value, label]) => <button key={value} className={"edv2-chip" + (category === value ? " is-active" : "")} onClick={() => setCategory(value)}>{label}</button>)}</div><ItemFilters query={query} setQuery={setQuery} rarity={rarity} setRarity={setRarity} sort={sort} setSort={setSort} /></div>
+
+    <div className="edv2-inventory-layout"><div><DataState loading={inventory.loading} error={inventory.error} retry={inventory.refresh} empty={!inventory.loading && !inventory.error && !filtered.length ? (all.length ? "По этим фильтрам ничего не найдено" : "Ваша коллекция пока пуста") : undefined} /><div className="edv2-inventory-cards">{filtered.map((item) => <ItemTile key={item.id} item={item.caseItem} selected={selectedIds.includes(item.id)} onClick={() => toggle(item.id)} disabled={locked || item.status !== "IN_INVENTORY"}  />)}</div><p className="edv2-bottom-note">Цены и доступность подтверждаются сервером при выполнении операции.</p></div><aside className="edv2-panel edv2-right-rail"><div className="edv2-row edv2-between"><h3>Выбрано</h3><b>{selected.length}</b></div><div className="edv2-row edv2-between"><span className="edv2-small">Общая стоимость</span><strong>{money(selectedTotal)}</strong></div><button className="edv2-btn edv2-primary" disabled={!selected.length || locked} onClick={() => setConfirm(1)}>Продать выбранное</button><Link className="edv2-btn" aria-disabled={!canSendToContract} to={canSendToContract ? "/contracts?items=" + selected.map((item) => item.id).join(",") : "#"} onClick={(e) => { if (!canSendToContract) e.preventDefault(); }}>В контракт →</Link><Link className="edv2-btn" aria-disabled={selected.length !== 1 || locked} to={selected.length === 1 && !locked ? "/upgrader?item=" + selected[0].id : "#"} onClick={(e) => { if (selected.length !== 1 || locked) e.preventDefault(); }}>В апгрейд →</Link><button className="edv2-subtle" disabled={!selected.length || locked} onClick={() => setSelectedIds([])}>Снять выделение</button><button className="edv2-subtle" onClick={() => setSelectedIds(filtered.map((item) => item.id))} disabled={locked || !filtered.length}>Выбрать все</button><p className="edv2-small">Контракт: от 3 до 10 предметов.<br />Апгрейд: один исходный предмет.<br />Продажа нескольких скинов выполняется по одному. При ошибке очередь останавливается.</p><p className="edv2-small">Вывод скинов в Steam пока недоступен.</p></aside></div>
+    {confirm > 0 && <ConfirmDialog title={confirm === 1 ? "Продать выбранные предметы?" : "Окончательное подтверждение"} confirmLabel={confirm === 1 ? "Продолжить" : "Продать за " + money(selectedTotal)} onClose={() => setConfirm(0)} onConfirm={() => confirm === 1 ? setConfirm(2) : sell()} busy={busy}><p><strong>{selected.length} предмета · {money(selectedTotal)}</strong></p><p>Предметы исчезнут из доступного инвентаря, средства будут зачислены на баланс. Продажу нельзя отменить.</p>{selected.length > 1 && <p>Предметы продаются последовательно. Уже выполненные продажи сохранятся, если один из запросов завершится ошибкой.</p>}</ConfirmDialog>}
+  </section>;
 }

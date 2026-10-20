@@ -7,10 +7,11 @@ import { api, API_URL } from "../../lib/api";
 import type { WalletDto } from "../../lib/types";
 import { LanguageSwitcher } from "../LanguageSwitcher";
 import { Money } from "../Money";
-import { IconExternalLink, IconGift, IconProfile, IconSearch, IconWallet, mainNavItems } from "../navIcons";
+import { IconExternalLink, IconGift, IconInventory, IconProfile, IconSearch, IconWallet, mainNavItems } from "../navIcons";
 import { CaseCrowLogo } from "../CaseCrowLogo";
 import { BottomNav } from "../BottomNav";
 import "../../styles/design-lab.css";
+import "../../styles/editorial-sections.css";
 
 const topNav = mainNavItems.slice(0, 4);
 
@@ -32,7 +33,17 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
 
   useEffect(() => {
     if (!user) return setBalanceMinor(null);
-    api.get<WalletDto>("/wallet/me").then((wallet) => setBalanceMinor(wallet.balanceMinor)).catch(() => setBalanceMinor(null));
+    let active = true;
+    let revision = 0;
+    const refresh = () => {
+      const current = ++revision;
+      api.get<WalletDto>("/wallet/me").then((wallet) => {
+        if (active && current === revision) setBalanceMinor(wallet.balanceMinor);
+      }).catch(() => { if (active && current === revision) setBalanceMinor(null); });
+    };
+    refresh();
+    window.addEventListener("casecrow:wallet-updated", refresh);
+    return () => { active = false; window.removeEventListener("casecrow:wallet-updated", refresh); };
   }, [user]);
 
   useEffect(() => setProfileOpen(false), [location.pathname]);
@@ -95,33 +106,38 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
   );
 }
 
-export function EditorialSidebar({ activeSection }: { activeSection?: "cases" }) {
+export function EditorialSidebar({ activeSection, sections }: { activeSection?: "cases"; sections?: boolean }) {
   const { t } = useTranslation();
   return <aside className="fidelity-rail">
     <nav aria-label={t("nav.sections", { defaultValue: "Разделы" })}>
-      {mainNavItems.map(({ to, key, icon: Icon, end }) => (
+      {(sections ? [...mainNavItems.slice(0, 4), { to: "/inventory", key: "inventory", icon: IconInventory, end: false }, ...mainNavItems.slice(4)] : mainNavItems).map(({ to, key, icon: Icon, end }) => (
         <NavLink key={to} to={to} end={end} className={({ isActive }) => isActive || (activeSection === "cases" && key === "cases") ? "active" : undefined}>
           <Icon /><span>{t(`nav.sidebar.${key}`)}</span>
         </NavLink>
       ))}
     </nav>
     <NavLink className="fidelity-reward" to="/bonuses"><IconGift /><b>{t("nav.dailyRewards", { defaultValue: "Ежедневные награды" })}</b><IconExternalLink size={14} /></NavLink>
+    {sections && <div className="edv2-side-brand"><CaseCrowLogo /><span>PREMIUM CASE OPENING<br />EVERY SKIN. A NEW STORY.</span></div>}
   </aside>;
 }
 
-type EditorialAppShellProps = { children: ReactNode; activeSection?: "cases" };
+type EditorialAppShellProps = { children: ReactNode; activeSection?: "cases"; sections?: boolean };
 
-export function EditorialAppShell({ children, activeSection }: EditorialAppShellProps) {
-  return <div className="fidelity-page editorial-production">
+export function EditorialAppShell({ children, activeSection, sections }: EditorialAppShellProps) {
+  return <div className={`fidelity-page editorial-production${sections ? " editorial-sections" : ""}`}>
     <EditorialHeader activeSection={activeSection} />
     <div className="fidelity-shell">
-      <EditorialSidebar activeSection={activeSection} />
+      <EditorialSidebar activeSection={activeSection} sections={sections} />
       <main className="fidelity-main">{children}</main>
     </div>
-    <BottomNav />
+    <BottomNav includeInventory={sections} />
   </div>;
 }
 
 export function EditorialLayout() {
   return <EditorialAppShell activeSection="cases"><Outlet /></EditorialAppShell>;
+}
+
+export function EditorialSectionsLayout() {
+  return <EditorialAppShell sections><Outlet /></EditorialAppShell>;
 }

@@ -1,190 +1,56 @@
-import type { CSSProperties } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CaseChest } from "../components/CaseChest";
-import { useTranslation } from "react-i18next";
+import { History, Plus, ShieldCheck, Swords } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { IconSearch } from "../components/navIcons";
-import { api, ApiError } from "../lib/api";
-import { formatMinor } from "../lib/money";
-import { rarityColor } from "../lib/rarity";
+import { useEditorialData } from "../hooks/useEditorialData";
+import { useEditorialOperation } from "../hooks/useEditorialOperation";
+import { resolveCaseArt } from "../lib/caseArt";
 import type { CaseDto, CaseItem, GameOperationDto, WalletDto } from "../lib/types";
-import { PageHeader, Readout } from "../components/dz/PageHeader";
-import { SelectableItem, Gate, Step } from "../components/dz/SelectableItem";
+import { EditorialItemImage } from "../components/editorial/EditorialItemImage";
+import { ConfirmDialog, DataState, OperationState, SignInState, money } from "../components/editorial/SectionUI";
 
 type BattleResult = { operation: GameOperationDto; won: boolean; battleCase: { id: string; name: string }; playerItem: CaseItem; botItem: CaseItem; winnings: string[] };
-
 export function BattlesPage() {
-  const { t } = useTranslation();
   const { user } = useAuth();
-  const [cases, setCases] = useState<CaseDto[]>([]);
-  const [wallet, setWallet] = useState<WalletDto | null>(null);
+  const cases = useEditorialData<CaseDto[]>("/cases");
+  const history = useEditorialData<GameOperationDto[]>(user ? "/games/operations/me" : null);
+  const wallet = useEditorialData<WalletDto>(user ? "/wallet/me" : null);
+  const operation = useEditorialOperation();
   const [selectedId, setSelectedId] = useState("");
-  const [query, setQuery] = useState("");
+  const [tab, setTab] = useState("available");
+  const [picker, setPicker] = useState(false);
+  const [confirm, setConfirm] = useState(false);
   const [result, setResult] = useState<BattleResult | null>(null);
-  const [confirming, setConfirming] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const submittingRef = useRef(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    Promise.all([api.get<CaseDto[]>("/cases"), user ? api.get<WalletDto>("/wallet/me") : Promise.resolve(null)])
-      .then(([nextCases, nextWallet]) => { setCases(nextCases); setWallet(nextWallet); setSelectedId(nextCases[0]?.id ?? ""); })
-      .catch(() => setError(t("battles.loadError")))
-      .finally(() => setLoading(false));
-  }, [user, t]);
-
-  const selected = cases.find((item) => item.id === selectedId);
-  const visibleCases = cases.filter((item) => item.name.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
-
-  async function startBattle() {
-    if (!selected || submittingRef.current) return;
-    submittingRef.current = true;
-    setSubmitting(true); setError(null); setResult(null);
-    try {
-      const next = await api.post<BattleResult>("/games/battles", { caseId: selected.id });
-      setResult(next); setConfirming(false);
-      setWallet(await api.get<WalletDto>("/wallet/me").catch(() => null));
-    } catch (err) {
-      setError(err instanceof ApiError && err.status === 0 ? t("battles.networkError") : err instanceof ApiError ? err.message : t("battles.startError"));
-    } finally { submittingRef.current = false; setSubmitting(false); }
-  }
-
-  if (!user) return (
-    <Gate
-      kicker="CASECROW / BATTLES"
-      title={t("battles.title")}
-      body={t("battles.authBody")}
-      action={<Link to="/login" className="dz-commit">{t("nav.signIn")} <span aria-hidden="true">↗</span></Link>}
-    />
-  );
-
-  return (
-    <div className="dz-workspace">
-      <PageHeader
-        kicker={t("battles.kicker")}
-        title={t("battles.title")}
-        lede={t("battles.lede")}
-        aside={<Readout label={t("battles.balance")} value={wallet ? formatMinor(wallet.balanceMinor) : "…"} />}
-      />
-
-      {error && (
-        <div role="alert" style={{ margin: "var(--dz-s4) 0", padding: "var(--dz-s3) var(--dz-s4)", border: "1px solid var(--dz-danger)", borderRadius: "var(--dz-r-sm)", color: "var(--dz-danger)", fontSize: "var(--dz-type-sm)" }}>
-          {error}
-        </div>
-      )}
-
-      {result && (
-        <section
-          className={`dz-outcome dz-outcome--${result.won ? "won" : "lost"}`}
-          role="status"
-          aria-live="polite"
-          style={{ display: "block" }}
-        >
-          <span className="dz-outcome__label">{result.won ? t("battles.win") : t("battles.loss")}</span>
-          <h2 className="dz-outcome__name">{result.battleCase.name}</h2>
-          <div className="dz-versus">
-            <BattleDrop label={t("battles.you")} item={result.playerItem} />
-            <span className="dz-versus__mark">{result.won ? "WIN" : "LOSE"}</span>
-            <BattleDrop label={t("battles.bot")} item={result.botItem} />
-          </div>
-        </section>
-      )}
-
-      <div className="dz-workspace__layout">
-        <section>
-          <Step label={t("battles.step1")} count={t("battles.available", { count: cases.length })} />
-
-          {cases.length > 8 && (
-            <label className="dz-field">
-              <span>{t("battles.searchLabel")}</span>
-              <input
-                type="search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder={t("battles.searchPlaceholder")}
-                aria-label={t("battles.searchLabel")}
-              />
-            </label>
-          )}
-
-          {loading ? (
-            <p style={{ color: "var(--dz-text-4)", fontSize: "var(--dz-type-sm)" }}>{t("common.loading")}</p>
-          ) : visibleCases.length === 0 ? (
-            <div className="dz-empty">
-              <span className="dz-empty__mark" aria-hidden="true"><IconSearch size={28} /></span>
-              <h2 className="dz-empty__title">{t("battles.noResults")}</h2>
-              <p className="dz-empty__body">{t("battles.noResultsBody")}</p>
-              <button type="button" className="dz-btn" onClick={() => setQuery("")}>
-                {t("battles.resetSearch")} ↗
-              </button>
-            </div>
-          ) : (
-            <div className="dz-pick-grid">
-              {visibleCases.map((item) => (
-                <SelectableItem
-                  key={item.id}
-                  name={item.name}
-                  value={formatMinor(item.priceMinor, item.currency)}
-                  note={`${String(item.itemCount ?? item.items.length).padStart(2, "0")} ${t("battles.drops")}`}
-                  selected={selectedId === item.id}
-                  disabled={submitting}
-                  onSelect={() => { setSelectedId(item.id); setResult(null); setConfirming(false); }}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-
-        <aside className="dz-summary">
-          <span className="dz-summary__label">{t("battles.step2")}</span>
-          <div className="battle-players">
-            <div>
-              <i>{user.displayName?.[0] ?? user.email[0]}</i>
-              <span>{t("battles.you")}</span>
-            </div>
-            <b>VS</b>
-            <div>
-              <i>AI</i>
-              <span>{t("battles.bot")}</span>
-            </div>
-          </div>
-          <dl className="dz-summary__rows">
-            <div className="dz-summary__row"><dt>{t("battles.caseLabel")}</dt><dd>{selected?.name ?? "—"}</dd></div>
-            <div className="dz-summary__row"><dt>{t("battles.entryLabel")}</dt><dd>{selected ? formatMinor(selected.priceMinor, selected.currency) : "—"}</dd></div>
-            <div className="dz-summary__row"><dt>{t("battles.roundsLabel")}</dt><dd>1</dd></div>
-          </dl>
-          {confirming ? (
-            <div className="dz-confirm">
-              <button type="button" className="dz-commit" disabled={submitting} onClick={() => void startBattle()}>
-                {submitting ? t("battles.battling") : t("battles.confirm")}
-              </button>
-              <button type="button" className="dz-confirm__cancel" disabled={submitting} onClick={() => setConfirming(false)}>
-                {t("common.cancel")}
-              </button>
-            </div>
-          ) : (
-            <button type="button" className="dz-commit" disabled={!selected} onClick={() => setConfirming(true)}>
-              {t("battles.start")}
-            </button>
-          )}
-        </aside>
-      </div>
-    </div>
-  );
-}
-
-function BattleDrop({ label, item }: { label: string; item: CaseItem }) {
-  return (
-    <article
-      className="battle-drop"
-      style={{ "--dz-rarity": rarityColor(item.rarity), "--rarity-color": rarityColor(item.rarity) } as CSSProperties}
-    >
-      <span>{label}</span>
-      <img src={item.imageUrl} alt={item.name} />
-      <strong>{item.name}</strong>
-      <b>{formatMinor(item.valueMinor, item.currency)}</b>
-    </article>
-  );
+  const [historyItem, setHistoryItem] = useState<GameOperationDto | null>(null);
+  const available = (cases.data ?? []).filter((value) => value.isActive && value.currency === "RUB");
+  const chosen = available.find((value) => value.id === selectedId) ?? available[0];
+  const battles = (history.data ?? []).filter((value) => value.type === "BATTLE");
+  const insufficient = !!chosen && !!wallet.data && BigInt(wallet.data.balanceMinor) < BigInt(chosen.priceMinor);
+  const refresh = () => { history.refresh(); wallet.refresh(); };
+  const create = async () => {
+    if (!chosen) return;
+    setConfirm(false); setResult(null);
+    const data = await operation.run<BattleResult>({ type: "BATTLE", ids: [], caseId: chosen.id }, "/games/battles", { caseId: chosen.id });
+    if (data) setResult(data);
+    refresh();
+  };
+  return <section className="edv2">
+    <div className="edv2-banner"><div className="edv2-banner-copy"><div className="edv2-kicker">COMMUNITY / CASE BATTLES</div><h1>Сражения</h1><p>Открывайте кейсы. Соревнуйтесь. Забирайте лучшие скины.</p></div><div className="edv2-banner-cases">{available.slice(0, 3).map((item) => <img key={item.id} src={resolveCaseArt(item.slug, item.imageUrl)} alt={item.name} />)}</div></div>
+    <div className="edv2-battlebar"><div className="edv2-chips"><button className={"edv2-chip" + (tab === "available" ? " is-active" : "")} onClick={() => setTab("available")}>С ботом</button><button className={"edv2-chip" + (tab === "history" ? " is-active" : "")} onClick={() => setTab("history")}><History size={13} /> Моя история</button></div><div className="edv2-actions"><button className="edv2-btn edv2-dark" onClick={() => { setPicker(!picker); setTab("available"); }}><Plus size={15} />Выбрать кейс</button></div></div>
+    {picker && <div className="edv2-panel edv2-contract-select"><div className="edv2-row edv2-between"><h2>Кейс для сражения</h2><button className="edv2-subtle" onClick={() => setPicker(false)}>Свернуть</button></div><div className="edv2-case-picker">{available.map((item) => <button className={"edv2-case-option" + (chosen?.id === item.id ? " is-selected" : "")} key={item.id} onClick={() => { setSelectedId(item.id); setPicker(false); setResult(null); }}><img src={resolveCaseArt(item.slug, item.imageUrl)} alt="" /><strong>{item.name}</strong><span>{money(item.priceMinor)}</span></button>)}</div></div>}
+    <OperationState operation={operation} onRefresh={refresh} />
+    {tab === "available" ? <><div className="edv2-sectionhead"><h2>{result ? "Результат сражения" : "Один кейс. Два участника."}</h2><span className="edv2-pill">1 × 1 · бот</span></div>
+      <div className="edv2-panel edv2-battle-feature"><div className="edv2-player"><div className="edv2-row"><span className="edv2-face">{(user?.displayName ?? "В").slice(0, 1)}</span><div><strong>{user?.displayName ?? "Вы"}</strong><p className="edv2-small">Игрок</p></div></div><div className="edv2-score">{result ? money(result.playerItem.valueMinor) : "—"}</div>{result ? <EditorialItemImage name={result.playerItem.name} imageUrl={result.playerItem.imageUrl} /> : <Swords size={43} strokeWidth={1} color="#a5ad9d" />}<span className="edv2-small">{result?.playerItem.name ?? "Предмет появится после открытия"}</span></div>
+      <div className="edv2-battle-mid"><span className="edv2-label">{result ? "РАУНД ЗАВЕРШЁН · 1 / 1" : "ОДИН РАУНД · WINNER TAKES ALL"}</span>{chosen && <img src={resolveCaseArt(chosen.slug, chosen.imageUrl)} alt={chosen.name} />}<b>{result ? (result.won ? "Победа — оба предмета ваши" : "В этом раунде победил бот") : chosen?.name ?? "Выберите кейс"}</b>{result ? <div className="edv2-track"><span /></div> : <button className="edv2-btn edv2-primary" onClick={() => setConfirm(true)} disabled={!user || !chosen || operation.busy || !!operation.pending || insufficient || !wallet.data}>{insufficient ? "Недостаточно средств" : "Начать · " + (chosen ? money(chosen.priceMinor) : "—")}</button>}<span className="edv2-small">{result ? "Результат подтверждён сервером" : "Стоимость одного кейса списывается с баланса"}</span>{result && <button className="edv2-subtle" onClick={() => setResult(null)}>Новое сражение</button>}</div>
+      <div className="edv2-player"><div className="edv2-row"><span className="edv2-face" style={{ background: "#343938" }}>B</span><div><strong>CaseCrow Bot</strong><p className="edv2-small">Соперник</p></div></div><div className="edv2-score">{result ? money(result.botItem.valueMinor) : "—"}</div>{result ? <EditorialItemImage name={result.botItem.name} imageUrl={result.botItem.imageUrl} /> : <Swords size={43} strokeWidth={1} color="#a5ad9d" />}<span className="edv2-small">{result?.botItem.name ?? "Тот же кейс. Независимый результат."}</span></div></div>
+      <p className="edv2-battle-note"><ShieldCheck size={12} style={{ verticalAlign: "middle", marginRight: 5 }} />При равной стоимости побеждает игрок. Сервер определяет оба предмета; победитель получает оба.</p>
+      {!user && <SignInState />}
+      <div className="edv2-sectionhead"><h2>Выберите сражение <span className="edv2-count">{available.length}</span></h2><span className="edv2-small">Один раунд с ботом</span></div><DataState loading={cases.loading} error={cases.error} retry={cases.refresh} empty={!cases.loading && !cases.error && !available.length ? "Доступных кейсов пока нет" : undefined} />
+      <div className="edv2-panel">{available.map((item) => <div key={item.id} className="edv2-battle-entry"><div className="edv2-entry-mode"><strong>1 × 1</strong><p><span className="edv2-pill">С ботом</span></p></div><div className="edv2-case-cell"><img src={resolveCaseArt(item.slug, item.imageUrl)} alt="" /><strong>{item.name}</strong></div><strong className="edv2-entry-price">{money(item.priceMinor)}</strong><div className="edv2-participants edv2-row"><span className="edv2-face">В</span><span className="edv2-face" style={{ background: "#343938" }}>B</span><span className="edv2-small">1 раунд</span></div><button className="edv2-btn edv2-xs" onClick={() => { setSelectedId(item.id); setResult(null); window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" }); }}>Выбрать →</button></div>)}</div>
+    </> : <><div className="edv2-sectionhead"><h2>История сражений</h2><span className="edv2-small">Последние операции аккаунта</span></div>{!user ? <SignInState /> : <><DataState loading={history.loading} error={history.error} retry={history.refresh} empty={!history.loading && !history.error && !battles.length ? "У вас пока нет завершённых сражений" : undefined} /><div className="edv2-panel">{battles.map((item) => <div key={item.id} className="edv2-battle-entry"><div className="edv2-entry-mode"><strong>1 × 1 · бот</strong><p>{new Date(item.createdAt).toLocaleDateString("ru-RU")}</p></div><div className="edv2-case-cell"><strong>{available.find((value) => value.id === item.metadata?.caseId)?.name ?? "Кейс из истории"}</strong></div><span className={"edv2-pill edv2-entry-price" + (item.status === "LOST" ? " is-lost" : "")}>{item.status === "WON" ? "Победа" : "Без выигрыша"}</span><span className="edv2-participants edv2-small">Раунд завершён</span><button className="edv2-btn edv2-xs" onClick={() => setHistoryItem(item)}>Подробнее</button></div>)}</div></>}</>}
+    <p className="edv2-bottom-note">Многопользовательские комнаты и командные режимы пока недоступны.</p>
+    {wallet.error && <p className="edv2-error">Баланс недоступен. <button className="edv2-subtle" onClick={wallet.refresh}>Обновить</button></p>}
+    {confirm && chosen && <ConfirmDialog title="Начать сражение?" confirmLabel={"Списать " + money(chosen.priceMinor)} onClose={() => setConfirm(false)} onConfirm={create} busy={operation.busy}><p><strong>{chosen.name} · один раунд с ботом.</strong></p><p>Стоимость списывается сразу. При победе оба предмета попадут в инвентарь; при проигрыше предметы не начисляются.</p></ConfirmDialog>}
+    {historyItem && <ConfirmDialog title="Сражение завершено" confirmLabel="Понятно" onClose={() => setHistoryItem(null)} onConfirm={() => setHistoryItem(null)}><p>Результат: <strong>{historyItem.status === "WON" ? "победа" : "без выигрыша"}</strong></p><p>Операция: {historyItem.id}</p><p>Nonce: {historyItem.nonce}</p><p style={{ overflowWrap: "anywhere" }}>Хеш серверного seed: {historyItem.serverSeedHash}</p><Link to="/inventory">Перейти в инвентарь →</Link></ConfirmDialog>}
+  </section>;
 }

@@ -1,278 +1,69 @@
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { GameEmptyState } from "../components/GameEmptyState";
-import { GameSteps } from "../components/GameSteps";
+import { Link, useSearchParams } from "react-router-dom";
+import { ArrowUpRight, RotateCcw } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { api, ApiError } from "../lib/api";
-import { formatMinor } from "../lib/money";
-import { RARITY_LABELS, rarityColor } from "../lib/rarity";
+import { useEditorialData } from "../hooks/useEditorialData";
+import { useEditorialOperation } from "../hooks/useEditorialOperation";
+import { upgradeChance } from "../lib/editorialGameRules";
 import type { CaseItem, GameOperationDto, InventoryItemDto } from "../lib/types";
-import { PageHeader, Readout } from "../components/dz/PageHeader";
-import { SelectableItem, Step, Gate } from "../components/dz/SelectableItem";
+import { EditorialItemImage } from "../components/editorial/EditorialItemImage";
+import { ConfirmDialog, DataState, ItemFilters, ItemTile, OperationState, Rules, SectionHeading, SignInState, filterItems, money } from "../components/editorial/SectionUI";
+import type { ItemSort } from "../components/editorial/SectionUI";
 
 type UpgradeResult = { operation: GameOperationDto; won: boolean; item: CaseItem | null; target: CaseItem; chance: number };
-
-/** Roll staging: bar fills to the win chance, the marker lands on the real roll, then the verdict. */
-function UpgradeRollOverlay({
-  roll, onClose, t,
-}: {
-  roll: { data: UpgradeResult; stage: "roll" | "done"; lost?: { name: string; imageUrl: string } };
-  onClose: () => void;
-  t: (key: string, opts?: Record<string, unknown>) => string;
-}) {
-  const { data, stage, lost } = roll;
-  const chancePct = data.chance * 100;
-  const rollPct = Math.min(100, data.operation.roll * 100);
-  const done = stage === "done";
-  return (
-    <div className={`upgrade-roll${done ? (data.won ? " is-won" : " is-lost") : ""}`} role="dialog" aria-modal="true" aria-live="polite">
-      <div className="upgrade-roll__panel">
-        {!done ? (
-          <>
-            <span className="upgrade-roll__label">{t("upgrader.ux.rolling", { defaultValue: "Бросок…" })}</span>
-            <div className="upgrade-roll__bar" style={{ "--chance": `${chancePct}%`, "--roll": `${rollPct}%` } as CSSProperties}>
-              <span className="upgrade-roll__zone" />
-              <span className="upgrade-roll__marker" />
-            </div>
-            <span className="upgrade-roll__pct">{chancePct.toFixed(1)}%</span>
-          </>
-        ) : (
-          <>
-            {data.won && <div className="dz-confetti" aria-hidden="true">{Array.from({ length: 14 }, (_, i) => <i key={i} style={{ "--i": i } as CSSProperties} />)}</div>}
-            <span className="upgrade-roll__verdict">
-              {data.won ? t("upgrader.won") : t("upgrader.lost")}
-            </span>
-            <div className="upgrade-roll__item">
-              {data.won && data.item ? (
-                <img className="upgrade-roll__win" src={data.item.imageUrl} alt="" />
-              ) : (
-                lost && <img className="upgrade-roll__shatter" src={lost.imageUrl} alt="" />
-              )}
-            </div>
-            <strong className="upgrade-roll__name">{data.won && data.item ? data.item.name : lost?.name}</strong>
-            <span className="upgrade-roll__meta">
-              ROLL {data.operation.roll.toFixed(5)} / {chancePct.toFixed(1)}%
-            </span>
-            <button type="button" className="upgrade-core__btn" onClick={onClose} autoFocus>
-              {t("upgrader.ux.retry", { defaultValue: "Попробовать ещё" })}
-            </button>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
 export function UpgraderPage() {
-  const { t } = useTranslation();
   const { user } = useAuth();
-  const [inventory, setInventory] = useState<InventoryItemDto[]>([]);
-  const [targets, setTargets] = useState<CaseItem[]>([]);
-  const [sourceId, setSourceId] = useState("");
+  const inventory = useEditorialData<InventoryItemDto[]>(user ? "/cases/inventory/me" : null);
+  const targets = useEditorialData<CaseItem[]>("/games/upgrade-targets");
+  const operation = useEditorialOperation();
+  const [params] = useSearchParams();
+  const [sourceId, setSourceId] = useState(params.get("item") ?? "");
   const [targetId, setTargetId] = useState("");
-  const [loading, setLoading] = useState(Boolean(user));
-  const [submitting, setSubmitting] = useState(false);
-  const submittingRef = useRef(false);
-  const [confirming, setConfirming] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [tab, setTab] = useState("source");
+  const [query, setQuery] = useState("");
+  const [rarity, setRarity] = useState("");
+  const [sort, setSort] = useState<ItemSort>("newest");
+  const [factor, setFactor] = useState<number | null>(null);
+  const [confirm, setConfirm] = useState(false);
   const [result, setResult] = useState<UpgradeResult | null>(null);
-  // Roll overlay: the outcome is already decided server-side; this only stages it.
-  const [roll, setRoll] = useState<{ data: UpgradeResult; stage: "roll" | "done"; lost?: { name: string; imageUrl: string } } | null>(null);
-  const rollTimer = useRef<ReturnType<typeof setTimeout>>();
-  useEffect(() => () => clearTimeout(rollTimer.current), []);
-
-  useEffect(() => {
-    if (!user) return;
-    Promise.all([api.get<InventoryItemDto[]>("/cases/inventory/me"), api.get<CaseItem[]>("/games/upgrade-targets")])
-      .then(([items, nextTargets]) => { setInventory(items); setTargets(nextTargets); })
-      .catch(() => setError(t("upgrader.loadError")))
-      .finally(() => setLoading(false));
-  }, [user, t]);
-
-  const source = inventory.find((item) => item.id === sourceId);
-  const eligibleTargets = useMemo(
-    () => source ? targets.filter((item) => BigInt(item.valueMinor) > BigInt(source.caseItem.valueMinor)).slice(0, 120) : [],
-    [source, targets]
-  );
-  const target = eligibleTargets.find((item) => item.id === targetId);
-  const chance = source && target
-    ? Math.max(.01, Math.min(.75, Number(BigInt(source.caseItem.valueMinor) * 90_000n / BigInt(target.valueMinor)) / 100_000))
-    : 0;
-
-  const multiplier = source && target ? Number(BigInt(target.valueMinor) * 100n / BigInt(source.caseItem.valueMinor)) / 100 : 0;
-
-  async function execute() {
-    if (!source || !target || submittingRef.current) return;
-    submittingRef.current = true;
-    setSubmitting(true); setError(null);
-    try {
-      const next = await api.post<UpgradeResult>("/games/upgrades", { inventoryItemId: source.id, targetCaseItemId: target.id });
-      setResult(next);
-      setRoll({ data: next, stage: "roll", lost: { name: source.caseItem.name, imageUrl: source.caseItem.imageUrl } });
-      clearTimeout(rollTimer.current);
-      rollTimer.current = setTimeout(() => setRoll((r) => (r ? { ...r, stage: "done" } : r)), 2100);
-      setInventory((items) => items.filter((item) => item.id !== source.id));
-      setSourceId(""); setTargetId(""); setConfirming(false);
-      const currentItems = await api.get<InventoryItemDto[]>("/cases/inventory/me").catch(() => null);
-      if (currentItems) setInventory(currentItems);
-    } catch (err) {
-      setError(err instanceof ApiError && err.status === 0 ? t("upgrader.networkError") : err instanceof ApiError ? err.message : t("upgrader.executeError"));
-    } finally { submittingRef.current = false; setSubmitting(false); }
-  }
-
-  if (!user) return (
-    <Gate
-      kicker="CASECROW / UPGRADER"
-      title={t("upgrader.title")}
-      body={t("upgrader.authBody")}
-      action={<Link to="/login" className="dz-commit">{t("nav.signIn")} <span aria-hidden="true">↗</span></Link>}
-    />
-  );
-
-  return (
-    <div className="dz-workspace">
-      <PageHeader
-        kicker={t("upgrader.kicker")}
-        title={t("upgrader.title")}
-        lede={t("upgrader.lede")}
-        aside={<Readout label={t("upgrader.chance")} value={`${(chance * 100).toFixed(1)}${t("upgrader.chanceSuffix")}`} />}
-      />
-
-      {error && (
-        <div role="alert" style={{ margin: "var(--dz-s4) 0", padding: "var(--dz-s3) var(--dz-s4)", border: "1px solid var(--dz-danger)", borderRadius: "var(--dz-r-sm)", color: "var(--dz-danger)", fontSize: "var(--dz-type-sm)" }}>
-          {error}
-        </div>
-      )}
-
-
-      {loading ? (
-        <p style={{ color: "var(--dz-text-4)", fontSize: "var(--dz-type-sm)" }}>{t("common.loading")}</p>
-      ) : (
-        <div className="upgrade-layout">
-          <section>
-            <Step label={t("upgrader.ux.yourItem", { defaultValue: "Ваш предмет" })} count={inventory.length} />
-            {source && (
-              <div className="upgrade-selected" style={{ "--dz-rarity": rarityColor(source.caseItem.rarity) } as CSSProperties}>
-                <img src={source.caseItem.imageUrl} alt="" />
-                <strong>{source.caseItem.name}</strong>
-                <span>{formatMinor(source.caseItem.valueMinor, source.caseItem.currency)}</span>
-              </div>
-            )}
-            {inventory.length === 0 ? (
-              <GameEmptyState
-                variant="upgrade-source"
-                label="СТАРТ / ИНВЕНТАРЬ"
-                title={t("upgrader.noSourceTitle")}
-                description={t("upgrader.noSourceBody")}
-                action={<Link to="/#collections">{t("home.discoveryHeading", { defaultValue: "Открыть каталог" })} <span aria-hidden="true">↗</span></Link>}
-              />
-            ) : (
-              <div className="dz-pick-grid">
-                {inventory.map((item) => (
-                  <SelectableItem
-                    key={item.id}
-                    name={item.caseItem.name}
-                    imageUrl={item.caseItem.imageUrl}
-                    value={formatMinor(item.caseItem.valueMinor, item.caseItem.currency)}
-                    rarity={item.caseItem.rarity}
-                    rarityLabel={t(`rarity.${item.caseItem.rarity}`, { defaultValue: RARITY_LABELS[item.caseItem.rarity] })}
-                    selected={sourceId === item.id}
-                    disabled={submitting}
-                    onSelect={() => { setSourceId(item.id); setTargetId(""); setResult(null); setConfirming(false); }}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
-
-          <div className="upgrade-core">
-            <span className="upgrade-core__arrow" aria-hidden="true">➜</span>
-            <span className="upgrade-core__chance">{target ? `${(chance * 100).toFixed(1)}%` : "—"}</span>
-            <span className="upgrade-core__mult">{target ? `×${multiplier.toFixed(2)}` : t("upgrader.ux.pickBoth", { defaultValue: "Выберите оба предмета" })}</span>
-            <p className="upgrade-core__note">{t("upgrader.fairNote")}</p>
-            {confirming ? (
-              <div className="dz-confirm">
-                <button type="button" className="upgrade-core__btn" onClick={() => void execute()} disabled={submitting}>
-                  {submitting ? t("upgrader.executing") : t("upgrader.confirm")}
-                </button>
-                <button type="button" className="dz-confirm__cancel" onClick={() => setConfirming(false)} disabled={submitting}>
-                  {t("common.cancel")}
-                </button>
-              </div>
-            ) : (
-              <button type="button" className="upgrade-core__btn" disabled={!source || !target} onClick={() => setConfirming(true)}>
-                {t("upgrader.ux.upgrade", { defaultValue: "АПГРЕЙД" })}
-              </button>
-            )}
-          </div>
-
-          <section>
-            <Step label={t("upgrader.ux.targetItem", { defaultValue: "Целевой предмет" })} count={eligibleTargets.length} />
-            {target && (
-              <div className="upgrade-selected" style={{ "--dz-rarity": rarityColor(target.rarity) } as CSSProperties}>
-                <img src={target.imageUrl} alt="" />
-                <strong>{target.name}</strong>
-                <span>{formatMinor(target.valueMinor, target.currency)}</span>
-              </div>
-            )}
-            {!source ? (
-              <GameEmptyState
-                variant="upgrade-target"
-                label="ЦЕЛЬ / ЗАБЛОКИРОВАНА"
-                title={t("upgrader.noTargetTitle")}
-                description={t("upgrader.noTargetBody")}
-              />
-            ) : eligibleTargets.length === 0 ? (
-              <GameEmptyState
-                variant="upgrade-target"
-                label="ЦЕЛЬ / НЕТ ВАРИАНТОВ"
-                title={t("upgrader.noTargetsTitle")}
-                description={t("upgrader.noTargetsBody")}
-              />
-            ) : (
-              <div className="dz-pick-grid">
-                {eligibleTargets.map((item) => (
-                  <SelectableItem
-                    key={item.id}
-                    name={item.name}
-                    imageUrl={item.imageUrl}
-                    value={formatMinor(item.valueMinor, item.currency)}
-                    rarity={item.rarity}
-                    rarityLabel={t(`rarity.${item.rarity}`, { defaultValue: RARITY_LABELS[item.rarity] })}
-                    selected={targetId === item.id}
-                    disabled={submitting}
-                    onSelect={() => { setTargetId(item.id); setResult(null); setConfirming(false); }}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
-        </div>
-      )}
-
-
-      {roll && createPortal(
-        <UpgradeRollOverlay
-          roll={roll}
-          onClose={() => { setRoll(null); setResult(null); }}
-          t={t}
-        />,
-        document.body,
-      )}
-
-      {!loading && inventory.length === 0 && (
-        <GameSteps
-          label={t("upgrader.stepsHeading")}
-          steps={[
-            { title: t("upgrader.step_1_title"), description: t("upgrader.step_1_body") },
-            { title: t("upgrader.step_2_title"), description: t("upgrader.step_2_body") },
-            { title: t("upgrader.step_3_title"), description: t("upgrader.step_3_body") },
-          ]}
-        />
-      )}
+  const [animating, setAnimating] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>();
+  const picker = useRef<HTMLDivElement>(null);
+  const available = (inventory.data ?? []).filter((item) => item.status === "IN_INVENTORY" && item.caseItem.currency === "RUB");
+  const source = available.find((item) => item.id === sourceId);
+  const target = targets.data?.find((item) => item.id === targetId);
+  const chance = source && target ? upgradeChance(source.caseItem.valueMinor, target.valueMinor) : null;
+  const percentage = (result?.chance ?? chance ?? 0) * 100;
+  const locked = operation.busy || !!operation.pending || animating;
+  const targetList = (targets.data ?? []).filter((item) => source && BigInt(item.valueMinor) > BigInt(source.caseItem.valueMinor) && (!factor || BigInt(item.valueMinor) >= BigInt(source.caseItem.valueMinor) * BigInt(factor)));
+  const sources = filterItems(available, (item) => item.caseItem, query, rarity, sort);
+  const choices = filterItems(targetList, (item) => item, query, rarity, sort);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const selectTab = (value: string) => { setTab(value); setQuery(""); setRarity(""); setSort("newest"); };
+  const change = (value: string) => { selectTab(value); picker.current?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" }); };
+  const reset = () => { if (locked) return; setSourceId(""); setTargetId(""); setResult(null); setFactor(null); selectTab("source"); };
+  const create = async () => {
+    if (!source || !target || chance === null) return;
+    setConfirm(false); setResult(null);
+    const data = await operation.run<UpgradeResult>({ type: "UPGRADE", ids: [source.id] }, "/games/upgrades", { inventoryItemId: source.id, targetCaseItemId: target.id });
+    if (data) {
+      setResult(data);
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) inventory.refresh();
+      else { setAnimating(true); timer.current = setTimeout(() => { setAnimating(false); inventory.refresh(); }, 1550); }
+    } else inventory.refresh();
+  };
+  return <section className={"edv2" + (operation.busy || animating ? " is-processing" : "")}>
+    <SectionHeading title="Апгрейд" description="Превратите свой скин в нечто большее. Выберите цель и испытайте удачу." action={<Rules>Один предмет можно обменять на попытку получить более дорогой. Шанс равен 90% отношения цен с округлением сервера, минимум 1%, максимум 75%. При неудаче исходный предмет расходуется. Кнопки ×2, ×3, ×5 фильтруют цели по цене; итоговый шанс зависит от выбранной пары.</Rules>} />
+    <OperationState operation={operation} onRefresh={inventory.refresh} />
+    <div className="edv2-upgrade-area"><div className="edv2-panel edv2-upgrade-choice"><div className="edv2-row edv2-between"><span className="edv2-label">Ваш предмет</span><span className="edv2-small">01</span></div><div className="edv2-upgrade-art">{source ? <EditorialItemImage name={source.caseItem.name} imageUrl={source.caseItem.imageUrl} /> : <span>{result ? "Предмет использован" : "Выберите предмет из инвентаря"}</span>}</div><b>{source?.caseItem.name ?? "Исходный скин"}</b><div className="edv2-row edv2-between"><strong>{source ? money(source.caseItem.valueMinor) : "—"}</strong><button className="edv2-btn" onClick={() => change("source")} disabled={locked}>Изменить</button></div></div>
+    <div className="edv2-panel edv2-upgrade-center"><div className="edv2-chance" style={{ "--chance": percentage + "%", "--roll": result ? result.operation.roll * 360 + "deg" : "0deg" } as CSSProperties}><div className="edv2-chance-inner"><small>ШАНС УСПЕХА</small><strong>{source && target || result ? percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 }) + "%" : "—"}</strong><small>{operation.busy ? "Ожидаем сервер" : animating ? "Открываем результат…" : "По правилам сервера"}</small>{result && !animating && <b className={"edv2-outcome" + (!result.won ? " is-lost" : "")}>{result.won ? "УСПЕХ" : "БЕЗ ВЫИГРЫША"}</b>}</div>{result && <span className="edv2-roll-marker" />}</div><div className="edv2-factors" aria-label="Фильтр целей по цене">{[2, 3, 5].map((value) => <button key={value} className={factor === value ? "is-active" : ""} aria-pressed={factor === value} disabled={!source || locked} onClick={() => { setFactor(factor === value ? null : value); selectTab("target"); }}>×{value}</button>)}</div><span className="edv2-small">Коэффициент — фильтр стоимости целей.<br />Результат определяет сервер.</span></div>
+    <div className="edv2-panel edv2-upgrade-choice"><div className="edv2-row edv2-between"><span className="edv2-label">Желаемый предмет</span><span className="edv2-small">02</span></div><div className="edv2-upgrade-art">{target ? <EditorialItemImage name={target.name} imageUrl={target.imageUrl} /> : <span>Выберите более дорогой скин</span>}</div><b>{target?.name ?? "Целевой скин"}</b><div className="edv2-row edv2-between"><strong>{target ? money(target.valueMinor) : "—"}</strong><button className="edv2-btn" onClick={() => change("target")} disabled={!source || locked}>Изменить</button></div></div></div>
+    <div className="edv2-upgrade-footer"><p>При неудаче исходный предмет будет использован. Перед операцией проверьте цель, цену и шанс.</p><div className="edv2-actions"><button className="edv2-btn" onClick={reset} disabled={locked}><RotateCcw size={14} />Сбросить</button><button className="edv2-btn edv2-primary" onClick={() => setConfirm(true)} disabled={!user || !source || !target || chance === null || locked || !!result}><ArrowUpRight size={15} />Апгрейд</button></div></div>
+    {result && !animating && <div className="edv2-result" role="status"><div className="edv2-row edv2-between"><h2>{result.won ? "Апгрейд успешен" : "Попытка завершена"}</h2><button className="edv2-btn edv2-xs" onClick={reset}>Новая попытка</button></div>{result.won && result.item ? <div className="edv2-result-items"><div className="edv2-result-item"><EditorialItemImage name={result.item.name} imageUrl={result.item.imageUrl} /><b>{result.item.name}</b><strong>{money(result.item.valueMinor)}</strong></div></div> : <p>Сервер подтвердил неудачу. Исходный предмет использован, целевой предмет не начислен.</p>}<p><Link to="/inventory">В инвентарь →</Link></p><small>Операция {result.operation.id} · шанс {(result.chance * 100).toLocaleString("ru-RU", { maximumFractionDigits: 3 })}% · roll {result.operation.roll}</small></div>}
+    <div ref={picker} className="edv2-available"><div className="edv2-sectionhead"><div className="edv2-picker-tabs"><button className={tab === "source" ? "is-active" : ""} onClick={() => selectTab("source")}>Ваш инвентарь</button><button className={tab === "target" ? "is-active" : ""} onClick={() => selectTab("target")}>Выберите цель</button></div><span className="edv2-count">{tab === "source" ? available.length : targetList.length}</span></div>
+    {!user && tab === "source" ? <SignInState /> : <><ItemFilters query={query} setQuery={setQuery} rarity={rarity} setRarity={setRarity} sort={sort} setSort={setSort} />{tab === "source" ? <><DataState loading={inventory.loading} error={inventory.error} retry={inventory.refresh} empty={!inventory.loading && !inventory.error && !sources.length ? "Нет подходящих предметов в инвентаре" : undefined} /><div className="edv2-items">{sources.map((item) => <ItemTile key={item.id} item={item.caseItem} selected={item.id === sourceId} disabled={locked} onClick={() => { setSourceId(item.id); setTargetId(""); setResult(null); setFactor(null); selectTab("target"); }} />)}</div></> : <><DataState loading={targets.loading} error={targets.error} retry={targets.refresh} empty={!targets.loading && !targets.error && !choices.length ? (source ? "Нет целей, соответствующих фильтрам" : "Сначала выберите исходный предмет") : undefined} /><div className="edv2-items">{choices.map((item) => <ItemTile key={item.id} item={item} selected={item.id === targetId} disabled={locked} onClick={() => { setTargetId(item.id); setResult(null); }} />)}</div></>}</>}
     </div>
-  );
+    {confirm && source && target && <ConfirmDialog title="Подтвердить апгрейд" confirmLabel="Выполнить апгрейд" onClose={() => setConfirm(false)} onConfirm={create} busy={operation.busy}><p><strong>{source.caseItem.name}</strong> → <strong>{target.name}</strong></p><p>Шанс успеха: {percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 })}%. При любом результате исходный предмет будет использован.</p></ConfirmDialog>}
+  </section>;
 }

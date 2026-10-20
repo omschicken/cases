@@ -2,7 +2,7 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { Layout } from "./components/Layout";
-import { EditorialLayout } from "./components/editorial/EditorialShell";
+import { EditorialLayout, EditorialSectionsLayout } from "./components/editorial/EditorialShell";
 import { ProtectedRoute, AdminRoute } from "./components/ProtectedRoute";
 import { LoginPage } from "./pages/Login";
 import { RegisterPage } from "./pages/Register";
@@ -47,6 +47,15 @@ export default function App() {
               />
             )}
           </Route>
+          <Route element={<EditorialSectionsLayout />}>
+            <Route path="/battles" element={<BattlesPage />} />
+            <Route path="/upgrader" element={<UpgraderPage />} />
+            <Route path="/upgrade" element={<Navigate to="/upgrader" replace />} />
+            <Route path="/contracts" element={<ContractsPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/inventory" element={<InventoryPage />} />
+            </Route>
+          </Route>
           <Route element={<Layout />}>
             <Route path="/verify/:openEventId" element={<VerifyPage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -54,10 +63,6 @@ export default function App() {
             <Route path="/auth/steam/callback" element={<SteamCallbackPage />} />
             <Route path="/auth/steam/complete" element={<SteamCompletePage />} />
 
-            <Route path="/battles" element={<BattlesPage />} />
-            <Route path="/upgrader" element={<UpgraderPage />} />
-            <Route path="/upgrade" element={<Navigate to="/upgrader" replace />} />
-            <Route path="/contracts" element={<ContractsPage />} />
             <Route path="/cards" element={<CardsPage />} />
             <Route path="/prizes" element={<PrizesPage />} />
             <Route path="/bonuses" element={<BonusesPage />} />
@@ -67,7 +72,6 @@ export default function App() {
             <Route path="*" element={<NotFoundPage />} />
 
             <Route element={<ProtectedRoute />}>
-              <Route path="/inventory" element={<InventoryPage />} />
               <Route path="/history" element={<HistoryPage />} />
               <Route path="/wallet" element={<WalletPage />} />
               <Route path="/profile" element={<ProfilePage />} />
