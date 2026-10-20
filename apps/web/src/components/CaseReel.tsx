@@ -7,9 +7,9 @@ import type { CaseItem } from "../lib/types";
 import { EditorialItemImage } from "./editorial/EditorialItemImage";
 import { REEL_MS, RESULT_HOLD_MS, reelProgress } from "../lib/reelMotion";
 
-const STRIP_LENGTH = 58;
-const WIN_INDEX = 47;
-const START_INDEX = 5;
+const STRIP_LENGTH = 44;
+const WIN_INDEX = 35;
+const START_INDEX = 4;
 
 function shortName(name: string) {
   const [weapon, ...rest] = name.replace(/ \([^)]*\)$/, "").replace(/^★ /, "").split(" | ");
@@ -132,7 +132,7 @@ export function CaseReel({ items, winner, onComplete, preview = false, onTick }:
               <div key={index} className={`dz-reel__card${phase === "landed" && index === WIN_INDEX ? " is-won" : ""}`}
                 style={{ "--rc": rarityColor(item.rarity) } as CSSProperties}>
                 <span className="dz-reel__edition">CS2 / {String(index + 1).padStart(2, "0")}</span>
-                <EditorialItemImage name={item.name} imageUrl={item.imageUrl} decorative loading="eager" />
+                <EditorialItemImage name={item.name} imageUrl={item.imageUrl} decorative loading={index < 8 || index >= WIN_INDEX - 3 ? "eager" : "lazy"} />
                 <small>{weapon}</small>
                 <strong>{finish || weapon}</strong>
                 <em>{formatMinor(item.valueMinor, item.currency)}</em>
