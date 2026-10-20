@@ -1,5 +1,5 @@
-export const REEL_MS = 4800;
-export const RESULT_HOLD_MS = 650;
+export const REEL_MS = 3400;
+export const RESULT_HOLD_MS = 420;
 
 /** Continuous velocity: accelerate, cruise, then ease into an exact stop. */
 export function reelProgress(time: number): number {
