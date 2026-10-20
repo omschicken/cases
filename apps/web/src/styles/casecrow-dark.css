@@ -232,3 +232,4 @@
  .fidelity-page .fidelity-main{padding-bottom:72px}
  .fidelity-page .fidelity-user-menu{right:-80px;max-width:calc(100vw - 24px)}
 }
+:root[data-casecrow-theme="dark"] .fidelity-catalog-search{background:#242a24;border-color:#3a443a;color:#b4c0b3}
