@@ -18,5 +18,6 @@ describe("case economic guardrails", () => {
     expect(assessCaseEconomics([], 100n).canOpen).toBe(false);
     expect(assessCaseEconomics([{ valueMinor: 10n, weight: 0 }], 100n).canBattle).toBe(false);
     expect(assessCaseEconomics([{ valueMinor: 10n, weight: Number.NaN }], 100n).canOpen).toBe(false);
+    expect(assessCaseEconomics([{ valueMinor: 10n, weight: 1e-15 }], 100n).canOpen).toBe(false);
   });
 });
