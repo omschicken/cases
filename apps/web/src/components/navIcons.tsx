@@ -1,70 +1,34 @@
-// Shared between the desktop Sidebar and the mobile BottomNav so both stay
-// in sync on what the primary destinations are.
+import {
+  ChevronLeft, ChevronRight, CircleArrowUp, CircleUserRound, ExternalLink,
+  FileText, Gift, History, Layers3, Package, PackageOpen, Search, Settings,
+  ShieldCheck, Swords, UsersRound, Wallet, type LucideProps,
+} from "lucide-react";
 
-export function IconCases() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <rect x="3" y="7" width="14" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M3 7 L10 3 L17 7" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-      <line x1="10" y1="7" x2="10" y2="17" stroke="currentColor" strokeWidth="1.5"  />
-    </svg>
-  );
+const NAV_ICON_DEFAULTS = { size: 20, strokeWidth: 1.75, "aria-hidden": true } as const;
+
+function withNavDefaults(Icon: typeof Package) {
+  return function NavIcon(props: LucideProps) {
+    return <Icon {...NAV_ICON_DEFAULTS} {...props} />;
+  };
 }
 
-export function IconBattles() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M3 3 L11 11 M9 13 L3 19 M13 9 L11 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M17 3 L9 11 M11 13 L17 19 M7 9 L9 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-export function IconUpgrader() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <circle cx="10" cy="10" r="7.5" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M10 14 L10 6 M6.5 9.5 L10 6 L13.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-export function IconContracts() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <rect x="4" y="2.5" width="12" height="15" rx="1.2" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M6.5 6.5 L13.5 6.5 M6.5 9.5 L13.5 9.5 M6.5 12.5 L11 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-export function IconCards() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <rect x="2.5" y="5" width="9" height="12" rx="1.2" stroke="currentColor" strokeWidth="1.5" transform="rotate(-8 7 11)" />
-      <rect x="8.5" y="5" width="9" height="12" rx="1.2" stroke="currentColor" strokeWidth="1.5" transform="rotate(8 13 11)" />
-    </svg>
-  );
-}
-
-export function IconInventory() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <rect x="2.5" y="2.5" width="6.5" height="6.5" rx="1.2" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="11" y="2.5" width="6.5" height="6.5" rx="1.2" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="2.5" y="11" width="6.5" height="6.5" rx="1.2" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="11" y="11" width="6.5" height="6.5" rx="1.2" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
-export function IconAdmin() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M10 2.5 L17 5.5 V10 C17 14 14 17 10 18 C6 17 3 14 3 10 V5.5 Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-    </svg>
-  );
-}
+export const IconCases = withNavDefaults(Package);
+export const IconBattles = withNavDefaults(Swords);
+export const IconContracts = withNavDefaults(FileText);
+export const IconUpgrader = withNavDefaults(CircleArrowUp);
+export const IconCards = withNavDefaults(Layers3);
+export const IconInventory = withNavDefaults(PackageOpen);
+export const IconReferral = withNavDefaults(UsersRound);
+export const IconGift = withNavDefaults(Gift);
+export const IconSearch = withNavDefaults(Search);
+export const IconWallet = withNavDefaults(Wallet);
+export const IconProfile = withNavDefaults(CircleUserRound);
+export const IconSettings = withNavDefaults(Settings);
+export const IconHistory = withNavDefaults(History);
+export const IconAdmin = withNavDefaults(ShieldCheck);
+export const IconExternalLink = withNavDefaults(ExternalLink);
+export const IconChevronLeft = withNavDefaults(ChevronLeft);
+export const IconChevronRight = withNavDefaults(ChevronRight);
 
 export const mainNavItems = [
   { to: "/", key: "cases", icon: IconCases, end: true },

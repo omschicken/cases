@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import heroImage from "../assets/casecrow-approved/cases/webp/case_01.webp";
-import promoImage from "../assets/editorial-kit/promo.webp";
 import { api, ApiError } from "../lib/api";
 import { caseVersionLabel, resolveCaseArt } from "../lib/caseArt";
 import { formatMinor } from "../lib/money";
@@ -146,7 +145,7 @@ export function CaseListPage() {
 
       {featured && (
         <section className="fidelity-promo" aria-label={`Выбранный кейс: ${featured.name}`}>
-          <img src={promoImage} alt="Коллекционное оружие" />
+          <img src={resolveCaseArt(featured.slug, featured.imageUrl)} alt={featured.name} />
           <div><small>Выбор каталога</small><h2>{featured.name}</h2><p>{featured.items.length} предметов · {formatMinor(featured.priceMinor, featured.currency)}</p></div>
           <Link to={`/cases/${featured.slug}`}>Смотреть кейс <span>↗</span></Link>
         </section>

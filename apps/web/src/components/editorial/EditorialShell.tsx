@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEvent, ReactNode } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
@@ -7,8 +7,9 @@ import { api, API_URL } from "../../lib/api";
 import type { WalletDto } from "../../lib/types";
 import { LanguageSwitcher } from "../LanguageSwitcher";
 import { Money } from "../Money";
-import { mainNavItems } from "../navIcons";
+import { IconExternalLink, IconGift, IconProfile, IconSearch, IconWallet, mainNavItems } from "../navIcons";
 import { CaseCrowLogo } from "../CaseCrowLogo";
+import { BottomNav } from "../BottomNav";
 import "../../styles/design-lab.css";
 
 const topNav = mainNavItems.slice(0, 4);
@@ -62,12 +63,12 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
       </nav>
       <div className="fidelity-account">
         <form className="fidelity-search" role="search" onSubmit={submitSearch}>
-          <span aria-hidden="true">⌕</span>
+          <IconSearch />
           <input value={query} onChange={(event) => updateSearch(event.target.value)} placeholder={t("home.searchPlaceholder")} aria-label={t("home.searchCases")} />
         </form>
         {user ? (
           <>
-            <NavLink className="fidelity-wallet" to="/wallet"><span aria-hidden="true">▤</span>{balanceMinor === null ? "—" : <Money minor={balanceMinor} />}</NavLink>
+            <NavLink className="fidelity-wallet" to="/wallet"><IconWallet />{balanceMinor === null ? "—" : <Money minor={balanceMinor} />}</NavLink>
             <NavLink className="fidelity-plus" to="/wallet" aria-label={t("wallet.topUp", { defaultValue: "Пополнить баланс" })}>+</NavLink>
             <div className={`fidelity-user${profileOpen ? " is-open" : ""}`}>
               <button className="fidelity-profile" type="button" onClick={() => setProfileOpen((value) => !value)} aria-expanded={profileOpen} aria-label={t("nav.profile")}>
@@ -85,7 +86,7 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
         ) : (
           <>
             <a className="fidelity-steam" href={`${API_URL}/auth/steam`}>{t("nav.logInSteam")}</a>
-            <NavLink className="fidelity-profile" to="/login" aria-label={t("nav.profile")}><CaseCrowLogo compact /></NavLink>
+            <NavLink className="fidelity-profile" to="/login" aria-label={t("nav.profile")}><IconProfile /></NavLink>
           </>
         )}
         <LanguageSwitcher />
@@ -104,16 +105,23 @@ export function EditorialSidebar({ activeSection }: { activeSection?: "cases" })
         </NavLink>
       ))}
     </nav>
-    <NavLink className="fidelity-reward" to="/bonuses"><span aria-hidden="true">♙</span><b>{t("nav.dailyRewards", { defaultValue: "Ежедневные награды" })}</b><i>↗</i></NavLink>
+    <NavLink className="fidelity-reward" to="/bonuses"><IconGift /><b>{t("nav.dailyRewards", { defaultValue: "Ежедневные награды" })}</b><IconExternalLink size={14} /></NavLink>
   </aside>;
 }
 
-export function EditorialLayout() {
+type EditorialAppShellProps = { children: ReactNode; activeSection?: "cases" };
+
+export function EditorialAppShell({ children, activeSection }: EditorialAppShellProps) {
   return <div className="fidelity-page editorial-production">
-    <EditorialHeader activeSection="cases" />
+    <EditorialHeader activeSection={activeSection} />
     <div className="fidelity-shell">
-      <EditorialSidebar activeSection="cases" />
-      <main className="fidelity-main"><Outlet /></main>
+      <EditorialSidebar activeSection={activeSection} />
+      <main className="fidelity-main">{children}</main>
     </div>
+    <BottomNav />
   </div>;
+}
+
+export function EditorialLayout() {
+  return <EditorialAppShell activeSection="cases"><Outlet /></EditorialAppShell>;
 }
