@@ -128,7 +128,7 @@ export function CaseDetailPage() {
   }
 
   async function openCase() {
-    if (!theCase || !user || !theCase.isActive || recoveryPending || openingLockRef.current) return;
+    if (!theCase || !user || !theCase.isActive || theCase.canOpen === false || recoveryPending || openingLockRef.current) return;
     openingLockRef.current = true;
     requestPendingRef.current = true;
     skipRequestedRef.current = false;
@@ -208,8 +208,8 @@ export function CaseDetailPage() {
       <CaseOpeningScene theCase={theCase} winner={winningItem} opening={opening} onComplete={finishOpening} onSkip={skipAnimation}
         actions={<><span className="cc-case-price"><Money minor={theCase.priceMinor} currency={theCase.currency} /></span>          {user ? (
             <>
-              <button onClick={openCase} disabled={opening || recoveryPending || !theCase.isActive} className="dza-open">
-                {!theCase.isActive ? t("caseDetail.unavailable", { defaultValue: "Недоступен" }) : opening ? t("caseDetail.rolling") : t("caseDetail.open", { defaultValue: "Открыть" })}
+              <button onClick={openCase} disabled={opening || recoveryPending || !theCase.isActive || theCase.canOpen === false} className="dza-open">
+                {!theCase.isActive || theCase.canOpen === false ? t("caseDetail.unavailable", { defaultValue: "Недоступен" }) : opening ? t("caseDetail.rolling") : t("caseDetail.open", { defaultValue: "Открыть" })}
               </button>
               <button onClick={demoSpin} disabled={opening} className="dza-demo">
                 {t("caseDetail.demoSpin")}
