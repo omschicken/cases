@@ -13,6 +13,7 @@ function readPreference(): ThemePreference {
 function applyTheme(preference: ThemePreference) {
   const dark = preference === "dark" || (preference === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
   document.documentElement.dataset.casecrowTheme = dark ? "dark" : "light";
+  document.documentElement.style.backgroundColor = dark ? "#101210" : "#f7f5f0";
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#101210" : "#f5f2ea");
 }
 
