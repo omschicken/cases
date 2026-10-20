@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -10,8 +10,10 @@ import { Money } from "../Money";
 import { IconExternalLink, IconGift, IconInventory, IconProfile, IconSearch, IconWallet, mainNavItems } from "../navIcons";
 import { CaseCrowLogo } from "../CaseCrowLogo";
 import { BottomNav } from "../BottomNav";
+import { ThemeSwitcher } from "../ThemeSwitcher";
 import "../../styles/design-lab.css";
 import "../../styles/editorial-sections.css";
+import "../../styles/casecrow-dark.css";
 
 const topNav = mainNavItems.slice(0, 4);
 
@@ -28,6 +30,7 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
   const location = useLocation();
   const [balanceMinor, setBalanceMinor] = useState<string | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   const [localSearch, setLocalSearch] = useState("");
   const query = searchValue ?? localSearch;
 
@@ -47,6 +50,27 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
   }, [user]);
 
   useEffect(() => setProfileOpen(false), [location.pathname]);
+
+  useEffect(() => {
+    if (!profileOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.target instanceof Node && !profileMenuRef.current?.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setProfileOpen(false);
+        profileMenuRef.current?.querySelector<HTMLButtonElement>(".fidelity-profile")?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [profileOpen]);
 
   const updateSearch = (value: string) => {
     onSearchChange?.(value);
@@ -81,8 +105,8 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
           <>
             <NavLink className="fidelity-wallet" to="/wallet"><IconWallet />{balanceMinor === null ? "—" : <Money minor={balanceMinor} />}</NavLink>
             <NavLink className="fidelity-plus" to="/wallet" aria-label={t("wallet.topUp", { defaultValue: "Пополнить баланс" })}>+</NavLink>
-            <div className={`fidelity-user${profileOpen ? " is-open" : ""}`}>
-              <button className="fidelity-profile" type="button" onClick={() => setProfileOpen((value) => !value)} aria-expanded={profileOpen} aria-label={t("nav.profile")}>
+            <div ref={profileMenuRef} className={`fidelity-user${profileOpen ? " is-open" : ""}`}>
+              <button className="fidelity-profile" type="button" onClick={() => setProfileOpen((value) => !value)} aria-expanded={profileOpen} aria-haspopup="menu" aria-label={t("nav.profile")}>
                 {user.steamAvatarUrl ? <img src={user.steamAvatarUrl} alt="" /> : (user.displayName ?? user.email).slice(0, 1).toUpperCase()}
               </button>
               {profileOpen && <div className="fidelity-user-menu">
@@ -100,6 +124,8 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
             <NavLink className="fidelity-profile" to="/login" aria-label={t("nav.profile")}><IconProfile /></NavLink>
           </>
         )}
+        <ThemeSwitcher />
+        
         <LanguageSwitcher />
       </div>
     </header>

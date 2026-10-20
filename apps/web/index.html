@@ -1,7 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        try {
+          var pref = localStorage.getItem("casecrow:theme");
+          var dark = pref === "dark" || (pref !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.dataset.casecrowTheme = dark ? "dark" : "light";
+          document.documentElement.style.backgroundColor = dark ? "#101210" : "#f7f5f0";
+        } catch (error) {
+          document.documentElement.dataset.casecrowTheme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,6 +37,7 @@
     <meta property="og:site_name" content="CaseCrow" />
     <meta property="og:type" content="website" />
     <meta name="theme-color" content="#f5f2ea" />
+
     <title>CaseCrow — CS2-кейсы с характером</title>
   </head>
   <body>
