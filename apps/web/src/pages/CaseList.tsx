@@ -84,7 +84,7 @@ export function CaseListPage() {
   }, [cases, filter, query, sort]);
 
   const featured = useMemo(
-    () => [...cases].sort((a, b) => Number(b.priceMinor) - Number(a.priceMinor))[0],
+    () => [...cases].filter((item) => item.canOpen !== false).sort((a, b) => Number(b.priceMinor) - Number(a.priceMinor))[0],
     [cases],
   );
 
@@ -132,12 +132,12 @@ export function CaseListPage() {
               <article className="fidelity-card" key={item.id}>
                 <Link className="fidelity-card-art" to={`/cases/${item.slug}`} aria-label={`Открыть страницу ${item.name}`}>
                   <img src={resolveCaseArt(item.slug, item.imageUrl)} alt={item.name} loading="lazy" />
-                  <span>{item.isActive ? "Доступен" : "Недоступен"}</span>
+                  <span>{item.canOpen === false ? "Проверка цены" : item.isActive ? "Доступен" : "Недоступен"}</span>
                   {version ? <em className="fidelity-card-version">{version}</em> : null}
                 </Link>
                 <div className="fidelity-card-info">
                   <div><h3>{item.name}</h3><strong>{formatMinor(item.priceMinor, item.currency)}</strong></div>
-                  <Link to={`/cases/${item.slug}`}>Открыть <span>→</span></Link>
+                  <Link to={`/cases/${item.slug}`}>{item.canOpen === false ? "Подробнее" : "Открыть"} <span>→</span></Link>
                 </div>
               </article>
             );
