@@ -51,9 +51,28 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
       }).catch(() => { if (active && current === revision) setBalanceMinor(null); });
     };
     refresh();
+    let lastForegroundRefresh = Date.now();
+    const onFocus = () => {
+      if (document.visibilityState === "visible" && Date.now() - lastForegroundRefresh > 5_000) {
+        lastForegroundRefresh = Date.now();
+        refresh();
+      }
+    };
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === "casecrow:wallet-revision") refresh();
+    };
     window.addEventListener("casecrow:wallet-updated", refresh);
-    return () => { active = false; window.removeEventListener("casecrow:wallet-updated", refresh); };
-  }, [user]);
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      active = false;
+      window.removeEventListener("casecrow:wallet-updated", refresh);
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
+  }, [user?.id]);
 
   useEffect(() => setProfileOpen(false), [location.pathname]);
   useEffect(() => { setLocalSearch(new URLSearchParams(location.search).get("q") ?? ""); }, [location.search]);
