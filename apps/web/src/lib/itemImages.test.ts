@@ -34,8 +34,12 @@ describe("item image policy", () => {
     expect(sources[0]?.url).not.toBe(remote);
   });
 
-  it("never invents an image for Karambit Emerald", () => {
-    expect(resolveItemImageSources("Karambit | Emerald (FN)", "https://placehold.co/320")).toEqual([]);
+  it("resolves the exact Karambit Emerald finish with an independent backup", () => {
+    const images = resolveItemImageSources("Karambit | Emerald (FN)", "https://placehold.co/320");
+    expect(images).toHaveLength(2);
+    expect(images[0]).toEqual({ url: "https://app.skin.land/market_images/98776_b.png", status: "official" });
+    expect(images[1]?.url).toContain("karambit_gamma_doppler_emerald");
+    expect(images.every(({ url }) => !isPlaceholderImageUrl(url))).toBe(true);
   });
 
   it("deduplicates the same approved image URL", () => {
