@@ -328,6 +328,7 @@ export function CaseDetailPage() {
         <div className="dza-arena__stage">
           <CaseStage
             caseName={theCase.name}
+            caseSlug={theCase.slug}
             caseImageUrl={theCase.imageUrl}
             chase={chaseItem ? { name: chaseItem.name, imageUrl: chaseItem.imageUrl, rarity: chaseItem.rarity } : undefined}
             hidden={opening}

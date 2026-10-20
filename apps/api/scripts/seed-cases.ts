@@ -162,7 +162,7 @@ function buildPayload(spec: CaseSpec, suffix: string) {
     name: spec.name,
     priceMinor: marketCasePrice(items, spec.floorRub * 100),
     currency: CURRENCY,
-    imageUrl: chase.imageUrl,
+    imageUrl: null,  // Case box art separate from item images; set via admin when real artwork exists.
     items,
     floorRub: spec.floorRub,
   };
