@@ -118,3 +118,34 @@
 @media(prefers-reduced-motion:reduce){
  .fidelity-page :is(.fidelity-card,.fidelity-card-info,.edv2-item){transition:none!important}
 }
+
+
+/* Inventory toolbars and filter fields must shrink before clipping content. */
+.edv2 .edv2-inventory-toolbar{min-width:0;flex-wrap:wrap;align-items:flex-start}
+.edv2 .edv2-inventory-toolbar .edv2-chips{flex:1 1 320px}
+.edv2 .edv2-inventory-toolbar .edv2-filters{flex:1 1 390px;min-width:0;flex-wrap:wrap}
+.edv2 .edv2-inventory-toolbar .edv2-filters .edv2-search{flex:1 1 180px;min-width:0}
+.edv2 .edv2-inventory-toolbar .edv2-filters .edv2-field{flex:1 1 140px;min-width:0}
+.edv2 .edv2-inventory-layout>*,
+.edv2 .edv2-contract-main>*{min-width:0}
+.edv2 .edv2-right-rail{max-width:100%;overflow-wrap:anywhere}
+.edv2 .edv2-slotgrid{min-width:0}
+.edv2 .edv2-slot{min-width:0}
+.edv2 .edv2-slot>b{max-width:100%}
+/* Inputs are operational controls, not decorative micro-labels. */
+.edv2 .edv2-field,
+.edv2 .edv2-field input,
+.edv2 .edv2-field select{font-size:12px;min-height:40px}
+.edv2 .edv2-item-body p{font-size:11px}
+.edv2 .edv2-item-body small{font-size:10.5px}
+.edv2 .edv2-kicker{letter-spacing:.11em}
+.edv2 .edv2-rules summary{min-height:41px}
+.edv2 .edv2-item-body b{line-height:1.35}
+/* Break overly wide contract/inventory two-column arrangements before they
+   become a narrow main column plus an unreachable sidebar. */
+@media(min-width:901px) and (max-width:1180px){
+ .edv2 .edv2-inventory-layout,
+ .edv2 .edv2-contract-main{grid-template-columns:minmax(0,1fr)}
+ .edv2 .edv2-right-rail{position:static}
+ .edv2 .edv2-contract-summary{width:100%;max-width:none}
+}
