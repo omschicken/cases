@@ -68,6 +68,19 @@ describe("atomic paid multi-open (integration)", () => {
     expect(await prisma.caseOpenEvent.count({ where: { userId } })).toBe(0);
   });
 
+  it("never reuses a nonce across concurrent single and batch purchases", async () => {
+    const { userId, caseId } = await scenario(150_000n);
+    const results = await Promise.all([
+      cases.openCase(userId, caseId),
+      cases.openCaseBatch(userId, caseId, 3),
+    ]);
+    const nonces = [results[0].nonce, ...results[1].results.map(item => item.nonce)];
+    expect(new Set(nonces).size).toBe(4);
+    expect(nonces.sort((a,b) => a-b)).toEqual([0,1,2,3]);
+    expect(await wallet.getBalance(userId)).toBe(110_000n);
+    expect(await prisma.caseOpenEvent.count({ where: { userId } })).toBe(4);
+  });
+
   it("allocates just one active seed when first use is concurrent", async () => {
     const { userId } = await scenario(10_000n);
     const both = await Promise.all([

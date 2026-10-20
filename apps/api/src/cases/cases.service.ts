@@ -140,7 +140,14 @@ export class CasesService {
         referenceId: theCase.id,
       });
 
-      const lockedSeed = await tx.provablyFairSeed.findUniqueOrThrow({ where: { id: seed.id } });
+      // Must hold the same seed row lock as batched opens: otherwise two
+      // concurrent requests can reuse one nonce before either update commits.
+      const rows = await tx.$queryRaw<{ nonce: number; serverSeed: string; serverSeedHash: string; clientSeed: string }[]>`
+        SELECT "nonce", "serverSeed", "serverSeedHash", "clientSeed"
+        FROM "ProvablyFairSeed" WHERE "id" = ${seed.id} FOR UPDATE
+      `;
+      const lockedSeed = rows[0];
+      if (!lockedSeed) throw new BadRequestException("Case seed unavailable");
       const nonce = lockedSeed.nonce;
 
       const roll = computeRoll(lockedSeed.serverSeed, lockedSeed.clientSeed, nonce);

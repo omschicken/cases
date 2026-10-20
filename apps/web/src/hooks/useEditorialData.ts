@@ -8,6 +8,11 @@ export function useEditorialData<T>(path: string | null) {
   const [revision, setRevision] = useState(0);
   const refresh = useCallback(() => setRevision((value) => value + 1), []);
   useEffect(() => {
+    if (!path?.startsWith("/cases/inventory/")) return;
+    window.addEventListener("casecrow:inventory-updated", refresh);
+    return () => window.removeEventListener("casecrow:inventory-updated", refresh);
+  }, [path, refresh]);
+  useEffect(() => {
     let active = true;
     setData(null);
     setError("");

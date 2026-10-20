@@ -148,3 +148,20 @@
  .edv2 .edv2-item-body{padding:8px}
  .edv2 .edv2-factors{flex-wrap:wrap}
 }
+
+/* Contract outcomes are actual available skins, not abstract 90% caps. */
+.cc-contract-prizes{display:grid;gap:8px;margin:12px 0}
+.cc-contract-prize{display:grid;grid-template-columns:53px minmax(0,1fr);align-items:center;gap:10px;min-width:0;padding:9px;border:1px solid var(--line,#dddcd3);border-radius:10px;background:var(--surface,#faf9f4)}
+.cc-contract-prize img{width:53px;height:49px;object-fit:contain}
+.cc-contract-prize>span{display:flex;flex-direction:column;min-width:0;gap:3px}
+.cc-contract-prize b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.cc-contract-prize small{font-size:10px;color:var(--muted,#73766d)}
+.cc-contract-prize strong{font-size:13px;font-variant-numeric:tabular-nums}
+.cc-contract-prize--high{border-color:#93a98c;background:color-mix(in srgb,var(--surface,#faf9f4),#91aa8a 8%)}
+:root[data-casecrow-theme="dark"] .cc-contract-prize{background:#242c25;border-color:#3a473a}
+:root[data-casecrow-theme="dark"] .cc-contract-prize--high{background:#283829;border-color:#637c61}
+@media(min-width:1100px) and (max-width:1450px){
+ .edv2 .edv2-contract-summary{min-width:0}
+ .cc-contract-prize{grid-template-columns:45px minmax(0,1fr);padding:8px 6px}
+ .cc-contract-prize img{width:45px;height:45px}
+}
