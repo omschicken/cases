@@ -151,7 +151,7 @@ export function CaseListPage() {
       {featured && (
         <section className="fidelity-promo" aria-label={`Выбранный кейс: ${featured.name}`}>
           <img src={resolveCaseArt(featured.slug, featured.imageUrl)} alt={featured.name} />
-          <div><small>Выбор каталога</small><h2>{featured.name}</h2><p>{featured.items.length} предметов · {formatMinor(featured.priceMinor, featured.currency)}</p></div>
+          <div><small>Выбор каталога</small><h2>{featured.name}</h2><p>{featured.itemCount ?? featured.items.length} предметов · {formatMinor(featured.priceMinor, featured.currency)}</p></div>
           <Link to={`/cases/${featured.slug}`}>Смотреть кейс <span>↗</span></Link>
         </section>
       )}
