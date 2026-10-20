@@ -706,6 +706,8 @@
  .fidelity-page>.bottom-nav .bottom-nav-link svg{width:19px;height:19px;filter:none}
  .fidelity-page>.bottom-nav .bottom-nav-link span{display:block!important;line-height:1.2}
  .fidelity-page .fidelity-mobile-art{margin-top:0}
+ .edv2 .edv2-inventory-toolbar .edv2-chips,
+ .edv2 .edv2-inventory-toolbar .edv2-filters{flex:0 1 auto;width:100%}
 }
 .edv2 .edv2-result-items{animation:cc-ease-enter .45s ease both}
 .fidelity-page .cc-opening-page .dza-open{background:var(--cc-sage)!important;color:var(--cc-canvas)!important;border-color:var(--cc-sage)!important;box-shadow:none!important}

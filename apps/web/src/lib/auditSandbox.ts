@@ -1,5 +1,6 @@
 import fixture from "../../e2e/fixtures/static.json";
 import type { CaseDto, CaseItem, GameOperationDto, InventoryItemDto, LedgerEntryDto } from "./types";
+import { upgradeChance } from "./editorialGameRules";
 
 // This module is reachable only in an explicitly isolated audit build. It never
 // uses fetch, tokens, payment providers, or a database. Values are UI fixtures.
@@ -83,10 +84,13 @@ export async function auditRequest(path: string, options: RequestInit): Promise<
   if (path === "/games/upgrades") {
     const source = itemById(input.inventoryItemId);
     const target = fixture.items.find(item => item.id === input.targetCaseItemId);
-    if (!target || BigInt(target.valueMinor) <= BigInt(source.caseItem.valueMinor)) throw new Error("Выберите более дорогую тестовую цель");
+    const chance = target && upgradeChance(source.caseItem.valueMinor, target.valueMinor);
+    if (!target || chance === null || chance === undefined) throw new Error("Выберите допустимую тестовую цель");
     source.status = "CONSUMED";
     add(target as CaseItem);
-    return settle({ operation: operation("UPGRADE", [source.id]), won: true, item: target, target, chance: .31 });
+    const result = operation("UPGRADE", [source.id]);
+    result.chance = chance;
+    return settle({ operation: result, won: true, item: target, target, chance });
   }
   if (path === "/games/battles") {
     const chosen = catalog.find(item => item.id === input.caseId);
