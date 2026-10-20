@@ -187,8 +187,13 @@ export function CaseDetailPage() {
     setBatchResults([]);
     setRevealed(false);
 
-    setOpening(true);
-    setDemoItem(weightedSample(theCase.items));
+    const item = weightedSample(theCase.items);
+    setDemoItem(item);
+    if (fastOpen) {
+      setOpening(false);
+      setRevealed(true);
+      openingLockRef.current = false;
+    } else setOpening(true);
   }
 
   const winningItem = result?.item ?? demoItem;
