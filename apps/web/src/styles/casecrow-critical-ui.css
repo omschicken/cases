@@ -1,0 +1,120 @@
+/* CaseCrow critical UI correction pass.
+   Scoped to the existing Editorial shell. Applied after editorial-sections,
+   dark and polish so these rules have an explicit, predictable precedence.
+   This file contains no imagery, prices, gameplay or API changes. */
+.fidelity-page{min-width:0;overflow-x:clip}
+.fidelity-shell,.fidelity-main,.fidelity-catalog,.edv2{min-width:0}
+.fidelity-account{min-width:0}
+.fidelity-topnav{min-width:0;white-space:nowrap}
+.fidelity-topnav a{flex-shrink:0}
+.fidelity-rail,.editorial-sections .fidelity-rail{
+  min-height:0;
+  height:calc(100dvh - 76px);
+  max-height:calc(100dvh - 76px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+}
+.fidelity-rail{height:calc(100dvh - 58px);max-height:calc(100dvh - 58px)}
+.fidelity-rail .fidelity-reward{flex-shrink:0}
+.fidelity-rail nav{min-width:0}
+.fidelity-rail nav a{min-width:0}
+.fidelity-rail nav a span{overflow-wrap:anywhere}
+/* Restore readable contract/rules text even when the source sheet uses !important. */
+:root[data-casecrow-theme="dark"] .editorial-sections .edv2 .edv2-rules summary{
+  color:#f3f2ec!important;background:#242a24;border-color:#465046
+}
+:root[data-casecrow-theme="dark"] .editorial-sections .edv2 .edv2-rules>div{
+  color:#d7dfd3;background:#242a24;border-color:#465046
+}
+:root[data-casecrow-theme="dark"] .fidelity-query,
+:root[data-casecrow-theme="dark"] .fidelity-catalog-error{
+  color:#d4dfd2;background:#222a23;border-color:#465046
+}
+:root[data-casecrow-theme="dark"] .fidelity-query button,
+:root[data-casecrow-theme="dark"] .fidelity-catalog-error button{
+  color:#f3f2ec;background:#364236;border-color:#566656
+}
+:root[data-casecrow-theme="dark"] .fidelity-catalog-head h2 small{color:#b5c4b1}
+:root[data-casecrow-theme="dark"] .fidelity-card-skeleton .fidelity-card-art,
+:root[data-casecrow-theme="dark"] .fidelity-card-skeleton .fidelity-card-info{
+  background:linear-gradient(90deg,#242924 25%,#303830 50%,#242924 75%);
+  background-size:200% 100%
+}
+/* Allow authentic long case and weapon titles instead of clipping CTA/text. */
+.fidelity-card-info{height:auto;min-height:82px;gap:10px}
+.fidelity-card-info>div{min-width:0}
+.fidelity-card-info h3{overflow-wrap:anywhere;line-height:1.35}
+.fidelity-card-info strong{display:block;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fidelity-card-info>a{flex:0 0 auto;min-height:43px;text-align:center}
+.edv2 .edv2-item-body b,
+.edv2 .edv2-item-body p{max-width:100%}
+.edv2 .edv2-result,
+.edv2 .edv2-recovery,
+.edv2 .edv2-dialog-copy{overflow-wrap:anywhere}
+.edv2 .edv2-item-media img{object-fit:contain}
+/* Short laptop screens must never trap the last sidebar entry. */
+@media(max-height:730px) and (min-width:901px){
+  .fidelity-rail,.editorial-sections .fidelity-rail{padding-top:10px;padding-bottom:10px}
+  .fidelity-rail nav a,.editorial-sections .fidelity-rail nav a{min-height:39px}
+  .fidelity-reward{margin-top:12px}
+}
+/* Navbar text + wallet + Steam login no longer collide on narrow laptops.
+   Navigation remains in the desktop sidebar on these widths. */
+@media(max-width:1350px) and (min-width:901px){
+  .fidelity-header,.editorial-sections .fidelity-header{
+    grid-template-columns:minmax(145px,1fr) auto;
+    gap:16px;
+    padding-inline:clamp(14px,2.1vw,27px);
+  }
+  .fidelity-topnav{display:none}
+  .fidelity-account{justify-content:flex-end;gap:8px}
+  .fidelity-logo{min-width:0}
+  .fidelity-rail{overflow-y:auto}
+}
+/* Give every route a reachable sorting control on phone and tablet. */
+@media(max-width:900px){
+  .fidelity-rail,.editorial-sections .fidelity-rail{display:none}
+  .fidelity-catalog-head select{
+    display:block;
+    max-width:100%;
+    width:min(100%,260px);
+    min-height:42px;
+    color:var(--ink);
+    background:var(--surface);
+    border:1px solid var(--line);
+  }
+  .fidelity-page{padding-bottom:calc(58px + env(safe-area-inset-bottom))}
+  .fidelity-page>.bottom-nav{
+    box-sizing:content-box;
+    height:58px;
+    padding-bottom:env(safe-area-inset-bottom)
+  }
+  .fidelity-page>.bottom-nav a{
+    min-width:40px;
+    min-height:44px
+  }
+  .edv2 .edv2-heading{gap:12px;flex-wrap:wrap}
+  .edv2 .edv2-heading h1{overflow-wrap:anywhere}
+  .edv2 .edv2-filters{flex-wrap:wrap}
+  .edv2 .edv2-field{min-width:0;flex:1 1 145px}
+  .edv2 .edv2-search{max-width:none;flex-basis:100%}
+}
+@media(max-width:600px){
+  .fidelity-card-info{height:auto;min-height:114px}
+  .fidelity-card-info>a{min-width:0;width:100%;min-height:38px}
+  .fidelity-card-info h3{font-size:clamp(12px,3.25vw,14px)}
+  .fidelity-card-info strong{font-size:clamp(13px,3.6vw,16px)}
+  .fidelity-catalog-head select{width:100%}
+  .edv2 .edv2-items,.edv2 .edv2-inventory-cards{
+    grid-template-columns:repeat(2,minmax(0,1fr))
+  }
+  .edv2 .edv2-item-body{min-width:0}
+  .edv2 .edv2-rules summary{font-size:12px!important}
+  .edv2 .edv2-rules summary span{font-size:13px}
+  .edv2 .edv2-action,.edv2 .edv2-btn{white-space:normal}
+}
+/* Respect reduced motion for layout polish and loading placeholders. */
+@media(prefers-reduced-motion:reduce){
+ .fidelity-page :is(.fidelity-card,.fidelity-card-info,.edv2-item){transition:none!important}
+}
