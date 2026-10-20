@@ -120,7 +120,8 @@ export interface PriceSyncSummaryDto {
   updated: number;
   failed: number;
   skipped: number;
-  bySource: { skinport: number; steam: number };
+  bySource: { marketcsgo?: number; skinport: number; steam: number };
+  thin?: number;
 }
 
 export interface PriceSyncStatusDto {

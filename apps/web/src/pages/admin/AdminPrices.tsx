@@ -78,8 +78,9 @@ export function AdminPrices() {
             <tr>
               <td>{t("admin.prices.updated")}</td>
               <td className="positive">
-                {summary.updated} ({t("admin.prices.viaSkinport", { n: summary.bySource.skinport })},{" "}
-                {t("admin.prices.viaSteam", { n: summary.bySource.steam })})
+                {summary.updated} (Market.CSGO: {summary.bySource.marketcsgo ?? 0},{" "}
+                {t("admin.prices.viaSkinport", { n: summary.bySource.skinport })},{" "}
+                {t("admin.prices.viaSteam", { n: summary.bySource.steam })}){summary.thin ? ` · ${summary.thin} на 1–2 лотах` : ""}
               </td>
             </tr>
             <tr>
