@@ -66,7 +66,15 @@ async function request<T>(path: string, options: RequestInit = {}, retry = true)
   }
 
   if (res.status === 204) return undefined as T;
-  return res.json() as Promise<T>;
+  const data = await res.json() as T;
+  if (options.method && options.method !== "GET" &&
+      /^\/(?:cases\/open(?:-batch)?|cases\/inventory\/[^/]+\/sell|games\/(?:contracts|upgrades|battles)|payments\/|wallet\/|bonuses\/)/.test(path) &&
+      !path.endsWith("/quote")) {
+    window.dispatchEvent(new Event("casecrow:wallet-updated"));
+    window.dispatchEvent(new Event("casecrow:inventory-updated"));
+    try { localStorage.setItem("casecrow:wallet-revision", String(Date.now())); } catch { /* optional cross-tab update */ }
+  }
+  return data;
 }
 
 async function tryRefresh(): Promise<boolean> {
@@ -93,8 +101,23 @@ async function tryRefresh(): Promise<boolean> {
   }
 }
 
+/** Deduplicate expensive, public reads while keeping account/financial data uncached. */
+const publicGetCache = new Map<string, { expiresAt: number; value: Promise<unknown> }>();
+function cachedGet<T>(path: string): Promise<T> {
+  if (path !== "/cases" && path !== "/games/upgrade-targets") return request<T>(path, { method: "GET" });
+  const now = Date.now();
+  const cached = publicGetCache.get(path);
+  if (cached && cached.expiresAt > now) return cached.value as Promise<T>;
+  const value = request<T>(path, { method: "GET" }).catch(error => {
+    publicGetCache.delete(path);
+    throw error;
+  });
+  publicGetCache.set(path, { expiresAt: now + 20_000, value });
+  return value;
+}
+
 export const api = {
-  get: <T>(path: string) => request<T>(path, { method: "GET" }),
+  get: <T>(path: string) => cachedGet<T>(path),
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: "POST", body: body !== undefined ? JSON.stringify(body) : undefined }),
   patch: <T>(path: string, body?: unknown) =>
