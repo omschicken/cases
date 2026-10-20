@@ -3,6 +3,7 @@ export const API_URL = import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE
 const ACCESS_TOKEN_KEY = "cs2cases.accessToken";
 const REFRESH_TOKEN_KEY = "cs2cases.refreshToken";
 const REQUEST_TIMEOUT_MS = 8_000;
+const MUTATION_TIMEOUT_MS = 30_000;
 
 export function getAccessToken() {
   return localStorage.getItem(ACCESS_TOKEN_KEY);
@@ -40,7 +41,7 @@ async function request<T>(path: string, options: RequestInit = {}, retry = true)
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timeout = window.setTimeout(() => controller.abort(), options.method && options.method !== "GET" ? MUTATION_TIMEOUT_MS : REQUEST_TIMEOUT_MS);
 
   let res: Response;
   try {
