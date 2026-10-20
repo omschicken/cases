@@ -5,6 +5,7 @@ import { Roles } from "../common/decorators/roles.decorator";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import type { AuthenticatedUser } from "../auth/jwt.strategy";
 import { AdminService } from "./admin.service";
+import { AdjustBalanceDto } from "./dto/adjust-balance.dto";
 import { ReviewKycDto } from "./dto/review-kyc.dto";
 import { ReviewWithdrawalDto } from "../payments/dto/review-withdrawal.dto";
 import { CreateCaseDto } from "../cases/dto/admin-case.dto";
@@ -24,6 +25,15 @@ export class AdminController {
   @Get("users/:id")
   getUser(@Param("id") id: string) {
     return this.adminService.getUser(id);
+  }
+
+  @Post("users/:id/balance")
+  adjustBalance(
+    @CurrentUser() admin: AuthenticatedUser,
+    @Param("id") id: string,
+    @Body() dto: AdjustBalanceDto,
+  ) {
+    return this.adminService.adjustBalance(admin.id, id, dto.amount, dto.note);
   }
 
   @Get("kyc/pending")

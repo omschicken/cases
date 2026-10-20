@@ -4,6 +4,9 @@ import { KycService } from "../kyc/kyc.service";
 import { PaymentsService } from "../payments/payments.service";
 import { CasesService } from "../cases/cases.service";
 import { PricesService } from "../prices/prices.service";
+import { WalletService } from "../wallet/wallet.service";
+import { randomUUID } from "node:crypto";
+import { BadRequestException } from "@nestjs/common";
 import { ReviewKycDto } from "./dto/review-kyc.dto";
 import { ReviewWithdrawalDto } from "../payments/dto/review-withdrawal.dto";
 import { CreateCaseDto } from "../cases/dto/admin-case.dto";
@@ -16,6 +19,7 @@ export class AdminService {
     private readonly payments: PaymentsService,
     private readonly cases: CasesService,
     private readonly prices: PricesService,
+    private readonly wallet: WalletService,
   ) {}
 
   private audit(adminUserId: string, action: string, targetType: string, targetId: string, metadata?: object) {
@@ -113,6 +117,19 @@ export class AdminService {
     const rows = await this.prices.rebalanceCases(0.8);
     void this.audit(adminUserId, "CASES_REBALANCE", "Case", "all");
     return rows;
+  }
+
+  /** Credits (or, with a negative amount, debits) a user's wallet; always ledgered and audited. */
+  async adjustBalance(adminUserId: string, userId: string, amount: number, note?: string) {
+    const amountMinor = BigInt(Math.round(amount * 100));
+    if (amountMinor === 0n) throw new BadRequestException("Amount must not be zero");
+    const ref = { reason: "ADMIN_ADJUSTMENT" as const, referenceType: "AdminAdjustment", referenceId: randomUUID() };
+    const entry =
+      amountMinor > 0n
+        ? await this.wallet.credit(userId, amountMinor, ref)
+        : await this.wallet.debit(userId, -amountMinor, ref);
+    await this.audit(adminUserId, "BALANCE_ADJUST", "User", userId, { amountMinor: amountMinor.toString(), note });
+    return { balanceMinor: entry.balanceAfterMinor.toString(), currency: "RUB" };
   }
 
   listAuditLog(take = 100) {

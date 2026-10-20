@@ -6,9 +6,10 @@ import { KycModule } from "../kyc/kyc.module";
 import { PaymentsModule } from "../payments/payments.module";
 import { CasesModule } from "../cases/cases.module";
 import { PricesModule } from "../prices/prices.module";
+import { WalletModule } from "../wallet/wallet.module";
 
 @Module({
-  imports: [KycModule, PaymentsModule, CasesModule, PricesModule],
+  imports: [KycModule, PaymentsModule, CasesModule, PricesModule, WalletModule],
   providers: [AdminService, AdminBootstrapService],
   controllers: [AdminController],
 })
