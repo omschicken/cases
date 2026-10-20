@@ -60,13 +60,15 @@ export function CaseDetailPage() {
   const [clientSeed, setClientSeed] = useState<string | null>(null);
   const [opening, setOpening] = useState(false);
   const [result, setResult] = useState<OpenCaseResult | null>(null);
+  const [batchResults, setBatchResults] = useState<OpenCaseResult[]>([]);
+  const [openCount, setOpenCount] = useState<1 | 3 | 5>(1);
+  const [fastOpen, setFastOpen] = useState(false);
   const [demoItem, setDemoItem] = useState<CaseItem | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [requestId, setRequestId] = useState(0);
   const [recoveryPending, setRecoveryPending] = useState(false);
-  // The staged opening scene is dismissible; the page below keeps the result
-  // panel, so closing it never hides the provably-fair record.
+  // Opening results are server-authoritative and remain recoverable after navigation.
 
   const openingLockRef = useRef(false);
   const requestPendingRef = useRef(false);
@@ -78,6 +80,7 @@ export function CaseDetailPage() {
     setRecoveryPending(Boolean(receipt && !receipt.result));
     if (receipt?.result) {
       setResult(receipt.result);
+      setBatchResults(receipt.results ?? [receipt.result]);
       setRevealed(true);
 
     }
@@ -89,6 +92,7 @@ export function CaseDetailPage() {
     setTheCase(null);
     setError(null);
     setResult(null);
+    setBatchResults([]);
     setDemoItem(null);
     setRevealed(false);
     api
@@ -143,11 +147,22 @@ export function CaseDetailPage() {
     try {
       // Only the server decides the result. The reel mounts once this
       // response arrives and presents that exact item.
-      const response = await api.post<OpenCaseResult>("/cases/open", { caseId: theCase.id });
-      saveOpening(user.id, theCase.id, { startedAt, result: response });
-      setResult(response);
-      requestPendingRef.current = false;
-      if (skipRequestedRef.current) finishOpening();
+      if (openCount === 1) {
+        const response = await api.post<OpenCaseResult>("/cases/open", { caseId: theCase.id });
+        saveOpening(user.id, theCase.id, { startedAt, result: response });
+        setResult(response);
+        setBatchResults([response]);
+        requestPendingRef.current = false;
+        if (fastOpen || skipRequestedRef.current) finishOpening();
+      } else {
+        const response = await api.post<{ results: OpenCaseResult[] }>("/cases/open-batch", { caseId: theCase.id, count: openCount });
+        if (response.results.length !== openCount) throw new Error("Неполный ответ на открытие. Проверьте инвентарь.");
+        saveOpening(user.id, theCase.id, { startedAt, result: response.results[0], results: response.results });
+        setResult(response.results[0]);
+        setBatchResults(response.results);
+        requestPendingRef.current = false;
+        finishOpening();
+      }
     } catch (err) {
       const uncertain = !(err instanceof ApiError) || err.status === 0 || err.status >= 500;
       if (uncertain) setRecoveryPending(true);
@@ -168,6 +183,7 @@ export function CaseDetailPage() {
     skipRequestedRef.current = false;
     setError(null);
     setResult(null);
+    setBatchResults([]);
     setRevealed(false);
 
     setOpening(true);
@@ -206,10 +222,18 @@ export function CaseDetailPage() {
       data-rarity={revealed && winningItem ? winningItem.rarity : undefined}
     >
       <CaseOpeningScene theCase={theCase} winner={winningItem} opening={opening} onComplete={finishOpening} onSkip={skipAnimation}
-        actions={<><span className="cc-case-price"><Money minor={theCase.priceMinor} currency={theCase.currency} /></span>          {user ? (
+        actions={<>
+          <div className="cc-opening-controls" aria-label="Параметры открытия">
+            <div className="cc-opening-multipliers" role="group" aria-label="Количество кейсов">
+              {([1, 3, 5] as const).map(count => <button key={count} type="button" className={openCount === count ? "is-active" : ""} disabled={opening || recoveryPending} aria-pressed={openCount === count} onClick={() => setOpenCount(count)}>×{count}</button>)}
+            </div>
+            <label className="cc-fast-toggle"><input type="checkbox" checked={fastOpen} onChange={event => setFastOpen(event.target.checked)} disabled={opening} />Быстро</label>
+          </div>
+          <span className="cc-case-price"><Money minor={(BigInt(theCase.priceMinor) * BigInt(openCount)).toString()} currency={theCase.currency} /></span>
+          {user ? (
             <>
               <button onClick={openCase} disabled={opening || recoveryPending || !theCase.isActive || theCase.canOpen === false} className="dza-open">
-                {!theCase.isActive || theCase.canOpen === false ? t("caseDetail.unavailable", { defaultValue: "Недоступен" }) : opening ? t("caseDetail.rolling") : t("caseDetail.open", { defaultValue: "Открыть" })}
+                {!theCase.isActive || theCase.canOpen === false ? t("caseDetail.unavailable", { defaultValue: "Недоступен" }) : opening ? t("caseDetail.rolling") : `Открыть ×${openCount}`}
               </button>
               <button onClick={demoSpin} disabled={opening} className="dza-demo">
                 {t("caseDetail.demoSpin")}
@@ -277,9 +301,23 @@ export function CaseDetailPage() {
       )}</> : null}
       />
 
+      {revealed && batchResults.length > 1 && (
+        <section className="cc-batch-results" aria-label="Полученные предметы" role="status">
+          <div className="cc-batch-heading"><h2>Получено {batchResults.length} предметов</h2><Link to="/inventory">Перейти в инвентарь →</Link></div>
+          <div className="cc-batch-grid">{batchResults.map((entry, index) => (
+            <article key={entry.openEventId} className="cc-batch-card">
+              <span className="cc-batch-index">{String(index + 1).padStart(2, "0")} / {batchResults.length}</span>
+              <EditorialItemImage name={entry.item.name} imageUrl={entry.item.imageUrl} decorative />
+              <strong>{entry.item.name}</strong>
+              <span>{formatMinor(entry.item.valueMinor, entry.item.currency)}</span>
+            </article>
+          ))}</div>
+        </section>
+      )}
+
       {seedHash && (
-        <div className="dz-panel">
-          <h3>{t("caseDetail.provablyFair")}</h3>
+        <details className="dz-panel cc-opening-audit"><summary>Проверка результата и сведения о генерации</summary><div>
+          <h3>Техническая проверка</h3>
           <p>
             {t("caseDetail.serverSeedCommitment")}
             <br />
@@ -292,7 +330,7 @@ export function CaseDetailPage() {
             {t("caseDetail.rotateHintPrefix")} <Link to="/profile">{t("caseDetail.profileLink")}</Link>{" "}
             {t("caseDetail.rotateHintSuffix")}
           </p>
-        </div>
+        </div></details>
       )}
 
       {/* ZONE 3 — contents */}
