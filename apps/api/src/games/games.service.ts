@@ -18,7 +18,7 @@ export class GamesService {
     return this.prisma.caseItem.findMany({
       where: { currency: "RUB", case: { isActive: true } },
       orderBy: { valueMinor: "asc" },
-      take: 250,
+      take: 1000,
     });
   }
 
