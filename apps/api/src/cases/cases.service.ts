@@ -66,17 +66,25 @@ export class CasesService {
       where: { userId, isActive: true },
     });
     if (existing) return existing;
-
-    const serverSeed = generateServerSeed();
-    return this.prisma.provablyFairSeed.create({
-      data: {
-        userId,
-        serverSeed,
-        serverSeedHash: hashServerSeed(serverSeed),
-        clientSeed: initialClientSeed ?? generateClientSeed(),
-        nonce: 0,
-        isActive: true,
-      },
+    // Only on first use: serialize seed allocation per account so two
+    // concurrent opens never create two active seeds with duplicate nonces.
+    return this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${userId} FOR UPDATE`;
+      const allocated = await tx.provablyFairSeed.findFirst({
+        where: { userId, isActive: true },
+      });
+      if (allocated) return allocated;
+      const serverSeed = generateServerSeed();
+      return tx.provablyFairSeed.create({
+        data: {
+          userId,
+          serverSeed,
+          serverSeedHash: hashServerSeed(serverSeed),
+          clientSeed: initialClientSeed ?? generateClientSeed(),
+          nonce: 0,
+          isActive: true,
+        },
+      });
     });
   }
 
