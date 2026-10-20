@@ -210,10 +210,10 @@ export class CasesService {
       await this.wallet.debitInTx(tx, userId, theCase.priceMinor * BigInt(count), {
         reason: "CASE_OPEN", referenceType: "Case", referenceId: theCase.id,
       });
-      const rows = await tx.$queryRaw<{ nonce: number; serverSeed: string; serverSeedHash: string; clientSeed: string }[]>\`
+      const rows = await tx.$queryRaw<{ nonce: number; serverSeed: string; serverSeedHash: string; clientSeed: string }[]>`
         SELECT "nonce", "serverSeed", "serverSeedHash", "clientSeed"
-        FROM "ProvablyFairSeed" WHERE "id" = \${seed.id} FOR UPDATE
-      \`;
+        FROM "ProvablyFairSeed" WHERE "id" = ${seed.id} FOR UPDATE
+      `;
       if (!rows[0]) throw new BadRequestException("Case seed unavailable");
       const locked = rows[0];
       const weights = theCase.items.map(item => ({ id: item.id, weight: item.weight }));
