@@ -1,0 +1,272 @@
+[
+  {
+    "id": "bae6f1e3-f0a8-41fd-a9fb-4c894096e916",
+    "name": "Static Case",
+    "slug": "static",
+    "priceMinor": "10000",
+    "currency": "RUB",
+    "itemCount": 8,
+    "isActive": true,
+    "imageUrl": "https://placehold.co/400x300/0d1117/7c6af7?text=STATIC",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "appearsToUseItemImage": false
+  },
+  {
+    "id": "6b281cda-504c-4a16-bfbe-16378dcf0bc2",
+    "name": "Neon Rush Case",
+    "slug": "neon-rush",
+    "priceMinor": "19900",
+    "currency": "RUB",
+    "itemCount": 8,
+    "isActive": true,
+    "imageUrl": "https://placehold.co/400x300/0d1117/7c6af7?text=NEON%20RUSH",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "appearsToUseItemImage": false
+  },
+  {
+    "id": "82bdc30c-ed75-4e27-ad83-9b357ed93115",
+    "name": "Phantom Case",
+    "slug": "phantom",
+    "priceMinor": "39900",
+    "currency": "RUB",
+    "itemCount": 8,
+    "isActive": true,
+    "imageUrl": "https://placehold.co/400x300/0d1117/7c6af7?text=PHANTOM",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "appearsToUseItemImage": false
+  },
+  {
+    "id": "f5e93be4-62d6-475a-a019-f73c49b33ee7",
+    "name": "Ignition Case",
+    "slug": "ignition",
+    "priceMinor": "59900",
+    "currency": "RUB",
+    "itemCount": 8,
+    "isActive": true,
+    "imageUrl": "https://placehold.co/400x300/0d1117/7c6af7?text=IGNITION",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "appearsToUseItemImage": false
+  },
+  {
+    "id": "e1ea89e4-78d1-48f2-a0c8-49f813b51da7",
+    "name": "Tidal Case",
+    "slug": "tidal",
+    "priceMinor": "79900",
+    "currency": "RUB",
+    "itemCount": 8,
+    "isActive": true,
+    "imageUrl": "https://placehold.co/400x300/0d1117/7c6af7?text=TIDAL",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "appearsToUseItemImage": false
+  },
+  {
+    "id": "ded5da1b-8255-46a7-9852-bfbc079410e9",
+    "name": "Overdrive Case",
+    "slug": "overdrive",
+    "priceMinor": "99900",
+    "currency": "RUB",
+    "itemCount": 8,
+    "isActive": true,
+    "imageUrl": "https://placehold.co/400x300/0d1117/7c6af7?text=OVERDRIVE",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "appearsToUseItemImage": false
+  },
+  {
+    "id": "c35acdcb-0d3f-4df7-8e31-0a82df9f7c76",
+    "name": "Sovereign Case",
+    "slug": "sovereign",
+    "priceMinor": "149900",
+    "currency": "RUB",
+    "itemCount": 8,
+    "isActive": true,
+    "imageUrl": "https://placehold.co/400x300/0d1117/7c6af7?text=SOVEREIGN",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "appearsToUseItemImage": false
+  },
+  {
+    "id": "ff3f9eb1-5a5a-452b-b123-c51b9fa92974",
+    "name": "Dragon Case",
+    "slug": "dragon",
+    "priceMinor": "199000",
+    "currency": "RUB",
+    "itemCount": 8,
+    "isActive": true,
+    "imageUrl": "https://placehold.co/400x300/0d1117/7c6af7?text=DRAGON",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "appearsToUseItemImage": false
+  },
+  {
+    "id": "d9d3e15a-7de9-40aa-b8dd-03fe19a11dd5",
+    "name": "Blacklight Case",
+    "slug": "blacklight",
+    "priceMinor": "299900",
+    "currency": "RUB",
+    "itemCount": 8,
+    "isActive": true,
+    "imageUrl": "https://placehold.co/400x300/0d1117/7c6af7?text=BLACKLIGHT",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "appearsToUseItemImage": false
+  },
+  {
+    "id": "89d4d499-880d-43c9-98fa-32be73905002",
+    "name": "Aurora Case",
+    "slug": "aurora",
+    "priceMinor": "449900",
+    "currency": "RUB",
+    "itemCount": 8,
+    "isActive": true,
+    "imageUrl": "https://placehold.co/400x300/0d1117/7c6af7?text=AURORA",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "appearsToUseItemImage": false
+  },
+  {
+    "id": "2640c4d0-3553-4ae1-a1e5-029a4959df38",
+    "name": "Blacklight Case",
+    "slug": "blacklight-case-v4",
+    "priceMinor": "129778",
+    "currency": "RUB",
+    "itemCount": 11,
+    "isActive": true,
+    "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Wts2sab1iLvWHMWSF_uMvj-NoVha_mg8ijDGMnYftbyrBOw52D5R0FOYPtkG6ltOxNrjl4FPdiN0WzC723SxP6ypp6u8LVKY7uvqAFpeI3XY",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 83427
+    },
+    "placeholder": false,
+    "appearsToUseItemImage": true
+  },
+  {
+    "id": "e343002c-bb38-44ed-9dc8-c913688d8997",
+    "name": "Ignition Case",
+    "slug": "ignition-case-v4",
+    "priceMinor": "65667",
+    "currency": "RUB",
+    "itemCount": 11,
+    "isActive": true,
+    "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Q7uCvZaZkNM-SAFiEyOlzot5mXSi9khgYvzSCkpu3eC3BbwUmCcMlQbMD4xG_w9zkPu7gsQXe2YJFzHqqjixL5ylr4ukAWb1lpPNV9oeSnQ",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 85538
+    },
+    "placeholder": false,
+    "appearsToUseItemImage": true
+  },
+  {
+    "id": "10851996-437a-4b1f-802a-9321139f78da",
+    "name": "Sovereign Case",
+    "slug": "sovereign-case-v3",
+    "priceMinor": "321667",
+    "currency": "RUB",
+    "itemCount": 11,
+    "isActive": true,
+    "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Z-ua6bbZrLOmsD2avx-9ytd5lRi67gVNwsDvSwtqqc3iXZg4kCZYjReYLtRbum9XgYuvm5wbWjtgUzCn3iSsf8G81tFEeH9rw",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 60606
+    },
+    "placeholder": false,
+    "appearsToUseItemImage": true
+  },
+  {
+    "id": "bb43717f-1180-4b87-85d9-acd79115513c",
+    "name": "Overdrive Case",
+    "slug": "overdrive-case-v3",
+    "priceMinor": "37112",
+    "currency": "RUB",
+    "itemCount": 12,
+    "isActive": true,
+    "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLzn4_v8ydP0POjV7Z4IumsA2aCw-JzuftsSxa_nBovp3PWnomsdn2QPVN0D5UiEOUP50LtltTvY-Ll4g3YjItFmSv-2i9A6X4-_a9cBu2YVmHc",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 66766
+    },
+    "placeholder": false,
+    "appearsToUseItemImage": true
+  },
+  {
+    "id": "2905217c-8a7d-4b9a-abd5-f9c13f671e19",
+    "name": "Static Case",
+    "slug": "static-case-v3",
+    "priceMinor": "27349",
+    "currency": "RUB",
+    "itemCount": 12,
+    "isActive": true,
+    "imageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1c-uaRaaVSJvGXC1icyOl-pK88HyjikUR_6z_UmIyudy-WPVByCpRzQ7UDukbtmofmM-3r4gaKjINH02yg2St2xdPu",
+    "imageHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 79139
+    },
+    "placeholder": false,
+    "appearsToUseItemImage": true
+  }
+]

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { CaseChest } from "../components/CaseChest";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
+import { IconSearch } from "../components/navIcons";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
 import { rarityColor } from "../lib/rarity";
@@ -112,7 +113,7 @@ export function BattlesPage() {
             <p style={{ color: "var(--dz-text-4)", fontSize: "var(--dz-type-sm)" }}>{t("common.loading")}</p>
           ) : visibleCases.length === 0 ? (
             <div className="dz-empty">
-              <span className="dz-empty__mark" aria-hidden="true">⌕</span>
+              <span className="dz-empty__mark" aria-hidden="true"><IconSearch size={28} /></span>
               <h2 className="dz-empty__title">{t("battles.noResults")}</h2>
               <p className="dz-empty__body">{t("battles.noResultsBody")}</p>
               <button type="button" className="dz-btn" onClick={() => setQuery("")}>

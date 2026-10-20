@@ -1,24 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import heroImage from "../assets/editorial-kit/hero-editorial.webp";
-import staticImage from "../assets/editorial-kit/static-case.webp";
-import ignitionImage from "../assets/editorial-kit/ignition-case.webp";
-import tidalImage from "../assets/editorial-kit/tidal-case.webp";
-import phantomImage from "../assets/editorial-kit/phantom-case.webp";
-import promoImage from "../assets/editorial-kit/promo.webp";
+import heroImage from "../assets/casecrow-approved/cases/webp/case_01.webp";
 import { api, ApiError } from "../lib/api";
+import { caseVersionLabel, resolveCaseArt } from "../lib/caseArt";
 import { formatMinor } from "../lib/money";
 import type { CaseDto } from "../lib/types";
 
 type SortMode = "default" | "priceAsc" | "priceDesc" | "name";
 type PriceFilter = "all" | "entry" | "core" | "apex";
-
-const EDITORIAL_ART: Record<string, string> = {
-  static: staticImage,
-  ignition: ignitionImage,
-  tidal: tidalImage,
-  phantom: phantomImage,
-};
 
 const FILTERS: Array<{ value: PriceFilter; label: string }> = [
   { value: "all", label: "Все кейсы" },
@@ -33,10 +22,6 @@ function belongsToFilter(item: CaseDto, filter: PriceFilter): boolean {
   if (filter === "entry") return price < 50_000;
   if (filter === "core") return price >= 50_000 && price <= 150_000;
   return price > 150_000;
-}
-
-function caseArt(item: CaseDto): string {
-  return EDITORIAL_ART[item.slug] ?? item.imageUrl;
 }
 
 export function CaseListPage() {
@@ -67,7 +52,11 @@ export function CaseListPage() {
       .catch((caught: unknown) => {
         if (!active) return;
         setCases([]);
-        setError(caught instanceof ApiError ? caught.message : "Не удалось загрузить каталог");
+        setError(
+          caught instanceof ApiError && caught.status === 0
+            ? "Каталог временно недоступен. Проверьте подключение и попробуйте ещё раз."
+            : "Не удалось загрузить каталог. Попробуйте повторить запрос.",
+        );
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -100,23 +89,20 @@ export function CaseListPage() {
         <div className="fidelity-hero-copy">
           <p>Коллекции&nbsp; / &nbsp;Counter-Strike 2</p>
           <h1 id="fidelity-title">Предметы<br />с <span>характером.</span></h1>
-          <div className="fidelity-mobile-art"><img src={heroImage} alt="Светлый коллекционный кейс и винтовка" /></div>
+          <div className="fidelity-mobile-art"><img src={heroImage} alt="Коллекционный кейс CaseCrow" /></div>
           <div className="fidelity-hero-bottom">
             <p>Открывай кейсы, собирай редкие скины<br />и формируй собственную коллекцию.</p>
             <a href="#catalog">Открыть кейсы <span>→</span></a>
           </div>
         </div>
         <div className="fidelity-hero-art">
-          <img src={heroImage} alt="Светлый коллекционный кейс и винтовка" />
-          <span>Качество<br />Стиль<br />Коллекции<br />Твой выбор</span>
-          <b>01&nbsp; / &nbsp;03</b>
-          <div className="fidelity-hero-arrows" aria-hidden="true"><i>‹</i><i>›</i></div>
+          <img src={heroImage} alt="Коллекционный кейс CaseCrow" />
         </div>
       </section>
 
       <section className="fidelity-catalog" id="catalog" aria-labelledby="catalog-title">
         <div className="fidelity-catalog-head">
-          <h2 id="catalog-title">Коллекции <small>{cases.length}</small></h2>
+          <h2 id="catalog-title">Коллекции <small>{loading || error ? "—" : cases.length}</small></h2>
           <div className="fidelity-filters" aria-label="Фильтры каталога">
             {FILTERS.map((item) => (
               <button className={filter === item.value ? "active" : ""} onClick={() => setFilter(item.value)} type="button" key={item.value}>{item.label}</button>
@@ -135,25 +121,31 @@ export function CaseListPage() {
 
         <div className="fidelity-card-grid" aria-busy={loading}>
           {loading && Array.from({ length: 8 }, (_, index) => <div className="fidelity-card fidelity-card-skeleton" key={index}><div className="fidelity-card-art" /><div className="fidelity-card-info" /></div>)}
-          {!loading && visibleCases.map((item) => (
-            <article className="fidelity-card" key={item.id}>
-              <Link className="fidelity-card-art" to={`/cases/${item.slug}`} aria-label={`Открыть страницу ${item.name}`}>
-                <img src={caseArt(item)} alt={item.name} loading="lazy" />
-                <span>{item.isActive ? "Доступен" : "Недоступен"}</span>
-              </Link>
-              <div className="fidelity-card-info">
-                <div><h3>{item.name}</h3><strong>{formatMinor(item.priceMinor, item.currency)}</strong></div>
-                <Link to={`/cases/${item.slug}`}>Открыть <span>→</span></Link>
-              </div>
-            </article>
-          ))}
-          {!loading && visibleCases.length === 0 && !error && <p className="fidelity-empty">Кейсы не найдены</p>}
+          {!loading && visibleCases.map((item) => {
+            const version = caseVersionLabel(item.slug);
+            return (
+              <article className="fidelity-card" key={item.id}>
+                <Link className="fidelity-card-art" to={`/cases/${item.slug}`} aria-label={`Открыть страницу ${item.name}`}>
+                  <img src={resolveCaseArt(item.slug, item.imageUrl)} alt={item.name} loading="lazy" />
+                  <span>{item.isActive ? "Доступен" : "Недоступен"}</span>
+                  {version ? <em className="fidelity-card-version">{version}</em> : null}
+                </Link>
+                <div className="fidelity-card-info">
+                  <div><h3>{item.name}</h3><strong>{formatMinor(item.priceMinor, item.currency)}</strong></div>
+                  <Link to={`/cases/${item.slug}`}>Открыть <span>→</span></Link>
+                </div>
+              </article>
+            );
+          })}
+          {!loading && visibleCases.length === 0 && !error && (
+            <p className="fidelity-empty">{cases.length === 0 ? "Активных кейсов пока нет" : "По вашему запросу кейсы не найдены"}</p>
+          )}
         </div>
       </section>
 
       {featured && (
         <section className="fidelity-promo" aria-label={`Выбранный кейс: ${featured.name}`}>
-          <img src={promoImage} alt="Коллекционное оружие" />
+          <img src={resolveCaseArt(featured.slug, featured.imageUrl)} alt={featured.name} />
           <div><small>Выбор каталога</small><h2>{featured.name}</h2><p>{featured.items.length} предметов · {formatMinor(featured.priceMinor, featured.currency)}</p></div>
           <Link to={`/cases/${featured.slug}`}>Смотреть кейс <span>↗</span></Link>
         </section>

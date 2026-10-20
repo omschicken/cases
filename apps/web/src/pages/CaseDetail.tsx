@@ -9,11 +9,8 @@ import { useAuth } from "../context/AuthContext";
 import { DropProtocol, type ProtocolPhase } from "../components/dz/DropProtocol";
 import { EditorialItemImage } from "../components/editorial/EditorialItemImage";
 import { resolveItemImage } from "../lib/itemImages";
+import { caseVersionLabel, resolveCaseArt } from "../lib/caseArt";
 import { Money } from "../components/Money";
-import staticCaseArt from "../assets/case-detail-editorial/static-case-cutout.webp";
-import ignitionCaseArt from "../assets/case-detail-editorial/ignition-case.webp";
-import tidalCaseArt from "../assets/case-detail-editorial/tidal-case.webp";
-import phantomCaseArt from "../assets/case-detail-editorial/phantom-case.webp";
 import "../styles/case-detail-editorial.css";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
 
@@ -95,17 +92,6 @@ function weightedSample(items: CaseItem[]): CaseItem {
   }
   return items[items.length - 1];
 }
-
-const EDITORIAL_CASE_ART: Record<string, string> = {
-  static: staticCaseArt,
-  ignition: ignitionCaseArt,
-  tidal: tidalCaseArt,
-  phantom: phantomCaseArt,
-  "static-case": staticCaseArt,
-  "ignition-case": ignitionCaseArt,
-  "tidal-case": tidalCaseArt,
-  "phantom-case": phantomCaseArt,
-};
 
 export function CaseDetailPage() {
   const { t } = useTranslation();
@@ -267,6 +253,7 @@ export function CaseDetailPage() {
   }
   const skinGroups = groupCaseItems(theCase.items);
   const totalWeight = theCase.items.reduce((total, item) => total + item.weight, 0);
+  const version = caseVersionLabel(theCase.slug);
 
   return (
     <div
@@ -281,7 +268,7 @@ export function CaseDetailPage() {
           result={result}
           oddsPercent={winningItem ? dropChancePercent(winningItem, theCase.items) : undefined}
           isOpening={opening}
-          caseImageUrl={EDITORIAL_CASE_ART[theCase.slug] ?? theCase.imageUrl}
+          caseImageUrl={resolveCaseArt(theCase.slug, theCase.imageUrl)}
           onSkip={skipAnimation}
           onClose={() => setProtocolDismissed(true)}
           onOpenAgain={openCase}
@@ -304,11 +291,11 @@ export function CaseDetailPage() {
 
       <section id="opening-station" className="dza-arena dze-product" aria-label={t("caseDetail.openingStation", { defaultValue: "Case opening" })}>
         <div className="dza-arena__stage dze-studio">
-          <img className="dze-studio__art" src={EDITORIAL_CASE_ART[theCase.slug] ?? theCase.imageUrl} alt={theCase.name} />
+          <img className="dze-studio__art" src={resolveCaseArt(theCase.slug, theCase.imageUrl)} alt={theCase.name} />
         </div>
 
         <div className="dza-arena__panel dze-product__info">
-          <span className="dze-eyebrow">● {t("caseDetail.crumbCases", { defaultValue: "Кейсы" })} / {theCase.slug.replace(/-/g, " ")}</span>
+          <span className="dze-eyebrow">● {t("caseDetail.crumbCases", { defaultValue: "Кейсы" })}{version ? ` / ${version}` : ""}</span>
           <h1 className="dze-title">{theCase.name.replace(/\s*case$/i, "")} <span>Case.</span></h1>
           <p className="dze-description">{t("caseDetail.editorialDescription", { defaultValue: "Изучи содержимое коллекции, реальные шансы и выбери свой следующий предмет." })}</p>
           <div className="dze-meta"><div><small>{t("caseDetail.status", { defaultValue: "СТАТУС" })}</small><strong>{theCase.isActive ? t("caseDetail.available", { defaultValue: "Доступен" }) : t("caseDetail.unavailable", { defaultValue: "Недоступен" })}</strong></div><div><small>{t("caseDetail.mode", { defaultValue: "РЕЖИМ" })}</small><strong>{t("caseDetail.openingStation", { defaultValue: "Открытие кейса" })}</strong></div></div>

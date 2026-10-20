@@ -2,16 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
-import { mainNavItems, IconInventory, IconAdmin } from "./navIcons";
-
-function IconHistory() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M3.5 12a8.5 8.5 0 1 0 2.49-6.01L3.5 8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M3.5 4.5v4h4M12 7.5V12l3 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+import { mainNavItems, IconInventory, IconAdmin, IconHistory, IconChevronLeft, IconChevronRight } from "./navIcons";
 
 /** 56px rail that opens to 200px on hover/focus, or stays open once pinned
  *  with a click. The rail itself keeps its 56px of layout space so opening
@@ -62,9 +53,7 @@ export function Sidebar() {
           aria-label="Закрепить меню"
           onClick={() => setPinned((v) => !v)}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d={pinned ? "M14 6l-6 6 6 6" : "M10 6l6 6-6 6"} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          {pinned ? <IconChevronLeft /> : <IconChevronRight />}
         </button>
       </div>
     </aside>
