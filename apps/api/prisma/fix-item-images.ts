@@ -3,7 +3,10 @@
  * placehold.co stub, or missing, and patches it with the real Steam CDN URL
  * from prisma/cs2-items.json and prisma/cs2-images-extra.json.
  *
- *   DATABASE_URL=...  tsx prisma/fix-item-images.ts
+ *   DATABASE_URL=...  pnpm --filter @cs2-cases/api fix:images
+ *
+ * Run by hand, not from the build: it writes to the database, and a build must
+ * never depend on (or wait for) a production database.
  *
  * Safe to run repeatedly — only rows that still have placeholder / empty URLs
  * are touched (items with a real Steam URL are skipped).
@@ -35,14 +38,12 @@ function loadImages(): Map<string, string> {
   return images;
 }
 
-/** The hallucinated Steam CDN hash used in every fake/AI-generated imageUrl. */
-const FAKE_HASH_PREFIX = "i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhW";
-
 function needsFix(url: string | null | undefined): boolean {
   if (!url || url.trim() === "") return true;
   if (/placehold(er)?\.co/i.test(url)) return true;
   if (url.startsWith("data:")) return true;
-  if (url.includes(FAKE_HASH_PREFIX)) return true;
+  // NB: "i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhW" is the start of EVERY genuine Steam
+  // economy image hash, so it must not be treated as a sign of a fake URL.
   return false;
 }
 
@@ -52,7 +53,7 @@ async function main() {
 
   const prisma = new PrismaClient();
   try {
-    // Fetch ALL case items — typically only a few hundred rows
+    // Fetch ALL case items (tens of thousands in production)
     const items = await prisma.caseItem.findMany({
       select: { id: true, name: true, imageUrl: true },
     });

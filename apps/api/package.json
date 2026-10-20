@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "build": "nest build",
-    "postbuild": "tsx prisma/fix-item-images.ts || echo 'fix-item-images: skipped (no DB)'",
     "dev": "nest start --watch",
     "start": "node dist/main.js",
     "lint": "eslint \"src/**/*.ts\"",
@@ -17,7 +16,8 @@
     "prisma:sync-prices": "tsx prisma/sync-prices.ts",
     "prisma:reprice-cases": "tsx prisma/reprice-cases.ts",
     "seed:cases": "tsx scripts/seed-cases.ts",
-    "seed:cases:db": "tsx prisma/seed-cases.ts"
+    "seed:cases:db": "tsx prisma/seed-cases.ts",
+    "fix:images": "tsx prisma/fix-item-images.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
