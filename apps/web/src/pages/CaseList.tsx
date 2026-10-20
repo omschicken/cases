@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { Search } from "lucide-react";
 import heroImage from "../assets/casecrow-approved/cases/webp/case_01.webp";
 import { api, ApiError } from "../lib/api";
 import { caseVersionLabel, resolveCaseArt } from "../lib/caseArt";
@@ -121,6 +122,7 @@ export function CaseListPage() {
           </select>
         </div>
 
+        <label className="fidelity-catalog-search"><Search size={18} aria-hidden="true" /><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Найти кейс или скин" aria-label="Поиск кейсов и скинов" /></label>
         {query && <div className="fidelity-query" role="status">Поиск: <strong>{query}</strong><button type="button" onClick={() => setSearchParams({})}>Сбросить</button></div>}
         {error && <div className="fidelity-catalog-error" role="alert"><span>{error}</span><button type="button" onClick={() => setRequestId((value) => value + 1)}>Повторить</button></div>}
 
