@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../prisma/prisma.service";
 import { fetchMarketListings } from "./market-catalog";
+import { fetchMarketCsgoPrices } from "./market-csgo";
 
 const STEAM_APP_ID = 730; // CS2
 const STEAM_CURRENCY_USD = 1;
@@ -20,7 +21,9 @@ export interface PriceSyncSummary {
   updated: number;
   failed: number;
   skipped: number;
-  bySource: { skinport: number; steam: number };
+  bySource: { marketcsgo: number; skinport: number; steam: number };
+  /** Updated from a price backed by only 1–2 lots — worth a human look. */
+  thin: number;
 }
 
 function sleep(ms: number) {
@@ -39,10 +42,10 @@ function sleep(ms: number) {
    * shares that name in the active catalog. Archived pools retain their
    * original values for historical verification.
  *
- * Active cases use exact market_hash_name values including wear. Skinport's
- * RUB catalog supplies the displayed price directly; the USD catalog feeds
- * the existing SkinPrice audit cache. Steam remains a fallback for an exact
- * name temporarily missing from Skinport.
+ * Active cases use exact market_hash_name values including wear. Market.CSGO's
+ * RUB list supplies the displayed price (it is also where winners' skins are
+ * bought), Skinport covers names it lacks, and Steam is the last fallback.
+ * The USD list feeds the SkinPrice audit cache.
  */
 @Injectable()
 export class PricesService {
@@ -86,7 +89,8 @@ export class PricesService {
       updated: 0,
       failed: 0,
       skipped: 0,
-      bySource: { skinport: 0, steam: 0 },
+      bySource: { marketcsgo: 0, skinport: 0, steam: 0 },
+      thin: 0,
     };
     this.lastSummary = summary;
     this.running = true;
@@ -111,31 +115,51 @@ export class PricesService {
     summary.totalNames = names.length;
     this.logger.log(`price sync: ${names.length} unique skins to check`);
 
-    // Skinport supports RUB directly. Converting USD with a fixed FX rate
-    // would give users a different price from the actual RUB listing.
-    const [rubPrices, usdPrices] = await Promise.all([
-      fetchMarketListings("RUB"),
-      fetchMarketListings("USD"),
-    ]);
-    this.logger.log(`skinport catalog: ${rubPrices.size} RUB listings fetched`);
+    // Source order: Market.CSGO (the market winners' skins are bought from, RUB
+    // and USD quoted directly), then Skinport, then Steam name by name. A source
+    // that is down or returns a partial list is skipped, never trusted.
+    const matched: Array<{ name: string; usd: bigint; rub: bigint; source: "marketcsgo" | "skinport"; thin: boolean }> = [];
+    let misses: string[] = [...names];
 
-    const misses: string[] = [];
-    const matched: Array<{ name: string; usd: bigint; rub: bigint }> = [];
-    for (const name of names) {
-      const rubValueMinor = rubPrices.get(name);
-      const usdValueMinor = usdPrices.get(name);
-      if (rubValueMinor === undefined || usdValueMinor === undefined) {
-        misses.push(name);
-        continue;
+    try {
+      const [rub, usd] = await Promise.all([fetchMarketCsgoPrices("RUB"), fetchMarketCsgoPrices("USD")]);
+      this.logger.log(`market.csgo catalog: ${rub.size} RUB / ${usd.size} USD listings fetched`);
+      const rest: string[] = [];
+      for (const name of misses) {
+        const r = rub.get(name);
+        const u = usd.get(name);
+        if (!r || !u) rest.push(name);
+        else matched.push({ name, usd: BigInt(u.priceMinor), rub: BigInt(r.priceMinor), source: "marketcsgo", thin: Math.min(r.volume, u.volume) <= 2 });
       }
-      matched.push({ name, usd: BigInt(usdValueMinor), rub: BigInt(rubValueMinor) });
+      misses = rest;
+    } catch (err) {
+      this.logger.warn(`market.csgo unavailable, falling back to skinport: ${err instanceof Error ? err.message : err}`);
     }
+
+    if (misses.length > 0) {
+      try {
+        const [rubPrices, usdPrices] = await Promise.all([fetchMarketListings("RUB"), fetchMarketListings("USD")]);
+        this.logger.log(`skinport catalog: ${rubPrices.size} RUB listings fetched`);
+        const rest: string[] = [];
+        for (const name of misses) {
+          const r = rubPrices.get(name);
+          const u = usdPrices.get(name);
+          if (r === undefined || u === undefined) rest.push(name);
+          else matched.push({ name, usd: BigInt(u), rub: BigInt(r), source: "skinport", thin: false });
+        }
+        misses = rest;
+      } catch (err) {
+        this.logger.warn(`skinport unavailable: ${err instanceof Error ? err.message : err}`);
+      }
+    }
+
     // A small bounded batch avoids thousands of serial database round trips
     // while staying within the connection pool's normal capacity.
     for (let i = 0; i < matched.length; i += 8) {
-      await Promise.all(matched.slice(i, i + 8).map(async ({ name, usd, rub }) => {
+      await Promise.all(matched.slice(i, i + 8).map(async ({ name, usd, rub, source, thin }) => {
         try {
-          await this.applyPrice(name, usd, rub, "skinport", summary);
+          await this.applyPrice(name, usd, rub, source, summary);
+          if (thin) summary.thin++;
         } catch (err) {
           summary.failed++;
           this.logger.warn(`price sync failed for "${name}": ${err instanceof Error ? err.message : err}`);
@@ -164,8 +188,8 @@ export class PricesService {
     }
 
     this.logger.log(
-      `price sync done: ${summary.updated} updated (${summary.bySource.skinport} skinport, ` +
-        `${summary.bySource.steam} steam fallback), ${summary.skipped} skipped (no listing), ${summary.failed} failed`,
+      `price sync done: ${summary.updated} updated (${summary.bySource.marketcsgo} market.csgo, ${summary.bySource.skinport} skinport, ` +
+        `${summary.bySource.steam} steam fallback; ${summary.thin} on 1–2 lots), ${summary.skipped} skipped (no listing), ${summary.failed} failed`,
     );
   }
 
@@ -173,7 +197,7 @@ export class PricesService {
     name: string,
     usdValueMinor: bigint,
     rubValueMinor: bigint | null,
-    source: "skinport" | "steam",
+    source: "marketcsgo" | "skinport" | "steam",
     summary: PriceSyncSummary,
   ) {
     await this.prisma.skinPrice.upsert({
