@@ -4,9 +4,12 @@
   "outputDirectory": "dist",
   "functions": {
     "api/**/*.ts": {
-      "maxDuration": 30
+      "maxDuration": 60
     }
   },
+  "crons": [
+    { "path": "/api/market/refresh", "schedule": "* * * * *" }
+  ],
   "rewrites": [
     {
       "source": "/api/:path((?!router(?:/|$)).*)",

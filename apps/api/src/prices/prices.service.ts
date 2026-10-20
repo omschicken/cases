@@ -1,266 +1,250 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
-import { fetchMarketListings } from "./market-catalog";
 import { fetchMarketCsgoPrices } from "./market-csgo";
+import { fetchSkinMeta } from "./market-images";
 
-const STEAM_APP_ID = 730; // CS2
-const STEAM_CURRENCY_USD = 1;
-// Valve doesn't publish a hard limit for this endpoint, but it's known to
-// soft-rate-limit aggressive callers. This is deliberately conservative —
-// nothing user-facing is waiting on a sync pass, so there's no reason to
-// push it. Only applies to the Steam fallback path now (see below) — the
-// Skinport pass is one bulk request, not one per skin.
-const REQUEST_SPACING_MS = 1500;
+/** A weapon skin / knife / glove name always ends with its wear. */
+const WEAR_RE = /\((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
+const FRESH_MS = 55_000;
+const FORCE_MIN_GAP_S = 8;
+const CHUNK = 4000;
+const IMAGE_RETRY_S = 3600;
 const DEFAULT_FX_RUB_PER_USD = 95;
 
-export interface PriceSyncSummary {
-  startedAt: Date;
-  finishedAt: Date | null;
-  totalNames: number;
-  updated: number;
-  failed: number;
-  skipped: number;
-  bySource: { marketcsgo: number; skinport: number; steam: number };
-  /** Updated from a price backed by only 1–2 lots — worth a human look. */
-  thin: number;
+export interface MarketSyncStatus {
+  lastStartedAt: string | null;
+  lastFinishedAt: string | null;
+  durationMs: number | null;
+  itemsSynced: number | null;
+  casesUpdated: number | null;
+  lastError: string | null;
+  skinsListed: number;
+  itemsTotal: number;
+  withImages: number;
 }
 
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+export interface MarketItemDto {
+  name: string;
+  category: string;
+  priceMinor: string;
+  currency: "USD" | "RUB";
+  volume: number;
+  imageUrl: string | null;
+  rarity: string | null;
+}
+
+export interface MarketItemQuery {
+  q?: string;
+  category?: string;
+  currency?: string;
+  min?: number;
+  max?: number;
+  sort?: string;
+  limit?: number;
+  offset?: number;
 }
 
 /**
- * Keeps CaseItem.valueMinor in sync with a real external market instead of
- * the static numbers cases were originally seeded with.
+ * The whole Market.CSGO catalog (~27k names) lives in `market_item`, refreshed
+ * every minute from two bulk price lists with a handful of set-based SQL
+ * statements — no per-skin requests. Active case items are re-priced from it in
+ * one UPDATE. Tables are created on first use so no manual migration is needed.
  *
- * Deliberately does NOT normalize CaseItem into a foreign-key relation on a
- * shared skin table — that would touch every read path (openCase, sellItem,
- * verifyOpenEvent, recent-drops, admin case creation, the frontend's CaseDto
- * shape). Instead this fetches one canonical USD price per unique skin
- * name, records it in SkinPrice, and bulk-updates every CaseItem row that
-   * shares that name in the active catalog. Archived pools retain their
-   * original values for historical verification.
- *
- * Active cases use exact market_hash_name values including wear. Market.CSGO's
- * RUB list supplies the displayed price (it is also where winners' skins are
- * bought), Skinport covers names it lacks, and Steam is the last fallback.
- * The USD list feeds the SkinPrice audit cache.
+ * Serverless note: work must finish inside the request that starts it (Vercel
+ * freezes the function afterwards), so every entry point awaits the sync. A
+ * claim row in `market_sync_state` keeps concurrent instances from duplicating it.
  */
 @Injectable()
 export class PricesService {
   private readonly logger = new Logger(PricesService.name);
-  private running = false;
-  private lastSummary: PriceSyncSummary | null = null;
+  private ready: Promise<void> | null = null;
 
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly config: ConfigService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  private get fxRubPerUsd(): number {
-    const raw = this.config.get<string>("USD_TO_RUB_RATE");
-    const n = raw ? Number(raw) : NaN;
-    return Number.isFinite(n) && n > 0 ? n : DEFAULT_FX_RUB_PER_USD;
-  }
-
-  getStatus() {
-    return { running: this.running, lastSummary: this.lastSummary };
-  }
-
-  /** Kicks off a (long-running) full sync in the background and returns
-   * immediately — a pass over 1000+ skins at a polite request rate takes
-   * tens of minutes, far too long to hold an admin's HTTP request open. */
-  triggerSync(): PriceSyncSummary {
-    if (this.running && this.lastSummary) return this.lastSummary;
-
-    void this.syncNow().catch((err) => this.logger.error(`price sync crashed: ${err instanceof Error ? err.message : err}`));
-    return this.lastSummary!;
-  }
-
-  /** Awaitable entry point for a long-running job outside Vercel Functions. */
-  async syncNow(): Promise<PriceSyncSummary> {
-    if (this.running) throw new Error("Price sync is already running");
-
-    const summary: PriceSyncSummary = {
-      startedAt: new Date(),
-      finishedAt: null,
-      totalNames: 0,
-      updated: 0,
-      failed: 0,
-      skipped: 0,
-      bySource: { marketcsgo: 0, skinport: 0, steam: 0 },
-      thin: 0,
-    };
-    this.lastSummary = summary;
-    this.running = true;
-
-    try {
-      await this.runSync(summary);
-      return summary;
-    } finally {
-      this.running = false;
-      summary.finishedAt = new Date();
-    }
-  }
-
-  private async runSync(summary: PriceSyncSummary) {
-    const rows = await this.prisma.caseItem.findMany({
-      where: { case: { isActive: true } },
-      distinct: ["name"],
-      select: { name: true },
-      orderBy: { name: "asc" },
+  private ensureTables(): Promise<void> {
+    this.ready ??= (async () => {
+      await this.prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS market_item (
+        name text PRIMARY KEY, category text NOT NULL, rub_minor bigint NOT NULL, usd_minor bigint NOT NULL,
+        volume integer NOT NULL DEFAULT 0, image_url text, rarity text, listed boolean NOT NULL DEFAULT true,
+        updated_at timestamptz NOT NULL DEFAULT now())`);
+      await this.prisma.$executeRawUnsafe(
+        `CREATE INDEX IF NOT EXISTS market_item_browse ON market_item (category, listed, usd_minor)`,
+      );
+      await this.prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS market_sync_state (
+        id integer PRIMARY KEY, last_started timestamptz, last_finished timestamptz, duration_ms integer,
+        items integer, cases_updated integer, last_error text, images_attempted_at timestamptz)`);
+      await this.prisma.$executeRawUnsafe(`INSERT INTO market_sync_state (id) VALUES (1) ON CONFLICT DO NOTHING`);
+    })().catch((err) => {
+      this.ready = null;
+      throw err;
     });
-    const names = rows.map((r) => r.name);
-    summary.totalNames = names.length;
-    this.logger.log(`price sync: ${names.length} unique skins to check`);
+    return this.ready;
+  }
 
-    // Source order: Market.CSGO (the market winners' skins are bought from, RUB
-    // and USD quoted directly), then Skinport, then Steam name by name. A source
-    // that is down or returns a partial list is skipped, never trusted.
-    const matched: Array<{ name: string; usd: bigint; rub: bigint; source: "marketcsgo" | "skinport"; thin: boolean }> = [];
-    let misses: string[] = [...names];
+  async getStatus(): Promise<MarketSyncStatus> {
+    await this.ensureTables();
+    const [s] = await this.prisma.$queryRaw<
+      {
+        last_started: Date | null;
+        last_finished: Date | null;
+        duration_ms: number | null;
+        items: number | null;
+        cases_updated: number | null;
+        last_error: string | null;
+      }[]
+    >`SELECT last_started, last_finished, duration_ms, items, cases_updated, last_error FROM market_sync_state WHERE id = 1`;
+    const [c] = await this.prisma.$queryRaw<{ skins: bigint; total: bigint; imgs: bigint }[]>`
+      SELECT count(*) FILTER (WHERE listed AND category = 'skin') AS skins, count(*) AS total,
+             count(*) FILTER (WHERE image_url IS NOT NULL) AS imgs FROM market_item`;
+    return {
+      lastStartedAt: s?.last_started?.toISOString() ?? null,
+      lastFinishedAt: s?.last_finished?.toISOString() ?? null,
+      durationMs: s?.duration_ms ?? null,
+      itemsSynced: s?.items ?? null,
+      casesUpdated: s?.cases_updated ?? null,
+      lastError: s?.last_error ?? null,
+      skinsListed: Number(c?.skins ?? 0),
+      itemsTotal: Number(c?.total ?? 0),
+      withImages: Number(c?.imgs ?? 0),
+    };
+  }
 
+  /** Runs a sync only if the data is older than a minute. Safe to call from anywhere. */
+  async ensureFresh(): Promise<void> {
+    await this.ensureTables();
+    const [row] = await this.prisma.$queryRaw<{ stale: boolean }[]>`
+      SELECT (last_finished IS NULL OR last_finished < now() - ${FRESH_MS / 1000} * interval '1 second') AS stale
+      FROM market_sync_state WHERE id = 1`;
+    if (row?.stale) await this.syncNow(false).catch(() => undefined);
+  }
+
+  /** Claims the run atomically; returns false if another instance synced very recently. */
+  private async claim(force: boolean): Promise<boolean> {
+    const gap = force ? FORCE_MIN_GAP_S : FRESH_MS / 1000;
+    const rows = await this.prisma.$queryRaw<{ id: number }[]>`
+      UPDATE market_sync_state SET last_started = now()
+      WHERE id = 1 AND (last_started IS NULL OR last_started < now() - ${gap} * interval '1 second')
+      RETURNING id`;
+    return rows.length > 0;
+  }
+
+  async syncNow(force: boolean): Promise<MarketSyncStatus> {
+    await this.ensureTables();
+    if (!(await this.claim(force))) return this.getStatus();
+
+    const t0 = Date.now();
     try {
       const [rub, usd] = await Promise.all([fetchMarketCsgoPrices("RUB"), fetchMarketCsgoPrices("USD")]);
-      this.logger.log(`market.csgo catalog: ${rub.size} RUB / ${usd.size} USD listings fetched`);
-      const rest: string[] = [];
-      for (const name of misses) {
-        const r = rub.get(name);
+      const fx = [...rub.entries()].reduce((acc, [n, r]) => {
+        const u = usd.get(n);
+        return u && acc.n < 200 ? { sum: acc.sum + r.priceMinor / u.priceMinor, n: acc.n + 1 } : acc;
+      }, { sum: 0, n: 0 });
+      const rubPerUsd = fx.n > 0 ? fx.sum / fx.n : DEFAULT_FX_RUB_PER_USD;
+
+      const names: string[] = [];
+      const cats: string[] = [];
+      const rubs: string[] = [];
+      const usds: string[] = [];
+      const vols: string[] = [];
+      for (const [name, r] of rub) {
         const u = usd.get(name);
-        if (!r || !u) rest.push(name);
-        else matched.push({ name, usd: BigInt(u.priceMinor), rub: BigInt(r.priceMinor), source: "marketcsgo", thin: Math.min(r.volume, u.volume) <= 2 });
+        names.push(name);
+        cats.push(WEAR_RE.test(name) ? "skin" : "other");
+        rubs.push(String(r.priceMinor));
+        usds.push(String(u ? u.priceMinor : Math.max(1, Math.round(r.priceMinor / rubPerUsd))));
+        vols.push(String(r.volume));
       }
-      misses = rest;
+
+      const runAt = new Date();
+      for (let i = 0; i < names.length; i += CHUNK) {
+        await this.prisma.$executeRaw`
+          INSERT INTO market_item (name, category, rub_minor, usd_minor, volume, listed, updated_at)
+          SELECT t.name, t.cat, t.rub::bigint, t.usd::bigint, t.vol::integer, true, ${runAt}
+          FROM unnest(${names.slice(i, i + CHUNK)}::text[], ${cats.slice(i, i + CHUNK)}::text[],
+                      ${rubs.slice(i, i + CHUNK)}::text[], ${usds.slice(i, i + CHUNK)}::text[],
+                      ${vols.slice(i, i + CHUNK)}::text[]) AS t(name, cat, rub, usd, vol)
+          ON CONFLICT (name) DO UPDATE SET category = EXCLUDED.category, rub_minor = EXCLUDED.rub_minor,
+            usd_minor = EXCLUDED.usd_minor, volume = EXCLUDED.volume, listed = true, updated_at = EXCLUDED.updated_at`;
+      }
+      await this.prisma.$executeRaw`UPDATE market_item SET listed = false WHERE listed AND updated_at < ${runAt}`;
+
+      const casesUpdated = await this.prisma.$executeRaw`
+        UPDATE "CaseItem" ci
+        SET "valueMinor" = CASE WHEN ci.currency = 'USD' THEN m.usd_minor ELSE m.rub_minor END
+        FROM market_item m, "Case" c
+        WHERE m.name = ci.name AND m.listed AND c.id = ci."caseId" AND c."isActive"
+          AND ci."valueMinor" IS DISTINCT FROM (CASE WHEN ci.currency = 'USD' THEN m.usd_minor ELSE m.rub_minor END)`;
+
+      await this.syncImages().catch((err) =>
+        this.logger.warn(`image sync skipped: ${err instanceof Error ? err.message : err}`),
+      );
+
+      await this.prisma.$executeRaw`
+        UPDATE market_sync_state SET last_finished = now(), duration_ms = ${Date.now() - t0},
+          items = ${names.length}, cases_updated = ${casesUpdated}, last_error = NULL WHERE id = 1`;
+      this.logger.log(`market sync: ${names.length} items, ${casesUpdated} case items repriced, ${Date.now() - t0} ms`);
     } catch (err) {
-      this.logger.warn(`market.csgo unavailable, falling back to skinport: ${err instanceof Error ? err.message : err}`);
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error(`market sync failed: ${message}`);
+      await this.prisma.$executeRaw`UPDATE market_sync_state SET last_error = ${message.slice(0, 500)} WHERE id = 1`;
     }
-
-    if (misses.length > 0) {
-      try {
-        const [rubPrices, usdPrices] = await Promise.all([fetchMarketListings("RUB"), fetchMarketListings("USD")]);
-        this.logger.log(`skinport catalog: ${rubPrices.size} RUB listings fetched`);
-        const rest: string[] = [];
-        for (const name of misses) {
-          const r = rubPrices.get(name);
-          const u = usdPrices.get(name);
-          if (r === undefined || u === undefined) rest.push(name);
-          else matched.push({ name, usd: BigInt(u), rub: BigInt(r), source: "skinport", thin: false });
-        }
-        misses = rest;
-      } catch (err) {
-        this.logger.warn(`skinport unavailable: ${err instanceof Error ? err.message : err}`);
-      }
-    }
-
-    // A small bounded batch avoids thousands of serial database round trips
-    // while staying within the connection pool's normal capacity.
-    for (let i = 0; i < matched.length; i += 8) {
-      await Promise.all(matched.slice(i, i + 8).map(async ({ name, usd, rub, source, thin }) => {
-        try {
-          await this.applyPrice(name, usd, rub, source, summary);
-          if (thin) summary.thin++;
-        } catch (err) {
-          summary.failed++;
-          this.logger.warn(`price sync failed for "${name}": ${err instanceof Error ? err.message : err}`);
-        }
-      }));
-    }
-
-    // Steam is ~1.5s per skin, so it is opt-in. By default a skin that no bulk
-    // source lists is simply skipped (and named in the log).
-    if (process.env.PRICE_STEAM_FALLBACK !== "1") {
-      summary.skipped += misses.length;
-      if (misses.length > 0) this.logger.warn(`no market listing for: ${misses.slice(0, 50).join(", ")}`);
-      misses = [];
-    }
-
-    for (const name of misses) {
-      try {
-        const usdValueMinor = await this.fetchSteamPriceMinor(name);
-        if (usdValueMinor === null) {
-          summary.skipped++;
-          await this.prisma.skinPrice.upsert({
-            where: { name },
-            create: { name, usdValueMinor: 0n, source: "steam", syncFailCount: 1 },
-            update: { syncFailCount: { increment: 1 } },
-          });
-        } else {
-          await this.applyPrice(name, usdValueMinor, null, "steam", summary);
-        }
-      } catch (err) {
-        summary.failed++;
-        this.logger.warn(`price sync failed for "${name}": ${err instanceof Error ? err.message : err}`);
-      }
-      await sleep(REQUEST_SPACING_MS);
-    }
-
-    this.logger.log(
-      `price sync done: ${summary.updated} updated (${summary.bySource.marketcsgo} market.csgo, ${summary.bySource.skinport} skinport, ` +
-        `${summary.bySource.steam} steam fallback; ${summary.thin} on 1–2 lots), ${summary.skipped} skipped (no listing), ${summary.failed} failed`,
-    );
+    return this.getStatus();
   }
 
-  private async applyPrice(
-    name: string,
-    usdValueMinor: bigint,
-    rubValueMinor: bigint | null,
-    source: "marketcsgo" | "skinport" | "steam",
-    summary: PriceSyncSummary,
-  ) {
-    await this.prisma.skinPrice.upsert({
-      where: { name },
-      create: { name, usdValueMinor, source, lastSyncedAt: new Date(), syncFailCount: 0 },
-      update: { usdValueMinor, source, lastSyncedAt: new Date(), syncFailCount: 0 },
-    });
-    await this.propagate(name, usdValueMinor, rubValueMinor);
-    summary.updated++;
-    summary.bySource[source]++;
+  /** Fills image/rarity for skins that have none. Retried at most hourly. */
+  private async syncImages() {
+    const [need] = await this.prisma.$queryRaw<{ missing: bigint; recent: boolean }[]>`
+      SELECT (SELECT count(*) FROM market_item WHERE category = 'skin' AND image_url IS NULL) AS missing,
+             COALESCE((SELECT images_attempted_at > now() - ${IMAGE_RETRY_S} * interval '1 second'
+                       FROM market_sync_state WHERE id = 1), false) AS recent`;
+    if (!need || Number(need.missing) < 50 || need.recent) return;
+    await this.prisma.$executeRaw`UPDATE market_sync_state SET images_attempted_at = now() WHERE id = 1`;
+
+    const meta = await fetchSkinMeta();
+    const names = [...meta.keys()];
+    for (let i = 0; i < names.length; i += CHUNK) {
+      const part = names.slice(i, i + CHUNK);
+      await this.prisma.$executeRaw`
+        UPDATE market_item m SET image_url = t.img, rarity = t.rar
+        FROM unnest(${part}::text[], ${part.map((n) => meta.get(n)!.imageUrl)}::text[],
+                    ${part.map((n) => meta.get(n)!.rarity ?? "")}::text[]) AS t(name, img, rar)
+        WHERE m.name = t.name`;
+    }
+    await this.prisma.$executeRaw`UPDATE market_item SET rarity = NULL WHERE rarity = ''`;
   }
 
-  /** Update active drops only. Historical case pools keep their values. */
-  private async propagate(name: string, usdValueMinor: bigint, rubValueMinor: bigint | null) {
-    await this.prisma.caseItem.updateMany({
-      where: { name, currency: "USD", case: { isActive: true } },
-      data: { valueMinor: usdValueMinor },
-    });
-    const rubValue = rubValueMinor ?? BigInt(Math.round(Number(usdValueMinor) * this.fxRubPerUsd));
-    await this.prisma.caseItem.updateMany({
-      where: { name, currency: "RUB", case: { isActive: true } },
-      data: { valueMinor: rubValue },
-    });
-  }
+  async listItems(query: MarketItemQuery): Promise<{ total: number; items: MarketItemDto[] }> {
+    await this.ensureFresh();
+    const currency: "USD" | "RUB" = query.currency?.toUpperCase() === "RUB" ? "RUB" : "USD";
+    const col = Prisma.raw(currency === "RUB" ? "rub_minor" : "usd_minor");
+    const where: Prisma.Sql[] = [Prisma.sql`listed`];
+    if (query.category !== "all") where.push(Prisma.sql`category = ${query.category === "other" ? "other" : "skin"}`);
+    if (query.q?.trim()) where.push(Prisma.sql`name ILIKE ${"%" + query.q.trim().replace(/[%_\\]/g, "\\$&") + "%"}`);
+    if (Number.isFinite(query.min)) where.push(Prisma.sql`${col} >= ${Math.round(query.min!)}`);
+    if (Number.isFinite(query.max)) where.push(Prisma.sql`${col} <= ${Math.round(query.max!)}`);
+    const order =
+      query.sort === "price_desc" ? Prisma.sql`${col} DESC, name` : query.sort === "name" ? Prisma.sql`name` : Prisma.sql`${col}, name`;
+    const limit = Math.min(Math.max(Math.floor(query.limit ?? 50), 1), 200);
+    const offset = Math.max(Math.floor(query.offset ?? 0), 0);
+    const cond = Prisma.join(where, " AND ");
 
-  /** Steam's public, keyless price-overview endpoint. Returns null ONLY when
-   * Steam itself responds normally but has no active listing for this exact
-   * market_hash_name — that's the one case worth counting as "skipped"
-   * (name mismatch, delisted item, etc). Anything else — non-2xx HTTP
-   * (blocked egress, Valve rate-limiting, transient 5xx), a malformed body —
-   * throws instead, so the caller buckets it as `failed`, not `skipped`.
-   * Conflating the two would make a summary read as "these skins don't
-   * exist on Steam" when the real story is "we couldn't reach Steam". */
-  private async fetchSteamPriceMinor(marketHashName: string): Promise<bigint | null> {
-    const url =
-      `https://steamcommunity.com/market/priceoverview/` +
-      `?appid=${STEAM_APP_ID}&currency=${STEAM_CURRENCY_USD}&market_hash_name=${encodeURIComponent(marketHashName)}`;
-
-    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (GunDone.case price sync)" } });
-    if (!res.ok) throw new Error(`steam priceoverview HTTP ${res.status}`);
-
-    const body = (await res.json()) as { success?: boolean; lowest_price?: string; median_price?: string };
-    if (!body.success) return null;
-
-    const raw = body.lowest_price ?? body.median_price;
-    if (!raw) return null;
-
-    // "$12.34" / "12,34€" / "1 234,56 pуб." — strip everything but digits,
-    // dot and comma, then normalize to a plain "12.34" before parsing.
-    const cleaned = raw.replace(/[^\d.,]/g, "");
-    const normalized =
-      cleaned.includes(",") && !cleaned.includes(".") ? cleaned.replace(",", ".") : cleaned.replace(/,/g, "");
-    const value = Number.parseFloat(normalized);
-    if (!Number.isFinite(value) || value <= 0) return null;
-
-    return BigInt(Math.round(value * 100));
+    const [count] = await this.prisma.$queryRaw<{ n: bigint }[]>`SELECT count(*) AS n FROM market_item WHERE ${cond}`;
+    const rows = await this.prisma.$queryRaw<
+      { name: string; category: string; price: bigint; volume: number; image_url: string | null; rarity: string | null }[]
+    >`SELECT name, category, ${col} AS price, volume, image_url, rarity FROM market_item WHERE ${cond}
+      ORDER BY ${order} LIMIT ${limit} OFFSET ${offset}`;
+    return {
+      total: Number(count?.n ?? 0),
+      items: rows.map((r) => ({
+        name: r.name,
+        category: r.category,
+        priceMinor: r.price.toString(),
+        currency,
+        volume: r.volume,
+        imageUrl: r.image_url,
+        rarity: r.rarity,
+      })),
+    };
   }
 }

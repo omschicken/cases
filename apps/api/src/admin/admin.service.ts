@@ -103,10 +103,10 @@ export class AdminService {
     return this.prices.getStatus();
   }
 
-  triggerPriceSync(adminUserId: string) {
-    const summary = this.prices.triggerSync();
-    void this.audit(adminUserId, "PRICE_SYNC_TRIGGER", "SkinPrice", "all");
-    return summary;
+  async triggerPriceSync(adminUserId: string) {
+    const status = await this.prices.syncNow(true);
+    void this.audit(adminUserId, "PRICE_SYNC_TRIGGER", "MarketItem", "all");
+    return status;
   }
 
   listAuditLog(take = 100) {
