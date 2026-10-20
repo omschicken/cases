@@ -80,6 +80,8 @@ export class GamesService {
       if (!target) throw new NotFoundException("Upgrade target not found");
       if (source.caseItem.currency !== "RUB") throw new BadRequestException("Only RUB-priced items can be upgraded");
       if (target.valueMinor <= source.caseItem.valueMinor) throw new BadRequestException("The target must be more valuable than the source item");
+      // A fixed 1% minimum would exceed the advertised 90% gross return beyond 90x.
+      if (target.valueMinor > source.caseItem.valueMinor * 90n) throw new BadRequestException("Upgrade target exceeds maximum 90x source value");
       const rawChance = Number(source.caseItem.valueMinor * 90_000n / target.valueMinor) / 100_000;
       const chance = Math.max(0.01, Math.min(0.75, rawChance));
 
