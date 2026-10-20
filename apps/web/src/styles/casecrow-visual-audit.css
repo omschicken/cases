@@ -392,7 +392,7 @@
 .fidelity-page .fidelity-hero-copy>p{margin-bottom:0}
 .fidelity-page .fidelity-hero h1{overflow-wrap:anywhere}
 @media(min-width:901px){
- .fidelity-page .fidelity-hero{grid-template-columns:minmax(340px,42%) minmax(0,1fr);height:auto;min-height:390px}
+ .fidelity-page .fidelity-hero{grid-template-columns:minmax(340px,42%) minmax(0,1fr);height:clamp(390px,32vw,460px);min-height:390px}
  .fidelity-page .fidelity-hero-copy{padding-block:32px}
  .fidelity-page .fidelity-hero h1{font-size:clamp(36px,3.8vw,60px)}
 }
