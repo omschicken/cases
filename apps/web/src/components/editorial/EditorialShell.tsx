@@ -14,37 +14,6 @@ import { ThemeSwitcher } from "../ThemeSwitcher";
 import "../../styles/design-lab.css";
 import "../../styles/editorial-sections.css";
 import "../../styles/casecrow-dark.css";
-import "../../styles/casecrow-dark.css";
-
-type ThemePreference = "light" | "dark" | "system";
-const THEME_KEY = "casecrow:theme";
-function readTheme(): ThemePreference {
-  try { const v = localStorage.getItem(THEME_KEY); if (v === "dark" || v === "light" || v === "system") return v; } catch {}
-  return "light";
-}
-function useCaseCrowTheme(): [ThemePreference, (theme: ThemePreference) => void] {
-  const [theme, setTheme] = useState<ThemePreference>(readTheme);
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const apply = () => {
-      const dark = theme === "dark" || (theme === "system" && media.matches);
-      document.documentElement.dataset.casecrowTheme = dark ? "dark" : "light";
-      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#101210" : "#f5f2ea");
-    };
-    const storage = (event: StorageEvent) => {
-      if (event.key === THEME_KEY) setTheme(readTheme());
-    };
-    apply();
-    media.addEventListener("change", apply);
-    window.addEventListener("storage", storage);
-    return () => { media.removeEventListener("change", apply); window.removeEventListener("storage", storage); };
-  }, [theme]);
-  const change = (value: ThemePreference) => {
-    setTheme(value);
-    try { localStorage.setItem(THEME_KEY, value); } catch {}
-  };
-  return [theme, change];
-}
 
 const topNav = mainNavItems.slice(0, 4);
 
@@ -56,7 +25,6 @@ type HeaderProps = {
 
 export function EditorialHeader({ searchValue, onSearchChange, activeSection }: HeaderProps) {
   const { t } = useTranslation();
-  const [theme, setTheme] = useCaseCrowTheme();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -157,7 +125,7 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
           </>
         )}
         <ThemeSwitcher />
-        <select className="fidelity-theme-select" aria-label="Тема оформления" value={theme} onChange={(event) => setTheme(event.target.value as ThemePreference)}><option value="light">Светлая</option><option value="dark">Тёмная</option><option value="system">Система</option></select>
+        
         <LanguageSwitcher />
       </div>
     </header>
