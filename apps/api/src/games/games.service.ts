@@ -1,4 +1,5 @@
 import { battleWinChance } from "./battle-odds";
+import { assessCaseEconomics } from "../common/util/case-economics";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { computeRoll, pickWeightedItem } from "@cs2-cases/shared";
 import type { Prisma } from "@prisma/client";
@@ -108,6 +109,9 @@ export class GamesService {
     });
     if (!battleCase || battleCase.items.length === 0) throw new NotFoundException("Battle case not found");
     if (battleCase.items.some((item) => item.currency !== "RUB")) throw new BadRequestException("This case is not configured in RUB");
+    if (!assessCaseEconomics(battleCase.items, battleCase.priceMinor).canBattle) {
+      throw new BadRequestException("Battle temporarily unavailable pending price review");
+    }
     const seed = await this.cases.getOrCreateActiveSeed(userId);
 
     return this.prisma.$transaction(async (tx) => {
