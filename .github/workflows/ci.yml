@@ -12,6 +12,22 @@ concurrency:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://casecrow_ci:casecrow_ci@localhost:5432/casecrow_ci?schema=public
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: casecrow_ci
+          POSTGRES_PASSWORD: casecrow_ci
+          POSTGRES_DB: casecrow_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U casecrow_ci -d casecrow_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,6 +46,8 @@ jobs:
         run: pnpm --filter @cs2-cases/shared build
       - name: Generate Prisma client
         run: pnpm --filter @cs2-cases/api prisma:generate
+      - name: Initialize isolated CI database
+        run: pnpm --filter @cs2-cases/api exec prisma migrate deploy
       - name: Typecheck
         run: pnpm typecheck
       - name: Build
