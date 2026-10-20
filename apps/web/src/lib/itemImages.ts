@@ -6,6 +6,13 @@ const ITEM_NAME_ALIASES: Record<string, string> = {
   "Butterfly |": "Butterfly Knife |",
 };
 
+/** Verified identical finish, used only when its preferred CDN is blocked. */
+const EXACT_IMAGE_BACKUPS: Record<string, string[]> = {
+  "Karambit | Emerald": [
+    "https://csspot.org/uploads/karambit_gamma_doppler_emerald_a4be4400bd.png",
+  ],
+};
+
 export type ItemImageStatus = "official" | "remote" | "fallback";
 
 export function normalizeItemImageName(name: string): string {
@@ -46,6 +53,9 @@ export function resolveItemImageSources(name: string, currentUrl?: string | null
   }
   if (!isPlaceholderImageUrl(currentUrl) && currentUrl && !sources.some((source) => source.url === currentUrl)) {
     sources.push({ url: currentUrl, status: "remote" });
+  }
+  for (const url of EXACT_IMAGE_BACKUPS[normalizeItemImageName(name)] ?? []) {
+    if (!sources.some((source) => source.url === url)) sources.push({ url, status: "remote" });
   }
   return sources;
 }
