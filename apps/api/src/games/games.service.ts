@@ -1,3 +1,4 @@
+import { battleWinChance } from "./battle-odds";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { computeRoll, pickWeightedItem } from "@cs2-cases/shared";
 import type { Prisma } from "@prisma/client";
@@ -122,6 +123,7 @@ export class GamesService {
       const playerItem = battleCase.items.find((item) => item.id === playerPick.id)!;
       const botItem = battleCase.items.find((item) => item.id === botPick.id)!;
       const won = playerItem.valueMinor >= botItem.valueMinor;
+      const chance = battleWinChance(battleCase.items);
       const winnings = won
         ? await Promise.all([
             tx.inventoryItem.create({ data: { userId, caseItemId: playerItem.id } }),
@@ -138,7 +140,7 @@ export class GamesService {
         outputCaseItemId: won ? playerItem.id : null,
         outputInventoryItemId: winnings[0]?.id,
         roll: playerRoll,
-        chance: 0.5,
+        chance,
         serverSeedHash: lockedSeed.serverSeedHash,
         clientSeed: lockedSeed.clientSeed,
         nonce: lockedSeed.nonce,
