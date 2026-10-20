@@ -6,6 +6,13 @@ const ITEM_NAME_ALIASES: Record<string, string> = {
   "Butterfly |": "Butterfly Knife |",
 };
 
+/** Verified identical finish, used only when its preferred CDN is blocked. */
+const EXACT_IMAGE_BACKUPS: Record<string, string[]> = {
+  "Karambit | Emerald": [
+    "https://csspot.org/uploads/karambit_gamma_doppler_emerald_a4be4400bd.png",
+  ],
+};
+
 export type ItemImageStatus = "official" | "remote" | "fallback";
 
 export function normalizeItemImageName(name: string): string {
@@ -29,4 +36,26 @@ export function resolveItemImage(name: string, currentUrl?: string | null): {
   if (official) return { url: official, status: "official" };
   if (!isPlaceholderImageUrl(currentUrl)) return { url: currentUrl ?? null, status: "remote" };
   return { url: null, status: "fallback" };
+}
+
+/**
+ * Ordered, exact-match image sources. A stale official CDN URL must not hide
+ * a valid inventory URL; never substitute a different weapon or finish.
+ */
+export function resolveItemImageSources(name: string, currentUrl?: string | null): Array<{
+  url: string;
+  status: Exclude<ItemImageStatus, "fallback">;
+}> {
+  const preferred = resolveItemImage(name, currentUrl);
+  const sources: Array<{ url: string; status: Exclude<ItemImageStatus, "fallback"> }> = [];
+  if (preferred.url && preferred.status !== "fallback") {
+    sources.push({ url: preferred.url, status: preferred.status });
+  }
+  if (!isPlaceholderImageUrl(currentUrl) && currentUrl && !sources.some((source) => source.url === currentUrl)) {
+    sources.push({ url: currentUrl, status: "remote" });
+  }
+  for (const url of EXACT_IMAGE_BACKUPS[normalizeItemImageName(name)] ?? []) {
+    if (!sources.some((source) => source.url === url)) sources.push({ url, status: "remote" });
+  }
+  return sources;
 }
