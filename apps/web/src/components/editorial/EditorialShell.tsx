@@ -16,6 +16,7 @@ import "../../styles/editorial-sections.css";
 import "../../styles/casecrow-dark.css";
 import "../../styles/casecrow-polish.css";
 import "../../styles/casecrow-critical-ui.css";
+import "../../styles/casecrow-visual-audit.css";
 
 const topNav = mainNavItems.slice(0, 4);
 const sidebarNav = [
