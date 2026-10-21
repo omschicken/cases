@@ -245,3 +245,156 @@
 .cc-app .edv2.cc-upgrade .cc-upgrade-horizon-mark img{width:100%;height:100%;object-fit:contain;filter:none}
 @media(max-width:850px){.cc-app .edv2.cc-upgrade .cc-upgrade-horizon-mark{width:440px;height:260px;right:-80px;top:0;opacity:.39}}
 @media(max-width:600px){.cc-app .edv2.cc-upgrade .cc-upgrade-horizon-mark{width:310px;height:205px;top:-10px;right:-95px;opacity:.25}}
+
+
+/*
+ * Casecrow Upgrader visual hotfix.
+ * The large hand-drawn raven was visually obstructing the page.
+ * Keep the courtyard as a quiet, shallow backdrop behind the heading only.
+ */
+.cc-app .edv2.cc-upgrade {
+  container-type:inline-size;
+  container-name:cc-upgrader;
+  background:var(--cc-canvas,#f7f5ef);
+  overflow:clip;
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-horizon {
+  height:170px;
+  max-height:170px;
+  background:linear-gradient(96deg,#f8f7f2 0%,#f8f7f2 24%,#f2f0e9 100%);
+  z-index:-1;
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-horizon-scenery {
+  background-image:
+    linear-gradient(90deg,#f8f7f2 0%,#f8f7f2de 42%,#f8f7f2b5 78%,#f8f7f2e5 100%),
+    url("../assets/casecrow-approved/hero-courtyard-v2.webp");
+  background-position: center, right 44%;
+  background-size:cover;
+  opacity:.29;
+  filter:grayscale(1) saturate(.3);
+  mask-image:linear-gradient(180deg,#000 0%,transparent 95%);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,transparent 95%);
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-horizon::after {
+  height:80px;
+  background:linear-gradient(transparent,var(--cc-canvas,#f7f5ef));
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-horizon-mark,
+.cc-app .edv2.cc-upgrade .cc-upgrade-horizon-scribble {
+  display:none!important;
+}
+.cc-app .edv2.cc-upgrade>.edv2-heading {
+  min-height:116px;
+  margin-bottom:21px;
+  z-index:3;
+}
+.cc-app .edv2.cc-upgrade>.edv2-heading h1,
+.cc-app .edv2.cc-upgrade>.edv2-heading p{
+  position:relative;
+  z-index:2;
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-workspace {
+  isolation:isolate;
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-workspace .edv2-upgrade-area{
+  position:relative;
+  z-index:2;
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-picker{
+  position:relative;
+  z-index:2;
+}
+
+/* The site's sidebar takes horizontal space; respond to content width,
+   not the overall browser window width. */
+@container cc-upgrader (max-width: 950px) {
+  .cc-app .edv2.cc-upgrade .edv2-upgrade-area{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+  }
+  .cc-app .edv2.cc-upgrade .edv2-panel.cc-upgrade-meter-panel{
+    grid-column:1/-1;
+    grid-row:2;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:14px;
+    min-height:285px;
+    padding:16px;
+  }
+  .cc-app .edv2.cc-upgrade .edv2-panel.cc-upgrade-choice{
+    min-height:330px;
+  }
+  .cc-app .edv2.cc-upgrade .cc-upgrade-center-eyebrow{
+    grid-column:auto;
+  }
+  .cc-app .edv2.cc-upgrade .cc-upgrade-factors{
+    grid-column:auto;
+    grid-row:auto;
+    display:flex;
+    justify-content:center;
+    width:100%;
+  }
+  .cc-app .edv2.cc-upgrade .cc-upgrade-factor-note{
+    grid-column:auto;
+    grid-row:auto;
+    margin-top:0;
+  }
+  .cc-app .edv2.cc-upgrade .edv2-chance.cc-upgrade-chance{
+    grid-column:auto;
+    grid-row:auto;
+    width:175px;
+  }
+}
+@container cc-upgrader (max-width: 570px) {
+  .cc-app .edv2.cc-upgrade .edv2-upgrade-area{
+    grid-template-columns:minmax(0,1fr);
+    gap:10px;
+  }
+  .cc-app .edv2.cc-upgrade .edv2-panel.cc-upgrade-choice{
+    min-height:335px;
+    padding:14px;
+    grid-column:1;
+  }
+  .cc-app .edv2.cc-upgrade .edv2-panel.cc-upgrade-meter-panel{
+    grid-column:1;
+    grid-row:auto;
+    min-height:278px;
+    display:flex;
+  }
+  .cc-app .edv2.cc-upgrade .edv2-upgrade-art.cc-upgrade-item-art{
+    height:163px;
+  }
+  .cc-app .edv2.cc-upgrade .cc-upgrade-skin-details b{
+    font-size:16px;
+  }
+  .cc-app .edv2.cc-upgrade .cc-upgrade-weapon{
+    font-size:11px;
+  }
+  .cc-app .edv2.cc-upgrade .cc-upgrade-card-value strong{
+    font-size:16px!important;
+  }
+  .cc-app .edv2.cc-upgrade .edv2-btn.cc-upgrade-card-action{
+    min-height:41px;
+    font-size:11px!important;
+  }
+  .cc-app .edv2.cc-upgrade .cc-upgrade-card-top .edv2-label{
+    font-size:10px;
+  }
+  .cc-app .edv2.cc-upgrade .cc-upgrade-footer{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .cc-app .edv2.cc-upgrade .cc-upgrade-footer>p{
+    max-width:none;
+  }
+}
+@media(max-width:600px) {
+  .cc-app .edv2.cc-upgrade>.edv2-heading{
+    min-height:123px;
+  }
+  .cc-app .edv2.cc-upgrade .cc-upgrade-horizon {
+    height:145px;
+    max-height:145px;
+  }
+}
