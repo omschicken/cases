@@ -18,7 +18,8 @@
     "seed:cases": "tsx scripts/seed-cases.ts",
     "seed:cases:db": "tsx prisma/seed-cases.ts",
     "seed:originals": "tsx prisma/seed-originals.ts",
-    "seed:originals:dry": "tsx prisma/seed-originals.ts --dry-run"
+    "seed:originals:dry": "tsx prisma/seed-originals.ts --dry-run",
+    "prisma:sync-csmoney": "tsx prisma/sync-csmoney.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
