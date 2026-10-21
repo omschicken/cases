@@ -17,7 +17,6 @@ import "../styles/upgrader-premium.css";
 
 type UpgradeResult = { operation: GameOperationDto; won: boolean; item: CaseItem | null; target: CaseItem; chance: number };
 type UpgradeMode = "classic" | "mystery";
-const MYSTERY_BANDS: Record<number, [number, number]> = { 1.5: [1.5, 2], 2: [2, 3], 3: [3, 5], 5: [5, 8] };
 export function UpgraderPage() {
   const { user } = useAuth();
   const inventory = useEditorialData<InventoryItemDto[]>(user ? "/cases/inventory/me" : null);
@@ -44,8 +43,6 @@ export function UpgraderPage() {
   const target = targets.data?.find((item) => item.id === targetId);
   const chance = source && target ? upgradeChance(source.caseItem.valueMinor, target.valueMinor) : null;
   const percentage = (result?.chance ?? chance ?? 0) * 100;
-  const band = MYSTERY_BANDS[factor ?? 2];
-  const mysteryChanceRange = "30–200%";
   const shownTarget = result && !animating ? (result.item ?? null) : mode === "classic" ? target ?? null : null;
   const shownTargetParts = shownTarget?.name.split(" | ") ?? [];
   const locked = operation.busy || !!operation.pending || animating;
@@ -127,8 +124,8 @@ export function UpgraderPage() {
             <span className="cc-upgrade-reel-ticks" aria-hidden="true"/>{mode === "mystery" && <span className="cc-upgrade-orb-flow" aria-hidden="true" />}
             <span className="cc-upgrade-reel-pointer" aria-hidden="true"/>
             <div className="edv2-chance-inner">
-              <small>{mode === "mystery" && !result ? "МИСТЕРИ" : "ШАНС УСПЕХА"}</small>
-              <strong>{mode === "mystery" && !result ? (source ? "✦" : "✦") : result || (mode === "classic" && source && target) ? percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 }) + "%" : "—"}</strong>
+              <small>{mode === "mystery" ? "МИСТЕРИ" : "ШАНС УСПЕХА"}</small>
+              <strong>{mode === "mystery" ? "✦" : result || (mode === "classic" && source && target) ? percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 }) + "%" : "—"}</strong>
               {result && !animating ? <span className={"cc-upgrade-result-symbol" + (result.won ? " is-won" : " is-lost")}>{result.won ? <Check size={21}/> : <X size={21}/>}</span> : <span className="cc-upgrade-reel-star">✦</span>}
               {result && !animating && <b className={"edv2-outcome" + (!result.won ? " is-lost" : "")}>{result.won ? "ПОБЕДА" : "НЕ ПОВЕЗЛО"}</b>}
             </div>
