@@ -143,7 +143,7 @@
 .cc-app .auth-kicker,.cc-app .auth-page a{color:var(--cc-sage)!important}
 .cc-app .auth-form{background:var(--paper)!important;border-color:var(--cc-line)!important;box-shadow:none!important}
 .cc-app .auth-form input{background:var(--surface)!important;border:1px solid var(--cc-line)!important;color:var(--ink)!important;box-shadow:none!important}
-.cc-app .auth-form button{background:var(--cc-sage-strong)!important;color:#fff!important;box-shadow:none!important;border:0!important}
+.cc-app .auth-form button{background:var(--ink)!important;color:var(--paper)!important;box-shadow:none!important;border:0!important}
 .cc-app .dz-workspace{gap:24px!important}
 .cc-app .dz-page-header{padding:8px 0 0!important;margin-bottom:0!important}
 .cc-app .dz-page-header__kicker{color:var(--cc-sage)!important;letter-spacing:.15em!important}
