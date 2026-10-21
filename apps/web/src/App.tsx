@@ -9,6 +9,7 @@ import { CaseListPage } from "./pages/CaseList";
 
 const LoginPage = lazy(() => import("./pages/Login").then(module => ({ default: module.LoginPage })));
 const RegisterPage = lazy(() => import("./pages/Register").then(module => ({ default: module.RegisterPage })));
+const OriginalCaseDetailPage = lazy(() => import("./pages/OriginalCaseDetail").then(module => ({ default: module.OriginalCaseDetailPage })));
 const CaseDetailPage = lazy(() => import("./pages/CaseDetail").then(module => ({ default: module.CaseDetailPage })));
 const VerifyPage = lazy(() => import("./pages/Verify").then(module => ({ default: module.VerifyPage })));
 const InventoryPage = lazy(() => import("./pages/Inventory").then(module => ({ default: module.InventoryPage })));
@@ -43,6 +44,7 @@ export default function App() {
           <Route element={<EditorialLayout />}>
             <Route path="/" element={<CaseListPage />} />
             <Route path="/cases/:slug" element={<CaseDetailPage />} />
+            <Route path="/collections/:slug" element={<OriginalCaseDetailPage />} />
             {DesignLabPage && (
               <Route
                 path="/design-lab"
