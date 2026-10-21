@@ -1,4 +1,5 @@
 import { battleWinChance } from "./battle-odds";
+import { mysteryIndex, mysteryPriceBounds } from "./mystery-odds";
 import { selectContractOutcomes } from "./contract-odds";
 import { assessCaseEconomics } from "../common/util/case-economics";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
@@ -136,11 +137,8 @@ export class GamesService {
    * the input without awarding the target.
    */
   async createMysteryUpgrade(userId: string, inventoryItemId: string, multiplier: number) {
-    const bands: Record<string, [number, number]> = {
-      "1.5": [1.5, 2], "2": [2, 3], "3": [3, 5], "5": [5, 8],
-    };
-    const band = bands[String(multiplier)];
-    if (!band) throw new BadRequestException("Unsupported mystery price range");
+    // Validate the band before any user-item lookup or consumption.
+    mysteryPriceBounds(1n, multiplier);
     const seed = await this.cases.getOrCreateActiveSeed(userId);
     return this.prisma.$transaction(async (tx) => {
       const source = await tx.inventoryItem.findFirst({
@@ -152,11 +150,7 @@ export class GamesService {
         throw new BadRequestException("Only positively priced RUB items can be upgraded");
       }
       const sourceMinor = source.caseItem.valueMinor;
-      const lo = BigInt(Math.round(band[0] * 100));
-      const hi = BigInt(Math.round(band[1] * 100));
-      // Round lower bound up and upper bound down to avoid out-of-range prizes.
-      const from = (sourceMinor * lo + 99n) / 100n;
-      const to = (sourceMinor * hi) / 100n;
+      const { from, to, min, max } = mysteryPriceBounds(sourceMinor, multiplier);
       const candidates = await tx.caseItem.findMany({
         where: { currency: "RUB", valueMinor: { gte: from, lte: to }, case: { isActive: true } },
         orderBy: [{ valueMinor: "asc" }, { id: "asc" }],
@@ -165,7 +159,7 @@ export class GamesService {
       if (!candidates.length) throw new BadRequestException("No mystery items in this price range");
       const lockedSeed = await this.lockSeed(tx, seed.id);
       const selectionRoll = computeRoll(lockedSeed.serverSeed, lockedSeed.clientSeed + ":mystery-target", lockedSeed.nonce);
-      const index = Math.min(candidates.length - 1, Math.floor(selectionRoll * candidates.length));
+      const index = mysteryIndex(selectionRoll, candidates.length);
       const target = candidates[index];
       const chance = Math.max(0.01, Math.min(0.75,
         Number(sourceMinor * 90_000n / target.valueMinor) / 100_000));
@@ -191,7 +185,7 @@ export class GamesService {
         roll, chance, serverSeedHash: lockedSeed.serverSeedHash,
         clientSeed: lockedSeed.clientSeed, nonce: lockedSeed.nonce,
         metadata: {
-          mode: "MYSTERY", rangeMin: band[0], rangeMax: band[1],
+          mode: "MYSTERY", rangeMin: min, rangeMax: max,
           selectionRoll, candidateCount: candidates.length,
           inputValueMinor: sourceMinor.toString(),
           targetValueMinor: target.valueMinor.toString(),
