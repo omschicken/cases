@@ -12,6 +12,7 @@
 import { PrismaClient, ItemRarity } from "@prisma/client";
 import { marketCasePrice } from "../src/prices/case-pricing";
 import { assessCaseEconomics } from "../src/common/util/case-economics";
+import { matchesCaseTheme } from "../src/prices/case-theme";
 
 const ORIGINALS = [
   {
@@ -243,7 +244,7 @@ async function main() {
       continue;
     }
     const pool = (Object.keys(COUNTS) as ItemRarity[]).flatMap((rarity) => {
-      const picks = choose(all,rarity,spec.slug,spec.keywords,COUNTS[rarity] ?? 0);
+      const picks = choose(all.filter(item => matchesCaseTheme(spec.slug, item.name)),rarity,spec.slug,spec.keywords,COUNTS[rarity] ?? 0);
       if (!picks.length) throw new Error(`No real items in rarity ${rarity} for ${spec.slug}`);
       return picks.map((item) => ({...item,weight:(SHARES[rarity] ?? 0)/picks.length}));
     });

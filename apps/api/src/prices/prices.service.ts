@@ -1,9 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
-import { fetchMarketCsgoPrices } from "./market-csgo";
+import { fetchCsMoneyPrices } from "./cs-money";
 import { fetchSkinMeta } from "./market-images";
 import { resolveMarketName } from "./market-names";
+import { matchesCaseTheme } from "./case-theme";
 import { balanceCase } from "./case-balance";
 import { pickCaseItems, toItemRarity, type Candidate } from "./case-populate";
 
@@ -13,7 +14,7 @@ const FRESH_MS = 55_000;
 const FORCE_MIN_GAP_S = 8;
 const CHUNK = 4000;
 const IMAGE_RETRY_S = 3600;
-const DEFAULT_FX_RUB_PER_USD = 95;
+
 
 export interface MarketSyncStatus {
   lastStartedAt: string | null;
@@ -22,6 +23,8 @@ export interface MarketSyncStatus {
   itemsSynced: number | null;
   casesUpdated: number | null;
   lastError: string | null;
+  source: "CS.MONEY";
+  mode: "active-case-batches";
   skinsListed: number;
   itemsTotal: number;
   withImages: number;
@@ -62,8 +65,8 @@ export interface MarketItemQuery {
 }
 
 /**
- * The whole Market.CSGO catalog (~27k names) lives in `market_item`, refreshed
- * every minute from two bulk price lists with a handful of set-based SQL
+ * Exact CS.MONEY quotes for active case items live in `market_item`, refreshed
+ * in small rotating batches from public CS.MONEY snapshots with set-based SQL
  * statements — no per-skin requests. Active case items are re-priced from it in
  * one UPDATE. Tables are created on first use so no manual migration is needed.
  *
@@ -91,6 +94,8 @@ export class PricesService {
         id integer PRIMARY KEY, last_started timestamptz, last_finished timestamptz, duration_ms integer,
         items integer, cases_updated integer, last_error text, images_attempted_at timestamptz)`);
       await this.prisma.$executeRawUnsafe(`INSERT INTO market_sync_state (id) VALUES (1) ON CONFLICT DO NOTHING`);
+      await this.prisma.$executeRawUnsafe(`ALTER TABLE market_item ADD COLUMN IF NOT EXISTS price_source text NOT NULL DEFAULT 'market.csgo'`);
+      await this.prisma.$executeRawUnsafe(`ALTER TABLE market_sync_state ADD COLUMN IF NOT EXISTS cs_money_cursor integer NOT NULL DEFAULT 0`);
     })().catch((err) => {
       this.ready = null;
       throw err;
@@ -114,6 +119,8 @@ export class PricesService {
       SELECT count(*) FILTER (WHERE listed AND category = 'skin') AS skins, count(*) AS total,
              count(*) FILTER (WHERE image_url IS NOT NULL) AS imgs FROM market_item`;
     return {
+      source: "CS.MONEY",
+      mode: "active-case-batches",
       lastStartedAt: s?.last_started?.toISOString() ?? null,
       lastFinishedAt: s?.last_finished?.toISOString() ?? null,
       durationMs: s?.duration_ms ?? null,
@@ -151,46 +158,44 @@ export class PricesService {
 
     const t0 = Date.now();
     try {
-      const [rub, usd] = await Promise.all([fetchMarketCsgoPrices("RUB"), fetchMarketCsgoPrices("USD")]);
-      const fx = [...rub.entries()].reduce((acc, [n, r]) => {
-        const u = usd.get(n);
-        return u && acc.n < 200 ? { sum: acc.sum + r.priceMinor / u.priceMinor, n: acc.n + 1 } : acc;
-      }, { sum: 0, n: 0 });
-      const rubPerUsd = fx.n > 0 ? fx.sum / fx.n : DEFAULT_FX_RUB_PER_USD;
-
-      const names: string[] = [];
-      const cats: string[] = [];
-      const rubs: string[] = [];
-      const usds: string[] = [];
-      const vols: string[] = [];
-      for (const [name, r] of rub) {
-        const u = usd.get(name);
-        names.push(name);
-        cats.push(WEAR_RE.test(name) ? "skin" : "other");
-        rubs.push(String(r.priceMinor));
-        usds.push(String(u ? u.priceMinor : Math.max(1, Math.round(r.priceMinor / rubPerUsd))));
-        vols.push(String(r.volume));
+      const targets = await this.prisma.$queryRaw<{name:string}[]>`SELECT DISTINCT ci.name FROM "CaseItem" ci JOIN "Case" c ON c.id=ci."caseId" WHERE c."isActive" ORDER BY ci.name`;
+      if (!targets.length) throw new Error("No active case prices to synchronize");
+      const batchSize = 8;
+      const [cursor] = await this.prisma.$queryRaw<{cs_money_cursor:number}[]>`SELECT cs_money_cursor FROM market_sync_state WHERE id=1`;
+      const offset = (cursor?.cs_money_cursor ?? 0) % targets.length;
+      const requested = targets.slice(offset, offset + batchSize).map(row => row.name);
+      const nextCursor = (offset + requested.length) % targets.length;
+      const quotes = await fetchCsMoneyPrices(requested);
+      if (!quotes.size) {
+        await this.prisma.$executeRaw`UPDATE market_sync_state SET cs_money_cursor=${nextCursor},last_finished=now(),last_error='CS.MONEY: no exact matches in this batch; prices retained' WHERE id=1`;
+        return this.getStatus();
       }
+      const names = [...quotes.keys()];
+      const cats = names.map(name => WEAR_RE.test(name) ? "skin" : "other");
+      const rubs = names.map(name => String(quotes.get(name)!.rubMinor));
+      const usds = names.map(name => String(quotes.get(name)!.usdMinor));
+      const vols = names.map(name => String(quotes.get(name)!.volume));
 
       const runAt = new Date();
       for (let i = 0; i < names.length; i += CHUNK) {
         await this.prisma.$executeRaw`
-          INSERT INTO market_item (name, category, rub_minor, usd_minor, volume, listed, updated_at)
-          SELECT t.name, t.cat, t.rub::bigint, t.usd::bigint, t.vol::integer, true, ${runAt}
+          INSERT INTO market_item (name, category, rub_minor, usd_minor, volume, listed, updated_at, price_source)
+          SELECT t.name, t.cat, t.rub::bigint, t.usd::bigint, t.vol::integer, true, ${runAt}, 'cs.money'
           FROM unnest(${names.slice(i, i + CHUNK)}::text[], ${cats.slice(i, i + CHUNK)}::text[],
                       ${rubs.slice(i, i + CHUNK)}::text[], ${usds.slice(i, i + CHUNK)}::text[],
                       ${vols.slice(i, i + CHUNK)}::text[]) AS t(name, cat, rub, usd, vol)
           ON CONFLICT (name) DO UPDATE SET category = EXCLUDED.category, rub_minor = EXCLUDED.rub_minor,
-            usd_minor = EXCLUDED.usd_minor, volume = EXCLUDED.volume, listed = true, updated_at = EXCLUDED.updated_at`;
+            usd_minor = EXCLUDED.usd_minor, volume = EXCLUDED.volume, listed = true, updated_at = EXCLUDED.updated_at, price_source=EXCLUDED.price_source`;
       }
-      await this.prisma.$executeRaw`UPDATE market_item SET listed = false WHERE listed AND updated_at < ${runAt}`;
+      // This is an incremental batch, never mark the unvisited catalog as unavailable.
 
-      const renamed = await this.repairCaseItemNames();
+      // Preserve exact wears and phase identities; no fallback to a different item.
+      const renamed = 0;
       const casesUpdated = await this.prisma.$executeRaw`
         UPDATE "CaseItem" ci
         SET "valueMinor" = CASE WHEN ci.currency = 'USD' THEN m.usd_minor ELSE m.rub_minor END
         FROM market_item m, "Case" c
-        WHERE m.name = ci.name AND m.listed AND c.id = ci."caseId" AND c."isActive"
+        WHERE m.name = ci.name AND m.name = ANY(${names}::text[]) AND m.listed AND c.id = ci."caseId" AND c."isActive"
           AND ci."valueMinor" IS DISTINCT FROM (CASE WHEN ci.currency = 'USD' THEN m.usd_minor ELSE m.rub_minor END)`;
 
       await this.syncImages().catch((err) =>
@@ -199,7 +204,7 @@ export class PricesService {
 
       await this.prisma.$executeRaw`
         UPDATE market_sync_state SET last_finished = now(), duration_ms = ${Date.now() - t0},
-          items = ${names.length}, cases_updated = ${casesUpdated}, last_error = NULL WHERE id = 1`;
+          items = ${names.length}, cases_updated = ${casesUpdated}, cs_money_cursor=${nextCursor}, last_error = NULL WHERE id = 1`;
       this.logger.log(`market sync: ${names.length} items, ${casesUpdated} case items repriced (${renamed} renamed), ${Date.now() - t0} ms`);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
@@ -279,7 +284,7 @@ export class PricesService {
       const need = target - c.items.length;
       if (need <= 0) continue;
       const price = Number(c.priceMinor);
-      const candidates: Candidate[] = rows.map((r) => ({
+      const candidates: Candidate[] = rows.filter(r => matchesCaseTheme(c.slug, r.name)).map((r) => ({
         name: r.name,
         priceMinor: Number(c.currency === "USD" ? r.usd_minor : r.rub_minor),
         imageUrl: r.image_url,

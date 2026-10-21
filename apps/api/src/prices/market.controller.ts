@@ -7,7 +7,7 @@ const num = (v?: string) => (v === undefined || v === "" ? undefined : Number(v)
 export class MarketController {
   constructor(private readonly prices: PricesService) {}
 
-  /** The full Market.CSGO catalog with live prices (minor units). */
+  /** Catalog and exact CS.MONEY prices (minor units). */
   @Get("items")
   @Header("Cache-Control", "public, s-maxage=20, stale-while-revalidate=40")
   items(
@@ -31,6 +31,13 @@ export class MarketController {
   /** Cheap no-op unless prices are older than a minute; safe for cron / uptime pingers. */
   @Get("refresh")
   async refresh() {
+    await this.prices.ensureFresh();
+    return this.prices.getStatus();
+  }
+
+  /** Dedicated scheduler target; older deployments do not expose this route. */
+  @Get("csmoney/refresh")
+  async refreshCsMoney() {
     await this.prices.ensureFresh();
     return this.prices.getStatus();
   }
