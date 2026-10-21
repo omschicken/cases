@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ArrowLeftRight, ArrowUpRight, RotateCcw, Sparkles, EyeOff, Check, X, RotateCw } from "lucide-react";
+import { ArrowLeftRight, ArrowUpRight, RotateCcw, Sparkles, EyeOff, Check, X, RotateCw, ShieldCheck } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useEditorialData } from "../hooks/useEditorialData";
 import { useEditorialOperation } from "../hooks/useEditorialOperation";
