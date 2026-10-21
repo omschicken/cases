@@ -128,7 +128,7 @@ export function UpgraderPage() {
             <span className="cc-upgrade-reel-pointer" aria-hidden="true"/>
             <div className="edv2-chance-inner">
               <small>{mode === "mystery" && !result ? "МИСТЕРИ" : "ШАНС УСПЕХА"}</small>
-              <strong>{mode === "mystery" && !result ? (source ? "30–200%" : "✦") : result || (mode === "classic" && source && target) ? percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 }) + "%" : "—"}</strong>
+              <strong>{mode === "mystery" && !result ? (source ? "✦" : "✦") : result || (mode === "classic" && source && target) ? percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 }) + "%" : "—"}</strong>
               {result && !animating ? <span className={"cc-upgrade-result-symbol" + (result.won ? " is-won" : " is-lost")}>{result.won ? <Check size={21}/> : <X size={21}/>}</span> : <span className="cc-upgrade-reel-star">✦</span>}
               {result && !animating && <b className={"edv2-outcome" + (!result.won ? " is-lost" : "")}>{result.won ? "ПОБЕДА" : "НЕ ПОВЕЗЛО"}</b>}
             </div>
