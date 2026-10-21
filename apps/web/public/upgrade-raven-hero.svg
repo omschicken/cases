@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" fill="none" role="img" aria-label="">
+ <defs>
+  <linearGradient id="f" x1="555" y1="70" x2="814" y2="440" gradientUnits="userSpaceOnUse"><stop stop-color="#343e34"/><stop offset=".5" stop-color="#626b5d"/><stop offset="1" stop-color="#a9ae9f"/></linearGradient>
+  <linearGradient id="h" x1="440" y1="70" x2="764" y2="375" gradientUnits="userSpaceOnUse"><stop stop-color="#1c2520"/><stop offset=".55" stop-color="#515b50"/><stop offset="1" stop-color="#8a9585"/></linearGradient>
+  <linearGradient id="beak" x1="316" y1="171" x2="501" y2="210" gradientUnits="userSpaceOnUse"><stop stop-color="#111915"/><stop offset=".8" stop-color="#697468"/></linearGradient>
+  <linearGradient id="gold" x1="650" y1="38" x2="744" y2="91" gradientUnits="userSpaceOnUse"><stop stop-color="#b79b5c"/><stop offset=".56" stop-color="#dbba73"/><stop offset="1" stop-color="#837143"/></linearGradient>
+  <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="matrix(-410 240 -300 -360 730 94)" gradientUnits="userSpaceOnUse"><stop stop-color="#faf8ee" stop-opacity=".5"/><stop offset="1" stop-color="#f8f6f0" stop-opacity="0"/></radialGradient>
+ </defs>
+ <path d="M110 450 190 288l70 72 120-151 82 115 76-71 104 128 84-78 138 147" stroke="#a3a69b" stroke-width="1.8" opacity=".28"/>
+ <path d="M0 450 153 333l72 44 145-186 91 119 97-55 117 117 92-61 179 139" stroke="#8e9a8c" stroke-width="2.5" opacity=".22"/>
+ <ellipse cx="650" cy="245" rx="336" ry="205" fill="url(#glow)"/>
+ <!-- The wing and tail fade into stone-colored etched feathers -->
+ <path d="M632 225c70-45 157-40 231-4 51 25 90 65 118 113-48-6-75-12-124-8 52 34 87 57 121 91-89-18-140-42-215-55 45 31 64 54 86 87-71-27-151-73-203-117l-122-62z" fill="url(#f)"/>
+ <path d="M645 249c87-39 201-3 314 84-109-35-175-43-269-32m-42-22c96-13 183 42 288 127-110-41-177-59-266-66m-39-33c73 27 158 86 201 142" stroke="#d3d7cb" stroke-width="2" opacity=".48"/>
+ <path d="M627 213c86-18 164-6 236 31 40 23 72 51 93 81-76-18-127-40-197-44-30-17-88-27-132-31z" fill="#424e43" opacity=".8"/>
+ <!-- Raven head, neck, chest -->
+ <path d="M674 82c53 7 87 37 93 83 6 30-9 48-23 65-14 19-10 41-4 63 15 46 44 96 76 153-102-18-168-51-222-103-50-48-55-92-71-124-15-28-40-36-46-62-7-26 15-58 48-70 45-18 104-13 149-5z" fill="url(#h)"/>
+ <path d="M466 144c-36 15-75 30-133 42-22 5-39 12-49 20 50 16 99 23 134 24 19 1 48-10 68-18l41-52z" fill="url(#beak)"/>
+ <path d="M284 206c66-3 120-8 166-21l35-19" stroke="#bec4b5" stroke-width="2" opacity=".64"/>
+ <path d="M507 101c-16 4-30 20-35 39 24-16 42-20 58-18M491 125c-12 21-13 40-8 54" stroke="#bcc5b5" stroke-width="3.8" opacity=".3"/>
+ <path d="M510 112c-19 17-32 49-23 83 12 33 38 41 57 69 31 41 24 97 91 144" stroke="#dce1d3" stroke-width="3" opacity=".27"/>
+ <path d="M728 168c-9 40-19 61-22 90 0 58 30 120 68 164" stroke="#c3ccbc" stroke-width="2.2" opacity=".25"/>
+ <path d="M569 242c21 13 30 23 36 45 8 31 8 56 29 86" stroke="#b7c0af" stroke-width="2" opacity=".45"/>
+ <!-- Neck layering -->
+ <g stroke="#b3bcae" stroke-width="2.2" opacity=".43" stroke-linecap="round">
+  <path d="M527 230q33 17 45 54M548 248q34 21 48 62M569 263q28 22 37 64M596 275q24 26 28 67M617 266q28 31 29 81M643 266q33 31 31 85M664 256q35 28 41 76M678 236q44 32 46 67"/>
+  <path d="M525 270q28 26 33 62M542 289q26 27 32 62M559 310q20 27 28 56M585 326q17 26 21 60M610 338q19 23 34 53M642 348q24 29 43 54"/>
+ </g>
+ <!-- Fine crown feathers -->
+ <g stroke="#bbc3b6" stroke-width="2" opacity=".42" stroke-linecap="round">
+  <path d="M515 112q51-29 105-19M530 97q48-22 112-10M556 86q61-10 101 5M588 80q68 0 104 29M628 78q58 11 82 38M665 86q54 24 61 50"/>
+ </g>
+ <path d="M558 166c13-12 33-14 47-4" stroke="#c4d0bf" stroke-width="3.5" stroke-linecap="round"/>
+ <ellipse cx="577" cy="169" rx="13" ry="12" fill="#121b17" stroke="#b8c3b2" stroke-width="1.8"/>
+ <ellipse cx="579" cy="167" rx="4.4" ry="4.3" fill="#dce6d4"/>
+ <circle cx="579" cy="167" r="2.2" fill="#111712"/>
+ <!-- Gold crown, positioned over the raven's forehead -->
+ <path d="m593 78-8-51 38 25 27-43 26 43 43-27-10 63z" fill="url(#gold)" stroke="#8e7746" stroke-width="3"/>
+ <path d="m593 80 116 10 4-14-122-10z" fill="#ad9157"/>
+ <circle cx="585" cy="23" r="4" fill="#d9c186"/><circle cx="650" cy="9" r="5" fill="#d9c186"/><circle cx="720" cy="23" r="4" fill="#d9c186"/>
+ <path d="M615 76q22 6 44 6t43-1" stroke="#e9d5a1" stroke-width="2.5" opacity=".75"/>
+</svg>
