@@ -239,3 +239,9 @@
 :root[data-casecrow-theme=dark] .cc-app .edv2.cc-upgrade .cc-upgrade-card-value strong{color:var(--cc-ink)}
 :root[data-casecrow-theme=dark] .cc-app .edv2.cc-upgrade .cc-upgrade-picker .edv2-item-body strong{color:var(--cc-ink)}
 :root[data-casecrow-theme=dark] .cc-app .edv2.cc-upgrade .cc-upgrade-picker .edv2-item{background:var(--cc-panel);border-color:var(--cc-line)}
+
+/* Hero artwork matches approved Raven + gold-crown composition. */
+.cc-app .edv2.cc-upgrade .cc-upgrade-horizon-mark{width:620px;height:385px;top:-44px;right:-8px;opacity:.66;transform:none;filter:none;mix-blend-mode:multiply}
+.cc-app .edv2.cc-upgrade .cc-upgrade-horizon-mark img{width:100%;height:100%;object-fit:contain;filter:none}
+@media(max-width:850px){.cc-app .edv2.cc-upgrade .cc-upgrade-horizon-mark{width:440px;height:260px;right:-80px;top:0;opacity:.39}}
+@media(max-width:600px){.cc-app .edv2.cc-upgrade .cc-upgrade-horizon-mark{width:310px;height:205px;top:-10px;right:-95px;opacity:.25}}
