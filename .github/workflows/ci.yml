@@ -32,5 +32,7 @@ jobs:
         run: pnpm --filter @cs2-cases/api prisma:generate
       - name: Typecheck
         run: pnpm typecheck
+      - name: Test CS.MONEY API parser
+        run: pnpm --filter @cs2-cases/api test -- csmc-csmoney.test.ts
       - name: Build
         run: pnpm build
