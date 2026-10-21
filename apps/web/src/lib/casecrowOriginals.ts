@@ -13,7 +13,7 @@ export const CASECROW_ORIGINALS = [
       "Raven"
     ],
     "order": 1,
-    "imageUrl": "/casecrow-originals/raven.svg"
+    "imageUrl": "/casecrow-originals/raven.webp"
   },
   {
     "slug": "ancient",
@@ -28,7 +28,7 @@ export const CASECROW_ORIGINALS = [
       "King"
     ],
     "order": 2,
-    "imageUrl": "/casecrow-originals/ancient.svg"
+    "imageUrl": "/casecrow-originals/ancient.webp"
   },
   {
     "slug": "blackout",
@@ -43,7 +43,7 @@ export const CASECROW_ORIGINALS = [
       "Slate"
     ],
     "order": 3,
-    "imageUrl": "/casecrow-originals/blackout.svg"
+    "imageUrl": "/casecrow-originals/blackout.webp"
   },
   {
     "slug": "anubis",
@@ -58,7 +58,7 @@ export const CASECROW_ORIGINALS = [
       "Temple"
     ],
     "order": 4,
-    "imageUrl": "/casecrow-originals/anubis.svg"
+    "imageUrl": "/casecrow-originals/anubis.webp"
   },
   {
     "slug": "ice-vein",
@@ -73,7 +73,7 @@ export const CASECROW_ORIGINALS = [
       "Frost"
     ],
     "order": 5,
-    "imageUrl": "/casecrow-originals/ice-vein.svg"
+    "imageUrl": "/casecrow-originals/ice-vein.webp"
   },
   {
     "slug": "dragon-fire",
@@ -88,7 +88,7 @@ export const CASECROW_ORIGINALS = [
       "Heat"
     ],
     "order": 6,
-    "imageUrl": "/casecrow-originals/dragon-fire.svg"
+    "imageUrl": "/casecrow-originals/dragon-fire.webp"
   },
   {
     "slug": "eco-round",
@@ -103,7 +103,7 @@ export const CASECROW_ORIGINALS = [
       "Groundwater"
     ],
     "order": 7,
-    "imageUrl": "/casecrow-originals/eco-round.svg"
+    "imageUrl": "/casecrow-originals/eco-round.webp"
   },
   {
     "slug": "headshot",
@@ -118,7 +118,7 @@ export const CASECROW_ORIGINALS = [
       "Blood"
     ],
     "order": 8,
-    "imageUrl": "/casecrow-originals/headshot.svg"
+    "imageUrl": "/casecrow-originals/headshot.webp"
   },
   {
     "slug": "fade",
@@ -133,7 +133,7 @@ export const CASECROW_ORIGINALS = [
       "Marble"
     ],
     "order": 9,
-    "imageUrl": "/casecrow-originals/fade.svg"
+    "imageUrl": "/casecrow-originals/fade.webp"
   },
   {
     "slug": "gold-rush",
@@ -148,7 +148,7 @@ export const CASECROW_ORIGINALS = [
       "Brass"
     ],
     "order": 10,
-    "imageUrl": "/casecrow-originals/gold-rush.svg"
+    "imageUrl": "/casecrow-originals/gold-rush.webp"
   },
   {
     "slug": "blood-money",
@@ -163,7 +163,7 @@ export const CASECROW_ORIGINALS = [
       "Scarlet"
     ],
     "order": 11,
-    "imageUrl": "/casecrow-originals/blood-money.svg"
+    "imageUrl": "/casecrow-originals/blood-money.webp"
   },
   {
     "slug": "toxic",
@@ -178,7 +178,7 @@ export const CASECROW_ORIGINALS = [
       "Poison"
     ],
     "order": 12,
-    "imageUrl": "/casecrow-originals/toxic.svg"
+    "imageUrl": "/casecrow-originals/toxic.webp"
   },
   {
     "slug": "doppler",
@@ -193,7 +193,7 @@ export const CASECROW_ORIGINALS = [
       "Ruby"
     ],
     "order": 13,
-    "imageUrl": "/casecrow-originals/doppler.svg"
+    "imageUrl": "/casecrow-originals/doppler.webp"
   },
   {
     "slug": "ruby-crystal",
@@ -208,7 +208,7 @@ export const CASECROW_ORIGINALS = [
       "Slaughter"
     ],
     "order": 14,
-    "imageUrl": "/casecrow-originals/ruby-crystal.svg"
+    "imageUrl": "/casecrow-originals/ruby-crystal.webp"
   },
   {
     "slug": "sapphire-crystal",
@@ -223,7 +223,7 @@ export const CASECROW_ORIGINALS = [
       "Ice"
     ],
     "order": 15,
-    "imageUrl": "/casecrow-originals/sapphire-crystal.svg"
+    "imageUrl": "/casecrow-originals/sapphire-crystal.webp"
   }
 ] as const;
 

@@ -4,11 +4,6 @@ import { CASECROW_ART_COLLECTIONS, CASECROW_ORIGINALS } from "../lib/casecrowOri
 import { formatMinor } from "../lib/money";
 import type { CaseDto } from "../lib/types";
 import "../styles/casecrow-original-collections.css";
-const spriteStyle = (order: number): CSSProperties => ({
-  backgroundImage: 'url("/casecrow-originals/sprite.avif")',
-  backgroundPosition: `${((order - 1) % 4) * 100 / 3}% ${Math.floor((order - 1) / 4) * 100 / 3}%`,
-  backgroundSize: "400% 400%",
-});
 
 interface Props {
   cases: CaseDto[];
@@ -45,7 +40,7 @@ export function OriginalCollection({ cases, loading, search }: Props) {
           const art = <div className="cco-art">
             <img src={entry.imageUrl} alt={entry.name} loading="lazy" decoding="async" />
           </div>;
-          return <article className={`cco-card ${live ? "cco-live" : "cco-pending"}`} key={entry.slug} style={{ "--cco-accent": entry.accent } as CSSProperties}>
+          return <article className={`cco-card ${entry.series === "crystals" ? "cco-crystal" : ""} ${live ? "cco-live" : "cco-pending"}`} key={entry.slug} style={{ "--cco-accent": entry.accent } as CSSProperties}>
             {live
               ? <Link className="cco-visual-link" to={`/cases/${entry.slug}`} aria-label={`Открыть кейс ${entry.name}`}>{art}</Link>
               : <Link className="cco-visual-link" to={`/collections/${entry.slug}`} aria-label={`Посмотреть кейс ${entry.name}`}>{art}</Link>}

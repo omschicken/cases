@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../lib/api";
@@ -6,15 +5,6 @@ import { CASECROW_ORIGINALS, CASECROW_ORIGINALS_BY_SLUG } from "../lib/casecrowO
 import { formatMinor } from "../lib/money";
 import type { CaseDto, CaseItem } from "../lib/types";
 import "../styles/casecrow-original-collections.css";
-
-function spriteStyle(order: number): CSSProperties {
-  const index = order - 1;
-  return {
-    backgroundImage: 'url("/casecrow-originals/sprite.avif")',
-    backgroundSize: "400% 400%",
-    backgroundPosition: `${(index % 4) * 100 / 3}% ${Math.floor(index / 4) * 100 / 3}%`,
-  };
-}
 
 function rollDemo(items: CaseItem[]): CaseItem {
   const weights = items.map((item) => Math.max(0, Number(item.weight) || 0));
@@ -81,7 +71,7 @@ export function OriginalCaseDetailPage() {
   return <main className="cco-detail">
     <Link to="/#new-collections" className="cco-detail-back">← Все коллекции</Link>
     <section className="cco-detail-main">
-      <div className="cco-detail-art" role="img" aria-label={`Кейс ${entry.name}`}>
+      <div className={`cco-detail-art ${entry.series === "crystals" ? "cco-detail-crystal" : ""}`} role="img" aria-label={`Кейс ${entry.name}`}>
         <img className="cco-case-full-art" src={entry.imageUrl} alt={entry.name} />
       </div>
       <div className="cco-detail-copy">
