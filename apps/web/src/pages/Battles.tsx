@@ -22,7 +22,7 @@ export function BattlesPage() {
   const [confirm, setConfirm] = useState(false);
   const [result, setResult] = useState<BattleResult | null>(null);
   const [historyItem, setHistoryItem] = useState<GameOperationDto | null>(null);
-  const available = (cases.data ?? []).filter((value) => value.isActive && value.currency === "RUB");
+  const available = (cases.data ?? []).filter((value) => value.isActive && value.currency === "RUB" && value.canBattle !== false);
   const chosen = available.find((value) => value.id === selectedId) ?? available[0];
   const battles = (history.data ?? []).filter((value) => value.type === "BATTLE");
   const insufficient = !!chosen && !!wallet.data && BigInt(wallet.data.balanceMinor) < BigInt(chosen.priceMinor);

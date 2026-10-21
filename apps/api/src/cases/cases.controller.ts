@@ -7,6 +7,7 @@ import { CurrentUser } from "../common/decorators/current-user.decorator";
 import type { AuthenticatedUser } from "../auth/jwt.strategy";
 import { CasesService } from "./cases.service";
 import { OpenCaseDto } from "./dto/open-case.dto";
+import { OpenCaseBatchDto } from "./dto/open-case-batch.dto";
 import { RotateSeedDto } from "./dto/rotate-seed.dto";
 
 @Controller("cases")
@@ -66,6 +67,13 @@ export class CasesController {
   @Post("open")
   open(@CurrentUser() user: AuthenticatedUser, @Body() dto: OpenCaseDto) {
     return this.casesService.openCase(user.id, dto.caseId, dto.clientSeed);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @Post("open-batch")
+  openBatch(@CurrentUser() user: AuthenticatedUser, @Body() dto: OpenCaseBatchDto) {
+    return this.casesService.openCaseBatch(user.id, dto.caseId, dto.count, dto.clientSeed);
   }
 
   @UseGuards(JwtAuthGuard)

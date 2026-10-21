@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SUPPORTED_LANGUAGES } from "../i18n";
 
@@ -13,6 +14,7 @@ const NATIVE_LABEL: Record<string, string> = {
 
 export function LanguageSwitcher() {
   const { i18n } = useTranslation();
+  useEffect(() => { document.documentElement.lang = i18n.resolvedLanguage ?? "ru"; }, [i18n.resolvedLanguage]);
 
   return (
     <select

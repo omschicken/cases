@@ -17,6 +17,12 @@ export class GamesController {
   history(@CurrentUser() user: AuthenticatedUser) { return this.games.listMyOperations(user.id); }
 
   @UseGuards(JwtAuthGuard)
+  @Post("contracts/quote")
+  quoteContract(@CurrentUser() user: AuthenticatedUser, @Body() dto: CreateContractDto) {
+    return this.games.quoteContract(user.id, dto.inventoryItemIds);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post("contracts")
   contract(@CurrentUser() user: AuthenticatedUser, @Body() dto: CreateContractDto) { return this.games.createContract(user.id, dto.inventoryItemIds); }
 

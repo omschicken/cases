@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { Search } from "lucide-react";
 import heroImage from "../assets/casecrow-approved/cases/webp/case_01.webp";
 import { api, ApiError } from "../lib/api";
 import { caseVersionLabel, resolveCaseArt } from "../lib/caseArt";
@@ -27,6 +28,11 @@ function belongsToFilter(item: CaseDto, filter: PriceFilter): boolean {
 export function CaseListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("q") ?? "";
+  useEffect(() => {
+    if (window.location.hash !== "#catalog") return;
+    const frame = window.requestAnimationFrame(() => document.getElementById("catalog")?.scrollIntoView({ block: "start" }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [searchQuery]);
   const [cases, setCases] = useState<CaseDto[]>([]);
   const [query, setQuery] = useState(searchQuery);
   const [filter, setFilter] = useState<PriceFilter>("all");
@@ -79,7 +85,7 @@ export function CaseListPage() {
   }, [cases, filter, query, sort]);
 
   const featured = useMemo(
-    () => [...cases].sort((a, b) => Number(b.priceMinor) - Number(a.priceMinor))[0],
+    () => [...cases].filter((item) => item.canOpen !== false).sort((a, b) => Number(b.priceMinor) - Number(a.priceMinor))[0],
     [cases],
   );
 
@@ -116,6 +122,7 @@ export function CaseListPage() {
           </select>
         </div>
 
+        <label className="fidelity-catalog-search"><Search size={18} aria-hidden="true" /><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Найти кейс или скин" aria-label="Поиск кейсов и скинов" /></label>
         {query && <div className="fidelity-query" role="status">Поиск: <strong>{query}</strong><button type="button" onClick={() => setSearchParams({})}>Сбросить</button></div>}
         {error && <div className="fidelity-catalog-error" role="alert"><span>{error}</span><button type="button" onClick={() => setRequestId((value) => value + 1)}>Повторить</button></div>}
 
@@ -127,12 +134,12 @@ export function CaseListPage() {
               <article className="fidelity-card" key={item.id}>
                 <Link className="fidelity-card-art" to={`/cases/${item.slug}`} aria-label={`Открыть страницу ${item.name}`}>
                   <img src={resolveCaseArt(item.slug, item.imageUrl)} alt={item.name} loading="lazy" />
-                  <span>{item.isActive ? "Доступен" : "Недоступен"}</span>
+                  <span>{item.canOpen === false ? "Проверка цены" : item.isActive ? "Доступен" : "Недоступен"}</span>
                   {version ? <em className="fidelity-card-version">{version}</em> : null}
                 </Link>
                 <div className="fidelity-card-info">
                   <div><h3>{item.name}</h3><strong>{formatMinor(item.priceMinor, item.currency)}</strong></div>
-                  <Link to={`/cases/${item.slug}`}>Открыть <span>→</span></Link>
+                  <Link to={`/cases/${item.slug}`}>{item.canOpen === false ? "Подробнее" : "Открыть"} <span>→</span></Link>
                 </div>
               </article>
             );
@@ -146,7 +153,7 @@ export function CaseListPage() {
       {featured && (
         <section className="fidelity-promo" aria-label={`Выбранный кейс: ${featured.name}`}>
           <img src={resolveCaseArt(featured.slug, featured.imageUrl)} alt={featured.name} />
-          <div><small>Выбор каталога</small><h2>{featured.name}</h2><p>{featured.items.length} предметов · {formatMinor(featured.priceMinor, featured.currency)}</p></div>
+          <div><small>Выбор каталога</small><h2>{featured.name}</h2><p>{featured.itemCount ?? featured.items.length} предметов · {formatMinor(featured.priceMinor, featured.currency)}</p></div>
           <Link to={`/cases/${featured.slug}`}>Смотреть кейс <span>↗</span></Link>
         </section>
       )}

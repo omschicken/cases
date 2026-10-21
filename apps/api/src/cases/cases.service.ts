@@ -10,6 +10,7 @@ import {
 import { Subject } from "rxjs";
 import { PrismaService } from "../prisma/prisma.service";
 import { WalletService } from "../wallet/wallet.service";
+import { assessCaseEconomics } from "../common/util/case-economics";
 import { CreateCaseDto } from "./dto/admin-case.dto";
 import { maskEmail } from "../common/util/mask";
 
@@ -48,14 +49,15 @@ export class CasesService {
         const previous = representative.get(baseName);
         if (!previous || item.valueMinor > previous.valueMinor) representative.set(baseName, item);
       }
-      return { ...itemCase, itemCount: itemCase.items.length, items: [...representative.values()] };
+      const eligibility = assessCaseEconomics(itemCase.items, itemCase.priceMinor);
+      return { ...itemCase, itemCount: itemCase.items.length, ...eligibility, items: [...representative.values()] };
     });
   }
 
   async getBySlug(slug: string) {
     const found = await this.prisma.case.findUnique({ where: { slug }, include: { items: true } });
     if (!found) throw new NotFoundException("Case not found");
-    return found;
+    return { ...found, ...assessCaseEconomics(found.items, found.priceMinor) };
   }
 
   /** Fetches the user's active provably-fair seed pair, creating one on first use. */
@@ -64,17 +66,25 @@ export class CasesService {
       where: { userId, isActive: true },
     });
     if (existing) return existing;
-
-    const serverSeed = generateServerSeed();
-    return this.prisma.provablyFairSeed.create({
-      data: {
-        userId,
-        serverSeed,
-        serverSeedHash: hashServerSeed(serverSeed),
-        clientSeed: initialClientSeed ?? generateClientSeed(),
-        nonce: 0,
-        isActive: true,
-      },
+    // Only on first use: serialize seed allocation per account so two
+    // concurrent opens never create two active seeds with duplicate nonces.
+    return this.prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${userId} FOR UPDATE`;
+      const allocated = await tx.provablyFairSeed.findFirst({
+        where: { userId, isActive: true },
+      });
+      if (allocated) return allocated;
+      const serverSeed = generateServerSeed();
+      return tx.provablyFairSeed.create({
+        data: {
+          userId,
+          serverSeed,
+          serverSeedHash: hashServerSeed(serverSeed),
+          clientSeed: initialClientSeed ?? generateClientSeed(),
+          nonce: 0,
+          isActive: true,
+        },
+      });
     });
   }
 
@@ -114,6 +124,9 @@ export class CasesService {
       throw new BadRequestException("This case is not configured in RUB");
     }
     if (theCase.items.length === 0) throw new BadRequestException("This case has no items configured");
+    if (!assessCaseEconomics(theCase.items, theCase.priceMinor).canOpen) {
+      throw new BadRequestException("Case temporarily unavailable pending price review");
+    }
 
     const seed = await this.getOrCreateActiveSeed(userId, clientSeedIfFirstUse);
 
@@ -182,6 +195,77 @@ export class CasesService {
     }
 
     return result;
+  }
+
+  /** Atomic multiple opening: one wallet debit, consecutive nonces and five
+   * or fewer real inventory items. No retries after an uncertain response. */
+  async openCaseBatch(userId: string, caseId: string, count: number, clientSeedIfFirstUse?: string) {
+    if (!Number.isInteger(count) || count < 1 || count > 5) throw new BadRequestException("Choose 1 to 5 cases");
+    const theCase = await this.prisma.case.findUnique({ where: { id: caseId }, include: { items: true } });
+    if (!theCase || !theCase.isActive || !theCase.items.length) throw new BadRequestException("Case unavailable");
+    if (theCase.currency !== "RUB" || theCase.items.some(item => item.currency !== "RUB"))
+      throw new BadRequestException("Case currency is unsupported");
+    if (!assessCaseEconomics(theCase.items, theCase.priceMinor).canOpen)
+      throw new BadRequestException("Case temporarily unavailable pending price review");
+    const seed = await this.getOrCreateActiveSeed(userId, clientSeedIfFirstUse);
+    type Opened = {
+      inventoryItemId: string; openEventId: string;
+      item: (typeof theCase.items)[number];
+      roll: number; nonce: number; serverSeedHash: string; clientSeed: string;
+    };
+    const results = await this.prisma.$transaction(async tx => {
+      // Row lock serializes all open operations on the same wallet.
+      await this.wallet.debitInTx(tx, userId, theCase.priceMinor * BigInt(count), {
+        reason: "CASE_OPEN", referenceType: "Case", referenceId: theCase.id,
+      });
+      const rows = await tx.$queryRaw<{ nonce: number; serverSeed: string; serverSeedHash: string; clientSeed: string }[]>`
+        SELECT "nonce", "serverSeed", "serverSeedHash", "clientSeed"
+        FROM "ProvablyFairSeed" WHERE "id" = ${seed.id} FOR UPDATE
+      `;
+      if (!rows[0]) throw new BadRequestException("Case seed unavailable");
+      const locked = rows[0];
+      const weights = theCase.items.map(item => ({ id: item.id, weight: item.weight }));
+      const output: Opened[] = [];
+      for (let index = 0; index < count; index++) {
+        const nonce = locked.nonce + index;
+        const roll = computeRoll(locked.serverSeed, locked.clientSeed, nonce);
+        const chosen = pickWeightedItem(weights, roll);
+        const item = theCase.items.find(candidate => candidate.id === chosen.id)!;
+        const inventory = await tx.inventoryItem.create({
+          data: { userId, caseItemId: item.id, status: "IN_INVENTORY" },
+        });
+        const event = await tx.caseOpenEvent.create({
+          data: {
+            userId, caseId: theCase.id, resultCaseItemId: item.id,
+            provablyFairSeedId: seed.id, nonce, roll, inventoryItemId: inventory.id,
+          },
+        });
+        output.push({
+          inventoryItemId: inventory.id, openEventId: event.id, item, roll, nonce,
+          serverSeedHash: locked.serverSeedHash, clientSeed: locked.clientSeed,
+        });
+      }
+      await tx.provablyFairSeed.update({ where: { id: seed.id }, data: { nonce: locked.nonce + count } });
+      return output;
+    }, { timeout: 15_000 });
+
+    // Broadcast only committed events, never unconfirmed rolls.
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId }, select: { email: true, displayName: true },
+    });
+    if (user) for (const result of results) {
+      this.broadcastDrop({
+        id: result.openEventId,
+        userLabel: user.displayName ?? maskEmail(user.email),
+        caseName: theCase.name,
+        item: {
+          name: result.item.name, imageUrl: result.item.imageUrl,
+          valueMinor: result.item.valueMinor.toString(),
+          currency: result.item.currency, rarity: result.item.rarity,
+        },
+      });
+    }
+    return { results, count, totalPriceMinor: (theCase.priceMinor * BigInt(count)).toString() };
   }
 
   async listMyOpenEvents(userId: string) {
