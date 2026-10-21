@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
-import heroImage from "../assets/casecrow-approved/cases/webp/case_01.webp";
+import heroImage from "../assets/casecrow-approved/hero-courtyard-v2.webp";
+import mobileHero from "../assets/casecrow-approved/cases/webp/case_01.webp";
 import { api, ApiError } from "../lib/api";
 import { caseVersionLabel, resolveCaseArt } from "../lib/caseArt";
 import { formatMinor } from "../lib/money";
@@ -33,11 +34,11 @@ export function CaseListPage() {
     const frame = window.requestAnimationFrame(() => document.getElementById("catalog")?.scrollIntoView({ block: "start" }));
     return () => window.cancelAnimationFrame(frame);
   }, [searchQuery]);
-  const [cases, setCases] = useState<CaseDto[]>([]);
+  const [cases, setCases] = useState<CaseDto[]>(() => api.peek<CaseDto[]>("/cases") ?? []);
   const [query, setQuery] = useState(searchQuery);
   const [filter, setFilter] = useState<PriceFilter>("all");
   const [sort, setSort] = useState<SortMode>("default");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !api.peek("/cases"));
   const [error, setError] = useState<string | null>(null);
   const [requestId, setRequestId] = useState(0);
 
@@ -48,7 +49,7 @@ export function CaseListPage() {
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
+    setLoading(!api.peek("/cases"));
     api.get<CaseDto[]>("/cases")
       .then((data) => {
         if (!active) return;
@@ -92,17 +93,17 @@ export function CaseListPage() {
   return (
     <>
       <section className="fidelity-hero" aria-labelledby="fidelity-title">
+        <picture className="cc-hero-scene">
+          <source media="(max-width:600px)" srcSet={mobileHero} />
+          <img src={heroImage} alt="Кейс CaseCrow и коллекционный скин в светлом каменном дворике" fetchPriority="high" decoding="async" width="2172" height="724" />
+        </picture>
         <div className="fidelity-hero-copy">
           <p>Коллекции&nbsp; / &nbsp;Counter-Strike 2</p>
           <h1 id="fidelity-title">Предметы<br />с <span>характером.</span></h1>
-          <div className="fidelity-mobile-art"><img src={heroImage} alt="Коллекционный кейс CaseCrow" /></div>
           <div className="fidelity-hero-bottom">
             <p>Открывай кейсы, собирай редкие скины<br />и формируй собственную коллекцию.</p>
             <a href="#catalog">Открыть кейсы <span>→</span></a>
           </div>
-        </div>
-        <div className="fidelity-hero-art">
-          <img src={heroImage} alt="Коллекционный кейс CaseCrow" />
         </div>
       </section>
 

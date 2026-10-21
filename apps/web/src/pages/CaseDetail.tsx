@@ -9,6 +9,8 @@ import { useAuth } from "../context/AuthContext";
 import { CaseOpeningScene } from "../components/CaseOpeningScene";
 import { EditorialItemImage } from "../components/editorial/EditorialItemImage";
 
+import "../styles/dz-item.css";
+import "../styles/dz-protocol.css";
 import "../styles/case-detail-editorial.css";
 import "../styles/case-reel.css";
 import "../styles/case-opening-scene.css";

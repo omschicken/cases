@@ -1,4 +1,5 @@
-export const API_URL = import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_URL ?? "/api";
+import { PublicReadCache } from "./publicReadCache";
+export const API_URL = import.meta.env.VITE_CASECROW_READONLY_PREVIEW === "1" ? "/api" : import.meta.env.VITE_API_BASE_URL ?? import.meta.env.VITE_API_URL ?? "/api";
 
 const ACCESS_TOKEN_KEY = "cs2cases.accessToken";
 const REFRESH_TOKEN_KEY = "cs2cases.refreshToken";
@@ -107,21 +108,13 @@ async function tryRefresh(): Promise<boolean> {
 }
 
 /** Deduplicate expensive, public reads while keeping account/financial data uncached. */
-const publicGetCache = new Map<string, { expiresAt: number; value: Promise<unknown> }>();
+const publicGetCache = new PublicReadCache();
 function cachedGet<T>(path: string): Promise<T> {
-  if (path !== "/cases" && path !== "/games/upgrade-targets") return request<T>(path, { method: "GET" });
-  const now = Date.now();
-  const cached = publicGetCache.get(path);
-  if (cached && cached.expiresAt > now) return cached.value as Promise<T>;
-  const value = request<T>(path, { method: "GET" }).catch(error => {
-    publicGetCache.delete(path);
-    throw error;
-  });
-  publicGetCache.set(path, { expiresAt: now + 20_000, value });
-  return value;
+  return publicGetCache.get(path, () => request<T>(path, { method: "GET" }));
 }
 
 export const api = {
+  peek: <T>(path: string) => publicGetCache.peek<T>(path),
   get: <T>(path: string) => cachedGet<T>(path),
   post: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: "POST", body: body !== undefined ? JSON.stringify(body) : undefined }),

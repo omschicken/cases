@@ -1,32 +1,35 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import { Layout } from "./components/Layout";
-import { EditorialLayout, EditorialSectionsLayout } from "./components/editorial/EditorialShell";
+
+import { EditorialLayout } from "./components/editorial/EditorialShell";
 import { ProtectedRoute, AdminRoute } from "./components/ProtectedRoute";
-import { LoginPage } from "./pages/Login";
-import { RegisterPage } from "./pages/Register";
+
 import { CaseListPage } from "./pages/CaseList";
-import { CaseDetailPage } from "./pages/CaseDetail";
-import { VerifyPage } from "./pages/Verify";
-import { InventoryPage } from "./pages/Inventory";
-import { HistoryPage } from "./pages/History";
-import { WalletPage } from "./pages/Wallet";
-import { ProfilePage } from "./pages/Profile";
-import { ReferralPage } from "./pages/Referral";
-import { AdminDashboardPage } from "./pages/admin/AdminDashboard";
-import { BattlesPage } from "./pages/Battles";
-import { UpgraderPage } from "./pages/Upgrader";
-import { ContractsPage } from "./pages/Contracts";
-import { CardsPage } from "./pages/Cards";
-import { PrizesPage } from "./pages/Prizes";
-import { BonusesPage } from "./pages/Bonuses";
-import { FAQPage } from "./pages/FAQ";
-import { FairPage } from "./pages/Fair";
-import { LeaderboardPage } from "./pages/Leaderboard";
-import { NotFoundPage } from "./pages/NotFound";
-import { SteamCallbackPage } from "./pages/SteamCallback";
-import { SteamCompletePage } from "./pages/SteamComplete";
+
+const LoginPage = lazy(() => import("./pages/Login").then(module => ({ default: module.LoginPage })));
+const RegisterPage = lazy(() => import("./pages/Register").then(module => ({ default: module.RegisterPage })));
+const CaseDetailPage = lazy(() => import("./pages/CaseDetail").then(module => ({ default: module.CaseDetailPage })));
+const VerifyPage = lazy(() => import("./pages/Verify").then(module => ({ default: module.VerifyPage })));
+const InventoryPage = lazy(() => import("./pages/Inventory").then(module => ({ default: module.InventoryPage })));
+const HistoryPage = lazy(() => import("./pages/History").then(module => ({ default: module.HistoryPage })));
+const WalletPage = lazy(() => import("./pages/Wallet").then(module => ({ default: module.WalletPage })));
+const ProfilePage = lazy(() => import("./pages/Profile").then(module => ({ default: module.ProfilePage })));
+const ReferralPage = lazy(() => import("./pages/Referral").then(module => ({ default: module.ReferralPage })));
+const AdminDashboardPage = lazy(() => import("./pages/admin/AdminDashboard").then(module => ({ default: module.AdminDashboardPage })));
+const BattlesPage = lazy(() => import("./pages/Battles").then(module => ({ default: module.BattlesPage })));
+const UpgraderPage = lazy(() => import("./pages/Upgrader").then(module => ({ default: module.UpgraderPage })));
+const ContractsPage = lazy(() => import("./pages/Contracts").then(module => ({ default: module.ContractsPage })));
+const CardsPage = lazy(() => import("./pages/Cards").then(module => ({ default: module.CardsPage })));
+const PrizesPage = lazy(() => import("./pages/Prizes").then(module => ({ default: module.PrizesPage })));
+const BonusesPage = lazy(() => import("./pages/Bonuses").then(module => ({ default: module.BonusesPage })));
+const FAQPage = lazy(() => import("./pages/FAQ").then(module => ({ default: module.FAQPage })));
+const FairPage = lazy(() => import("./pages/Fair").then(module => ({ default: module.FairPage })));
+const LeaderboardPage = lazy(() => import("./pages/Leaderboard").then(module => ({ default: module.LeaderboardPage })));
+const NotFoundPage = lazy(() => import("./pages/NotFound").then(module => ({ default: module.NotFoundPage })));
+const SteamCallbackPage = lazy(() => import("./pages/SteamCallback").then(module => ({ default: module.SteamCallbackPage })));
+const SteamCompletePage = lazy(() => import("./pages/SteamComplete").then(module => ({ default: module.SteamCompletePage })));
+const Layout = lazy(() => import("./components/Layout").then(module => ({ default: module.Layout })));
 
 const DesignLabPage = import.meta.env.DEV
   ? lazy(() => import("./pages/DesignLab").then((module) => ({ default: module.DesignLabPage })))
@@ -46,8 +49,7 @@ export default function App() {
                 element={<Suspense fallback={null}><DesignLabPage /></Suspense>}
               />
             )}
-          </Route>
-          <Route element={<EditorialSectionsLayout />}>
+
             <Route path="/battles" element={<BattlesPage />} />
             <Route path="/upgrader" element={<UpgraderPage />} />
             <Route path="/upgrade" element={<Navigate to="/upgrader" replace />} />
@@ -55,7 +57,6 @@ export default function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/inventory" element={<InventoryPage />} />
             </Route>
-          </Route>
           <Route element={<Layout />}>
             <Route path="/verify/:openEventId" element={<VerifyPage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -81,6 +82,7 @@ export default function App() {
             <Route element={<AdminRoute />}>
               <Route path="/admin/*" element={<AdminDashboardPage />} />
             </Route>
+          </Route>
           </Route>
         </Routes>
       </AuthProvider>

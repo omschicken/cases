@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Res, Sse, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Header, Param, Post, Res, Sse, UseGuards } from "@nestjs/common";
 import type { Response } from "express";
 import { map } from "rxjs/operators";
 import { Throttle } from "@nestjs/throttler";
@@ -15,6 +15,7 @@ export class CasesController {
   constructor(private readonly casesService: CasesService) {}
 
   @Get()
+  @Header("Cache-Control", "public, max-age=0, s-maxage=10, stale-while-revalidate=30")
   listActive() {
     return this.casesService.listActive();
   }
