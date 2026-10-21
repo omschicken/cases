@@ -587,3 +587,57 @@
 @media(prefers-reduced-motion:reduce){
   .cc-app .edv2.cc-upgrade .cc-upgrade-reel-pointer{animation:none!important;transition:none!important}
 }
+
+
+/* Mystery-only orb. Do not change the site header, sidebar, background or cards. */
+.cc-app .edv2.cc-upgrade .cc-upgrade-reel.cc-upgrade-mystery-orb{
+  width:min(204px,100%);max-width:204px;aspect-ratio:1;
+  border:0!important;isolation:isolate;
+  background:conic-gradient(from 32deg,#97c7cf,#8e7cc2,#dba7b4,#e6c984,#99c9bd,#7e91d0,#b999d1,#97c7cf)!important;
+  padding:12px;box-shadow:0 0 0 5px #f5f3ed,0 7px 23px #778d9b36,0 0 25px #9abcc02a!important;
+  animation:cc-mystery-orb-glow 4s ease-in-out infinite;
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb:before{
+  content:"";inset:-6px;border-radius:50%;border:1px solid #a4b9ad99;
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb .cc-upgrade-orb-flow{
+  position:absolute;z-index:1;inset:-2px;border-radius:50%;pointer-events:none;
+  background:conic-gradient(from 0deg,transparent,#fcf5debc 18%,transparent 30%,#8dd8d59c 47%,transparent 62%,#d5aeecb3 82%,transparent);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 27px),#000 calc(100% - 26px),#000 calc(100% - 8px),transparent calc(100% - 7px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 27px),#000 calc(100% - 26px),#000 calc(100% - 8px),transparent calc(100% - 7px));
+  animation:cc-mystery-orb-turn 7s linear infinite;
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb .cc-upgrade-reel-ticks{opacity:.23}
+.cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb .cc-upgrade-reel-pointer::before{
+  width:9px;height:9px;top:-3px;background:#effffc;border-color:#879e9b;
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb .edv2-chance-inner{
+  background:radial-gradient(circle at 50% 25%,#26322b,#111915 80%)!important;
+  box-shadow:inset 0 0 0 1px #adbdaf5e,0 0 16px #7ccac33b!important;
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb .edv2-chance-inner small{color:#bccac0!important}
+.cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb .edv2-chance-inner strong{
+  font:700 25px/1.18 Inter,Arial,sans-serif!important;letter-spacing:.20em!important;
+  color:#e6e6d5!important;text-shadow:0 0 20px #f9deb07d;
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb .cc-upgrade-reel-star{
+  color:#f4d6a4;font-size:28px;text-shadow:0 0 12px #e6dba18c
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb.is-spinning .cc-upgrade-orb-flow{
+  animation-duration:1.1s
+}
+.cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb.is-finalizing .cc-upgrade-orb-flow{
+  animation-duration:2.3s
+}
+@keyframes cc-mystery-orb-turn{to{transform:rotate(360deg)}}
+@keyframes cc-mystery-orb-glow{
+  0%,100%{filter:saturate(.95) brightness(.97)}
+  50%{filter:saturate(1.22) brightness(1.12)}
+}
+:root[data-casecrow-theme="dark"] .cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb{
+  box-shadow:0 0 0 5px #293128,0 8px 24px #67a2a247,0 0 30px #6c9eae2e!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .cc-app .edv2.cc-upgrade .cc-upgrade-mystery-orb,
+  .cc-app .edv2.cc-upgrade .cc-upgrade-orb-flow{animation:none!important}
+}
