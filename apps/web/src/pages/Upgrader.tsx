@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { useEditorialData } from "../hooks/useEditorialData";
 import { useEditorialOperation } from "../hooks/useEditorialOperation";
 import { upgradeChance } from "../lib/editorialGameRules";
+import { nearestUpgradeTarget } from "../lib/upgradeSelection";
 import type { CaseItem, GameOperationDto, InventoryItemDto } from "../lib/types";
 import { EditorialItemImage } from "../components/editorial/EditorialItemImage";
 import { ConfirmDialog, DataState, ItemFilters, ItemTile, OperationState, Rules, SectionHeading, SignInState, filterItems, money } from "../components/editorial/SectionUI";
@@ -17,21 +18,6 @@ import "../styles/upgrader-premium.css";
 type UpgradeResult = { operation: GameOperationDto; won: boolean; item: CaseItem | null; target: CaseItem; chance: number };
 type UpgradeMode = "classic" | "mystery";
 const MYSTERY_BANDS: Record<number, [number, number]> = { 1.5: [1.5, 2], 2: [2, 3], 3: [3, 5], 5: [5, 8] };
-function nearestTarget(items: CaseItem[], sourceMinor: string, ratio: number): CaseItem | undefined {
-  const base = BigInt(sourceMinor);
-  if (base <= 0n) return undefined;
-  const desired = base * BigInt(Math.round(ratio * 100)) / 100n;
-  return items.filter(item => {
-    const price = BigInt(item.valueMinor);
-    return price > base && price <= base * 90n;
-  }).reduce<CaseItem | undefined>((best, item) => {
-    if (!best) return item;
-    const a = BigInt(item.valueMinor), b = BigInt(best.valueMinor);
-    const da = a > desired ? a - desired : desired - a;
-    const db = b > desired ? b - desired : desired - b;
-    return da < db || (da === db && a < b) ? item : best;
-  }, undefined);
-}
 export function UpgraderPage() {
   const { user } = useAuth();
   const inventory = useEditorialData<InventoryItemDto[]>(user ? "/cases/inventory/me" : null);
@@ -80,7 +66,7 @@ export function UpgraderPage() {
     if (locked || !source) return;
     setFactor(value); setResult(null);
     if (mode === "classic") {
-      const closest = nearestTarget(targets.data ?? [], source.caseItem.valueMinor, value);
+      const closest = nearestUpgradeTarget(targets.data ?? [], source.caseItem.valueMinor, value);
       setTargetId(closest?.id ?? "");
       selectTab("target");
     } else {
@@ -168,7 +154,7 @@ export function UpgraderPage() {
       </div>
     </div>
     <div ref={picker} className="edv2-available cc-upgrade-picker">
-      {user && !inventory.loading && !inventory.error && !hasSources && <div className="edv2-state edv2-panel" role="status">В инвентаре пока нет доступных предметов для апгрейда. <Link to="/">Открыть каталог кейсов →</Link></div>}
+      {user && !inventory.loading && !inventory.error && !hasSources && !result && <div className="edv2-state edv2-panel" role="status">В инвентаре пока нет доступных предметов для апгрейда. <Link to="/">Открыть каталог кейсов →</Link></div>}
       {source && !targets.loading && !targets.error && targetList.length === 0 && <div className="edv2-state" role="status">Для этого предмета нет подходящих целей. Сбросьте множитель или выберите другой предмет. <button type="button" className="edv2-btn" onClick={() => { setFactor(null); setTargetId(""); }}>Показать все цели</button></div>}
       <div className="edv2-sectionhead"><div className="edv2-picker-tabs"><button type="button" className={tab === "source" ? "is-active" : ""} onClick={() => selectTab("source")}>Ваш инвентарь</button><button type="button" className={tab === "target" ? "is-active" : ""} onClick={() => selectTab("target")}>Выберите цель</button></div><span className="edv2-count">{tab === "source" ? available.length : targetList.length}</span></div>
       {!user && tab === "source" ? <SignInState /> : <><ItemFilters query={query} setQuery={setQuery} rarity={rarity} setRarity={setRarity} sort={sort} setSort={setSort} />{tab === "source" ? <><DataState loading={inventory.loading} error={inventory.error} retry={inventory.refresh} empty={!inventory.loading && !inventory.error && !sources.length ? "Нет подходящих предметов в инвентаре" : undefined} /><div className="edv2-items">{sources.slice(0, visibleLimit).map((item) => <ItemTile key={item.id} item={item.caseItem} selected={item.id === sourceId} disabled={locked} onClick={() => { setSourceId(item.id); setTargetId(""); setResult(null); setFactor(mode === "mystery" ? 2 : null); selectTab(mode === "mystery" ? "source" : "target"); }} />)}</div>{sources.length > visibleLimit && <button type="button" className="edv2-btn cc-load-more" onClick={() => setVisibleLimit(v => v + 60)}>Показать ещё · {sources.length - visibleLimit} предметов</button>}</> : <><DataState loading={targets.loading} error={targets.error} retry={targets.refresh} empty={!targets.loading && !targets.error && !choices.length ? (source ? "Нет целей, соответствующих фильтрам" : "Сначала выберите исходный предмет") : undefined} /><div className="edv2-items">{choices.slice(0, visibleLimit).map((item) => <ItemTile key={item.id} item={item} selected={item.id === targetId} disabled={locked} onClick={() => { setTargetId(item.id); setFactor(null); setResult(null); }} />)}</div>{choices.length > visibleLimit && <button type="button" className="edv2-btn cc-load-more" onClick={() => setVisibleLimit(v => v + 60)}>Показать ещё · {choices.length - visibleLimit} скинов</button>}</>}</>}
