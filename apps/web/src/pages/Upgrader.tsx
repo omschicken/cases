@@ -132,13 +132,23 @@ export function UpgraderPage() {
         </div>
 
         <div className="edv2-panel edv2-upgrade-center cc-upgrade-meter-panel">
-          <div className="cc-upgrade-center-eyebrow"><Sparkles size={15} /> ВАША ВОЗМОЖНОСТЬ</div>
-          <div className="edv2-chance cc-upgrade-chance" role="meter" aria-label="Шанс успешного апгрейда" aria-valuemin={0} aria-valuemax={100} aria-valuenow={source && target ? percentage : 0} style={{ "--chance": percentage + "%", "--roll": result ? result.operation.roll * 360 + "deg" : "0deg" } as CSSProperties}>
-            <div className="edv2-chance-inner"><small>ШАНС УСПЕХА</small><strong>{(source && target) || result ? percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 }) + "%" : "—"}</strong><ShieldCheck size={20} strokeWidth={1.6}/><small>{operation.busy ? "Ожидаем сервер" : animating ? "Открываем результат…" : "По правилам сервера"}</small>{result && !animating && <b className={"edv2-outcome" + (!result.won ? " is-lost" : "")}>{result.won ? "УСПЕХ" : "БЕЗ ВЫИГРЫША"}</b>}</div>
-            {result && <span className="edv2-roll-marker" />}
+          <div className="cc-upgrade-center-eyebrow"><Sparkles size={15} /> {mode === "mystery" ? "МИСТЕРИ АПГРЕЙД" : "ВАША ВОЗМОЖНОСТЬ"}</div>
+          <div className="cc-upgrade-modes" role="group" aria-label="Режим апгрейда">
+            <button type="button" className={mode === "classic" ? "is-active" : ""} aria-pressed={mode === "classic"} disabled={locked} onClick={() => selectMode("classic")}>Обычный</button>
+            <button type="button" className={mode === "mystery" ? "is-active" : ""} aria-pressed={mode === "mystery"} disabled={locked} onClick={() => selectMode("mystery")}><EyeOff size={13}/> Мистери</button>
           </div>
-          <div className="edv2-factors cc-upgrade-factors" aria-label="Фильтр целей по цене">{[1.5, 2, 3, 5].map((value) => <button type="button" key={value} className={factor === value ? "is-active" : ""} aria-pressed={factor === value} disabled={!source || locked} onClick={() => { setFactor(factor === value ? null : value); setTargetId(""); selectTab("target"); }}>×{value}</button>)}</div>
-          <p className="cc-upgrade-factor-note">Множитель фильтрует стоимость цели.<br />Точный шанс указан для выбранной пары.</p>
+          <div className={"edv2-chance cc-upgrade-chance cc-upgrade-reel" + (operation.busy ? " is-spinning" : "") + (result && animating ? " is-finalizing" : "") + (result && !animating ? (result.won ? " is-won" : " is-lost") : "")} role="meter" aria-label="Шанс успешного апгрейда" aria-valuemin={0} aria-valuemax={100} aria-valuenow={result ? percentage : mode === "classic" && source && target ? percentage : 0} style={{ "--chance": (result || mode === "classic" ? percentage : 0) + "%", "--roll": result ? result.operation.roll * 360 + "deg" : "0deg" } as CSSProperties}>
+            <span className="cc-upgrade-reel-ticks" aria-hidden="true"/>
+            <span className="cc-upgrade-reel-pointer" aria-hidden="true"/>
+            <div className="edv2-chance-inner">
+              <small>{mode === "mystery" && !result ? "ДИАПАЗОН ШАНСА" : "ШАНС УСПЕХА"}</small>
+              <strong>{result || (mode === "classic" && source && target) ? percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 }) + "%" : mode === "mystery" && source ? mysteryChanceRange : "—"}</strong>
+              {result && !animating ? <span className={"cc-upgrade-result-symbol" + (result.won ? " is-won" : " is-lost")}>{result.won ? <Check size={21}/> : <X size={21}/>}</span> : <span className="cc-upgrade-reel-star">✦</span>}
+              {result && !animating && <b className={"edv2-outcome" + (!result.won ? " is-lost" : "")}>{result.won ? "ПОБЕДА" : "НЕ ПОВЕЗЛО"}</b>}
+            </div>
+          </div>
+          <div className="edv2-factors cc-upgrade-factors" aria-label={mode === "mystery" ? "Диапазон цены случайного предмета" : "Подбор цели по цене"}>{[1.5, 2, 3, 5].map(value => <button type="button" key={value} className={factor === value ? "is-active" : ""} aria-pressed={factor === value} disabled={!source || locked || !!result} onClick={() => selectMultiplier(value)}>×{value}</button>)}</div>
+          <p className="cc-upgrade-factor-note">{mode === "mystery" ? <>Случайная цель от ×{band[0]} до ×{band[1]}.<br/>При выигрыше она появится справа.</> : <>Множитель сразу подберёт ближайший скин.<br/>Цель также можно выбрать вручную.</>}</p>
         </div>
 
         <div className={"edv2-panel edv2-upgrade-choice cc-upgrade-choice" + (target ? " has-item" : "")}>
