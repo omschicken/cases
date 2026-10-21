@@ -252,7 +252,7 @@ export function CaseDetailPage() {
             </>
           ) : (
             <>
-              {CASECROW_ORIGINALS_BY_SLUG.has(theCase.slug) ? <Link to="/login" className="dz-btn">{t("caseDetail.logIn")}</Link> : <button onClick={demoSpin} disabled={opening} className="dza-open">
+              {CASECROW_ORIGINALS_BY_SLUG.has(theCase.slug) ? <Link to="/login" className="dza-open">{t("caseDetail.logIn")}</Link> : <button onClick={demoSpin} disabled={opening} className="dza-open">
                 {opening ? t("caseDetail.rolling") : t("caseDetail.demoSpin")}
               </button>}
               <p className="dza-hint">
