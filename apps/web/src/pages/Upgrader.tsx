@@ -123,12 +123,12 @@ export function UpgraderPage() {
             <button type="button" className={mode === "classic" ? "is-active" : ""} aria-pressed={mode === "classic"} disabled={locked} onClick={() => selectMode("classic")}>Обычный</button>
             <button type="button" className={mode === "mystery" ? "is-active" : ""} aria-pressed={mode === "mystery"} disabled={locked} onClick={() => selectMode("mystery")}><EyeOff size={13}/> Мистери</button>
           </div>
-          <div className={"edv2-chance cc-upgrade-chance cc-upgrade-reel" + (operation.busy ? " is-spinning" : "") + (result && animating ? " is-finalizing" : "") + (result && !animating ? (result.won ? " is-won" : " is-lost") : "")} role="meter" aria-label="Шанс успешного апгрейда" aria-valuemin={0} aria-valuemax={100} aria-valuenow={result ? percentage : mode === "classic" && source && target ? percentage : 0} style={{ "--chance": (result || mode === "classic" ? percentage : 0) + "%", "--roll": result ? result.operation.roll * 360 + "deg" : "0deg" } as CSSProperties}>
-            <span className="cc-upgrade-reel-ticks" aria-hidden="true"/>
+          <div className={"edv2-chance cc-upgrade-chance cc-upgrade-reel" + (mode === "mystery" ? " cc-upgrade-mystery-orb" : "") + (operation.busy ? " is-spinning" : "") + (result && animating ? " is-finalizing" : "") + (result && !animating ? (result.won ? " is-won" : " is-lost") : "")} role="meter" aria-label="Шанс успешного апгрейда" aria-valuemin={0} aria-valuemax={100} aria-valuenow={result ? percentage : mode === "classic" && source && target ? percentage : 0} style={{ "--chance": (result || mode === "classic" ? percentage : 0) + "%", "--roll": result ? result.operation.roll * 360 + "deg" : "0deg" } as CSSProperties}>
+            <span className="cc-upgrade-reel-ticks" aria-hidden="true"/>{mode === "mystery" && <span className="cc-upgrade-orb-flow" aria-hidden="true" />}
             <span className="cc-upgrade-reel-pointer" aria-hidden="true"/>
             <div className="edv2-chance-inner">
-              <small>{mode === "mystery" && !result ? "ДИАПАЗОН ШАНСА" : "ШАНС УСПЕХА"}</small>
-              <strong>{result || (mode === "classic" && source && target) ? percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 }) + "%" : mode === "mystery" && source ? mysteryChanceRange : "—"}</strong>
+              <small>{mode === "mystery" && !result ? "МИСТЕРИ" : "ШАНС УСПЕХА"}</small>
+              <strong>{mode === "mystery" && !result ? (source ? "30–200%" : "✦") : result || (mode === "classic" && source && target) ? percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 }) + "%" : "—"}</strong>
               {result && !animating ? <span className={"cc-upgrade-result-symbol" + (result.won ? " is-won" : " is-lost")}>{result.won ? <Check size={21}/> : <X size={21}/>}</span> : <span className="cc-upgrade-reel-star">✦</span>}
               {result && !animating && <b className={"edv2-outcome" + (!result.won ? " is-lost" : "")}>{result.won ? "ПОБЕДА" : "НЕ ПОВЕЗЛО"}</b>}
             </div>
