@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
+import { OriginalCollection } from "../components/OriginalCollection";
 import heroImage from "../assets/casecrow-approved/hero-courtyard-v2.webp";
 import mobileHero from "../assets/casecrow-approved/cases/webp/case_01.webp";
 import { api, ApiError } from "../lib/api";
@@ -106,6 +107,8 @@ export function CaseListPage() {
           </div>
         </div>
       </section>
+
+      <OriginalCollection cases={cases} loading={loading} search={query} />
 
       <section className="fidelity-catalog" id="catalog" aria-labelledby="catalog-title">
         <div className="fidelity-catalog-head">
