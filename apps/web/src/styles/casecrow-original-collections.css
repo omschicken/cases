@@ -1,6 +1,10 @@
 /* Reuse the catalog's typography, cards and responsive grid. */
 #new-collections { scroll-margin-top:100px; }
-.original-catalog .fidelity-card-art img { object-fit:contain; object-position:center; }
+.original-catalog .fidelity-card-art { display:block; position:relative; padding:0; }
+.original-catalog .fidelity-card-art img {
+  position:absolute; inset:0; display:block; width:100%; height:100%;
+  object-fit:cover; object-position:center; margin:0;
+}
 .original-catalog > p { color:var(--dze-muted, inherit); }
 
 /* Only the 15 originals: square source art must not use the old chest cutout. */
