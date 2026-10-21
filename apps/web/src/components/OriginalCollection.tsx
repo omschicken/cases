@@ -1,58 +1,42 @@
-import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { CASECROW_ART_COLLECTIONS, CASECROW_ORIGINALS } from "../lib/casecrowOriginals";
 import { formatMinor } from "../lib/money";
 import type { CaseDto } from "../lib/types";
 import "../styles/casecrow-original-collections.css";
 
-interface Props {
-  cases: CaseDto[];
-  loading: boolean;
-  search: string;
-}
+interface Props { cases: CaseDto[]; loading: boolean; search: string; }
 
-/** The collection is editorial only; availability, pricing and opening live on the API. */
+/** Artwork and taxonomy are local; prices, availability and contents come from the API. */
 export function OriginalCollection({ cases, loading, search }: Props) {
-  const availableBySlug = new Map(cases.map((theCase) => [theCase.slug, theCase]));
+  const availableBySlug = new Map(cases.map(item => [item.slug, item]));
   const needle = search.trim().toLocaleLowerCase("ru");
-  const groups = CASECROW_ART_COLLECTIONS.map((group) => ({
-    ...group,
-    entries: CASECROW_ORIGINALS.filter((entry) =>
-      entry.series === group.key && (!needle || entry.name.toLocaleLowerCase("ru").includes(needle)),
-    ),
-  })).filter((group) => group.entries.length > 0);
-  if (!groups.length) return null;
-
-  return <div className="cco-collections" id="new-collections">
-    {groups.map((group) => <section className="cco-section" aria-labelledby={`cco-title-${group.key}`} key={group.key}>
-      <header className="cco-header">
-        <div>
-          <p className="cco-kicker">CASECROW / COLLECTION</p>
-          <h2 id={`cco-title-${group.key}`}>{group.title}</h2>
-          <p>{group.subtitle}</p>
+  return <div id="new-collections">
+    {CASECROW_ART_COLLECTIONS.map(group => {
+      const entries = CASECROW_ORIGINALS.filter(entry => entry.series === group.key &&
+        (!needle || `${entry.name} ${availableBySlug.get(entry.slug)?.items.map(item => item.name).join(" ") ?? ""}`.toLocaleLowerCase("ru").includes(needle)));
+      if (!entries.length) return null;
+      return <section className="fidelity-catalog original-catalog" aria-labelledby={`collection-${group.key}`} key={group.key}>
+        <div className="fidelity-catalog-head">
+          <h2 id={`collection-${group.key}`}>{group.title} <small>{entries.length}</small></h2>
         </div>
-        <span>{String(group.entries.length).padStart(2, "0")} кейсов</span>
-      </header>
-      <div className="cco-grid">
-        {group.entries.map((entry) => {
-          const data = availableBySlug.get(entry.slug);
-          const live = Boolean(data?.isActive && data.canOpen !== false);
-          const art = <div className="cco-art">
-            <img src={entry.imageUrl} alt={entry.name} loading="lazy" decoding="async" />
-          </div>;
-          return <article className={`cco-card ${entry.series === "crystals" ? "cco-crystal" : ""} ${live ? "cco-live" : "cco-pending"}`} key={entry.slug} style={{ "--cco-accent": entry.accent } as CSSProperties}>
-            {live
-              ? <Link className="cco-visual-link" to={`/cases/${entry.slug}`} aria-label={`Открыть кейс ${entry.name}`}>{art}</Link>
-              : <Link className="cco-visual-link" to={`/collections/${entry.slug}`} aria-label={`Посмотреть кейс ${entry.name}`}>{art}</Link>}
-            <div className="cco-info">
-              <div><h3>{entry.name}</h3><span>{data ? formatMinor(data.priceMinor, data.currency) : "Скоро"}</span></div>
-              {live
-                ? <Link to={`/cases/${entry.slug}`}>Открыть <span aria-hidden="true">↗</span></Link>
-                : <Link to={`/collections/${entry.slug}`}>Подробнее <span aria-hidden="true">↗</span></Link>}
-            </div>
-          </article>;
-        })}
-      </div>
-    </section>)}
+        <p>{group.subtitle}</p>
+        <div className="fidelity-card-grid" aria-busy={loading}>
+          {entries.map(entry => {
+            const data = availableBySlug.get(entry.slug);
+            const label = loading ? "Загрузка…" : !data ? "Недоступен" : data.isActive && data.canOpen !== false ? "Доступен" : "Недоступен";
+            return <article className="fidelity-card" key={entry.slug}>
+              <Link className="fidelity-card-art" to={`/cases/${entry.slug}`} aria-label={`Открыть страницу ${entry.name}`}>
+                <img src={entry.imageUrl} alt={entry.name} width="1100" height="1100" loading="lazy" decoding="async" />
+                <span>{label}</span>
+              </Link>
+              <div className="fidelity-card-info">
+                <div><h3>{entry.name}</h3><strong>{data ? formatMinor(data.priceMinor, data.currency) : "—"}</strong></div>
+                <Link to={`/cases/${entry.slug}`}>{data?.isActive && data.canOpen !== false ? "Открыть" : "Подробнее"} <span>→</span></Link>
+              </div>
+            </article>;
+          })}
+        </div>
+      </section>;
+    })}
   </div>;
 }

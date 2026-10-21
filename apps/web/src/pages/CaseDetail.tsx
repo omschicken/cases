@@ -17,6 +17,8 @@ import "../styles/case-opening-scene.css";
 import "../styles/casecrow-polish.css";
 import type { CaseDto, CaseItem, OpenCaseResult } from "../lib/types";
 import { clearOpening, loadOpening, saveOpening } from "../lib/openingRecovery";
+import { CASECROW_ORIGINALS_BY_SLUG } from "../lib/casecrowOriginals";
+import "../styles/casecrow-original-collections.css";
 
 const EXTERIOR_PATTERN = / \((Factory New|Minimal Wear|Field-Tested|Well-Worn|Battle-Scarred)\)$/;
 const EXTERIOR_SHORT: Record<string, string> = {
@@ -227,6 +229,7 @@ export function CaseDetailPage() {
   return (
     <div
       className="case-detail"
+      data-original-case={CASECROW_ORIGINALS_BY_SLUG.has(theCase.slug) ? "true" : undefined}
       data-rarity={revealed && winningItem ? winningItem.rarity : undefined}
     >
       <CaseOpeningScene theCase={theCase} winner={winningItem} opening={opening} onComplete={finishOpening} onSkip={skipAnimation}
@@ -243,17 +246,17 @@ export function CaseDetailPage() {
               <button onClick={openCase} disabled={opening || recoveryPending || !theCase.isActive || theCase.canOpen === false} className="dza-open">
                 {!theCase.isActive || theCase.canOpen === false ? t("caseDetail.unavailable", { defaultValue: "Недоступен" }) : opening ? t("caseDetail.rolling") : `Открыть ×${openCount}`}
               </button>
-              <button onClick={demoSpin} disabled={opening} className="dza-demo">
+              {!CASECROW_ORIGINALS_BY_SLUG.has(theCase.slug) && <button onClick={demoSpin} disabled={opening} className="dza-demo">
                 {t("caseDetail.demoSpin")}
-              </button>
+              </button>}
             </>
           ) : (
             <>
-              <button onClick={demoSpin} disabled={opening} className="dza-open">
+              {CASECROW_ORIGINALS_BY_SLUG.has(theCase.slug) ? <Link to="/login" className="dz-btn">{t("caseDetail.logIn")}</Link> : <button onClick={demoSpin} disabled={opening} className="dza-open">
                 {opening ? t("caseDetail.rolling") : t("caseDetail.demoSpin")}
-              </button>
+              </button>}
               <p className="dza-hint">
-                <>{t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link></>
+                {CASECROW_ORIGINALS_BY_SLUG.has(theCase.slug) ? "Войдите, чтобы открыть кейс" : <>{t("caseDetail.demoHint")} <Link to="/login">{t("caseDetail.logIn")}</Link></>}
               </p>
             </>
           )}
