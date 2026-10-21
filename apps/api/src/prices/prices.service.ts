@@ -5,6 +5,7 @@ import { fetchCsMoneyPrices } from "./cs-money";
 import { fetchSkinMeta } from "./market-images";
 import { resolveMarketName } from "./market-names";
 import { matchesCaseTheme } from "./case-theme";
+import { marketCasePrice } from "./case-pricing";
 import { balanceCase } from "./case-balance";
 import { pickCaseItems, toItemRarity, type Candidate } from "./case-populate";
 
@@ -67,7 +68,7 @@ export interface MarketItemQuery {
 /**
  * Exact CS.MONEY quotes for active case items live in `market_item`, refreshed
  * in small rotating batches from public CS.MONEY snapshots with set-based SQL
- * statements — no per-skin requests. Active case items are re-priced from it in
+ * statements. Active case items are re-priced from it in
  * one UPDATE. Tables are created on first use so no manual migration is needed.
  *
  * Serverless note: work must finish inside the request that starts it (Vercel
@@ -191,12 +192,23 @@ export class PricesService {
 
       // Preserve exact wears and phase identities; no fallback to a different item.
       const renamed = 0;
-      const casesUpdated = await this.prisma.$executeRaw`
+      const casesUpdated = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.$executeRaw`
         UPDATE "CaseItem" ci
         SET "valueMinor" = CASE WHEN ci.currency = 'USD' THEN m.usd_minor ELSE m.rub_minor END
         FROM market_item m, "Case" c
         WHERE m.name = ci.name AND m.name = ANY(${names}::text[]) AND m.listed AND c.id = ci."caseId" AND c."isActive"
           AND ci."valueMinor" IS DISTINCT FROM (CASE WHEN ci.currency = 'USD' THEN m.usd_minor ELSE m.rub_minor END)`;
+      // Refresh the opening price in the same transaction as its quoted drops.
+      // Existing weights and historical pools are never changed by the sync.
+      const minimums: Record<string,number> = {fade:119900,doppler:199900,'ruby-crystal':499900,'sapphire-crystal':499900};
+      const themed = await tx.case.findMany({where:{isActive:true,slug:{in:Object.keys(minimums)},items:{some:{name:{in:names}}}},include:{items:true}});
+      for (const c of themed) {
+        const priceMinor = BigInt(marketCasePrice(c.items.map(i=>({weight:i.weight,valueMinor:Number(i.valueMinor)})),minimums[c.slug]));
+        if(c.priceMinor!==priceMinor) await tx.case.update({where:{id:c.id},data:{priceMinor}});
+      }
+      return updated;
+      });
 
       await this.syncImages().catch((err) =>
         this.logger.warn(`image sync skipped: ${err instanceof Error ? err.message : err}`),
