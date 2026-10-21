@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@cs2-cases/shared": "workspace:*",
+    "@react-three/drei": "9.122.0",
+    "@react-three/fiber": "8.18.0",
     "gsap": "^3.15.0",
     "i18next": "^26.4.2",
     "i18next-browser-languagedetector": "^8.2.1",
@@ -21,12 +23,14 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^17.0.15",
-    "react-router-dom": "^6.27.0"
+    "react-router-dom": "^6.27.0",
+    "three": "0.170.0"
   },
   "devDependencies": {
     "@types/node": "^20.16.11",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
+    "@types/three": "0.170.0",
     "@vitejs/plugin-react": "^4.3.2",
     "playwright": "1.52.0",
     "typescript": "^5.6.3",

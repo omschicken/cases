@@ -7,6 +7,7 @@ import { resolveCaseArt } from "../lib/caseArt";
 import { CASECROW_ORIGINALS_BY_SLUG } from "../lib/casecrowOriginals";
 import { CaseReel } from "./CaseReel";
 import { EditorialItemImage } from "./editorial/EditorialItemImage";
+import { RavenStage } from "./raven/RavenStage";
 
 interface Props {
   theCase: CaseDto;
@@ -47,6 +48,9 @@ export function CaseOpeningScene({ theCase, winner, opening, actions, resultView
   }
   const art = resolveCaseArt(theCase.slug, theCase.imageUrl);
   const featured = [...theCase.items].sort((a, b) => Number(BigInt(b.valueMinor) - BigInt(a.valueMinor))).slice(0, 5);
+  const reliableStage = opening && !winner
+    ? <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера. Повторное нажатие не требуется.</p><button type="button" onClick={onSkip}>Показать результат без анимации</button></div>
+    : theCase.items.length > 0 && <CaseReel key={opening ? "spin" : "preview"} items={theCase.items} winner={winner ?? theCase.items[0]} preview={!opening} onComplete={onComplete} onTick={tick} />;
   return <div className="cc-opening-page" style={{ "--cc-case-art": `url("${art}")` } as CSSProperties}>
     <header className="cc-opening-hero">
       <div className="cc-opening-hero__copy">
@@ -61,9 +65,7 @@ export function CaseOpeningScene({ theCase, winner, opening, actions, resultView
       </div>
     </header>
     <section ref={stage} className="cc-opening-stage" aria-label="Открытие кейса" data-opening={opening}>
-      {resultView || (opening && !winner
-        ? <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера. Повторное нажатие не требуется.</p><button type="button" onClick={onSkip}>Показать результат без анимации</button></div>
-        : theCase.items.length > 0 && <CaseReel key={opening ? "spin" : "preview"} items={theCase.items} winner={winner ?? theCase.items[0]} preview={!opening} onComplete={onComplete} onTick={tick} />)}
+      {resultView || (theCase.slug === 'raven' ? <RavenStage key={theCase.id} opening={opening} winner={winner} onComplete={onComplete} sound={sound} fallback={reliableStage} /> : reliableStage)}
       {!resultView && <p className="cc-opening-assurance"><ShieldCheck size={14} />Результат определяется сервером</p>}
       {!opening && !resultView && <div className="cc-opening-commit">{actions}</div>}
     </section>
