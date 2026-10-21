@@ -43,7 +43,7 @@ export function OriginalCollection({ cases, loading, search }: Props) {
           const data = availableBySlug.get(entry.slug);
           const live = Boolean(data?.isActive && data.canOpen !== false);
           const art = <div className="cco-art">
-            <div className="cco-art-sprite" role="img" aria-label={entry.name} style={spriteStyle(entry.order)} />
+            <img src={entry.imageUrl} alt={entry.name} loading="lazy" decoding="async" />
           </div>;
           return <article className={`cco-card ${live ? "cco-live" : "cco-pending"}`} key={entry.slug} style={{ "--cco-accent": entry.accent } as CSSProperties}>
             {live
