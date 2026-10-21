@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ArrowLeftRight, ArrowUpRight, Crown, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowLeftRight, ArrowUpRight, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useEditorialData } from "../hooks/useEditorialData";
 import { useEditorialOperation } from "../hooks/useEditorialOperation";
@@ -69,7 +69,7 @@ export function UpgraderPage() {
   return <section className={"edv2 cc-upgrade" + (operation.busy || animating ? " is-processing" : "")}>
     <div className="cc-upgrade-horizon" aria-hidden="true">
       <div className="cc-upgrade-horizon-scenery" />
-      <div className="cc-upgrade-horizon-mark"><img src="/casecrow-mark.svg" alt="" /><Crown size={36} strokeWidth={1.2} /></div>
+      <div className="cc-upgrade-horizon-mark"><img src="/upgrade-raven-hero.svg" alt="" /></div>
       <div className="cc-upgrade-horizon-scribble">Bigger skins<br />Brighter stories</div>
     </div>
     <SectionHeading title="Апгрейд" description="Превратите свой скин в нечто большее. Выберите предмет, цель и испытайте удачу." action={rules} />
