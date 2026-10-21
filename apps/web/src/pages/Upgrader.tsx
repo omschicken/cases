@@ -69,8 +69,6 @@ export function UpgraderPage() {
   return <section className={"edv2 cc-upgrade" + (operation.busy || animating ? " is-processing" : "")}>
     <div className="cc-upgrade-horizon" aria-hidden="true">
       <div className="cc-upgrade-horizon-scenery" />
-      <div className="cc-upgrade-horizon-mark"><img src="/upgrade-raven-hero.svg" alt="" /></div>
-      <div className="cc-upgrade-horizon-scribble">Bigger skins<br />Brighter stories</div>
     </div>
     <SectionHeading title="Апгрейд" description="Превратите свой скин в нечто большее. Выберите предмет, цель и испытайте удачу." action={rules} />
     <OperationState operation={operation} onRefresh={inventory.refresh} />
