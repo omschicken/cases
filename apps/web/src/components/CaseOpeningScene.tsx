@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ShieldCheck, SkipForward, Volume2, VolumeX } from "lucide-react";
 import type { CaseDto, CaseItem } from "../lib/types";
 import { resolveCaseArt } from "../lib/caseArt";
+import { CASECROW_ORIGINALS_BY_SLUG } from "../lib/casecrowOriginals";
 import { CaseReel } from "./CaseReel";
 import { EditorialItemImage } from "./editorial/EditorialItemImage";
 
@@ -50,7 +51,7 @@ export function CaseOpeningScene({ theCase, winner, opening, actions, resultView
     <header className="cc-opening-hero">
       <div className="cc-opening-hero__copy">
         <nav aria-label="Навигация"><Link to="/">Кейсы</Link><span>/</span><span>{theCase.name}</span></nav>
-        <h1>{resultView ? "Твоя новая история" : "Открытие кейса"}</h1>
+        <h1>{CASECROW_ORIGINALS_BY_SLUG.has(theCase.slug) ? theCase.name : resultView ? "Твоя новая история" : "Открытие кейса"}</h1>
         <p>Каждый скин — новая история</p>
       </div>
       <img className="cc-opening-hero__case" src={art} alt="" />

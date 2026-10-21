@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import { OriginalCollection } from "../components/OriginalCollection";
+import { CASECROW_ORIGINALS_BY_SLUG } from "../lib/casecrowOriginals";
 import heroImage from "../assets/casecrow-approved/hero-courtyard-v2.webp";
 import mobileHero from "../assets/casecrow-approved/cases/webp/case_01.webp";
 import { api, ApiError } from "../lib/api";
@@ -75,7 +76,7 @@ export function CaseListPage() {
   const visibleCases = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase("ru");
     const filtered = cases.filter((item) =>
-      belongsToFilter(item, filter) &&
+      !CASECROW_ORIGINALS_BY_SLUG.has(item.slug) && belongsToFilter(item, filter) &&
       (!needle || `${item.name} ${item.slug} ${item.items.map((entry) => entry.name).join(" ")}`.toLocaleLowerCase("ru").includes(needle)),
     );
     if (sort === "default") return filtered;
@@ -112,7 +113,7 @@ export function CaseListPage() {
 
       <section className="fidelity-catalog" id="catalog" aria-labelledby="catalog-title">
         <div className="fidelity-catalog-head">
-          <h2 id="catalog-title">Коллекции <small>{loading || error ? "—" : cases.length}</small></h2>
+          <h2 id="catalog-title">Коллекции <small>{loading || error ? "—" : cases.filter(item => !CASECROW_ORIGINALS_BY_SLUG.has(item.slug)).length}</small></h2>
           <div className="fidelity-filters" aria-label="Фильтры каталога">
             {FILTERS.map((item) => (
               <button className={filter === item.value ? "active" : ""} onClick={() => setFilter(item.value)} type="button" key={item.value}>{item.label}</button>

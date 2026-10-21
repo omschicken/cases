@@ -8,6 +8,7 @@ import case07 from "../assets/casecrow-approved/cases/webp/case_07.webp";
 import case08 from "../assets/casecrow-approved/cases/webp/case_08.webp";
 import case09 from "../assets/casecrow-approved/cases/webp/case_09.webp";
 import case10 from "../assets/casecrow-approved/cases/webp/case_10.webp";
+import { CASECROW_ORIGINALS_BY_SLUG } from "./casecrowOriginals";
 
 export const CASE_ART_BY_SLUG = {
   static: case01,
@@ -38,7 +39,7 @@ export function hasApprovedCaseArt(slug: string): slug is ApprovedCaseSlug {
 }
 
 export function resolveCaseArt(slug: string, fallback?: string | null): string {
-  return hasApprovedCaseArt(slug) ? CASE_ART_BY_SLUG[slug] : (fallback ?? "");
+  return CASECROW_ORIGINALS_BY_SLUG.get(slug)?.imageUrl ?? (hasApprovedCaseArt(slug) ? CASE_ART_BY_SLUG[slug] : (fallback ?? ""));
 }
 
 export function caseVersionLabel(slug: string): string | null {
