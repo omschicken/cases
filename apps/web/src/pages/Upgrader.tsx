@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ArrowLeftRight, ArrowUpRight, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowLeftRight, ArrowUpRight, RotateCcw, Sparkles, EyeOff, Check, X, RotateCw } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useEditorialData } from "../hooks/useEditorialData";
 import { useEditorialOperation } from "../hooks/useEditorialOperation";
@@ -15,6 +15,23 @@ import { RARITY_LABELS } from "../lib/rarity";
 import "../styles/upgrader-premium.css";
 
 type UpgradeResult = { operation: GameOperationDto; won: boolean; item: CaseItem | null; target: CaseItem; chance: number };
+type UpgradeMode = "classic" | "mystery";
+const MYSTERY_BANDS: Record<number, [number, number]> = { 1.5: [1.5, 2], 2: [2, 3], 3: [3, 5], 5: [5, 8] };
+function nearestTarget(items: CaseItem[], sourceMinor: string, ratio: number): CaseItem | undefined {
+  const base = BigInt(sourceMinor);
+  if (base <= 0n) return undefined;
+  const desired = base * BigInt(Math.round(ratio * 100)) / 100n;
+  return items.filter(item => {
+    const price = BigInt(item.valueMinor);
+    return price > base && price <= base * 90n;
+  }).reduce<CaseItem | undefined>((best, item) => {
+    if (!best) return item;
+    const a = BigInt(item.valueMinor), b = BigInt(best.valueMinor);
+    const da = a > desired ? a - desired : desired - a;
+    const db = b > desired ? b - desired : desired - b;
+    return da < db || (da === db && a < b) ? item : best;
+  }, undefined);
+}
 export function UpgraderPage() {
   const { user } = useAuth();
   const inventory = useEditorialData<InventoryItemDto[]>(user ? "/cases/inventory/me" : null);
@@ -29,6 +46,7 @@ export function UpgraderPage() {
   const [sort, setSort] = useState<ItemSort>("newest");
   const [visibleLimit, setVisibleLimit] = useState(60);
   const [factor, setFactor] = useState<number | null>(null);
+  const [mode, setMode] = useState<UpgradeMode>("classic");
   const [confirm, setConfirm] = useState(false);
   const [result, setResult] = useState<UpgradeResult | null>(null);
   const [animating, setAnimating] = useState(false);
@@ -40,6 +58,10 @@ export function UpgraderPage() {
   const target = targets.data?.find((item) => item.id === targetId);
   const chance = source && target ? upgradeChance(source.caseItem.valueMinor, target.valueMinor) : null;
   const percentage = (result?.chance ?? chance ?? 0) * 100;
+  const band = MYSTERY_BANDS[factor ?? 2];
+  const mysteryChanceRange = `${(90 / band[1]).toLocaleString("ru-RU", { maximumFractionDigits: 1 })}–${(90 / band[0]).toLocaleString("ru-RU", { maximumFractionDigits: 1 })}%`;
+  const shownTarget = result && !animating ? (result.item ?? null) : mode === "classic" ? target ?? null : null;
+  const shownTargetParts = shownTarget?.name.split(" | ") ?? [];
   const locked = operation.busy || !!operation.pending || animating;
   const targetList = (targets.data ?? []).filter((item) => source && BigInt(item.valueMinor) > BigInt(source.caseItem.valueMinor) && BigInt(item.valueMinor) <= BigInt(source.caseItem.valueMinor) * 90n && (!factor || BigInt(item.valueMinor) * 100n >= BigInt(source.caseItem.valueMinor) * BigInt(Math.round(factor * 100))));
   const sources = filterItems(available, (item) => item.caseItem, query, rarity, sort);
@@ -48,23 +70,44 @@ export function UpgraderPage() {
   useEffect(() => setVisibleLimit(60), [tab, query, rarity, sort, sourceId, factor]);
   const selectTab = (value: string) => { setTab(value); setQuery(""); setRarity(""); setSort("newest"); };
   const change = (value: string) => { selectTab(value); picker.current?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth", block: "start" }); };
-  const reset = () => { if (locked) return; setSourceId(""); setTargetId(""); setResult(null); setFactor(null); selectTab("source"); };
+  const reset = () => { if (locked) return; setSourceId(""); setTargetId(""); setResult(null); setFactor(mode === "mystery" ? 2 : null); selectTab("source"); };
+  const selectMode = (next: UpgradeMode) => {
+    if (locked) return;
+    setMode(next); setResult(null); setTargetId(""); setFactor(next === "mystery" ? 2 : null);
+    selectTab(next === "mystery" ? "source" : "target");
+  };
+  const selectMultiplier = (value: number) => {
+    if (locked || !source) return;
+    setFactor(value); setResult(null);
+    if (mode === "classic") {
+      const closest = nearestTarget(targets.data ?? [], source.caseItem.valueMinor, value);
+      setTargetId(closest?.id ?? "");
+      selectTab("target");
+    } else {
+      setTargetId(""); selectTab("source");
+    }
+  };
   const create = async () => {
-    if (!source || !target || chance === null) return;
+    if (!source || (mode === "classic" && (!target || chance === null))) return;
     setConfirm(false); setResult(null);
-    const data = await operation.run<UpgradeResult>({ type: "UPGRADE", ids: [source.id] }, "/games/upgrades", { inventoryItemId: source.id, targetCaseItemId: target.id });
+    const mystery = mode === "mystery";
+    const data = await operation.run<UpgradeResult>(
+      { type: "UPGRADE", ids: [source.id] },
+      mystery ? "/games/upgrades/mystery" : "/games/upgrades",
+      mystery ? { inventoryItemId: source.id, multiplier: factor ?? 2 } : { inventoryItemId: source.id, targetCaseItemId: target!.id },
+    );
     if (data) {
       setResult(data);
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) inventory.refresh();
-      else { setAnimating(true); timer.current = setTimeout(() => { setAnimating(false); inventory.refresh(); }, 1550); }
+      else { setAnimating(true); timer.current = setTimeout(() => { setAnimating(false); inventory.refresh(); }, 900); }
     } else inventory.refresh();
   };
   const sourceSkin = source?.caseItem;
   const sourceParts = sourceSkin?.name.split(" | ") ?? [];
-  const targetParts = target?.name.split(" | ") ?? [];
+  const targetParts = shownTargetParts;
   const sourceTitle = sourceParts[1] ?? sourceParts[0] ?? "Выберите предмет";
   const targetTitle = targetParts[1] ?? targetParts[0] ?? "Выберите цель";
-  const rules = <Rules>Один предмет можно обменять на попытку получить более дорогой. Шанс равен 90% отношения цен с округлением сервера, минимум 1%, максимум 75%. Цель не может стоить более чем в 90 раз дороже исходного предмета. При неудаче исходный предмет расходуется. Кнопки ×1.5, ×2, ×3, ×5 фильтруют цели по цене; итоговый шанс зависит от выбранной пары.</Rules>;
+  const rules = <Rules>Один предмет можно обменять на попытку получить более дорогой. Шанс равен 90% отношения цен с округлением сервера, минимум 1%, максимум 75%. Цель не может стоить более чем в 90 раз дороже исходного предмета. При неудаче исходный предмет расходуется. Кнопки ×1.5, ×2, ×3, ×5 автоматически подбирают ближайшую по стоимости цель. В режиме «Мистери» предмет выбирается случайно в указанном ценовом диапазоне, а шанс зависит от выпавшей цели.</Rules>;
 
   return <section className={"edv2 cc-upgrade" + (operation.busy || animating ? " is-processing" : "")}>
     <div className="cc-upgrade-horizon" aria-hidden="true">
