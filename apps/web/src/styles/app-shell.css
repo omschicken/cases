@@ -155,3 +155,20 @@
 .cc-app .dz-chips button[aria-pressed="true"]{background:var(--ink)!important;color:var(--paper)!important;border-color:var(--ink)!important}
 .cc-app .dz-chips button[aria-pressed="true"] b{background:var(--cc-sage)!important;color:#fff!important}
 @media(prefers-reduced-motion:reduce){.cc-app *, .cc-app *::before,.cc-app *::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Compact catalog: five cases across on desktop, with two readable rows. */
+@media(min-width:601px){
+ .cc-app .fidelity-card-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+ .cc-app .fidelity-card-info{display:flex!important;flex-direction:column;align-items:stretch;height:auto;min-height:112px!important;padding:12px!important;gap:10px}
+ .cc-app .fidelity-card-info>div{min-width:0}
+ .cc-app .fidelity-card-info h3{font-size:14px!important;margin:0 0 5px!important}
+ .cc-app .fidelity-card-info strong{font-size:16px!important}
+ .cc-app .fidelity-card-info>a{width:100%!important;min-width:0!important;height:34px;min-height:34px!important;margin:0!important}
+ .cc-app .fidelity-card-art>span{top:9px;left:9px;padding:6px 9px;font-size:8px!important}
+}
+@media(min-width:1000px){
+ .cc-app .fidelity-card-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(min-width:1200px){
+ .cc-app .fidelity-card-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+}
