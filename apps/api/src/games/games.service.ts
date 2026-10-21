@@ -307,7 +307,7 @@ export class GamesService {
     if (participants.length < 2) throw new BadRequestException("At least two players are required");
     const seeds = new Map<string, Awaited<ReturnType<GamesService["lockSeed"]>>>();
     for (const participant of [...participants].sort((a, b) => a.userId.localeCompare(b.userId))) {
-      const seed = await this.cases.getOrCreateActiveSeed(participant.userId);
+      const seed = await this.cases.getOrCreateActiveSeedInTx(tx, participant.userId);
       const lockedSeed = await this.lockSeed(tx, seed.id);
       seeds.set(participant.userId, lockedSeed);
     }
