@@ -1,8 +1,14 @@
+import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { CASECROW_ART_COLLECTIONS, CASECROW_ORIGINALS } from "../lib/casecrowOriginals";
 import { formatMinor } from "../lib/money";
 import type { CaseDto } from "../lib/types";
 import "../styles/casecrow-original-collections.css";
+const spriteStyle = (order: number): CSSProperties => ({
+  backgroundImage: 'url("/casecrow-originals/sprite.avif")',
+  backgroundPosition: `${((order - 1) % 4) * 100 / 3}% ${Math.floor((order - 1) / 4) * 100 / 3}%`,
+  backgroundSize: "400% 400%",
+});
 
 interface Props {
   cases: CaseDto[];
@@ -37,17 +43,17 @@ export function OriginalCollection({ cases, loading, search }: Props) {
           const data = availableBySlug.get(entry.slug);
           const live = Boolean(data?.isActive && data.canOpen !== false);
           const art = <div className="cco-art">
-            <img src={entry.imageUrl} alt={entry.name} loading="lazy" decoding="async" width="600" height="600" />
+            <div className="cco-art-sprite" role="img" aria-label={entry.name} style={spriteStyle(entry.order)} />
           </div>;
-          return <article className={`cco-card ${live ? "cco-live" : "cco-pending"}`} key={entry.slug} style={{ "--cco-accent": entry.accent } as React.CSSProperties}>
+          return <article className={`cco-card ${live ? "cco-live" : "cco-pending"}`} key={entry.slug} style={{ "--cco-accent": entry.accent } as CSSProperties}>
             {live
               ? <Link className="cco-visual-link" to={`/cases/${entry.slug}`} aria-label={`Открыть кейс ${entry.name}`}>{art}</Link>
-              : <div className="cco-visual-link">{art}</div>}
+              : <Link className="cco-visual-link" to={`/collections/${entry.slug}`} aria-label={`Посмотреть кейс ${entry.name}`}>{art}</Link>}
             <div className="cco-info">
               <div><h3>{entry.name}</h3><span>{data ? formatMinor(data.priceMinor, data.currency) : "Скоро"}</span></div>
               {live
                 ? <Link to={`/cases/${entry.slug}`}>Открыть <span aria-hidden="true">↗</span></Link>
-                : <span className="cco-unavailable">{loading ? "Загрузка…" : data?.canOpen === false ? "Проверка цены" : "Готовится"}</span>}
+                : <Link to={`/collections/${entry.slug}`}>Подробнее <span aria-hidden="true">↗</span></Link>}
             </div>
           </article>;
         })}
