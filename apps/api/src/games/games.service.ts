@@ -129,6 +129,78 @@ export class GamesService {
     });
   }
 
+  /**
+   * The mystery target is deliberately chosen only after the user confirms the
+   * displayed price band. Both target selection and win/loss use seeded,
+   * independent rolls, and the operation is atomic. A losing roll consumes
+   * the input without awarding the target.
+   */
+  async createMysteryUpgrade(userId: string, inventoryItemId: string, multiplier: number) {
+    const bands: Record<string, [number, number]> = {
+      "1.5": [1.5, 2], "2": [2, 3], "3": [3, 5], "5": [5, 8],
+    };
+    const band = bands[String(multiplier)];
+    if (!band) throw new BadRequestException("Unsupported mystery price range");
+    const seed = await this.cases.getOrCreateActiveSeed(userId);
+    return this.prisma.$transaction(async (tx) => {
+      const source = await tx.inventoryItem.findFirst({
+        where: { id: inventoryItemId, userId, status: "IN_INVENTORY" },
+        include: { caseItem: true },
+      });
+      if (!source) throw new NotFoundException("Inventory item not found");
+      if (source.caseItem.currency !== "RUB" || source.caseItem.valueMinor <= 0n) {
+        throw new BadRequestException("Only positively priced RUB items can be upgraded");
+      }
+      const sourceMinor = source.caseItem.valueMinor;
+      const lo = BigInt(Math.round(band[0] * 100));
+      const hi = BigInt(Math.round(band[1] * 100));
+      // Round lower bound up and upper bound down to avoid out-of-range prizes.
+      const from = (sourceMinor * lo + 99n) / 100n;
+      const to = (sourceMinor * hi) / 100n;
+      const candidates = await tx.caseItem.findMany({
+        where: { currency: "RUB", valueMinor: { gte: from, lte: to }, case: { isActive: true } },
+        orderBy: [{ valueMinor: "asc" }, { id: "asc" }],
+        take: 5000,
+      });
+      if (!candidates.length) throw new BadRequestException("No mystery items in this price range");
+      const lockedSeed = await this.lockSeed(tx, seed.id);
+      const selectionRoll = computeRoll(lockedSeed.serverSeed, lockedSeed.clientSeed + ":mystery-target", lockedSeed.nonce);
+      const index = Math.min(candidates.length - 1, Math.floor(selectionRoll * candidates.length));
+      const target = candidates[index];
+      const chance = Math.max(0.01, Math.min(0.75,
+        Number(sourceMinor * 90_000n / target.valueMinor) / 100_000));
+      const roll = computeRoll(lockedSeed.serverSeed, lockedSeed.clientSeed, lockedSeed.nonce);
+      const won = roll < chance;
+      const claimed = await tx.inventoryItem.updateMany({
+        where: { id: source.id, userId, status: "IN_INVENTORY" },
+        data: { status: "CONSUMED", resolvedAt: new Date() },
+      });
+      if (claimed.count !== 1) throw new BadRequestException("The source item changed before the upgrade completed");
+      const created = won
+        ? await tx.inventoryItem.create({ data: { userId, caseItemId: target.id } })
+        : null;
+      await tx.provablyFairSeed.update({
+        where: { id: seed.id }, data: { nonce: lockedSeed.nonce + 1 },
+      });
+      const operation = await tx.gameOperation.create({ data: {
+        userId, type: "UPGRADE", status: won ? "WON" : "LOST",
+        inputInventoryItemIds: [source.id],
+        targetCaseItemId: target.id,
+        outputCaseItemId: won ? target.id : null,
+        outputInventoryItemId: created?.id,
+        roll, chance, serverSeedHash: lockedSeed.serverSeedHash,
+        clientSeed: lockedSeed.clientSeed, nonce: lockedSeed.nonce,
+        metadata: {
+          mode: "MYSTERY", rangeMin: band[0], rangeMax: band[1],
+          selectionRoll, candidateCount: candidates.length,
+          inputValueMinor: sourceMinor.toString(),
+          targetValueMinor: target.valueMinor.toString(),
+        },
+      } });
+      return { operation, won, item: won ? target : null, target, chance };
+    });
+  }
+
   async createBattle(userId: string, caseId: string) {
     const battleCase = await this.prisma.case.findFirst({
       where: { id: caseId, isActive: true, currency: "RUB" },
