@@ -45,7 +45,7 @@ export function UpgraderPage() {
   const chance = source && target ? upgradeChance(source.caseItem.valueMinor, target.valueMinor) : null;
   const percentage = (result?.chance ?? chance ?? 0) * 100;
   const band = MYSTERY_BANDS[factor ?? 2];
-  const mysteryChanceRange = `${(90 / band[1]).toLocaleString("ru-RU", { maximumFractionDigits: 1 })}–${(90 / band[0]).toLocaleString("ru-RU", { maximumFractionDigits: 1 })}%`;
+  const mysteryChanceRange = "30–200%";
   const shownTarget = result && !animating ? (result.item ?? null) : mode === "classic" ? target ?? null : null;
   const shownTargetParts = shownTarget?.name.split(" | ") ?? [];
   const locked = operation.busy || !!operation.pending || animating;
@@ -80,7 +80,7 @@ export function UpgraderPage() {
     const data = await operation.run<UpgradeResult>(
       { type: "UPGRADE", ids: [source.id] },
       mystery ? "/games/upgrades/mystery" : "/games/upgrades",
-      mystery ? { inventoryItemId: source.id, multiplier: factor ?? 2 } : { inventoryItemId: source.id, targetCaseItemId: target!.id },
+      mystery ? { inventoryItemId: source.id, multiplier: 2 } : { inventoryItemId: source.id, targetCaseItemId: target!.id },
     );
     if (data) {
       setResult(data);
@@ -93,7 +93,7 @@ export function UpgraderPage() {
   const targetParts = shownTargetParts;
   const sourceTitle = sourceParts[1] ?? sourceParts[0] ?? "Выберите предмет";
   const targetTitle = targetParts[1] ?? targetParts[0] ?? "Выберите цель";
-  const rules = <Rules>Один предмет можно обменять на попытку получить более дорогой. Шанс равен 90% отношения цен с округлением сервера, минимум 1%, максимум 75%. Цель не может стоить более чем в 90 раз дороже исходного предмета. При неудаче исходный предмет расходуется. Кнопки ×1.5, ×2, ×3, ×5 автоматически подбирают ближайшую по стоимости цель. В режиме «Мистери» предмет выбирается случайно в указанном ценовом диапазоне, а шанс зависит от выпавшей цели.</Rules>;
+  const rules = <Rules>Один предмет можно обменять на попытку получить более дорогой. Шанс равен 90% отношения цен с округлением сервера, минимум 1%, максимум 75%. Цель не может стоить более чем в 90 раз дороже исходного предмета. При неудаче исходный предмет расходуется. Кнопки ×1.5, ×2, ×3, ×5 автоматически подбирают ближайшую по стоимости цель. В «Мистери» предмет выдаётся всегда: 20% наград стоят 30–60% исходной цены, 15% стоят 60–90%, 50% стоят 90–110%, 10% стоят 110–150%, 5% стоят 150–200%. Если в любом из диапазонов нет предметов, операция недоступна и исходный предмет не расходуется.</Rules>;
 
   return <section className={"edv2 cc-upgrade" + (operation.busy || animating ? " is-processing" : "")}>
     <div className="cc-upgrade-horizon" aria-hidden="true">
@@ -133,8 +133,8 @@ export function UpgraderPage() {
               {result && !animating && <b className={"edv2-outcome" + (!result.won ? " is-lost" : "")}>{result.won ? "ПОБЕДА" : "НЕ ПОВЕЗЛО"}</b>}
             </div>
           </div>
-          <div className="edv2-factors cc-upgrade-factors" aria-label={mode === "mystery" ? "Диапазон цены случайного предмета" : "Подбор цели по цене"}>{[1.5, 2, 3, 5].map(value => <button type="button" key={value} className={factor === value ? "is-active" : ""} aria-pressed={factor === value} disabled={!source || locked || !!result} onClick={() => selectMultiplier(value)}>×{value}</button>)}</div>
-          <p className="cc-upgrade-factor-note">{mode === "mystery" ? <>Случайная цель от ×{band[0]} до ×{band[1]}.<br/>При выигрыше она появится справа.</> : <>Множитель сразу подберёт ближайший скин.<br/>Цель также можно выбрать вручную.</>}</p>
+          <div className="edv2-factors cc-upgrade-factors" aria-label={mode === "mystery" ? "Диапазоны наград" : "Подбор цели по цене"}>{(mode === "mystery" ? [] : [1.5, 2, 3, 5]).map(value => <button type="button" key={value} className={factor === value ? "is-active" : ""} aria-pressed={factor === value} disabled={!source || locked || !!result} onClick={() => selectMultiplier(value)}>×{value}</button>)}</div>
+          <p className="cc-upgrade-factor-note">{mode === "mystery" ? <>Награда от 30% до 200% цены.<br/>50% предметов в диапазоне 90–110%.</> : <>Множитель сразу подберёт ближайший скин.<br/>Цель также можно выбрать вручную.</>}</p>
         </div>
 
         <div className={"edv2-panel edv2-upgrade-choice cc-upgrade-choice cc-upgrade-target-card" + (shownTarget ? " has-item" : "") + (result && !animating ? (result.won ? " is-success" : " is-failure") : "")}>
@@ -143,13 +143,13 @@ export function UpgraderPage() {
             {shownTarget ? <EditorialItemImage name={shownTarget.name} imageUrl={shownTarget.imageUrl} /> : <div className="cc-upgrade-placeholder">{mode === "mystery" && !result ? <EyeOff size={45} strokeWidth={1.3} /> : result && !animating ? <X size={40} strokeWidth={1.5} /> : <img src="/casecrow-mark.svg" alt="" />}<span>{result && !animating ? "Без выигрыша" : mode === "mystery" ? "Узнаете после апгрейда" : "Выберите более дорогой скин"}</span></div>}
           </div>
           <div className="cc-upgrade-skin-details"><div className="cc-upgrade-weapon">{result && !animating && !result.won ? "В следующий раз повезёт" : targetParts[0] ?? (mode === "mystery" ? "Секретный предмет" : "Целевой скин")}</div><b title={shownTarget?.name}>{result && !animating && !result.won ? "Попытка завершена" : shownTargetParts[1] ?? shownTargetParts[0] ?? (mode === "mystery" ? "Мистери-цель" : targetTitle)}</b>{shownTarget && <span className="cc-upgrade-rarity"><i style={{ background: edRarity[shownTarget.rarity] }} />{RARITY_LABELS[shownTarget.rarity]}</span>}</div>
-          <div className="edv2-row edv2-between cc-upgrade-card-value"><strong>{shownTarget ? money(shownTarget.valueMinor) : mode === "mystery" && source ? `${money((BigInt(source.caseItem.valueMinor) * BigInt(Math.round(band[0] * 100)) / 100n).toString())} – ${money((BigInt(source.caseItem.valueMinor) * BigInt(Math.round(band[1] * 100)) / 100n).toString())}` : "—"}</strong><span className="cc-upgrade-card-order">{result && !animating ? (result.won ? "НАЧИСЛЕНО" : "НЕ ПОЛУЧЕНО") : "ВАША ЦЕЛЬ"}</span></div>
+          <div className="edv2-row edv2-between cc-upgrade-card-value"><strong>{shownTarget ? money(shownTarget.valueMinor) : mode === "mystery" && source ? `${money((BigInt(source.caseItem.valueMinor) * 30n / 100n).toString())} – ${money((BigInt(source.caseItem.valueMinor) * 200n / 100n).toString())}` : "—"}</strong><span className="cc-upgrade-card-order">{result && !animating ? (result.won ? "НАЧИСЛЕНО" : "НЕ ПОЛУЧЕНО") : "ВАША ЦЕЛЬ"}</span></div>
           {result && !animating ? <div className="cc-upgrade-result-actions"><button type="button" className="edv2-btn cc-upgrade-card-action" onClick={reset}><RotateCw size={15}/> Новая попытка</button>{result.won && <Link className="cc-upgrade-inventory-link" to="/inventory">В инвентарь →</Link>}</div> : mode === "mystery" ? <button type="button" className="edv2-btn cc-upgrade-card-action" disabled><EyeOff size={15}/> Цель скрыта</button> : <button type="button" className="edv2-btn cc-upgrade-card-action" onClick={() => change("target")} disabled={!source || locked}><ArrowUpRight size={15}/>{target ? "Выбрать другую цель" : "Выбрать цель"}</button>}
         </div>
       </div>
 
       <div className="edv2-upgrade-footer cc-upgrade-footer">
-        <p><ShieldCheck size={16} /> При неудаче исходный предмет будет использован.</p>
+        <p><ShieldCheck size={16} /> {mode === "mystery" ? "При каждом мистери-апгрейде выдаётся один случайный предмет." : "При неудаче исходный предмет будет использован."}</p>
         <div className="edv2-actions"><button type="button" className="edv2-btn" onClick={reset} disabled={locked}><RotateCcw size={15}/>Сбросить</button><button type="button" className="edv2-btn edv2-primary" onClick={() => setConfirm(true)} disabled={!user || !source || (mode === "classic" && (!target || chance === null)) || locked || !!result}><ArrowUpRight size={18}/>{mode === "mystery" ? "Мистери апгрейд" : "Апгрейд"}</button></div>
       </div>
     </div>
@@ -160,8 +160,8 @@ export function UpgraderPage() {
       {!user && tab === "source" ? <SignInState /> : <><ItemFilters query={query} setQuery={setQuery} rarity={rarity} setRarity={setRarity} sort={sort} setSort={setSort} />{tab === "source" ? <><DataState loading={inventory.loading} error={inventory.error} retry={inventory.refresh} empty={!inventory.loading && !inventory.error && !sources.length ? "Нет подходящих предметов в инвентаре" : undefined} /><div className="edv2-items">{sources.slice(0, visibleLimit).map((item) => <ItemTile key={item.id} item={item.caseItem} selected={item.id === sourceId} disabled={locked} onClick={() => { setSourceId(item.id); setTargetId(""); setResult(null); setFactor(mode === "mystery" ? 2 : null); selectTab(mode === "mystery" ? "source" : "target"); }} />)}</div>{sources.length > visibleLimit && <button type="button" className="edv2-btn cc-load-more" onClick={() => setVisibleLimit(v => v + 60)}>Показать ещё · {sources.length - visibleLimit} предметов</button>}</> : <><DataState loading={targets.loading} error={targets.error} retry={targets.refresh} empty={!targets.loading && !targets.error && !choices.length ? (source ? "Нет целей, соответствующих фильтрам" : "Сначала выберите исходный предмет") : undefined} /><div className="edv2-items">{choices.slice(0, visibleLimit).map((item) => <ItemTile key={item.id} item={item} selected={item.id === targetId} disabled={locked} onClick={() => { setTargetId(item.id); setFactor(null); setResult(null); }} />)}</div>{choices.length > visibleLimit && <button type="button" className="edv2-btn cc-load-more" onClick={() => setVisibleLimit(v => v + 60)}>Показать ещё · {choices.length - visibleLimit} скинов</button>}</>}</>}
     </div>
     {confirm && source && (mode === "mystery" || target) && <ConfirmDialog title={mode === "mystery" ? "Мистери апгрейд" : "Подтвердить апгрейд"} confirmLabel={mode === "mystery" ? "Открыть случайную цель" : "Выполнить апгрейд"} onClose={() => setConfirm(false)} onConfirm={create} busy={operation.busy}>
-      <p><strong>{source.caseItem.name}</strong> → <strong>{mode === "mystery" ? `Случайный предмет ×${band[0]}–×${band[1]}` : target?.name}</strong></p>
-      <p>{mode === "mystery" ? `Диапазон шанса ${mysteryChanceRange}. Точный шанс зависит от случайно выбранного предмета.` : `Шанс успеха: ${percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 })}%.`} При любом результате исходный предмет будет использован.</p>
+      <p><strong>{source.caseItem.name}</strong> → <strong>{mode === "mystery" ? `Случайный предмет от 30% до 200% цены` : target?.name}</strong></p>
+      <p>{mode === "mystery" ? `Награда гарантирована; 50% результатов в зоне 90–110% стоимости исходного предмета.` : `Шанс успеха: ${percentage.toLocaleString("ru-RU", { maximumFractionDigits: 3 })}%.`} При любом результате исходный предмет будет использован.</p>
     </ConfirmDialog>}
   </section>;
 }
