@@ -82,7 +82,7 @@ export function OriginalCaseDetailPage() {
     <Link to="/#new-collections" className="cco-detail-back">← Все коллекции</Link>
     <section className="cco-detail-main">
       <div className="cco-detail-art" role="img" aria-label={`Кейс ${entry.name}`}>
-        <div className="cco-art-sprite" style={spriteStyle(entry.order)} />
+        <img className="cco-case-full-art" src={entry.imageUrl} alt={entry.name} />
       </div>
       <div className="cco-detail-copy">
         <small>CASECROW / {entry.series === "crystals" ? "Кристальная коллекция" : "Авторская коллекция"}</small>
