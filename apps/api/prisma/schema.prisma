@@ -127,6 +127,8 @@ model User {
   gameOperations      GameOperation[]
   dailyBonusClaims    DailyBonusClaim[]
   promoRedemptions    PromoCodeRedemption[]
+  battleRoomsCreated  BattleRoom[] @relation("BattleRoomCreator")
+  battleParticipants  BattleParticipant[]
 
   @@index([referredById])
 }
@@ -310,6 +312,46 @@ model GameOperation {
   createdAt              DateTime            @default(now())
 
   @@index([userId, createdAt])
+}
+
+enum BattleRoomStatus {
+  WAITING
+  COMPLETED
+  CANCELLED
+}
+
+/// Public multiplayer room. caseIds preserves the exact ordered round setup.
+model BattleRoom {
+  id            String           @id @default(uuid())
+  requestKey    String           @unique
+  createdById   String
+  createdBy     User             @relation("BattleRoomCreator", fields: [createdById], references: [id])
+  caseIds       Json
+  maxPlayers    Int
+  status        BattleRoomStatus @default(WAITING)
+  createdAt     DateTime         @default(now())
+  completedAt   DateTime?
+  participants  BattleParticipant[]
+
+  @@index([status, createdAt])
+}
+
+/// Unique (room, user) entry is the idempotency guard for paid joins.
+model BattleParticipant {
+  id           String     @id @default(uuid())
+  roomId       String
+  room         BattleRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+  paidMinor    BigInt
+  scoreMinor   BigInt     @default(0)
+  isWinner     Boolean    @default(false)
+  roundResults Json       @default("[]")
+  awardedItems Json       @default("[]")
+  createdAt    DateTime   @default(now())
+
+  @@unique([roomId, userId])
+  @@index([roomId, createdAt])
 }
 
 model Deposit {

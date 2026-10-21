@@ -8,6 +8,7 @@ import {
   verifyRoll,
 } from "@cs2-cases/shared";
 import { Subject } from "rxjs";
+import { Prisma } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { WalletService } from "../wallet/wallet.service";
 import { assessCaseEconomics } from "../common/util/case-economics";
@@ -68,23 +69,28 @@ export class CasesService {
     if (existing) return existing;
     // Only on first use: serialize seed allocation per account so two
     // concurrent opens never create two active seeds with duplicate nonces.
-    return this.prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${userId} FOR UPDATE`;
-      const allocated = await tx.provablyFairSeed.findFirst({
-        where: { userId, isActive: true },
-      });
-      if (allocated) return allocated;
-      const serverSeed = generateServerSeed();
-      return tx.provablyFairSeed.create({
-        data: {
-          userId,
-          serverSeed,
-          serverSeedHash: hashServerSeed(serverSeed),
-          clientSeed: initialClientSeed ?? generateClientSeed(),
-          nonce: 0,
-          isActive: true,
-        },
-      });
+    return this.prisma.$transaction((tx) => this.getOrCreateActiveSeedInTx(tx, userId, initialClientSeed));
+  }
+
+  /** Allocate a seed inside an existing game transaction. Reusing the caller's
+   * transaction avoids a self-deadlock after it has inserted another row with
+   * a foreign key to this user (as multiplayer battle settlement does). */
+  async getOrCreateActiveSeedInTx(tx: Prisma.TransactionClient, userId: string, initialClientSeed?: string) {
+    const existing = await tx.provablyFairSeed.findFirst({ where: { userId, isActive: true } });
+    if (existing) return existing;
+    await tx.$queryRaw`SELECT "id" FROM "User" WHERE "id" = ${userId} FOR UPDATE`;
+    const allocated = await tx.provablyFairSeed.findFirst({ where: { userId, isActive: true } });
+    if (allocated) return allocated;
+    const serverSeed = generateServerSeed();
+    return tx.provablyFairSeed.create({
+      data: {
+        userId,
+        serverSeed,
+        serverSeedHash: hashServerSeed(serverSeed),
+        clientSeed: initialClientSeed ?? generateClientSeed(),
+        nonce: 0,
+        isActive: true,
+      },
     });
   }
 

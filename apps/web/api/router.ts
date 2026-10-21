@@ -26,9 +26,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
 
-  // Interface previews read only the public live catalog. Never connect a
-  // preview to the production database or forward credentials/mutations.
-  if (process.env.VERCEL_ENV === "preview") {
+  // Interface-only previews stay read-only. A preview becomes interactive
+  // only when it has an explicitly enabled, isolated database.
+  const writablePreview =
+    process.env.VERCEL_ENV === "preview" &&
+    process.env.CASECROW_PREVIEW_WRITABLE === "1" &&
+    Boolean(process.env.DATABASE_URL);
+  if (process.env.VERCEL_ENV === "preview" && !writablePreview) {
     res.setHeader("content-type", "application/json; charset=utf-8");
     if (req.method !== "GET" || !/^\/cases(?:\/[a-z0-9-]+)?$/.test(targetPath)) {
       res.statusCode = 503;
