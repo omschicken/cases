@@ -31,6 +31,9 @@ interface DropProtocolProps {
   itemRarity?: string;
   /** Ends the animation early. The outcome is already final, so this only
    *  stops the animation — it never re-rolls. */
+  onSell?: () => void;
+  selling?: boolean;
+  sold?: boolean;
   onSkip: () => void;
   onClose: () => void;
   onOpenAgain?: () => void;
@@ -60,7 +63,7 @@ function splitCondition(name: string) {
 
 export function DropProtocol({
   phase, caseName, item, result, oddsPercent, caseChest, isOpening = false,
-  itemRarity, onSkip, onClose, onOpenAgain, canOpenAgain = false,
+  itemRarity, onSkip, onClose, onOpenAgain, canOpenAgain = false, onSell, selling = false, sold = false,
 }: DropProtocolProps) {
   const { t } = useTranslation();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -282,7 +285,8 @@ export function DropProtocol({
             >
               {t("caseDetail.continue", { defaultValue: "Продолжить" })}
             </button>
-            {!isDemo && (
+            {result && (sold ? <span className="dz-protocol__btn">Предмет продан</span> : <button type="button" className="dz-protocol__btn dz-protocol__btn--primary" onClick={onSell} disabled={selling}>{selling ? "Продажа…" : `Продать за ${formatMinor(item!.valueMinor, item!.currency)}`}</button>)}
+            {!isDemo && !sold && (
               <Link to="/inventory" className="dz-protocol__btn">
                 {t("caseDetail.claim", { defaultValue: "Забрать в инвентарь" })}
               </Link>
