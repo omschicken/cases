@@ -1,5 +1,5 @@
 import { battleWinChance } from "./battle-odds";
-import { mysteryIndex, mysteryPriceBounds } from "./mystery-odds";
+import { mysteryIndex, mysteryBandIndex, mysteryBounds, MYSTERY_REWARDS } from "./mystery-odds";
 import { selectContractOutcomes } from "./contract-odds";
 import { assessCaseEconomics } from "../common/util/case-economics";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
@@ -136,62 +136,60 @@ export class GamesService {
    * independent rolls, and the operation is atomic. A losing roll consumes
    * the input without awarding the target.
    */
-  async createMysteryUpgrade(userId: string, inventoryItemId: string, multiplier: number) {
-    // Validate the band before any user-item lookup or consumption.
-    mysteryPriceBounds(1n, multiplier);
+  async createMysteryUpgrade(userId: string, inventoryItemId: string, _multiplier: number) {
     const seed = await this.cases.getOrCreateActiveSeed(userId);
-    return this.prisma.$transaction(async (tx) => {
+    return this.prisma.$transaction(async tx => {
       const source = await tx.inventoryItem.findFirst({
         where: { id: inventoryItemId, userId, status: "IN_INVENTORY" },
         include: { caseItem: true },
       });
       if (!source) throw new NotFoundException("Inventory item not found");
       if (source.caseItem.currency !== "RUB" || source.caseItem.valueMinor <= 0n) {
-        throw new BadRequestException("Only positively priced RUB items can be upgraded");
+        throw new BadRequestException("Only positively priced RUB items can be used");
       }
-      const sourceMinor = source.caseItem.valueMinor;
-      const { from, to, min, max } = mysteryPriceBounds(sourceMinor, multiplier);
-      const candidates = await tx.caseItem.findMany({
-        where: { currency: "RUB", valueMinor: { gte: from, lte: to }, case: { isActive: true } },
-        orderBy: [{ valueMinor: "asc" }, { id: "asc" }],
-        take: 5000,
-      });
-      if (!candidates.length) throw new BadRequestException("No mystery items in this price range");
-      const lockedSeed = await this.lockSeed(tx, seed.id);
-      const selectionRoll = computeRoll(lockedSeed.serverSeed, lockedSeed.clientSeed + ":mystery-target", lockedSeed.nonce);
-      const index = mysteryIndex(selectionRoll, candidates.length);
-      const target = candidates[index];
-      const chance = Math.max(0.01, Math.min(0.75,
-        Number(sourceMinor * 90_000n / target.valueMinor) / 100_000));
-      const roll = computeRoll(lockedSeed.serverSeed, lockedSeed.clientSeed, lockedSeed.nonce);
-      const won = roll < chance;
+      const inputPrice = source.caseItem.valueMinor;
+      // Check that all reward bands can actually award an item before consuming anything.
+      // Otherwise the advertised 20/15/50/10/5 distribution cannot be honored.
+      const pools = await Promise.all(MYSTERY_REWARDS.map(async band => {
+        const { from, to } = mysteryBounds(inputPrice, band.min, band.max);
+        const pool = await tx.caseItem.findMany({
+          where: { currency: "RUB", valueMinor: { gte: from, lte: to }, case: { isActive: true } },
+          orderBy: [{ valueMinor: "asc" }, { id: "asc" }],
+          take: 5001,
+        });
+        if (pool.length > 5000) throw new BadRequestException("Too many mystery items for this price range");
+        return pool;
+      }));
+      if (pools.some(pool => pool.length === 0)) {
+        throw new BadRequestException("Mystery upgrade unavailable for this item's price: missing rewards in a price band");
+      }
+      const locked = await this.lockSeed(tx, seed.id);
+      const roll = computeRoll(locked.serverSeed, locked.clientSeed, locked.nonce);
+      const bandIndex = mysteryBandIndex(roll);
+      const pool = pools[bandIndex];
+      const pickRoll = computeRoll(locked.serverSeed, locked.clientSeed + ":mystery-item", locked.nonce);
+      const item = pool[mysteryIndex(pickRoll, pool.length)];
       const claimed = await tx.inventoryItem.updateMany({
         where: { id: source.id, userId, status: "IN_INVENTORY" },
         data: { status: "CONSUMED", resolvedAt: new Date() },
       });
-      if (claimed.count !== 1) throw new BadRequestException("The source item changed before the upgrade completed");
-      const created = won
-        ? await tx.inventoryItem.create({ data: { userId, caseItemId: target.id } })
-        : null;
-      await tx.provablyFairSeed.update({
-        where: { id: seed.id }, data: { nonce: lockedSeed.nonce + 1 },
-      });
+      if (claimed.count !== 1) throw new BadRequestException("Source item changed before completion");
+      const created = await tx.inventoryItem.create({ data: { userId, caseItemId: item.id } });
+      await tx.provablyFairSeed.update({ where: { id: seed.id }, data: { nonce: locked.nonce + 1 } });
       const operation = await tx.gameOperation.create({ data: {
-        userId, type: "UPGRADE", status: won ? "WON" : "LOST",
-        inputInventoryItemIds: [source.id],
-        targetCaseItemId: target.id,
-        outputCaseItemId: won ? target.id : null,
-        outputInventoryItemId: created?.id,
-        roll, chance, serverSeedHash: lockedSeed.serverSeedHash,
-        clientSeed: lockedSeed.clientSeed, nonce: lockedSeed.nonce,
+        userId, type: "UPGRADE", status: "WON", inputInventoryItemIds: [source.id],
+        targetCaseItemId: item.id, outputCaseItemId: item.id,
+        outputInventoryItemId: created.id, roll, chance: 1,
+        serverSeedHash: locked.serverSeedHash, clientSeed: locked.clientSeed, nonce: locked.nonce,
         metadata: {
-          mode: "MYSTERY", rangeMin: min, rangeMax: max,
-          selectionRoll, candidateCount: candidates.length,
-          inputValueMinor: sourceMinor.toString(),
-          targetValueMinor: target.valueMinor.toString(),
+          mode:"MYSTERY", bandIndex,
+          bandMin:MYSTERY_REWARDS[bandIndex].min, bandMax:MYSTERY_REWARDS[bandIndex].max,
+          bandWeights:MYSTERY_REWARDS.map(b => b.weight), pickRoll,
+          candidateCount:pool.length, inputValueMinor:inputPrice.toString(),
+          targetValueMinor:item.valueMinor.toString(),
         },
       } });
-      return { operation, won, item: won ? target : null, target, chance };
+      return { operation, won: true, item, target: item, chance: 1 };
     });
   }
 
