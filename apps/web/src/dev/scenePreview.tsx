@@ -16,6 +16,12 @@ if (q.get('diff')) overlay.style.mixBlendMode = 'difference'; // bright = mismat
 // ?w=1000&h=420 previews the site's wide stage instead of the square reference frame
 const wrap = document.getElementById('wrap') as HTMLElement;
 if (q.get('w') && q.get('h')) { wrap.style.width = `${q.get('w')}px`; wrap.style.height = `${q.get('h')}px`; overlay.style.display = 'none'; }
+// ?ref=background.png compares against any picture in public/scene-ref/: the frame takes its aspect ratio, ?ov=0.5 blends it over the scene, ?diff=1 shows the difference
+const refName = q.get('ref');
+if (refName) {
+  overlay.src = `/scene-ref/${refName}`; overlay.style.display = 'block';
+  overlay.addEventListener('load', () => { if (!q.get('h')) wrapEl.style.height = `${Math.round(Number.parseFloat(wrapEl.style.width) * overlay.naturalHeight / overlay.naturalWidth)}px`; });
+}
 const phase = (q.get('phase') ?? 'idle') as Phase;
 
 /**

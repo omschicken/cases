@@ -10,11 +10,10 @@ import { dropOrigin, lidAngle, shakeAt, simulateDrop } from './physics';
 import { Dust } from './Dust';
 import type { DropLog } from './Dust';
 import { ChestModel, CHEST } from './ChestModel';
-import { ReferenceDecals } from './ReferenceDecals';
+import { RavenSculpt } from './RavenSculpt';
 import { Raven3D } from './Raven3D';
-import { Courtyard3D, LeafShadows, Platform } from './Courtyard3D';
+import { Backdrop } from './Backdrop';
 import { Post } from './Post';
-import { VIEW } from './sceneConfig';
 import { useReferenceMaps } from './referenceMaps';
 
 /** dev only: ?p=0.5 freezes the phase progress so a single frame of the flight can be inspected */
@@ -26,37 +25,59 @@ const ORBIT = import.meta.env.DEV && new URLSearchParams(location.search).get('o
 /** dev only: ?dof=0 renders without depth of field */
 const NO_DOF = import.meta.env.DEV && new URLSearchParams(location.search).get('dof') === '0';
 
+/** The case and the raven are switched off while the backdrop is being matched to the reference (dev: ?case=1 shows them again). */
+const NO_CASE = !(import.meta.env.DEV && new URLSearchParams(location.search).get('case') === '1');
+
+/** dev only: ?cam=x,y,z,fov,tx,ty,tz looks at a point the usual way; without it the scene uses the approved shot. */
 function cameraFromQuery() {
-  if (!import.meta.env.DEV) return VIEW;
+  if (!import.meta.env.DEV) return null;
   const raw = new URLSearchParams(location.search).get('cam');
-  if (!raw) return VIEW;
+  if (!raw) return null;
   const n = raw.split(',').map(Number);
-  if (n.length !== 7 || n.some(Number.isNaN)) return VIEW;
+  if (n.length !== 7 || n.some(Number.isNaN)) return null;
   return { position: [n[0], n[1], n[2]] as const, fov: n[3], target: [n[4], n[5], n[6]] as const };
 }
 
 /** While the case opens the camera backs off and rises so the raised lid and the item stay in frame. */
-const OPEN_VIEW = { position: [5.6, 4.6, 13.8] as const, target: [0.3, 1.5, 0] as const };
 const OPENING_PHASES: Phase[] = ['unlock', 'lidOpen', 'resultReveal', 'complete'];
 
 /** Vertical camera jolt from the case's impacts (written by the world, read by the camera rig). */
 const jolt = { y: 0 };
 
+/**
+ * The shot, read from the approved background: a horizontal camera high above the podium with a lens shift (the horizon is 0.43 frame
+ * heights above the top of the frame), so verticals stay vertical. `OPEN_SHOT` is where the camera backs off to while the case opens.
+ */
+const SHOT = { x: -0.69, y: 7.63, z: 15.15, vfov: 24, horizon: 0.429 };
+const OPEN_SHOT = { x: 0.4, y: 8.6, z: 18.4 };
+
+/** Sets the lens shift for a frame of w × h pixels: the vertical field of view stays 24° and the horizon sits above the frame. */
+type ManualCamera = PerspectiveCamera & { manual?: boolean }; // react-three-fiber leaves the projection alone when `manual` is set
+function applyLens(camera: ManualCamera, w: number, h: number) {
+  const f = h / 2 / Math.tan(MathUtils.degToRad(SHOT.vfov / 2)); const fullH = 4.5 * h;
+  camera.manual = true; camera.fov = MathUtils.radToDeg(2 * Math.atan(fullH / 2 / f)); camera.aspect = w / fullH;
+  camera.setViewOffset(w, fullH, 0, fullH / 2 + SHOT.horizon * h, w, h); camera.updateProjectionMatrix();
+}
+
 function CameraRig({ phase, reduced }: { phase: Phase; reduced: boolean }) {
-  const camera = useThree(state => state.camera) as PerspectiveCamera;
+  const camera = useThree(state => state.camera) as ManualCamera;
+  const size = useThree(state => state.size);
   const cfg = useMemo(cameraFromQuery, []);
   const k = useRef(0); const pos = useRef(new Vector3()); const look = useRef(new Vector3());
   useLayoutEffect(() => {
-    camera.position.set(...cfg.position); camera.fov = cfg.fov;
-    camera.lookAt(new Vector3(...cfg.target)); camera.updateProjectionMatrix();
-  }, [camera, cfg]);
+    if (cfg) { // dev: ?cam=... looks at a point the usual way, to inspect the scene from anywhere
+      camera.manual = false; camera.clearViewOffset(); camera.position.set(...cfg.position); camera.fov = cfg.fov;
+      camera.lookAt(new Vector3(...cfg.target)); camera.updateProjectionMatrix(); return;
+    }
+    camera.position.set(SHOT.x, SHOT.y, SHOT.z); camera.rotation.set(0, 0, 0); applyLens(camera, size.width, size.height);
+  }, [camera, cfg, size.width, size.height]);
   useFrame((_, dt) => {
     const goal = OPENING_PHASES.includes(phase) ? 1 : 0;
     k.current = reduced ? goal : MathUtils.damp(k.current, goal, 1.6, dt);
     const e = k.current * k.current * (3 - 2 * k.current);
-    pos.current.set(...cfg.position).lerp(new Vector3(...OPEN_VIEW.position), e);
-    look.current.set(...cfg.target).lerp(new Vector3(...OPEN_VIEW.target), e);
-    camera.position.copy(pos.current); camera.position.y += jolt.y; camera.lookAt(look.current);
+    if (cfg) { camera.position.set(...cfg.position); camera.position.y += jolt.y; return; }
+    pos.current.set(SHOT.x, SHOT.y, SHOT.z).lerp(look.current.set(OPEN_SHOT.x, OPEN_SHOT.y, OPEN_SHOT.z), e);
+    camera.position.copy(pos.current); camera.position.y += jolt.y; camera.rotation.set(0, 0, 0);
   });
   return null;
 }
@@ -108,16 +129,12 @@ function World({ phase, reduced }: { phase: Phase; reduced: boolean }) {
   });
   return <>
     <color attach="background" args={['#efe2cf']} />
-    {/* light rig: a low warm sun with soft shadows, a cool sky fill, warm bounce from the sunlit stone, a back rim for the case */}
-    <hemisphereLight args={['#f6eadc', '#f0dac4', .8]} />
-    <directionalLight position={[-7, 10, 3.5]} intensity={3.9} color="#fff0dc" castShadow shadow-mapSize={[3072, 3072]} shadow-bias={-.0005} shadow-normalBias={.025} shadow-radius={10} shadow-blurSamples={25}
-      shadow-camera-left={-14} shadow-camera-right={14} shadow-camera-top={11} shadow-camera-bottom={-11} shadow-camera-near={1} shadow-camera-far={44} />
+    {/* light rig: the sun through the leaves lives in the backdrop; here a soft sky fill and a warm bounce from the sunlit stone onto the case */}
+    <hemisphereLight args={['#ffe7cc', '#f3c9a0', .34]} />
     <directionalLight position={[3, -3, 6]} intensity={.65} color="#ffc486" />
-    {/* warm bounce off the sunlit steps onto the front of the case */}
     <pointLight position={[-0.8, 0.5, 4.2]} intensity={7} distance={7} decay={2} color="#ffbd7a" />
-    <directionalLight position={[7, 5, 8]} intensity={.35} color="#d3e2ff" />
     <directionalLight position={[2, 4, -7]} intensity={.9} color="#fff0d8" />
-    <Environment resolution={512} environmentIntensity={.6}>
+    <Environment resolution={512} environmentIntensity={.32}>
       {/* sky dome: blue zenith, pale warm horizon, bright sun disc in the sun's direction */}
       <mesh scale={80}>
         <sphereGeometry args={[1, 48, 24]} />
@@ -130,18 +147,16 @@ function World({ phase, reduced }: { phase: Phase; reduced: boolean }) {
       <Lightformer form="rect" intensity={2.6} color="#fff0dc" position={[-4, 6, 5]} scale={[8, 5, 1]} />
       <Lightformer form="rect" intensity={1.2} color="#ffd9b0" position={[6, 3, -2]} scale={[6, 4, 1]} rotation-y={-Math.PI / 2} />
     </Environment>
-    <Courtyard3D />
-    <Platform />
-    {/* dappled sunlight: one patch of leaf shadow over the platform and floor (clear over the case), one over the columns */}
-    <LeafShadows aim={[0, 0, 1]} hole={1.8} spread={4.6} count={420} seed={1234} />
-    <LeafShadows aim={[6.5, 3, -3.4]} hole={0} spread={4.2} count={360} seed={99} />
-    <group ref={chest} visible={false}>
-      <ChestModel lidRef={lid} latchRef={latch} />
-      <ReferenceDecals />
-      <Raven3D phase={phase} progress={progress} perchY={CHEST.bodyH + CHEST.lidH + .02} />
+    <Backdrop />
+    <group visible={!NO_CASE}>
+      <group ref={chest} visible={false}>
+        <ChestModel lidRef={lid} latchRef={latch} />
+        <RavenSculpt />
+        <Raven3D phase={phase} progress={progress} perchY={CHEST.bodyH + CHEST.lidH + .02} />
+      </group>
+      <ContactSoil heightRef={chest} />
+      <Dust dropRef={dropLog} />
     </group>
-    <ContactSoil heightRef={chest} />
-    <Dust dropRef={dropLog} />
   </>;
 }
 
@@ -162,8 +177,8 @@ function ReadySignal({ onReady }: { onReady?: () => void }) {
 export default function RavenWorld({ phase, reduced, onLost, manual, onReady }: { phase: Phase; reduced: boolean; onLost: () => void; manual?: (api: RavenManualApi) => void; onReady?: () => void }) {
   // The scene is composed for a wide frame (about 2.2 : 1) and fills the whole stage; the stage keeps its own height.
   return <div className="raven-world" style={{ position: 'relative', width: '100%', height: '100%' }}>
-    <Canvas shadows={{ type: VSMShadowMap }} dpr={manual ? (import.meta.env.DEV ? Number(new URLSearchParams(location.search).get('dpr')) || 1 : 1) : [1, 1.75]} frameloop={manual ? 'never' : 'always'} camera={{ position: [...VIEW.position], fov: VIEW.fov }}
-      gl={{ antialias: true, powerPreference: 'high-performance', toneMapping: ACESFilmicToneMapping, toneMappingExposure: 1.14 }}
+    <Canvas shadows={{ type: VSMShadowMap }} dpr={manual ? (import.meta.env.DEV ? Number(new URLSearchParams(location.search).get('dpr')) || 1 : 1) : [1, 1.75]} frameloop={manual ? 'never' : 'always'} camera={{ position: [SHOT.x, SHOT.y, SHOT.z], fov: SHOT.vfov }}
+      gl={{ antialias: true, powerPreference: 'high-performance', toneMapping: ACESFilmicToneMapping, toneMappingExposure: 0.9 }}
       onCreated={({ gl, advance }) => {
         gl.domElement.addEventListener('webglcontextlost', onLost, { once: true });
         manual?.({ advance: (t: number) => advance(t), canvas: gl.domElement });

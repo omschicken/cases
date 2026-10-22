@@ -86,24 +86,26 @@ function leavesAlong(curve: CatmullRomCurve3, r: () => number, out: Matrix4[], s
   curve.getPointAt(1, p); curve.getTangentAt(1, tan); place(p, at.copy(tan).normalize(), leafScale * 0.7); // the terminal leaf
 }
 
-function buildOlive(seed: number, stems: number, height: number): Built {
+type Habit = { spread: number; density: number; leaf: number };
+function buildOlive(seed: number, stems: number, height: number, habit: Habit): Built {
   const r = rng(seed); const bark: BufferGeometry[] = []; const leaves: Matrix4[] = [];
   for (let s = 0; s < stems; s++) {
     const a = (s / stems) * Math.PI * 2 + r() * 0.6; const lean = new Vector3(Math.cos(a), 0, Math.sin(a));
     const base = lean.clone().multiplyScalar(0.1); const h = height * (0.8 + r() * 0.4);
-    const stem = new CatmullRomCurve3([base, base.clone().add(new Vector3(lean.x * 0.08, h * 0.35, lean.z * 0.08)), base.clone().add(new Vector3(lean.x * 0.25 + (r() - 0.5) * 0.1, h * 0.7, lean.z * 0.25 + (r() - 0.5) * 0.1)), base.clone().add(new Vector3(lean.x * 0.4, h, lean.z * 0.4))]);
-    bark.push(taperedTube(stem, 12, 0.055, 0.025));
-    const nB = 5 + Math.floor(r() * 3);
+    // a thick, nearly upright stem that only leans out near its top, like the old olive in the reference
+    const stem = new CatmullRomCurve3([base.clone().multiplyScalar(0.3), base.clone().add(new Vector3(lean.x * 0.03 + (r() - 0.5) * 0.03, h * 0.35, lean.z * 0.03)), base.clone().add(new Vector3(lean.x * 0.12 + (r() - 0.5) * 0.06, h * 0.7, lean.z * 0.12 + (r() - 0.5) * 0.06)), base.clone().add(new Vector3(lean.x * 0.24, h, lean.z * 0.24))]);
+    bark.push(taperedTube(stem, 12, 0.085, 0.04));
+    const nB = 9 + Math.floor(r() * 4); // many limbs, all round the stem, so the crown is full
     for (let b = 0; b < nB; b++) {
-      const t = 0.4 + (b / nB) * 0.6; const o = stem.getPointAt(t); const ang = a + (r() - 0.5) * 2.4;
+      const t = 0.35 + (b / nB) * 0.65; const o = stem.getPointAt(t); const ang = r() * Math.PI * 2;
       const dir = new Vector3(Math.cos(ang) * 0.85, 0.5 + r() * 0.3, Math.sin(ang) * 0.85);
-      const br = branchCurve(r, o, dir, 0.7 + r() * 0.6, 0.5); bark.push(taperedTube(br, 8, 0.022, 0.008));
-      const nT = 5 + Math.floor(r() * 3);
+      const br = branchCurve(r, o, dir, (0.7 + r() * 0.6) * habit.spread, 0.5); bark.push(taperedTube(br, 8, 0.022, 0.008));
+      const nT = Math.round((5 + Math.floor(r() * 3)) * habit.density);
       for (let k = 0; k < nT; k++) {
         const tt = 0.25 + (k / nT) * 0.75; const to = br.getPointAt(tt); const bt = br.getTangentAt(tt);
         const td = bt.clone().multiplyScalar(0.5).add(new Vector3((r() - 0.5) * 1.4, (r() - 0.4) * 0.5, (r() - 0.5) * 1.4)).normalize();
-        const tw = branchCurve(r, to, td, 0.42 + r() * 0.4, 0.9); bark.push(taperedTube(tw, 5, 0.007, 0.0025));
-        leavesAlong(tw, r, leaves, 0.1, 0.62);
+        const tw = branchCurve(r, to, td, (0.42 + r() * 0.4) * habit.spread, 0.9); bark.push(taperedTube(tw, 5, 0.007, 0.0025));
+        leavesAlong(tw, r, leaves, 0.1 * habit.leaf, 0.62 * habit.leaf);
       }
     }
   }
@@ -155,10 +157,10 @@ function Plant({ built, seed }: { built: Built; seed: number }) {
 }
 
 /** An olive in a planter or on a block: a few woody stems, many drooping twigs with leaves. `scale` sizes the whole plant. */
-export function OliveTree({ position, scale = 1, seed = 1, stems = 4, height = 1.3 }: { position: V3; scale?: number; seed?: number; stems?: number; height?: number }) {
-  const built = useMemo(() => buildOlive(seed, stems, height), [seed, stems, height]);
+export function OliveTree({ position, scale = 1, seed = 1, stems = 4, height = 1.3, spread = 1, density = 1, leaf = 1 }: { position: V3; scale?: number; seed?: number; stems?: number; height?: number; spread?: number; density?: number; leaf?: number }) {
+  const built = useMemo(() => buildOlive(seed, stems, height, { spread, density, leaf }), [seed, stems, height, spread, density, leaf]);
   return <group position={position} scale={scale}>
-    <mesh position={[0, 0.02, 0]} receiveShadow><cylinderGeometry args={[0.42, 0.46, 0.06, 24]} /><meshStandardMaterial color="#5b4a3a" roughness={1} /></mesh>
+    <mesh position={[0, 0.006, 0]} receiveShadow><cylinderGeometry args={[0.34, 0.36, 0.014, 28]} /><meshStandardMaterial color="#4a3a2c" roughness={1} /></mesh>
     <Plant built={built} seed={seed} />
   </group>;
 }

@@ -43,7 +43,7 @@ function Relief({ maps }: { maps: RefMaps }) {
   const alpha = useMemo(() => new CanvasTexture(silhouette(maps.image, 3)), [maps]);
   useEffect(() => { if (import.meta.env.DEV) (window as unknown as { __ravenReady?: boolean }).__ravenReady = true; }, []); // dev harness: scene fully built
   return <mesh position={pos} geometry={geometry} castShadow receiveShadow>
-    <meshStandardMaterial map={maps.color} color="#aaa6a0" emissiveMap={maps.color} emissive="#ffffff" emissiveIntensity={0.45} normalMap={maps.normal} normalScale={[2.1, 2.1] as unknown as never}
+    <meshStandardMaterial map={maps.color} color="#7f7c77" emissiveMap={maps.color} emissive="#ffffff" emissiveIntensity={0.07} normalMap={maps.normal} normalScale={[2.1, 2.1] as unknown as never}
       alphaMap={alpha} alphaTest={0.5} roughness={0.6} metalness={0.2} side={DoubleSide} />
   </mesh>;
 }
