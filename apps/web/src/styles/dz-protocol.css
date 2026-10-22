@@ -1,0 +1,624 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   DROP PROTOCOL — DROPZONE signature #3
+
+   The opening sequence, staged as one scene instead of things scattered
+   down the page (a status line and a result panel the user had to scroll
+   to). Two phases on one stage:
+
+     ARMING   the chest's own fullscreen overlay runs the whole burst →
+              reveal → settle sequence; this scene's stage underneath it
+              is just a frame
+     REVEAL   the item is presented for study, with the real odds
+
+   The server remains the only authority on the outcome. This layer is
+   presentation over a result that is already final before the first frame
+   runs: nothing here can change what dropped, and there is deliberately no
+   near-miss effect, because a staged near-miss misrepresents a roll that
+   was never close.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dz-protocol {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: clamp(var(--dz-s3), 2vw, var(--dz-s5));
+  /* Opaque rather than translucent: a blurred backdrop over a 15k-line page
+     is the most expensive thing on screen, and the scene wants the page gone
+     anyway, not dimly visible behind it. */
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%,
+      color-mix(in srgb, var(--dz-rarity) 10%, transparent), transparent 70%),
+    var(--dz-void);
+  animation: dz-protocol-in var(--dz-d-move) var(--dz-e-enter);
+}
+
+/* During opening, the background pulses brighter with the eruption */
+.dz-protocol--opening {
+  animation:
+    dz-protocol-in var(--dz-d-move) var(--dz-e-enter),
+    protocol-bg-pulse 1.25s ease-out both;
+}
+@keyframes protocol-bg-pulse {
+  0%, 50%  { background-color: transparent; }
+  64%      {
+    background:
+      radial-gradient(ellipse 140% 100% at 50% 44%,
+        color-mix(in srgb, var(--dz-rarity) 32%, transparent) 0%,
+        color-mix(in srgb, var(--dz-rarity) 8%, transparent) 60%,
+        transparent 80%),
+      var(--dz-void);
+  }
+  100%     {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%,
+        color-mix(in srgb, var(--dz-rarity) 10%, transparent), transparent 70%),
+      var(--dz-void);
+  }
+}
+
+@keyframes dz-protocol-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Opening burst: radial flash ───────────────────────────────────────── */
+.dz-protocol--opening::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: radial-gradient(ellipse 70% 65% at 50% 44%,
+    rgba(255,255,255,.9) 0%,
+    rgba(255,255,255,.6) 10%,
+    color-mix(in srgb, var(--dz-rarity, hsl(26,85%,55%)) 80%, transparent) 28%,
+    transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+  animation: protocol-flash 1.25s ease-out both;
+}
+@keyframes protocol-flash {
+  0%, 52%  { opacity: 0; }
+  64%      { opacity: 1; }
+  76%      { opacity: .3; }
+  100%     { opacity: 0; }
+}
+
+/* ── Full-screen god rays spinning out from the chest ──────────────────── */
+.dz-protocol--opening::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 380;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 44%,
+    color-mix(in srgb, var(--dz-rarity, hsl(26,85%,55%)) 22%, transparent) 0deg 5deg,
+    transparent 5deg 14deg,
+    color-mix(in srgb, var(--dz-rarity, hsl(26,85%,55%)) 10%, transparent) 14deg 18deg,
+    transparent 18deg 30deg
+  );
+  opacity: 0;
+  pointer-events: none;
+  animation: fullscreen-rays 1.25s ease-out both;
+}
+@keyframes fullscreen-rays {
+  0%, 52%  { opacity: 0; transform: rotate(-14deg) scale(.9); }
+  63%      { opacity: .8; transform: rotate(0deg) scale(1); }
+  78%      { opacity: .45; transform: rotate(16deg) scale(1.06); }
+  100%     { opacity: 0; transform: rotate(36deg) scale(1.15); }
+}
+
+/* ── Top bar ───────────────────────────────────────────────────────────── */
+.dz-protocol__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dz-s4);
+  padding-bottom: var(--dz-s3);
+  border-bottom: 1px solid var(--dz-edge);
+}
+
+.dz-protocol__phase {
+  display: flex;
+  align-items: center;
+  gap: var(--dz-s3);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+  min-width: 0;
+}
+
+.dz-protocol__phase b {
+  color: var(--dz-rarity);
+  font-weight: 600;
+}
+
+/* Phase pips — where you are in the sequence. */
+.dz-protocol__pips {
+  display: flex;
+  gap: 4px;
+}
+
+.dz-protocol__pip {
+  width: 16px;
+  height: 2px;
+  background: var(--dz-surface-4);
+  transition: background var(--dz-d-quick) var(--dz-e-enter);
+}
+
+.dz-protocol__pip.is-done { background: var(--dz-rarity); }
+
+/* ── Stage ─────────────────────────────────────────────────────────────── */
+.dz-protocol__stage {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  /* overflow: visible so the chest's rays, rings and shockwave can bleed
+     outside the chamber frame during the opening sequence. */
+  overflow: visible;
+  padding: var(--dz-s3) 0;
+}
+
+.dz-protocol__chamber {
+  width: min(100%, 980px);
+  aspect-ratio: 16 / 9;
+  max-height: 100%;
+}
+
+/* At reveal the chamber shares the stage with the read-out, so it gives up
+   height rather than pushing the item name, value and actions off-screen.
+   height:100% + min-height:0 lets it absorb whatever the row leaves. */
+.dz-protocol__reveal .dz-protocol__chamber {
+  aspect-ratio: 2 / 1;
+  height: 100%;
+  min-height: 0;
+  max-height: min(42vh, 380px);
+}
+
+/* On a phone the 16/9 cell gets too short to hold the reel comfortably. */
+@media (max-width: 760px) {
+  .dz-protocol__chamber { aspect-ratio: 4 / 3; }
+}
+
+/* The case during ARMING (non-opening state). */
+.dz-protocol__case {
+  width: clamp(200px, 38vw, 420px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+/* Burst stage: no chamber frame — the chest's own overlay animates freely. */
+.dz-protocol__burst-stage {
+  position: relative;
+  width: min(94vw, 900px);
+  height: min(74vh, 560px);
+  display: grid;
+  place-items: center;
+  animation: burst-stage-zoom 1.25s ease-out both;
+}
+@keyframes burst-stage-zoom {
+  0%    { transform: scale(1); }
+  12%   { transform: scale(.95) translateY(3px); }
+  50%   { transform: scale(1.04) translateY(-5px); }
+  68%   { transform: scale(1.12) translateY(-10px); }
+  84%   { transform: scale(1.06) translateY(-7px); }
+  100%  { transform: scale(1); }
+}
+
+/* Inside the burst stage, give the chest more breathing room */
+.dz-protocol__burst-stage .case-chest-detail {
+  width: min(100%, 46rem);
+  height: 28rem;
+}
+
+.dz-protocol__case img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ── Reveal ──────────────────────────────────────────────────────────────
+   The item stays inside the cell it came from, and the read-out sits under
+   it. Same chamber box as ACTIVATION, so the transition between the two
+   phases does not resize the stage. */
+/* min-height:0 on every nested grid in the chain, or the stage row refuses
+   to shrink below its content and pushes the footer actions — including the
+   button that closes the scene — past the bottom of the viewport. */
+.dz-protocol__reveal {
+  display: grid;
+  grid-template-rows: minmax(0, auto) auto;
+  /* align-content centres the cell and its read-out as one group. With a 1fr
+     first row the chamber floated in the middle of a tall track and left a
+     dead gap above the item name. */
+  align-content: center;
+  justify-items: center;
+  gap: var(--dz-s4);
+  width: 100%;
+  min-height: 0;
+  height: 100%;
+}
+
+.dz-protocol__item {
+  display: grid;
+  place-items: center;
+  gap: var(--dz-s2);
+  text-align: center;
+  max-width: 560px;
+}
+
+/* Concrete size, not a percentage: the chamber's object slot is positioned
+   and sized by its content, so a % width there resolves against an auto
+   width and the art lands off-centre and undersized. */
+.dz-protocol__item-art {
+  width: clamp(200px, 34vw, 400px);
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  animation: dz-item-rise var(--dz-d-cine) var(--dz-e-snap) both;
+}
+
+.dz-protocol__item-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dz-protocol__item-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 20px 34px rgba(0, 0, 0, 0.8))
+    drop-shadow(0 0 30px color-mix(in srgb, var(--dz-rarity) 45%, transparent));
+}
+
+@keyframes dz-item-rise {
+  from { opacity: 0; transform: translate3d(0, 34px, 0) scale(0.84); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+.dz-protocol__item-rarity {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-rarity);
+}
+
+.dz-protocol__item-name {
+  margin: 0;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-lg);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-text-1);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.dz-protocol__item-value {
+  margin: 0;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-rarity);
+}
+
+/* The item's real chance, from the same weights the server rolls against.
+   Shown at the reveal on purpose: a win reads honestly next to the odds
+   that produced it. */
+.dz-protocol__item-odds {
+  margin: 0;
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: 0.08em;
+  color: var(--dz-text-4);
+}
+
+/* ── Footer actions ────────────────────────────────────────────────────── */
+.dz-protocol__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dz-s3);
+  padding-top: var(--dz-s3);
+  border-top: 1px solid var(--dz-edge);
+}
+
+.dz-protocol__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dz-s2);
+  /* 44px min height: this is the one row a user hits repeatedly, often on a
+     phone, and often in a hurry. */
+  min-height: 44px;
+  padding: 0 var(--dz-s5);
+  border-radius: var(--dz-r-md);
+  border: 1px solid var(--dz-edge-strong);
+  background: var(--dz-surface-2);
+  color: var(--dz-text-2);
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background var(--dz-d-micro) var(--dz-e-enter),
+    border-color var(--dz-d-micro) var(--dz-e-enter),
+    color var(--dz-d-micro) var(--dz-e-enter),
+    transform var(--dz-d-micro) var(--dz-e-exit);
+}
+
+.dz-protocol__btn:hover:not(:disabled),
+.dz-protocol__btn:focus-visible {
+  background: var(--dz-surface-3);
+  border-color: var(--dz-edge-lit);
+  color: var(--dz-text-1);
+  transform: translate3d(0, -1px, 0);
+}
+
+.dz-protocol__btn:focus-visible {
+  outline: 2px solid var(--dz-amber);
+  outline-offset: 2px;
+}
+
+.dz-protocol__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.dz-protocol__btn--primary {
+  background: linear-gradient(180deg, var(--dz-amber-hot), var(--dz-amber));
+  border-color: var(--dz-amber-hot);
+  color: var(--dz-void);
+  font-weight: 700;
+}
+
+.dz-protocol__btn--primary:hover:not(:disabled),
+.dz-protocol__btn--primary:focus-visible {
+  background: linear-gradient(180deg, var(--dz-amber-hot), var(--dz-amber));
+  color: var(--dz-void);
+  filter: brightness(1.07);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--dz-amber) 40%, transparent);
+}
+
+/* Skip — always reachable during the animation. The result is already
+   decided server-side, so ending the animation early costs the user
+   nothing, and a player opening their fortieth case should not be held
+   hostage by a 6.5s sequence. */
+.dz-protocol__skip {
+  background: transparent;
+  border-color: var(--dz-edge);
+  color: var(--dz-text-4);
+}
+
+/* ── Provably-fair detail ────────────────────────────────────────────────
+   Collapsed by default so the reveal stays clean, but present in the same
+   scene so verification never requires leaving it. */
+.dz-protocol__fair {
+  width: min(100%, 560px);
+  margin-top: var(--dz-s2);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  color: var(--dz-text-4);
+}
+
+.dz-protocol__fair summary {
+  cursor: pointer;
+  padding: var(--dz-s2) 0;
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-3);
+}
+
+.dz-protocol__fair summary:focus-visible {
+  outline: 2px solid var(--dz-amber);
+  outline-offset: 2px;
+  border-radius: var(--dz-r-sm);
+}
+
+.dz-protocol__fair dl {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--dz-s1) var(--dz-s3);
+  margin: var(--dz-s2) 0 0;
+  text-align: left;
+}
+
+.dz-protocol__fair dt { color: var(--dz-text-4); white-space: nowrap; }
+
+.dz-protocol__fair dd {
+  margin: 0;
+  color: var(--dz-text-2);
+  /* Hashes are long and must not widen the scene. */
+  overflow-wrap: anywhere;
+}
+
+/* ── Status line for assistive tech ──────────────────────────────────────
+   The phase is conveyed visually by the stage; this carries the same
+   information to a screen reader without duplicating it on screen. */
+.dz-protocol__live {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── Apex darkness veil (COVERT / GOLD reveal) ────────────────────────────
+   Covers the whole scene near-opaque for ~1 second, then fades out.
+   The item animation runs underneath; the user first hears silence, then
+   the veil lifts and the item and the chord hit simultaneously.
+   z-index 420: above stage content (auto), below bar/actions (430). */
+.dz-protocol__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 420;
+  background: var(--dz-void);
+  pointer-events: none;
+  animation: apex-veil 2.4s ease-out both;
+}
+@keyframes apex-veil {
+  0%, 42%  { opacity: 0.96; }
+  70%      { opacity: 0;    }
+  100%     { opacity: 0;    }
+}
+
+/* Bar and actions always float above the veil so skip/continue are reachable */
+.dz-protocol__bar,
+.dz-protocol__actions {
+  position: relative;
+  z-index: 430;
+}
+
+/* ── Apex reveal: no chamber box, item fills the stage ─────────────────── */
+.dz-protocol__reveal--apex {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-content: center;
+  justify-items: center;
+  gap: var(--dz-s4);
+  width: 100%;
+  min-height: 0;
+  height: 100%;
+}
+
+/* Apex art: dramatically larger, rises from below with rotation */
+.dz-protocol__item-art--apex {
+  width: clamp(280px, 54vw, 640px) !important;
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  animation: dz-item-apex 2.4s cubic-bezier(0.06, 0.95, 0.12, 1) both;
+}
+
+@keyframes dz-item-apex {
+  0%   {
+    opacity: 0;
+    transform: translate3d(0, 72px, 0) scale(0.58) rotateY(-7deg);
+    filter: brightness(6) blur(16px);
+  }
+  18%  { opacity: 0.5; filter: brightness(2.5) blur(6px); }
+  55%  {
+    opacity: 1;
+    transform: translate3d(0, -10px, 0) scale(1.06) rotateY(2.5deg);
+    filter: brightness(1.15) blur(0);
+  }
+  72%  { transform: translate3d(0, 4px, 0) scale(0.98) rotateY(-0.5deg); }
+  86%  { transform: translate3d(0, -2px, 0) scale(1.01); }
+  100% { transform: translate3d(0, 0, 0) scale(1) rotateY(0deg); filter: brightness(1); }
+}
+
+/* High-rarity (CLASSIFIED) standard reveal: slower, more dramatic float */
+.dz-protocol__item-art--high {
+  animation-duration: 1.5s !important;
+  animation-timing-function: cubic-bezier(0.10, 0.85, 0.18, 1) !important;
+}
+
+/* ── Rarity-specific background pulse ─────────────────────────────────── */
+/* CLASSIFIED: the screen dims slightly before the item floats up */
+.dz-protocol--rarity-CLASSIFIED.dz-protocol--opening {
+  animation:
+    dz-protocol-in var(--dz-d-move) var(--dz-e-enter),
+    protocol-bg-pulse 1.25s ease-out both;
+}
+
+/* COVERT / GOLD: the whole protocol is darker, richer — a different gravity */
+.dz-protocol--rarity-COVERT,
+.dz-protocol--rarity-GOLD {
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 0%,
+      color-mix(in srgb, var(--dz-rarity) 16%, transparent), transparent 70%),
+    var(--dz-void);
+}
+
+/* Opening pulse is more extreme for apex rarities */
+.dz-protocol--rarity-COVERT.dz-protocol--opening,
+.dz-protocol--rarity-GOLD.dz-protocol--opening {
+  animation:
+    dz-protocol-in var(--dz-d-move) var(--dz-e-enter),
+    apex-bg-surge 1.25s ease-out both;
+}
+@keyframes apex-bg-surge {
+  0%, 48%  { background:
+    radial-gradient(ellipse 100% 80% at 50% 0%,
+      color-mix(in srgb, var(--dz-rarity) 16%, transparent), transparent 70%),
+    var(--dz-void); }
+  66%      { background:
+    radial-gradient(ellipse 180% 120% at 50% 44%,
+      color-mix(in srgb, var(--dz-rarity) 42%, transparent) 0%,
+      color-mix(in srgb, var(--dz-rarity) 12%, transparent) 55%,
+      transparent 80%),
+    var(--dz-void); }
+  100%     { background:
+    radial-gradient(ellipse 100% 80% at 50% 0%,
+      color-mix(in srgb, var(--dz-rarity) 16%, transparent), transparent 70%),
+    var(--dz-void); }
+}
+
+/* Apex god rays are wider and more vivid */
+.dz-protocol--rarity-COVERT.dz-protocol--opening::after,
+.dz-protocol--rarity-GOLD.dz-protocol--opening::after {
+  background: repeating-conic-gradient(
+    from 0deg at 50% 44%,
+    color-mix(in srgb, var(--dz-rarity, hsl(26,85%,55%)) 35%, transparent) 0deg 5deg,
+    transparent 5deg 12deg,
+    color-mix(in srgb, var(--dz-rarity, hsl(26,85%,55%)) 18%, transparent) 12deg 16deg,
+    transparent 16deg 28deg
+  );
+}
+
+/* Apex flash is pure white then rarity (more violent than default) */
+.dz-protocol--rarity-COVERT.dz-protocol--opening::before,
+.dz-protocol--rarity-GOLD.dz-protocol--opening::before {
+  background: radial-gradient(ellipse 80% 70% at 50% 44%,
+    rgba(255,255,255,1)  0%,
+    rgba(255,255,255,.7) 12%,
+    color-mix(in srgb, var(--dz-rarity, hsl(26,85%,55%)) 90%, transparent) 30%,
+    transparent 60%);
+  animation: protocol-flash-apex 1.25s ease-out both;
+}
+@keyframes protocol-flash-apex {
+  0%, 50%  { opacity: 0; }
+  62%      { opacity: 1; }
+  72%      { opacity: .5; }
+  100%     { opacity: 0; }
+}
+
+/* ── Apex reveal: the item's rarity glow is stronger ──────────────────── */
+.dz-protocol--rarity-COVERT .dz-protocol__item-art--apex img,
+.dz-protocol--rarity-GOLD .dz-protocol__item-art--apex img {
+  filter:
+    drop-shadow(0 24px 40px rgba(0, 0, 0, 0.85))
+    drop-shadow(0 0 48px color-mix(in srgb, var(--dz-rarity) 65%, transparent))
+    drop-shadow(0 0 90px color-mix(in srgb, var(--dz-rarity) 30%, transparent));
+}
+
+/* ── Detail-page idle chest enhancement ────────────────────────────────── */
+/* On the case detail page the chest lives in the dz-case-stage section.
+   Giving it more presence makes the pre-click tension feel physical. */
+.dz-case-stage .case-chest-detail .case-chest-aura {
+  animation-duration: 1.9s;
+  opacity: 0.26;
+}
+.dz-case-stage .case-chest-detail .case-chest-atmosphere {
+  animation-duration: 4.2s;
+  opacity: 0.10;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dz-protocol { animation: none; }
+  .dz-protocol__item-art { animation: none; }
+  .dz-protocol__item-art--apex { animation: none; }
+  .dz-protocol__veil { animation: none; opacity: 0; }
+}

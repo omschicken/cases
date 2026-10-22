@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "status": "authoring-only-not-ready-for-runtime",
+  "units": "meters",
+  "blenderCoordinates": {"up": "+Z", "front": "-Y"},
+  "gltfCoordinates": {"up": "+Y", "front": "+Z"},
+  "case": {
+    "filename": "RavenCase.glb",
+    "root": "RavenCase",
+    "parts": ["CaseBody", "CaseLid", "LockLeft", "LockRight", "Hinge", "RavenRelief", "Logo", "Interior"],
+    "dimensions": [2.7, 1.24, 1.7],
+    "lidPivotGLTF": [0, 1, -0.8],
+    "lidAxis": "X",
+    "lidOpenRadians": -1.884955592,
+    "latchOpenRadians": 1.396263402,
+    "perchGLTF": [0, 1.22, 0],
+    "desktopTrianglesMax": 70000,
+    "mobileTrianglesMax": 35000,
+    "desktopTextureMax": 2048,
+    "mobileTextureMax": 1024
+  },
+  "bird": {
+    "filename": "RavenBird.glb",
+    "root": "RavenBird",
+    "requiredClips": ["Fly", "Landing", "Idle", "Takeoff", "FlyAway"],
+    "rootMotion": "in-place; world trajectory owned by OpeningSequenceController",
+    "clipFps": 30,
+    "maxInfluences": 4,
+    "maxBones": 64,
+    "desktopTrianglesMax": 80000,
+    "mobileTrianglesMax": 25000,
+    "inspection": "feather alpha, wing folding, foot contact, head/beak silhouette, no toy-like specularity"
+  },
+  "releaseChecks": [
+    "Actual matching case relief and approved logo geometry",
+    "UV, normal, base color and roughness maps; metallic map on case steel",
+    "No external texture URLs or missing buffers",
+    "Khronos glTF validator clean",
+    "Visual review against packed original reference at 390 and 1440",
+    "Measured hardware performance; do not infer mobile FPS from desktop emulation",
+    "Documented source and commercial web distribution rights",
+    "Server-confirmed result only; no API mutation from model components"
+  ]
+}

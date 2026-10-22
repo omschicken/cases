@@ -1,0 +1,491 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   DROPZONE — dz-nav.css
+   Shell structure, topbar, sidebar, footer.
+
+   Namespace: dz-shell / dz-topbar / dz-brand / dz-sidebar / dz-main /
+              dz-footer / dz-menu-toggle / dz-balance / dz-account /
+              dz-steam-btn / dz-guest-btn / dz-sidebar-backdrop
+
+   Mobile: sidebar is a full-height drawer behind a backdrop.
+   Desktop (≥768px): sidebar is sticky, topbar has no hamburger.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Shell ──────────────────────────────────────────────────────────── */
+.dz-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--dz-surface-0);
+  color: var(--dz-text-1);
+}
+
+/* ── Topbar ─────────────────────────────────────────────────────────── */
+.dz-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: var(--dz-s3);
+  height: 56px;
+  padding: 0 var(--dz-s4);
+  background: rgba(7, 8, 6, 0.94);
+  border-bottom: 1px solid var(--dz-edge);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ── Brand ──────────────────────────────────────────────────────────── */
+.dz-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--dz-s2);
+  text-decoration: none;
+  color: var(--dz-text-1);
+  flex: 0 0 auto;
+  user-select: none;
+}
+
+.dz-brand__sigil {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  font: 900 1rem var(--dz-font-display);
+  color: var(--dz-void);
+  background: var(--dz-amber);
+  border-radius: 4px;
+  letter-spacing: 0;
+  flex-shrink: 0;
+}
+
+.dz-brand__sigil i {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  background: var(--dz-void);
+  border-radius: 50%;
+  font-style: normal;
+}
+
+.dz-brand__word {
+  font: 900 1.15rem var(--dz-font-display);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--dz-text-1);
+  line-height: 1;
+}
+
+.dz-brand__suffix {
+  color: var(--dz-amber);
+  font-style: normal;
+}
+
+/* ── Hamburger toggle ───────────────────────────────────────────────── */
+.dz-menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-sm);
+  color: var(--dz-text-3);
+  cursor: pointer;
+  transition: color var(--dz-d-micro) var(--dz-e-enter),
+              border-color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-menu-toggle:hover {
+  color: var(--dz-text-1);
+  border-color: var(--dz-edge-strong);
+}
+
+/* ── Topbar right slot ──────────────────────────────────────────────── */
+.dz-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--dz-s3);
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+/* ── Balance pill ───────────────────────────────────────────────────── */
+.dz-balance {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 var(--dz-s3);
+  font: 700 var(--dz-type-tech) var(--dz-font-technical);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-amber);
+  background: rgba(215, 168, 58, 0.08);
+  border: 1px solid rgba(215, 168, 58, 0.22);
+  border-radius: var(--dz-r-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--dz-d-micro) var(--dz-e-enter),
+              border-color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-balance:hover {
+  background: rgba(215, 168, 58, 0.14);
+  border-color: rgba(215, 168, 58, 0.38);
+}
+
+/* ── Account avatar & menu ──────────────────────────────────────────── */
+.dz-account {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.dz-account__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  overflow: hidden;
+  background: var(--dz-surface-3);
+  border: 1px solid var(--dz-edge-strong);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--dz-text-1);
+  font: 700 0.85rem var(--dz-font-display);
+  transition: border-color var(--dz-d-micro) var(--dz-e-enter),
+              box-shadow var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-account__trigger:hover,
+.dz-account--open .dz-account__trigger {
+  border-color: var(--dz-amber);
+  box-shadow: 0 0 0 3px rgba(215, 168, 58, 0.14);
+}
+
+.dz-account__trigger img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dz-account__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 58;
+}
+
+.dz-account__panel {
+  position: absolute;
+  z-index: 59;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 196px;
+  padding: var(--dz-s2);
+  background: var(--dz-surface-2);
+  border: 1px solid var(--dz-edge-strong);
+  border-radius: var(--dz-r-sm);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
+  animation: dz-panel-in var(--dz-d-quick) var(--dz-e-enter) both;
+}
+
+@keyframes dz-panel-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+.dz-account__name {
+  margin: 0 0 var(--dz-s2);
+  padding: var(--dz-s2) var(--dz-s3) var(--dz-s3);
+  font-size: var(--dz-type-sm);
+  color: var(--dz-text-4);
+  border-bottom: 1px solid var(--dz-edge);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dz-account__panel a,
+.dz-account__panel button {
+  display: block;
+  width: 100%;
+  padding: var(--dz-s2) var(--dz-s3);
+  color: var(--dz-text-2);
+  background: none;
+  border: 0;
+  border-radius: 5px;
+  text-align: left;
+  font: 600 var(--dz-type-sm) var(--dz-font-display);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--dz-d-micro) var(--dz-e-enter),
+              background var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-account__panel a:hover,
+.dz-account__panel button:hover {
+  color: var(--dz-amber);
+  background: rgba(215, 168, 58, 0.07);
+}
+
+/* ── Steam sign-in button ───────────────────────────────────────────── */
+.dz-steam-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 var(--dz-s3);
+  font: 700 var(--dz-type-xs) var(--dz-font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dz-void);
+  background: var(--dz-amber);
+  border-radius: var(--dz-r-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-steam-btn:hover {
+  background: var(--dz-amber-hot);
+}
+
+/* Guest icon button */
+.dz-guest-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: var(--dz-text-3);
+  border: 1px solid var(--dz-edge);
+  border-radius: 50%;
+  text-decoration: none;
+  transition: color var(--dz-d-micro) var(--dz-e-enter),
+              border-color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-guest-btn:hover {
+  color: var(--dz-amber);
+  border-color: var(--dz-edge-strong);
+}
+
+/* ── Body layout ────────────────────────────────────────────────────── */
+.dz-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────────── */
+.dz-sidebar {
+  flex: 0 0 210px;
+  width: 210px;
+  display: flex;
+  flex-direction: column;
+  background: var(--dz-surface-1);
+  border-right: 1px solid var(--dz-edge);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  padding: var(--dz-s4) 0;
+}
+
+.dz-sidebar::-webkit-scrollbar { display: none; }
+
+.dz-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0 var(--dz-s3);
+}
+
+.dz-sidebar__divider {
+  height: 1px;
+  margin: var(--dz-s3) var(--dz-s4);
+  background: var(--dz-edge);
+}
+
+.dz-sidebar__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--dz-s3);
+  padding: var(--dz-s2) var(--dz-s3);
+  color: var(--dz-text-3);
+  border-radius: var(--dz-r-sm);
+  text-decoration: none;
+  font: 600 0.82rem var(--dz-font-display);
+  letter-spacing: 0.03em;
+  transition: color var(--dz-d-micro) var(--dz-e-enter),
+              background var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-sidebar__link svg {
+  flex: 0 0 auto;
+  color: inherit;
+  opacity: 0.65;
+  transition: opacity var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-sidebar__link:hover {
+  color: var(--dz-text-1);
+  background: var(--dz-surface-3);
+}
+
+.dz-sidebar__link:hover svg {
+  opacity: 1;
+}
+
+.dz-sidebar__link.active {
+  color: var(--dz-amber);
+  background: rgba(215, 168, 58, 0.07);
+}
+
+.dz-sidebar__link.active svg {
+  opacity: 1;
+}
+
+.dz-sidebar__link.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  bottom: 7px;
+  width: 2px;
+  background: var(--dz-amber);
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── Sidebar backdrop (mobile) ──────────────────────────────────────── */
+.dz-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 59; /* below topbar (z-index: 60) */
+  background: rgba(5, 7, 11, 0.65);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: dz-backdrop-in var(--dz-d-enter, 240ms) var(--dz-e-enter) both;
+}
+
+@keyframes dz-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Main ───────────────────────────────────────────────────────────── */
+.dz-main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────── */
+.dz-footer {
+  padding: var(--dz-s4) var(--dz-s5) var(--dz-s7);
+  background: var(--dz-surface-0);
+  border-top: 1px solid var(--dz-edge);
+}
+
+.dz-footer__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1520px;
+  margin: 0 auto var(--dz-s3);
+}
+
+.dz-footer__brand {
+  font: 900 1rem var(--dz-font-display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dz-text-1);
+}
+
+.dz-footer__brand span {
+  color: var(--dz-amber);
+}
+
+.dz-footer__age {
+  padding: 2px var(--dz-s2);
+  font: 800 var(--dz-type-tech) var(--dz-font-display);
+  color: var(--dz-amber);
+  border: 1px solid rgba(124, 107, 255, 0.28);
+  border-radius: 4px;
+}
+
+.dz-footer p {
+  max-width: 1520px;
+  margin: 0 auto;
+  font-size: var(--dz-type-sm);
+  color: var(--dz-text-4);
+  line-height: 1.65;
+}
+
+/* ── Mobile (< 768px) ───────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Sidebar stays IN the flex flow — slides in by shifting its own margin,
+     which pushes .dz-main to the right instead of overlapping it. */
+  .dz-body {
+    display: flex;
+    position: relative;
+    overflow-x: hidden; /* clips the off-screen sidebar */
+  }
+
+  .dz-sidebar {
+    /* In-flow, no fixed/absolute — moves content, not covers it */
+    position: relative;
+    flex: 0 0 min(270px, 82vw);
+    width: min(270px, 82vw);
+    min-height: calc(100dvh - 56px); /* fill height behind scroll */
+    margin-left: calc(-1 * min(270px, 82vw)); /* hidden by default */
+    transition: margin-left var(--dz-d-move, 260ms) var(--dz-e-enter, ease);
+    box-shadow: none;
+    z-index: auto;
+  }
+
+  .dz-sidebar--open {
+    margin-left: 0;
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.55);
+  }
+
+  .dz-main {
+    overflow-y: unset;
+    min-width: 0;
+    flex: 1;
+  }
+}
+
+/* ── Desktop (≥ 768px) ──────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .dz-menu-toggle {
+    display: none;
+  }
+
+  .dz-sidebar {
+    position: sticky;
+    top: 56px;
+    height: calc(100dvh - 56px);
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .dz-sidebar {
+    transition: none;
+  }
+
+  .dz-account__panel {
+    animation: none;
+  }
+
+  .dz-sidebar-backdrop {
+    animation: none;
+  }
+}

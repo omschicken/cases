@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://casecrow_ci:casecrow_ci@localhost:5432/casecrow_ci?schema=public
+      DIRECT_URL: postgresql://casecrow_ci:casecrow_ci@localhost:5432/casecrow_ci?schema=public
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: casecrow_ci
+          POSTGRES_PASSWORD: casecrow_ci
+          POSTGRES_DB: casecrow_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U casecrow_ci -d casecrow_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build shared workspace package
+        run: pnpm --filter @cs2-cases/shared build
+      - name: Generate Prisma client
+        run: pnpm --filter @cs2-cases/api prisma:generate
+      - name: Initialize isolated CI database
+        run: pnpm --filter @cs2-cases/api exec prisma migrate deploy
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Build
+        run: pnpm build
+      - name: Unit tests
+        run: pnpm test

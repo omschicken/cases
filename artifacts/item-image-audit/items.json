@@ -1,0 +1,2605 @@
+[
+  {
+    "id": "3a2c64bc-dce6-40e9-98ee-a22f1e98a3b0",
+    "name": "MP9 | Setting Sun (FT)",
+    "case": "Static Case",
+    "caseSlug": "static",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=MP9%20Setting%20Sun",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8js_f9Ttk4eetZKFsMs-DD3OExPx44t5kX3CMmRQguynLyIqvdXiVbFN2CZMhQLRZ4RbumtXhPrji4gzfio5MyCr4in4a7nk_4PFCD_TmMRwm0Q",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "c60d0222-2529-4fdb-9c2c-f7033217affa",
+    "name": "Sawed-Off | Serenity (BS)",
+    "case": "Static Case",
+    "caseSlug": "static",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Sawed-Off%20Serenity",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLin4Hl-S1d6c2tfZt-IeeWCmiWx9FytfdocCW6khUz_W2Dwtv6cXLFZgUnD5VzQrMPtxjrx9K0Ye637wzYj4gXzimqiH9KuC91o7FV9mPR2UI",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "4926ba10-c04a-48ba-934a-57d575e0270c",
+    "name": "P2000 | Amber Fade (FT)",
+    "case": "Static Case",
+    "caseSlug": "static",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=P2000%20Amber%20Fade",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL5lYayrXIL0POvV6JsJPWsA2KEwOJ6ueJWQyC0nQlpsjvcmd_7dHyVZgdxAsB1QeRZ5BPqlYbmNuvr5lTW2o1Myyyt3ykY7DErvbib25P3aA",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "ec1026d8-9998-446e-9bbd-8dc10f09338d",
+    "name": "UMP-45 | Gunsmoke (MW)",
+    "case": "Static Case",
+    "caseSlug": "static",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=UMP-45%20Gunsmoke",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLkk4a0qB1T9s2pbah9Jf6sAm6Xyfo4trM5GCzrkE5w42jVzYqgdijBalR2CMd4R-JeuhS8lNXjN7nj4gTa2pUFk3skeb6bFA",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "5557d87e-e6f1-4b11-acd3-32296b09d8c0",
+    "name": "AUG | Storm (FN)",
+    "case": "Static Case",
+    "caseSlug": "static",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=AUG%20Storm",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwi5Hf7i1k_OaheqlrMv-dGlicyOl-pK84GCzkxEkisDnUz42qc32WaVckW5AhQeVYs0W9wIfuP7i34laK2d9G02yg2S19fQbA",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "682318df-b914-4b50-a893-26a92583250e",
+    "name": "M4A1-S | Nitro (MW)",
+    "case": "Static Case",
+    "caseSlug": "static",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/d946ef?text=M4A1-S%20Nitro",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H-OcMWiCwOBxtd5oTCq2mwk0jDGMnYftb3nFaVQgApQiQuEOukS-x4KxP-PjsQOLjt9HzS6t2CpB6C0_4LxWBaA7uvqANEieesU",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "3c0af362-dae9-496a-ac98-20cd28f542b6",
+    "name": "AWP | Electric Hive (FT)",
+    "case": "Static Case",
+    "caseSlug": "static",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/eb4444?text=AWP%20Electric%20Hive",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf9Ttk5_u4bZthKfebGinElLtytLVtG362x05wsWyByt2scHrGOgd1WZJ1ROBc4xi_ld3gNO7g-UWA3Kwc2RVq",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "6adbb67b-63af-432c-b943-9e52ea1c1881",
+    "name": "Karambit | Case Hardened (BS)",
+    "case": "Static Case",
+    "caseSlug": "static",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/f59e0b?text=Karambit",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Q7uCvZaZkNM-SH1ifyOJztN5lRi67gVNz5DvUmdj4eXuWOFAhAsF4RLFc5BC4xtbuY7yx7wDbgo9CzSj2h3xK8G81tB_XeHWq",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "da1429fa-281c-49d7-a4ce-f8027ea1933b",
+    "name": "Tec-9 | Nuclear Threat (BS)",
+    "case": "Neon Rush Case",
+    "caseSlug": "neon-rush",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Tec-9%20Nuclear",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLlm5W5wjFL0Py7Y6F-NOKaHmKvxvxzte9WWyywzCIrujqNjsGtIyjEbQR1A8Z1QLVZtha_k9HvNbu04wTei4sWxCX93SJP7nw_4rtWT-N7rTdwfM9W",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "7cd1c2cb-b215-4dbf-95ab-9bac6635a962",
+    "name": "Five-SeveN | Kami (FT)",
+    "case": "Neon Rush Case",
+    "caseSlug": "neon-rush",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Five-SeveN%20Kami",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3l4Dl7idN6vyRYL1SK_GeB1icyOl-pK9oGnHnk012sT_XzNv4eXuUawUlDpEkQOIN40XskIHmP-mx4wOLio1B02yg2SJzf1Vk",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "38473358-44ea-4104-9b19-e20b87519e19",
+    "name": "FAMAS | Neural Net (MW)",
+    "case": "Neon Rush Case",
+    "caseSlug": "neon-rush",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=FAMAS%20Neural%20Net",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3n5vh7h1a4s2oaalsM8-XAXOD_uJ_t-l9AX_lzB8ltmXcnoqvInjEPQEoC5AjELRY4Rm_lIDmM7zlsQ2L3YsQxHngznQe8yNao04",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "910e8f09-f8d9-41c6-acc7-05a52508cc8d",
+    "name": "P90 | Trigon (FT)",
+    "case": "Neon Rush Case",
+    "caseSlug": "neon-rush",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=P90%20Trigon",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhx8bf_jdk_6v-V7B_KfecAFicyOl-pK9vGi3nlEt24GnSwoypc3rFbQ52XsN0EOFcshfuwYa1NbzktVTZ3ohN02yg2RSFidN_",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "7fe8aacb-e5bf-4d5c-9472-a89c2c372bb8",
+    "name": "AK-47 | Elite Build (FN)",
+    "case": "Neon Rush Case",
+    "caseSlug": "neon-rush",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=AK-47%20Elite%20Build",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSLfGAGmKC2NF6ueZhW2e2wh9y5GjTztirdSqfP1dyCpclR7FZ5xe9wNbhZei25FGPjokXxC2vkGoXuQLr5jvs",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "6818aa97-4e33-4a8e-bc70-18bd362a444b",
+    "name": "Desert Eagle | Kumicho Dragon (FT)",
+    "case": "Neon Rush Case",
+    "caseSlug": "neon-rush",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/d946ef?text=Desert%20Eagle",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL1m5fn8Sdk7uORbKF-JeKHC2aXzetJu_RkRiq7mhk1sjqKlLD1KCzPKhh0CcBwQLVe5BHrloKyZOnr5w3XiYhDnC39iCpK7X1psrlUWaFw8qXekUifZlV_fDVZ",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "5ff75cf1-1c78-431e-887a-da678100ecd7",
+    "name": "M4A4 | Neo-Noir (MW)",
+    "case": "Neon Rush Case",
+    "caseSlug": "neon-rush",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/eb4444?text=M4A4%20Neo-Noir",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0P_6afBSLvWcMWmfyPxJvOhuRz39wE1142vSztmvInvBOgV0W5R1FLYNuxW4wIbgNrmx4g2Kj4tMmCX93zQJsHgJr0dqFw",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "e4ffce7f-5abf-474c-bed4-06a821058e75",
+    "name": "Butterfly | Autotronic (BS)",
+    "case": "Neon Rush Case",
+    "caseSlug": "neon-rush",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/f59e0b?text=Butterfly",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Z-ua6bbZrLOmsCXSvw_tipOR7SSWqqhwypzKRiID3KCj4Ml93UtZuROIDtUawltG1N-Pj4gaMg98Xyy2q2CxN63k54uwHBfd0-_GEhwHBOap9v8dVISN0PQ",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "d597f32e-1f83-431a-b043-5c28b46c0d88",
+    "name": "MP7 | Fade (FT)",
+    "case": "Phantom Case",
+    "caseSlug": "phantom",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=MP7%20Fade",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8jsHf_CNk6fOqbZtgMKesAm6Xyfo45LQ7Fy3rzR536j6HyYn6J3zFaAcjA5RwQ-9fs0O5m93nMe2x5QHfjZUFk3sMNd5yQw",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "fa64dfc7-5745-41b9-b15d-8e39b4601984",
+    "name": "G3SG1 | Scavenger (MW)",
+    "case": "Phantom Case",
+    "caseSlug": "phantom",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=G3SG1%20Scavenger",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2zYXnrB1c_M2pO7dqcc-AD3GRxutJvOhuRz39xkl2tziGmNf9JX-WPQcpAsEiQOUNsBixx4bmN7nj5FHb3Y9Cyiz-hzQJsHglCU9Y5w",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "49482673-e1b4-4ed8-aac7-8a9d2dcc4719",
+    "name": "Nova | Exo (FN)",
+    "case": "Phantom Case",
+    "caseSlug": "phantom",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Nova%20Exo",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL_kYDhwiNK0PyhfqVSM_OaMWGZ_uJ_t-l9AS3lxE8k4zuGz42qciiVPQIkDcF0TLNeuhmwxtfhYbzm4wfci95FnC_gznQeGrfN1lI",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "b2cd2150-6449-40e5-87fb-5149126eca6b",
+    "name": "Galil AR | Rocket Pop (FT)",
+    "case": "Phantom Case",
+    "caseSlug": "phantom",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Galil%20AR%20Rocket%20Po",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2n5rp8SNJ0PG7V6NsLPmfD3Wv0e9kpOhqQyygqhEutDWR1Nf8eXzDP1InCMR3QucIshjrktexMOqz4QPcjo1Gz3qq2H9L5ylu4ugcEf1yh3Lp9zc",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "a2721ce0-0b2b-4e42-9663-69d7070a50a5",
+    "name": "SG 553 | Phantasm (FN)",
+    "case": "Phantom Case",
+    "caseSlug": "phantom",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=SG%20553%20Phantasm",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": false,
+    "officialImageUrl": null,
+    "replacementAvailable": false,
+    "needsReplacement": true,
+    "resolution": "Editorial neutral fallback"
+  },
+  {
+    "id": "de8f4610-8140-4bf3-968a-365e172fe74a",
+    "name": "AWP | Hyper Beast (FT)",
+    "case": "Phantom Case",
+    "caseSlug": "phantom",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/d946ef?text=AWP%20Hyper%20Beast",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V6x0MPWBMWWVwP1ij-1gSCGn20pxtm_WzNuoeHKeaFAnCZUiTe5bt0HqxofmZOrm5Q2IjoMQzS_5iShXrnE8NzWs__c",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "68cc38f1-464c-45c2-b18a-fbdf9f041750",
+    "name": "AK-47 | Neon Rider (MW)",
+    "case": "Phantom Case",
+    "caseSlug": "phantom",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/eb4444?text=AK-47%20Neon%20Rider",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlV6poL_6sHG6UxPxJvOhuRz39xkQhsTnVzoygdy7Ea1UoCZQkRe9bs0brl9TvN-m0tVHYjY5CyS35jjQJsHhk4o5zcA",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "9a3e9a04-6ec6-43f7-92ea-19fbb88a2347",
+    "name": "M9 Bayonet | Doppler (FN)",
+    "case": "Phantom Case",
+    "caseSlug": "phantom",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/f59e0b?text=M9%20Bayonet",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Wts2sab1iLvWHMWad_v13oPFhRju2qhAmoT-Jn4bjJC_4Ml93UtZuQrZfuhi5lYC1Pujr7lDd2YNAmy2siHlJ6Htu5r5TUqcm-6De2wiUOap9v8cDcIwcZw",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "6070638a-e5e8-4559-9158-edeb41891e7e",
+    "name": "MP5-SD | Phosphor (FT)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=MP5-SD%20Phosphor",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8jsPz-R1c_M2jePFSJvWAGm6GwOJJtPNgXxa_nBovp3PRzd-vdCqQOgYgCMYkRrECskLuwdfkZeqz5QKMjYwUnHj33SlI630__a9cBl0Wy4S-",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "6739576a-6c4d-4398-9a14-4eab8919612f",
+    "name": "PP-Bizon | Night Riot (MW)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=PP-Bizon%20Night%20Rio",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLzl4zv8x1Y-s2sYb5iLs-BB2iE_uJ_t-l9AXqxzUQisWTWz9egc3KWbAJ0XJt5Q7YN5xnuxNDiN7iz4waLgtkWzS7gznQeDJdgNeg",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "600f8bc7-4785-4f65-91fb-51e3797c3605",
+    "name": "MAC-10 | Heat (FN)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=MAC-10%20Heat",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8n5WxrR1Y-s2jaac8cM-BC2OYzvpJvOhuRz39xR5w4GzUyo6pdnuUawMpWJokTLUL50K6l9XiNO7i4lGKiYsRxCv6jTQJsHim4lDW8g",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "ffd5d1de-447d-4c38-b424-23321158d380",
+    "name": "FAMAS | Mecha Industries (FT)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=FAMAS%20Mecha%20Ind.",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3n5vh7h1c_M2oaalsM8-eC2SYwNF6ueZhW2ewwx4hsm3dz46heSjCPVUjC8chEOYMtxOwkNHiYb63swXY3Y9Nn32skGoXuc3DGOrc",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "bd9a52ab-c032-46ee-a669-5b5b15bf4d63",
+    "name": "M4A4 | Spider Lily (MW)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=M4A4%20Spider%20Lily",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiVI0P_6V6JhL-eWHHSvzedxuPUnHXiwlk4lsTvUz477ICiRPw52WJNxROICtxK-wYDhZejm5gCP2I9MzjK-0H1trtkVHA",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "5d82d9d6-ac0e-45cd-9d5b-fa091f02e41a",
+    "name": "AK-47 | The Empress (FT)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/d946ef?text=AK-47%20Empress",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiVI0POlPPNSJf2DHGKD0tF6ueZhW2exxEt152rWzI7_Ii-Ubw90DMB0Ee4C5xOwx9GxZbjk71PXgogWn36tkGoXudZeYvlo",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "ed247650-130f-4f67-b69a-01f0d1f04f6d",
+    "name": "AWP | Asiimov (FN)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/eb4444?text=AWP%20Asiimov",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V6V-Kf2cGFidxOp_pewnF3nhxEt0sGnSzN76dH3GOg9xC8FyEORftRe-x9PuYurq71bW3d8UnjK-0H0YSTpMGQ",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "4d9eb1d0-fceb-479a-9665-b8136d455f6f",
+    "name": "Karambit | Marble Fade (FN)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/f59e0b?text=Karambit%20Marble",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Q7uCvZaZkNM-SA1idwPx0vORWSSi3kCIrujqNjsGveH2RaVRxX5ohEe4Juhawm4fiM-ji4APf2YMXmSz_hyoduytv4uhWT-N7rfLHGBJ4",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "76c9350e-560c-40ec-a15d-4c5e8783050f",
+    "name": "CZ75-Auto | Tacticat (FT)",
+    "case": "Tidal Case",
+    "caseSlug": "tidal",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=CZ75%20Tacticat",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLyhMG1_B1c_M2tcvM4H-SSDXOZwu9ij-1gSCGn2x4k5zvVm9z8IH7FZwFyCJckR7NfshSwwNGyMLzn41fejINHn3r6jy5XrnE8D8_CCNo",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "3d37161b-0cb7-4bf1-8cba-b4e134986a9e",
+    "name": "XM1014 | Ziggy (MW)",
+    "case": "Tidal Case",
+    "caseSlug": "tidal",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=XM1014%20Ziggy",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLpk8ewrHZk7uORcKk8cKHHMX2Zxulvj-BnTjuwnQQYvzSCkpu3In6XPA4lAsZ5E-JbukWwwd3nY-zn4gLe2thNmCiv2ixK6SZs5ucHVb1lpPO5jVz-xA",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "5af9f59e-ca2a-44cd-8905-2ed593438d6e",
+    "name": "Negev | Mjölnir (FT)",
+    "case": "Tidal Case",
+    "caseSlug": "tidal",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Negev%20Mjolnir",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL_m5Hl6x1c_M2gbaNoNs-HBmiC_uJ_t-l9AXDhxRsi62yEmYqrdSmSbQMhWcN3EO8KshHpw4LmP-Oz51bcjNgXn3ngznQe6IKqifc",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "d8c548fe-361d-4988-914f-fe8551abb693",
+    "name": "M4A1-S | Decimator (FN)",
+    "case": "Tidal Case",
+    "caseSlug": "tidal",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=M4A1-S%20Decimator",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_eAMWrEwL9JtORqRiSygRI1jDGMnYftb3iUb1dxW5ImFLNftxCxktflZLm2tgaP2otGyn_-hytOvy9q5elQV_A7uvqA6CRSoZY",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "d9c170ea-18cd-45f0-ada0-5145d22f4327",
+    "name": "Glock-18 | Fade (FN)",
+    "case": "Tidal Case",
+    "caseSlug": "tidal",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Glock-18%20Fade",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1a7s2oaaBoH_yaCW-Ej-8u5bZvHnq1w0Vz62TUzNj4eCiVblMmXMAkROJeskLpkdXjMrzksVTAy9US8PY25So",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "38c73863-4a91-43dc-8b7c-bce9552c5ba9",
+    "name": "Desert Eagle | Ocean Drive (MW)",
+    "case": "Tidal Case",
+    "caseSlug": "tidal",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/d946ef?text=Deagle%20Ocean",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL1m5fn8Sdk7OeRbKFsJ_yWMWyZ1e1-j-1gSCGn2x5-sG7Wzdyvc3OSbgcnXpR5FO9bukTtm9WzMePhswaN2N5CmCj_jyhXrnE8ibjhEyc",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "919071b2-c196-4f3c-bd2b-53d1fe5e7cb2",
+    "name": "M4A4 | Howl (FT)",
+    "case": "Tidal Case",
+    "caseSlug": "tidal",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/eb4444?text=M4A4%20Howl",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0P_6afVSKP-EAm6extF6ueZhW2exwkl2tmTXwt39eCiUPQR2DMN4TOVetUK8xoLgM-K341eM2otDnC6okGoXufBz_TAB",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "4e228a8c-fb0e-453f-a7c3-4a986268a12d",
+    "name": "Butterfly | Doppler (FN)",
+    "case": "Tidal Case",
+    "caseSlug": "tidal",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/f59e0b?text=Butterfly%20Doppler",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Z-ua6bbZrLOmsD2qv0u9moOlgXSyMmBw1sTGAk5X8JRTFAVp5Xco0W-ENtRXswYC1Mu_ks1fdjN9EyiqthiMbvHtv5btQBPck-KbT2gnHM-Ajoc5Ufn65u8U",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "0253dd29-f951-4ad6-be6e-79b6257ca05e",
+    "name": "Dual Berettas | Flora Carnivora (FT)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Dual%20Berettas",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL0kp_0-B1Y-s2qfaVhH_WfB3OV0tFzpuhlcC-_mg8mjDGMnYftbynGOA4lDZd4FOZYuxi6kdPvZuLrsgTW2IIQxXn7iSNJ6ic96-YCB_I7uvqA4cV5qzc",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "540aa706-c99b-4241-aad6-4c6e19264fac",
+    "name": "USP-S | Guardian (MW)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=USP-S%20Guardian",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLkjYbf7itX6vytbbZSI-WsG3SA_ut6teZoQT2MmRQguynLyd76I32fbFUkD5EmRu4Ct0O4m9fmY-zlsQSMiN9CnHj2jitL531o4fFCD_TZrkjVNw",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "f1efa72d-3b35-4f09-bffc-9e7d3734a1e4",
+    "name": "P250 | Valence (FN)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=P250%20Valence",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhzMOwwiNK0OL8PfRSI_-dGmiF09F6ueZhW2fiwUx14zmDnNagcC-WagUkApslQuBYsUW_ktexPry3swPfiogTyyiqkGoXuQius2mt",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "b56794c6-03e5-4edd-a26c-d0fcf561d0be",
+    "name": "Galil AR | Connexion (FN)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Galil%20Connexion",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2n5rp8SNJ0PW9V6NsLPmfMXeYzut4uflWQyC0nQlpt22Dzd_4cS7Db1NzDZYkQuIKsBW4xt3jPurq7gPag4oXnCqrhipB7TErvbi_0k78nw",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "2fab4edd-7e0f-4caa-abaf-3c1cf056423e",
+    "name": "AK-47 | Bloodsport (FT)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=AK-47%20Bloodsport",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiVI0POlPPNSIvycAWOD0eFkpN5lRi67gVN15mmDw9egci_EPFAkDMQlTeZe4EXplNa0Yrvr5wbd345GyHioiC4b8G81tFuqg_k_",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "7e4f3bc0-a39c-46f8-92da-01e10d220059",
+    "name": "M4A1-S | Mecha Industries (FN)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/d946ef?text=M4A1-S%20Mecha",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_eAMWrEwL9JveRqRyiMnBMjpi6RiIb8MhTLN1F4TowiE7EMtRW7ltzlMbvi5wPej4pDmCT2i3tKuHo4sOoEWKFz8qPS3F7BL_Rjtn0I4s52",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "e05fc7f7-57e6-4323-a853-1100321a4954",
+    "name": "AWP | Wildfire (FN)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/eb4444?text=AWP%20Wildfire",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V7NkLPSVB3WV_uJ_t-l9AX7rxhl-tmzSwomtdC6TPwQnW5UkR-YD5kK-ltCzP-Ox4FfXiNoQyyrgznQeu9L0PzQ",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "00f80302-0b14-4f60-91fb-c5874f142637",
+    "name": "Karambit | Tiger Tooth (FN)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/f59e0b?text=Karambit%20Tiger",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Q7uCvZaZkNM-SAFiEyOlzot5mXSi9khgYvzSCkpu3eC3BbwUmCcMlQbMD4xG_w9zkPu7gsQXe2YJFzHqqjixL5ylr4ukAWb1lpPNV9oeSnQ",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "fa7e8165-5ef9-415a-a85b-53c490578715",
+    "name": "MAC-10 | Neon Rider (MW)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=MAC-10%20Neon%20Rider",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8n5WxrR1Y-s2jaac8cM-dC2ie0-dytfNWQyC0nQlp5DzTntmgdC7COABxX5NxQrUOtUS5w4LgMu6zsVCK2IJCmyisjitM6DErvbicsEA0SQ",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "9d034720-89cf-49d2-9bb1-5ba917fc4057",
+    "name": "SSG 08 | Dragonfire (FT)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=SSG%2008%20Dragonfire",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLijZGwpR1Y-s29e6M9eM-XHGaXzuBwufNscDqwmg0ijDGMnYftbyrFPVAoWcQjELQOuxO4k4e1N-nnsQfW2I5Mz3ivi3wb7Stj5ukAUKY7uvqAqS55_Pw",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "08548e59-61a6-47c4-960c-b26615e3afde",
+    "name": "MP9 | Hydra (FN)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=MP9%20Hydra",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8js_f_jdk4uL3V6x0JOKSMWuZxuZi_rQ9H363xU5_4GrWnIr8IHqfbwBxA5R2QuZZshm6kdO2Mum35Q3ajoJbjXKp1xQlWoY",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "98a68a18-0fb5-40c1-ae75-27f286f81133",
+    "name": "AWP | Corticera (FN)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=AWP%20Corticera",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk6fO4bahsH_GEHlicyOl-pK8xTSzqwU1-5jjWno6hJHyeOg91A5R2TOEOtRS-kIG2ZeO25lDYg90U02yg2USK57Qn",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "d64cb30a-af83-42b9-a8ef-dac71ce68f88",
+    "name": "Glock-18 | Water Elemental (FN)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Glock%20Water",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1Y-s2pZKtuK72fB3aFxP11te99cCW6khUz_TjVyompc3-QOFR2DJQkFOMJtBbqk9LlY-7n5QLZjtkTxCWqhixPv311o7FVIf8eASQ",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "e8f1fa27-8ad1-43b4-b47f-a8d94d39abea",
+    "name": "AK-47 | Neon Revolution (FN)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/d946ef?text=AK-47%20Neon%20Rev",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSIf6SHGSY2NF6ueZhW2e3w0524mjQzomreXqVbAAhWJF3RuZfuxC5x920Yurh7gONjY0RxHr4kGoXuT5bpI-V",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "b9794d19-e6df-4b14-a102-5c7a84394fb6",
+    "name": "M4A4 | Poseidon (FN)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/eb4444?text=M4A4%20Poseidon",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0OKhe6FkJP-dMWuZxuZi_uM9Sn23xkx_sG3VyNyqcnnFZgchDMYjQuMJtRHuw9PvZuPjtlCI3d9bjXKpHL2aoaM",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "55914cec-0ddb-4b86-bb2c-15a82719d969",
+    "name": "M9 Bayonet | Lore (FN)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/f59e0b?text=M9%20Bayonet%20Lore",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Wts2sab1iLvWHMWSF_uMvj-NoVha_mg8ijDGMnYftbyrBOw52D5R0FOYPtkG6ltOxNrjl4FPdiN0WzC723SxP6ypp6u8LVKY7uvqAFpeI3XY",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "c5240058-d8b2-42ac-9fbb-a79a25e30570",
+    "name": "M4A1-S | Leaded Glass (FN)",
+    "case": "Dragon Case",
+    "caseSlug": "dragon",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=M4A1-S%20Leaded",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_eAMWrEwL9Jo-loWz22hyIrujqNjsH8dn6ePwB2DpEmFuAMt0HulYa1Nu2z4QWPjt9NnCX63H9M5ys96r1QT-N7rZDTLd1E",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "0ab751ef-25bb-4b76-83d3-59d6508642c4",
+    "name": "Desert Eagle | Printstream (FN)",
+    "case": "Dragon Case",
+    "caseSlug": "dragon",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Deagle%20Print",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL1m5fn8Sdk7OeRbKFsJ8-DHG6e1f1iouRoQha_nBovp3OGmdeqInyVP1V0XsYlRbEI50a5wNyzZr605AyI3t5MmCSohylAuC89_a9cBoMY9UkV",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "6dc5f166-ed41-4c6b-b0a7-6d4fb528c42e",
+    "name": "AK-47 | Slate (FN)",
+    "case": "Dragon Case",
+    "caseSlug": "dragon",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=AK-47%20Slate",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiVI0POlPPNSMOKcCGKD0ud5vuBlcCW6khUz_W3Sytb4cCqTOFUpWJtzTOUD5hPsw9a0Yrnrs1SK3ooXzy6shilM5311o7FVYrIufmI",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "b4f7cfcf-1e8b-4b07-97ec-8808ffc2a99b",
+    "name": "Glock-18 | Neo-Noir (FN)",
+    "case": "Dragon Case",
+    "caseSlug": "dragon",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Glock%20Neo-Noir",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1Y-s2pZKtuK8-dAW6C_uJ_t-l9AXznwh9zsjjSn9j9dH-eb1V0CsF3QrNZ4xW8ltPlM-7h4QbYit5NzyzgznQecekkTuo",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "51c70b41-6a8d-4828-905d-181d6f307de5",
+    "name": "AWP | The Prince (FN)",
+    "case": "Dragon Case",
+    "caseSlug": "dragon",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=AWP%20The%20Prince",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf-jFk7uW-V6FjIf2WAlicyOl-pK9qHXHkw093sGvTw4uqJSnDPQAkCsNyEbZcshiwxtK0Yumz4gbX2o9C02yg2f5NtC8l",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "c6b2d74c-46d0-48bf-9748-974c682e3177",
+    "name": "AK-47 | X-Ray (FN)",
+    "case": "Dragon Case",
+    "caseSlug": "dragon",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/d946ef?text=AK-47%20X-Ray",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlV7x_IemsAm6Xyfo44OQ_Tn3il08k4GzVyo2qeSnDaQAlXpF1RuZZsUO4kNLjNO2w51HWjJUFk3tTkVsnkA",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "e5f7bae1-b286-4620-8a97-f43b0ae095b1",
+    "name": "AWP | Dragon Lore (FT)",
+    "case": "Dragon Case",
+    "caseSlug": "dragon",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/eb4444?text=AWP%20Dragon%20Lore",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk4veqYaF7IfysCnWRxuF4j-B-Xxa_nBovp3Pdwtj9cC_GaAd0DZdwQu9fuhS4kNy0NePntVTbjYpCyyT_3CgY5i9j_a9cBkcCWUKV",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "ab8a183b-680e-46d0-87d9-8e09ff2da14a",
+    "name": "Karambit | Gamma Doppler (FN)",
+    "case": "Dragon Case",
+    "caseSlug": "dragon",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/f59e0b?text=Karambit%20Gamma",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Q7uCvZaZkNM-SA1iXwON7sd5tQDmjmRg1jC2Nm5z8dRTLN1F4ToxwQLNZ5xa-xNDuNu_ktgCN2YtNn36thypAuidrsb4BUqMj_qPfiwCTL_Rjtpd8Mt3S",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "d6178748-ac69-49d8-9df6-ecfa2aef09f7",
+    "name": "USP-S | Printstream (FN)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=USP-S%20Printstream",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLkjYbf7itX6vytbbZSI-WsG3SA_v5kue99XD2hkBwqjDGMnYftb3yUPFR0XsNyRrNc5kO5ltziMenr5lONj4kXyi2riywc7y9o5LtQAqQ7uvqAkScWnv4",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "e9e9e796-6175-4327-9b81-b29395b1168b",
+    "name": "P250 | Re.built (FN)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=P250%20Re.built",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhzMOwwiFO0OL8PfRSMvWRG26c1dF6ueZhW2flkRh_sjjXmNb8cCnDPVUnW5ByQ-JZ5hG_xN3gZuPltAHegogWzH7-kGoXuSIylluX",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "636d181e-5dd2-45f3-bf60-7896a4a0dc85",
+    "name": "M4A4 | In Living Color (FN)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=M4A4%20Living%20Color",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0P_6afBSLP-FC1icyOl-pK84GH2wxhty4DjcyNuhdHyXbAVxW8QjTbEMthC8kNa0MLmzs1Hbj95E02yg2bbWGcKW",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "c2c5cf48-dab2-4f3c-9499-2664020f2b93",
+    "name": "AK-47 | Ice Coaled (FN)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=AK-47%20Ice%20Coaled",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSI_-UGm-Zz-llj-1gSCGn2x4l5z_RyNj6JXnEbgFzXMYjEOUIsBe5m9exP-zg4leMj4pGxXn7jCJXrnE84asPq_0",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "9cb1edba-17cc-4d13-a260-07a604d26af2",
+    "name": "AWP | Fade (FN)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=AWP%20Fade",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_CNk7uW-V6JsJPWsAm6Xyfo45-c5GXDnwB534DuEwtuoIHOfaAYiAsYjF-QItUaxmoC0MO_h5ALcjJUFk3sEzfdk4w",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "b9bdb744-12ae-4a28-895b-285e1c794af9",
+    "name": "M4A1-S | Welcome to the Jungle (FN)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/d946ef?text=M4A1-S%20Jungle",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9Jo-9oRCyMmRQguynLzYqgInjGZlcnX5ciE-IPthLrkN3hYu_ltQPW3Y1NzSn-jCpJ6ydpsvFCD_TdxQe8NQ",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "87f5ce73-3fcd-4683-892b-3606277e374c",
+    "name": "AK-47 | Gold Arabesque (FN)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/eb4444?text=AK-47%20Arabesque",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiVI0POlPPNSJ_-fCliR0-90tfJ4WiyMmRQguynLntmvICieOARzCpMhF-BYsRe-xoHvYu_g5lSNj4NDyy2viCwY6Hlu5_FCD_Q1jEqYuQ",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "d6948702-59f3-4d5d-aee7-aaa800534685",
+    "name": "Butterfly | Lore (FN)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/f59e0b?text=Butterfly%20Lore",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Z-ua6bbZrLOmsDXKvw_tipOR7SSWqqhEooTi6lob-KT-JZw90XJMiTO8PukW4wIXmN-zq5gXf2tpBm37_2y4auylv5exUAKAi_7qX0V8Ly4BE2w",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "955cc808-35e8-4098-b6a3-747148ed1abb",
+    "name": "Glock-18 | Gamma Doppler (FN)",
+    "case": "Aurora Case",
+    "caseSlug": "aurora",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=Glock%20Gamma",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1a4s2paalgIc-XAXeAzetkj_FhTjq2wSIgvzKGkbD1KCzPKhhxC5FyRbII4Ua_ltDhY-Ln41fW2I1Ayn_9ii5P7Xpr5ekHV6Mg__HekUifZpA8glcU",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "b5cf25d9-228b-4499-96f8-cdf6966e6025",
+    "name": "M4A1-S | Blue Phosphor (FN)",
+    "case": "Aurora Case",
+    "caseSlug": "aurora",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=M4A1-S%20Blue%20P",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_GeMWrEwL9lj-NlWiygmBIstgKJk4jxNWWeOg5xDJR2Q-5b5BGwxIDuP7uw4ALa3ohMz3n3iypLvyc55-pQUKct5OSJ2OKlF5Nn",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "f7a37c87-2ff2-4f28-a5cd-95dc9f8012d1",
+    "name": "AK-47 | Vulcan (FN)",
+    "case": "Aurora Case",
+    "caseSlug": "aurora",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=AK-47%20Vulcan",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSMuWRDGKC_uJ_t-l9AXCxxEh14zjTztivci2ePQZ2W8NzTecD4BKwloLiYeqxtAOIj9gUyyngznQeF7I6QE8",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "dde47866-7a62-4a0a-9d3d-464d11bb4579",
+    "name": "AWP | Gungnir (FN)",
+    "case": "Aurora Case",
+    "caseSlug": "aurora",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=AWP%20Gungnir",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf-jFk7uW-V6N4LvedB3WvzedxuPUnHnjnzUl0sWrdztitI3rDZgJzAsZ1QOFY4UPqldDgMO_l41HXit9AmTK-0H227dAsvQ",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "f955d4cf-67b9-485f-9a9b-b6325db0dc2f",
+    "name": "M4A4 | Howl (FN)",
+    "case": "Aurora Case",
+    "caseSlug": "aurora",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/5b4fcf?text=M4A4%20Howl",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0P_6afVSKP-EAm6extF6ueZhW2exwkl2tmTXwt39eCiUPQR2DMN4TOVetUK8xoLgM-K341eM2otDnC6okGoXufBz_TAB",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "47c2da57-3971-4b85-b44d-7ac52e1f4412",
+    "name": "Desert Eagle | Golden Koi (FN)",
+    "case": "Aurora Case",
+    "caseSlug": "aurora",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/d946ef?text=Deagle%20Golden%20Koi",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL1m5fn8Sdk7v-Re6dsLPWAMWWCwPh5j-1gSCGn20om6jyGw9qgJHmQaAcgC8MmR7IMthm5m4W2M7zj7wOIj4pGn32o23hXrnE8VHBG1O4",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "968e74d1-99ca-40cb-8c4b-400f5b817d8b",
+    "name": "AK-47 | Wild Lotus (FN)",
+    "case": "Aurora Case",
+    "caseSlug": "aurora",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/eb4444?text=AK-47%20Wild%20Lotus",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlV61-LPGdCliWzeFkse1WQyC0nQlpsDuGyt-pdnyRPA4hDcYkR-QPuhi-wdPuYbyx5AaMidkQnC_-2ilIuzErvbi4ijV5Mw",
+    "replacementAvailable": true,
+    "needsReplacement": true,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "cfa347ef-c293-4945-9df9-0e123e8bf71c",
+    "name": "Karambit | Emerald (FN)",
+    "case": "Aurora Case",
+    "caseSlug": "aurora",
+    "currentImageUrl": "https://placehold.co/300x300/0f0f1a/f59e0b?text=Karambit%20Emerald",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/svg+xml; charset=utf-8",
+      "contentLength": null
+    },
+    "placeholder": true,
+    "exactOfficialMatch": false,
+    "officialImageUrl": null,
+    "replacementAvailable": false,
+    "needsReplacement": true,
+    "resolution": "Editorial neutral fallback"
+  },
+  {
+    "id": "068c9759-3872-4fc7-8e3c-3a2f98733cda",
+    "name": "Glock-18 | Synth Leaf (Field-Tested)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight-case-v4",
+    "currentImageUrl": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1T9s2ibaVrH_KfG2KvzOtyufRkAXDikUt_tzzQyYqtcyqUag8jAsFzF7QD5Bntl4W1ZOPg5QSNjYpBnHrgznQeiI6gWCw/360fx270f",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 66744
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1T9s2ibaVrH_KfG2KvzedxuPUnGnuywx4h52nQzomsInmVbw8mCZAhR-UP4BHpldXhZevn7wXc2dkUnjK-0H1CafWWiA",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "57090533-bd4b-4a4c-a351-49c0bd8acc43",
+    "name": "P90 | Vent Rush (Field-Tested)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight-case-v4",
+    "currentImageUrl": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhx8bf-jFk_6v-V7BsLvefC2OvzOtyufRkAS2wzRkit2-EyIqvcHKRawR2DpImTeYDs0W6k9eyN-Pr4ATY3d5HzS3gznQedIwTnmE/360fx270f",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 91520
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhx8bf-jFk_6v-V7BsLvefC2OvzedxuPUnTXywwElz52XXzIz4dn2RalcoC8FzQrJfsRe-moG0YeK2sQPZ3YpEmzK-0H18Z6zceQ",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "ee6e8a73-7b44-42cc-b1ed-1e038bb22eb8",
+    "name": "MP5-SD | Phosphor (Field-Tested)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8jsPz-R1c_M2jePFSJvWAGm6GwOJJtPNgXxa_nBovp3PRzd-vdCqQOgYgCMYkRrECskLuwdfkZeqz5QKMjYwUnHj33SlI630__a9cBl0Wy4S-",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 91388
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8jsPz-R1c_M2jePFSJvWAGm6GwOJJtPNgXxa_nBovp3PRzd-vdCqQOgYgCMYkRrECskLuwdfkZeqz5QKMjYwUnHj33SlI630__a9cBl0Wy4S-",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "bce324b3-e52c-43c2-8e44-a9b6d15e7caa",
+    "name": "MAG-7 | Heat (Field-Tested)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8n5G3wiFO0P-vb_NSMvWXBmiE_uJ_t-l9AX7nzBsk623dm46odHmUbFd1Dcd2RbINtBXtkNDjMbzj5AGKjt4UyijgznQe8JftFTE",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 122291
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8n5G3wiFO0P-vb_NSMvWXBmiE_uJ_t-l9AX7nzBsk623dm46odHmUbFd1Dcd2RbINtBXtkNDjMbzj5AGKjt4UyijgznQe8JftFTE",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "10f962a3-41fb-4f96-8e0c-4a837d0a8e0d",
+    "name": "M4A4 | Cyber Security (Field-Tested)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0P_6afBSI-mRC3WA1OB9j-1gSCGn2x9-527Tyt-pcnyUagQlW5JxEOIOuhjrw9XlMrixtQTd2NhNmH_5jCNXrnE8Cu1wa6c",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 100876
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0P_6afBSI-mRC3WA1OB9j-1gSCGn2x9-527Tyt-pcnyUagQlW5JxEOIOuhjrw9XlMrixtQTd2NhNmH_5jCNXrnE8Cu1wa6c",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "26b0ee80-a7f9-4f04-9d58-aeea2a5d1780",
+    "name": "AK-47 | Uncharted (Field-Tested)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSIeqHC2SvzedxuPUnFnCwwBl_5D_Syon8dnyUaQUlD5oiQ7ECuxW7l920ZL-w4AfX2IlByTK-0H0PRM7cOA",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 77131
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSIeqHC2SvzedxuPUnFnCwwBl_5D_Syon8dnyUaQUlD5oiQ7ECuxW7l920ZL-w4AfX2IlByTK-0H0PRM7cOA",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "76a51b79-e9b6-4a94-a902-1bd732b003a3",
+    "name": "USP-S | Printstream (Field-Tested)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLkjYbf7itX6vytbbZSI-WsG3SA_v5kue99XD2hkBwqjDGMnYftb3yUPFR0XsNyRrNc5kO5ltziMenr5lONj4kXyi2riywc7y9o5LtQAqQ7uvqAkScWnv4",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 65403
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLkjYbf7itX6vytbbZSI-WsG3SA_v5kue99XD2hkBwqjDGMnYftb3yUPFR0XsNyRrNc5kO5ltziMenr5lONj4kXyi2riywc7y9o5LtQAqQ7uvqAkScWnv4",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "1adeb6a0-513e-4eee-8af6-c404de6aa489",
+    "name": "AWP | Exoskeleton (Field-Tested)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf-jFk7uW-V6F1L-OYC2uV1eF4j-1gSCGn20km5zyEmd2qc3uWZwcnA5MiELIJtxa_w9OyN-nh5wKKj4kTyn78hyNXrnE83OTew2I",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 71773
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf-jFk7uW-V6F1L-OYC2uV1eF4j-1gSCGn20km5zyEmd2qc3uWZwcnA5MiELIJtxa_w9OyN-nh5wKKj4kTyn78hyNXrnE83OTew2I",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "78caa320-2664-4c9c-a1ec-d2e860386ec5",
+    "name": "M4A1-S | Printstream (Field-Tested)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9lj_F7Rienhgk1tjyIpYPwJiPTcAAoCpsiEO5ZsUbpm9C2Zuni4VHW3o5EzSX62HxP7Sg96-hWVqYi_6TJz1aW0nxrkGs",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 58165
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9lj_F7Rienhgk1tjyIpYPwJiPTcAAoCpsiEO5ZsUbpm9C2Zuni4VHW3o5EzSX62HxP7Sg96-hWVqYi_6TJz1aW0nxrkGs",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "b6557d81-d339-4a63-9560-208b28968286",
+    "name": "AK-47 | Phantom Disruptor (Field-Tested)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlJfA6H-CbD2mEzuNJtOh6XTyjgRI1jDGMnYftb3qTbQMpCZVxF-8Ku0Xtw4XkYu2xtQSL3d5FxSz-3H5Ovy895epRA6E7uvqAsbzZtpo",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 85966
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlJfA6H-CbD2mEzuNJtOh6XTyjgRI1jDGMnYftb3qTbQMpCZVxF-8Ku0Xtw4XkYu2xtQSL3d5FxSz-3H5Ovy895epRA6E7uvqAsbzZtpo",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "1332ffa0-5af4-4362-9b01-18c04ea2cb93",
+    "name": "★ M9 Bayonet | Lore (Factory New)",
+    "case": "Blacklight Case",
+    "caseSlug": "blacklight-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Wts2sab1iLvWHMWSF_uMvj-NoVha_mg8ijDGMnYftbyrBOw52D5R0FOYPtkG6ltOxNrjl4FPdiN0WzC723SxP6ypp6u8LVKY7uvqAFpeI3XY",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 83427
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Wts2sab1iLvWHMWSF_uMvj-NoVha_mg8ijDGMnYftbyrBOw52D5R0FOYPtkG6ltOxNrjl4FPdiN0WzC723SxP6ypp6u8LVKY7uvqAFpeI3XY",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "f86b22e8-01c7-49f5-a223-ee304dafd4c8",
+    "name": "FAMAS | Valence (Field-Tested)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition-case-v4",
+    "currentImageUrl": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3n5vh7h1a_s2oaalsM8-QAWmEzvtkj-xsSyCmmFN25TmEyo7_eHLFbQF2XpMlROVct0PtwIG1M-7k51bcjYMWzS7_hitM8G81tAmdCZI8/360fx270f",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 72930
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3n5vh7h1a_s2oaalsM8-QAWmEzvtkj-1gSCGn2x4ksWzczo39c3_Ga1R1CpByR-YO4RXqm9fgP76w4lbYi91CzSyq2H5XrnE8rQqckvg",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "eaebb23e-d8e3-45af-a09d-51929675dc32",
+    "name": "MAC-10 | Tatter (Field-Tested)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8n5WxrR1Y-s2lZ7Z4MOSsAm6Xyfo4tbY7H3q1xRt152TWyt6tc3ifaVcmDppxReVethawlYHmNO6ztQbciJUFk3uxmhdQIQ",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 84195
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8n5WxrR1Y-s2lZ7Z4MOSsAm6Xyfo4tbY7H3q1xRt152TWyt6tc3ifaVcmDppxReVethawlYHmNO6ztQbciJUFk3uxmhdQIQ",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "b681d3f5-f6c7-44a1-a2f4-0ffd5797afaa",
+    "name": "MP7 | Abyssal Apparition (Field-Tested)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8jsHf_jdk4uL5V6JoIeKsAm6Xyfo45uc9GnnnzBh-5zzTw9n9I3mQPAEgD5YlFuIOthC6wNK1MeKwsgHeiZUFk3vcOiyhPQ",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 94837
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8jsHf_jdk4uL5V6JoIeKsAm6Xyfo45uc9GnnnzBh-5zzTw9n9I3mQPAEgD5YlFuIOthC6wNK1MeKwsgHeiZUFk3vcOiyhPQ",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "6fdf1701-57d5-41c2-9cbe-2be0a5eb7ba0",
+    "name": "PP-Bizon | Forest Leaves (Field-Tested)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition-case-v4",
+    "currentImageUrl": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLzl4zv8x1I_82ibaV7JeOsAm6Xyfo45bU-Hi_gkRl-t2mAw937Iy3FPQF2DJpxQOADsBawloC0Yr_m41GIiJUFk3v_uUXI3A/360fx270f",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 61633
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLzl4zv8x1I_82ibaV7JeOsAm6Xyfo45bU-Hi_gkRl-t2mAw937Iy3FPQF2DJpxQOADsBawloC0Yr_m41GIiJUFk3v_uUXI3A",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "0c4a210e-90ff-4d23-802d-195c91e9d28b",
+    "name": "SG 553 | Colony IV (Field-Tested)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLimcO1qx1Y-s29b_E4c8-BC2aT1eFkj-1gSCGn20Qit2yAn9n8IHKealB2DZIjTO8JsBW7ktDlYu_m5ADWit4Rznn63XtXrnE82sW2soE",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 104226
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLimcO1qx1Y-s29b_E4c8-BC2aT1eFkj-1gSCGn20Qit2yAn9n8IHKealB2DZIjTO8JsBW7ktDlYu_m5ADWit4Rznn63XtXrnE82sW2soE",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "7b427b6d-05e2-4d26-8f1b-d9acc5316907",
+    "name": "CZ75-Auto | Tigris (Field-Tested)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLyhMG1_B1Y-s2tP_FsbeSaCWKC_uJ_t-l9ASvil0R15WjUmYmqc33CaQ91W5QlRbVetETtwNC1P-u34g2L2dpEmS_gznQebcVQ6rs",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 90912
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLyhMG1_B1Y-s2tP_FsbeSaCWKC_uJ_t-l9ASvil0R15WjUmYmqc33CaQ91W5QlRbVetETtwNC1P-u34g2L2dpEmS_gznQebcVQ6rs",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "58a72faf-841a-47fb-bf73-c47053b5d2d2",
+    "name": "AWP | Mortis (Field-Tested)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf-jFk7uW-V6BoIeSbMWuZxuZi_rNtHiuwwRwismWEnNn8JymSZgUiDpd3Ru9ZsxG-xNy2NLzn41DWg41bjXKp5oOAt0A",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 64066
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf-jFk7uW-V6BoIeSbMWuZxuZi_rNtHiuwwRwismWEnNn8JymSZgUiDpd3Ru9ZsxG-xNy2NLzn41DWg41bjXKp5oOAt0A",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "a355f2dc-63c6-47a1-a3aa-36876ea16966",
+    "name": "M4A1-S | Nightmare (Field-Tested)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9lj-9gSCGnmBw1tgKJk4jxNWXCbAUpXpp0FrYPthC7k4fnZOm04laMjYxHn3r52HxJ6i065e0FVKV05OSJ2IHiKyzQ",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 67505
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9lj-9gSCGnmBw1tgKJk4jxNWXCbAUpXpp0FrYPthC7k4fnZOm04laMjYxHn3r52HxJ6i065e0FVKV05OSJ2IHiKyzQ",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "5f39c9d7-ef3d-4016-a765-5e2ec9a49032",
+    "name": "AK-47 | Nightwish (Field-Tested)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSLvmUBnOHyP1-j-1gSCGn20glt2nXnt78cnKUbwN2XJp2R-ZbuxHqlNXlMLiw5AHc3toWnCur23hXrnE8p0T2bx4",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 99469
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSLvmUBnOHyP1-j-1gSCGn20glt2nXnt78cnKUbwN2XJp2R-ZbuxHqlNXlMLiw5AHc3toWnCur23hXrnE8p0T2bx4",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "fdd1f357-c0ea-4ec1-bc03-8269146d17b6",
+    "name": "AWP | Neo-Noir (Field-Tested)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V6poL_6cB3WvzedxuPUnHirrxR4l423SyI39I3KXPwdxWZclQeNZ5EXskYfnNeyw71OMi9lNzDK-0H3r66pOTw",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 70877
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V6poL_6cB3WvzedxuPUnHirrxR4l423SyI39I3KXPwdxWZclQeNZ5EXskYfnNeyw71OMi9lNzDK-0H3r66pOTw",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "e16c9041-d7f4-442a-885f-fd4305c22d81",
+    "name": "★ Karambit | Tiger Tooth (Factory New)",
+    "case": "Ignition Case",
+    "caseSlug": "ignition-case-v4",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Q7uCvZaZkNM-SAFiEyOlzot5mXSi9khgYvzSCkpu3eC3BbwUmCcMlQbMD4xG_w9zkPu7gsQXe2YJFzHqqjixL5ylr4ukAWb1lpPNV9oeSnQ",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 85538
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Q7uCvZaZkNM-SAFiEyOlzot5mXSi9khgYvzSCkpu3eC3BbwUmCcMlQbMD4xG_w9zkPu7gsQXe2YJFzHqqjixL5ylr4ukAWb1lpPNV9oeSnQ",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "ae50542a-15cd-4620-94a0-d960c1950104",
+    "name": "Glock-18 | Reactor (Field-Tested)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign-case-v3",
+    "currentImageUrl": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1a4s2gfadhJfGBMXeR1fpzou84cC6_mh4sjDCAnobsLGWRblJ1A8dyRbRYtES4xNbhNLjqtVeIi45CzSqv2i9B7S1v4u5UUPYh5OSJ2Ogs2lKT/360fx270f",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 58809
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1a4s2gfadhJfGBMXeR1fpzou84cC6_mh4sjDGMnYftb3yTbAQjA5NxR-4MtRjumtzkM-yzsVDegtkWyyX43ytBvC9tsrpRAKE7uvqAUKOQcp4",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "160f0319-db9b-4bc9-9b32-08eaad570db1",
+    "name": "P250 | Apep's Curse (Field-Tested)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign-case-v3",
+    "currentImageUrl": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhzMOwwiVI0OL8PfRSIeCWHlicyOl-pK87HCjkxR9ztj-Dzdv8di2TPFchDptyTbEIthTsl9znY77r5Qzc2YwR02yg2XoGglyv/360fx270f",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 68752
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhzMOwwiVI0OL8PfRSIeCWHlicyOl-pK87HCjkxR9ztj-Dzdv8di2TPFchDptyTbEIthTsl9znY77r5Qzc2YwR02yg2XoGglyv",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "4842a682-fdd7-49c4-ab96-8818d9663c6d",
+    "name": "AWP | Capillary (Field-Tested)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V7JoKf6sAm6Xyfo44bE5HSrmlx5z4GTUzt__I3yebQAgA8R3FuFfsBTqx9W2Y7vq5lbfjZUFk3ugIlCuqg",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 72830
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V7JoKf6sAm6Xyfo44bE5HSrmlx5z4GTUzt__I3yebQAgA8R3FuFfsBTqx9W2Y7vq5lbfjZUFk3ugIlCuqg",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "2f392d1b-cd85-491b-b87e-90f0b96d64e5",
+    "name": "M4A4 | Spider Lily (Field-Tested)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiVI0P_6V6JhL-eWHHSvzedxuPUnHXiwlk4lsTvUz477ICiRPw52WJNxROICtxK-wYDhZejm5gCP2I9MzjK-0H1trtkVHA",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 108671
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiVI0P_6V6JhL-eWHHSvzedxuPUnHXiwlk4lsTvUz477ICiRPw52WJNxROICtxK-wYDhZejm5gCP2I9MzjK-0H1trtkVHA",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "492102b5-d67f-4d05-8594-8b0445753a5c",
+    "name": "AK-47 | Vulcan (Field-Tested)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSMuWRDGKC_uJ_t-l9AXCxxEh14zjTztivci2ePQZ2W8NzTecD4BKwloLiYeqxtAOIj9gUyyngznQeF7I6QE8",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 81967
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSMuWRDGKC_uJ_t-l9AXCxxEh14zjTztivci2ePQZ2W8NzTecD4BKwloLiYeqxtAOIj9gUyyngznQeF7I6QE8",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "18cad155-c19c-439c-80d3-f86098ca6b8e",
+    "name": "Desert Eagle | Printstream (Field-Tested)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL1m5fn8Sdk7OeRbKFsJ8-DHG6e1f1iouRoQha_nBovp3OGmdeqInyVP1V0XsYlRbEI50a5wNyzZr605AyI3t5MmCSohylAuC89_a9cBoMY9UkV",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 75599
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL1m5fn8Sdk7OeRbKFsJ8-DHG6e1f1iouRoQha_nBovp3OGmdeqInyVP1V0XsYlRbEI50a5wNyzZr605AyI3t5MmCSohylAuC89_a9cBoMY9UkV",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "742c6299-1e70-4a75-97e7-e497c9ea1b79",
+    "name": "AWP | Wildfire (Field-Tested)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V7NkLPSVB3WV_uJ_t-l9AX7rxhl-tmzSwomtdC6TPwQnW5UkR-YD5kK-ltCzP-Ox4FfXiNoQyyrgznQeu9L0PzQ",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 65135
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V7NkLPSVB3WV_uJ_t-l9AX7rxhl-tmzSwomtdC6TPwQnW5UkR-YD5kK-ltCzP-Ox4FfXiNoQyyrgznQeu9L0PzQ",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "dd6d0c9e-be93-4722-8458-205b0a3c0de6",
+    "name": "M4A1-S | Welcome to the Jungle (Field-Tested)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign-case-v3",
+    "currentImageUrl": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9Jo-9oRCyMnRgmpSTLy9igc3PDbVcnDZd3R-de5hHpl4CxZO6z4gLWjt5Dzyv8iCJA6C5j5vFCD_ThScH7Ig/360fx270f",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 47707
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9Jo-9oRCyMmRQguynLzYqgInjGZlcnX5ciE-IPthLrkN3hYu_ltQPW3Y1NzSn-jCpJ6ydpsvFCD_TdxQe8NQ",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "fed262a9-3819-4a01-b8e0-d23858b69bfe",
+    "name": "AWP | Fade (Factory New)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign-case-v3",
+    "currentImageUrl": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_CNk7uW-V6JsJPWsAm6Xyfo45-c5GXDnwB534DuEwtuoIHOfaAYiAsYjF-QItUaxmoC0MO_h5ALcjJUFk3sEzfdk4w/360fx270f",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 48185
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_CNk7uW-V6JsJPWsAm6Xyfo45-c5GXDnwB534DuEwtuoIHOfaAYiAsYjF-QItUaxmoC0MO_h5ALcjJUFk3sEzfdk4w",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "3ad361f9-8fb9-443b-b6be-5742b79fb8fc",
+    "name": "AK-47 | Gold Arabesque (Factory New)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign-case-v3",
+    "currentImageUrl": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiVI0POlPPNSJ_-fCliR0-90tfJ4WiyMmBgjuiiI1Nn4cXjEbwMlDsR4RrVfsRK4wdPgPrjh4wKNg49Cyn__2iNI6ihi5O8cEf1yNgAZ7yU/360fx270f",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 56337
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiVI0POlPPNSJ_-fCliR0-90tfJ4WiyMmRQguynLntmvICieOARzCpMhF-BYsRe-xoHvYu_g5lSNj4NDyy2viCwY6Hlu5_FCD_Q1jEqYuQ",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "1c8f211b-7016-4fdc-a9fd-2d22c0304142",
+    "name": "★ Butterfly Knife | Fade (Factory New)",
+    "case": "Sovereign Case",
+    "caseSlug": "sovereign-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Z-ua6bbZrLOmsD2avx-9ytd5lRi67gVNwsDvSwtqqc3iXZg4kCZYjReYLtRbum9XgYuvm5wbWjtgUzCn3iSsf8G81tFEeH9rw",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 60606
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1Z-ua6bbZrLOmsD2avx-9ytd5lRi67gVNwsDvSwtqqc3iXZg4kCZYjReYLtRbum9XgYuvm5wbWjtgUzCn3iSsf8G81tFEeH9rw",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "9c71ffd4-27be-4de4-9ad8-f703d6c821cd",
+    "name": "P250 | Verdigris (Field-Tested)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhzMOwwiNK0OL8PfRSNvWBCm6X0-dlj-1gSCGn20R35DnRn42udXiVOg91CpZ4ReACthC4wYexZuuw5VeIjdkUzyqq3CNXrnE8Cr6wnKw",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 104839
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLhzMOwwiNK0OL8PfRSNvWBCm6X0-dlj-1gSCGn20R35DnRn42udXiVOg91CpZ4ReACthC4wYexZuuw5VeIjdkUzyqq3CNXrnE8Cr6wnKw",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "9b7ca60a-62db-4960-8b30-4b3ed10ebc1c",
+    "name": "Nova | Gila (Field-Tested)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL_kYDhwiNW0PyhfqVSM_GdClicyOl-pK8wHnrrwU8hsW2DyoqgeSieblIkDJZwQu8Cs0TultLgP76051SPid9N02yg2S7-0Sao",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 59440
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL_kYDhwiNW0PyhfqVSM_GdClicyOl-pK8wHnrrwU8hsW2DyoqgeSieblIkDJZwQu8Cs0TultLgP76051SPid9N02yg2S7-0Sao",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "1b757f67-e98d-41e0-a65a-d0b14a20183e",
+    "name": "Tec-9 | Isaac (Field-Tested)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLlm5W5wiFO0Oara_1SIeOaB2qf19F6ueZhW2frlEpz6zyAy477dXrEagFxDcclRO4C5EK8wIa1Nem3s1TdiotNzCn5kGoXuYgN6W8t",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 68329
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLlm5W5wiFO0Oara_1SIeOaB2qf19F6ueZhW2frlEpz6zyAy477dXrEagFxDcclRO4C5EK8wIa1Nem3s1TdiotNzCn5kGoXuYgN6W8t",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "7e898a03-b3b3-4122-a0b6-c7d3d5483425",
+    "name": "MP9 | Bulldozer (Field-Tested)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8js_f7i1k9veiZKt6H_2WCm6FzKBz5OU4TS-ykU1_tmWEn9r6dXOUawQkApp5FOcL4RnqmtTuYu-2tQeIlcsbmjeGmfSA/360fx270f",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 73678
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8js_f7i1k9veiZKt6H_yaCW-Ej-tztbQ5Hy2wxklw5TiDnt_4eC_GOFR1XJdzQ-AMskXswNbvNuvq4wPAy9USwXKj73o",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "b04960f7-8c64-4569-ad82-0439ed2af951",
+    "name": "XM1014 | Tranquility (Field-Tested)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLpk8ewrHZk7OeRcKk8cKHHMWSR0-disfJWQyC0nQlp5zjWnNigIC-falMlWMN2F-cP5Ba-xoXlMri0swTZg41EyX34jS1LuDErvbgNI5zBZg",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 70067
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLpk8ewrHZk7OeRcKk8cKHHMWSR0-disfJWQyC0nQlp5zjWnNigIC-falMlWMN2F-cP5Ba-xoXlMri0swTZg41EyX34jS1LuDErvbgNI5zBZg",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "0914e8a0-b1a1-4fe9-846d-6d8de5c5475a",
+    "name": "AUG | Stymphalian (Field-Tested)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwi5Hf-jFk7uepV7d5Of2DBmacyO94j-NgXS2gqhEutDWR1Iz6cnqXOA8mD5shTOEPuhm-moHlZLnj4gLWjdhEzimr2n8bvC5q4e8cEf1yYjdCpmM",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 117457
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwi5Hf-jFk7uepV7d5Of2DBmacyO94j-NgXS2gqhEutDWR1Iz6cnqXOA8mD5shTOEPuhm-moHlZLnj4gLWjdhEzimr2n8bvC5q4e8cEf1yYjdCpmM",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "4c00c492-32ba-477a-baa0-f2992a98c466",
+    "name": "M4A4 | Neo-Noir (Field-Tested)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0P_6afBSLvWcMWmfyPxJvOhuRz39wE1142vSztmvInvBOgV0W5R1FLYNuxW4wIbgNrmx4g2Kj4tMmCX93zQJsHgJr0dqFw",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 115630
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0P_6afBSLvWcMWmfyPxJvOhuRz39wE1142vSztmvInvBOgV0W5R1FLYNuxW4wIbgNrmx4g2Kj4tMmCX93zQJsHgJr0dqFw",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "8fbaa1af-06b9-41a2-b45b-b79b5974d8b6",
+    "name": "M4A1-S | Player Two (Field-Tested)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9lj-J6SCbhxUl_jDGMnYftby7BbVdyCsB0EeZY4RPukNfhZOO2sQ3W398Qy3_6jHxIunptsO9TUqs7uvqAAWrfZoM",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 75074
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9lj-J6SCbhxUl_jDGMnYftby7BbVdyCsB0EeZY4RPukNfhZOO2sQ3W398Qy3_6jHxIunptsO9TUqs7uvqAAWrfZoM",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "eaea588d-e096-4bdf-bda5-ab2cc878890e",
+    "name": "USP-S | Monster Mashup (Field-Tested)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLkjYbf7itX6vytbbZSI-WsG3SA_uVkv-pmXBa_nBovp3PQn46ueX3FbAB0WZMjTe9csEKwk9XvNbnl41Tcj48WzHqv3HhP5ydj_a9cBuLIfNg1",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 95212
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLkjYbf7itX6vytbbZSI-WsG3SA_uVkv-pmXBa_nBovp3PQn46ueX3FbAB0WZMjTe9csEKwk9XvNbnl41Tcj48WzHqv3HhP5ydj_a9cBuLIfNg1",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "61a83429-8f4c-4eb2-8d8b-40892b78e441",
+    "name": "AK-47 | Bloodsport (Field-Tested)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiVI0POlPPNSIvycAWOD0eFkpN5lRi67gVN15mmDw9egci_EPFAkDMQlTeZe4EXplNa0Yrvr5wbd345GyHioiC4b8G81tFuqg_k_",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 84153
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiVI0POlPPNSIvycAWOD0eFkpN5lRi67gVN15mmDw9egci_EPFAkDMQlTeZe4EXplNa0Yrvr5wbd345GyHioiC4b8G81tFuqg_k_",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "4028b8df-4e3b-4032-b7f1-4deb9c9e1df9",
+    "name": "M4A1-S | Hyper Beast (Field-Tested)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9JuPh5SjuMlxgmoCm6lob-KT-JbwF1WZEjR-YJskK9k9XiYePltAeNjYlAxSn5j34dvCZstb4LB6Ut-7qX0V8Xkv5_2A",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 67351
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_OGMWrEwL9JuPh5SjuMlxgmoCm6lob-KT-JbwF1WZEjR-YJskK9k9XiYePltAeNjYlAxSn5j34dvCZstb4LB6Ut-7qX0V8Xkv5_2A",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "06daeeb9-15d0-428a-9895-451388122215",
+    "name": "★ Bayonet | Doppler (Factory New)",
+    "case": "Overdrive Case",
+    "caseSlug": "overdrive-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLzn4_v8ydP0POjV7Z4IumsA2aCw-JzuftsSxa_nBovp3PWnomsdn2QPVN0D5UiEOUP50LtltTvY-Ll4g3YjItFmSv-2i9A6X4-_a9cBu2YVmHc",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 66766
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLzn4_v8ydP0POjV7dsMOCbB3WV_uN3ouNlSiCpkBkYvzSCkpu3d3_FaFUnXpRwEO4O50G5xoW1Y7zn5wLe3oxBxHn6jiwf7XposO8LBb1lpPPeBvHrwA",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "9950edca-7ca5-4661-acd6-c2875052d1af",
+    "name": "USP-S | Cortex (Field-Tested)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLkjYbf7itX6vytbbZSI-WsG3SA_u1jpN5lRi67gVNz4G7Qm938cS_Da1AhXpB1EeVb4xm4mtDjN7vj4A3b2NpGyCr52i4Y8G81tMzdoYZ7",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 99625
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLkjYbf7itX6vytbbZSI-WsG3SA_u1jpN5lRi67gVNz4G7Qm938cS_Da1AhXpB1EeVb4xm4mtDjN7vj4A3b2NpGyCr52i4Y8G81tMzdoYZ7",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "a16f0098-4833-4805-a165-1dd5a1916e28",
+    "name": "Glock-18 | Steel Disruption (Field-Tested)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1a4s2qbLRsNPSWAHSV_v1_vPdsXRa_nBovp3PWmYuhdnyebAdyWJUjE7ResBC6xoXhZe_j7w3Zid1Aziio3SlI5iw__a9cBqG4HP4O",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 87916
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL2kpnj9h1a4s2qbLRsNPSWAHSV_v1_vPdsXRa_nBovp3PWmYuhdnyebAdyWJUjE7ResBC6xoXhZe_j7w3Zid1Aziio3SlI5iw__a9cBqG4HP4O",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "6468a1f4-aa89-4e6d-9151-b79b65758beb",
+    "name": "M4A4 | 龍王 (Dragon King) (Battle-Scarred)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0P_6afBSIf6QC3SE0-96j-1gSCGn20x062mAwtb8cX3CaAMoApV3EeFZ50Wwk9fuM-vqtAHW3opHn3iqiSxXrnE8PytIGFg",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 112972
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwiFO0P_6afBSIf6QC3SE0-96j-1gSCGn20x062mAwtb8cX3CaAMoApV3EeFZ50Wwk9fuM-vqtAHW3opHn3iqiSxXrnE8PytIGFg",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "d73552de-9c90-4c93-b84a-d530d392e41b",
+    "name": "AWP | Acheron (Field-Tested)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.cloudflare.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf9Ttk4eetZKFsMs-ABXKczf1JouRtTSWmkCIqtjmMj4K3eH-QPw4gW5shRu5csxS_moGxMr7h4w3f390Unn7823xLu3o-4rlQV71lpPPqq3txRw/360fx270f",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 50115
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf9Ttk4eetZKFsMs-ABXKczf1JouRtTSWmkCIrujqNjsH4eC-ROFMkDccjR7EDsBCxlN2xZu7jtlaNj4pMxSr8hiIc53tt67kHT-N7rafi4HxI",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "4d73af68-fc2f-41dd-87e6-5bab503aa743",
+    "name": "MAC-10 | Oceanic (Minimal Wear)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8n5WxrR1a4s2jaac8cM-cDWKRz-dJvOhuRz39lh4h52qGm9z7cCjBZ1IpCJp5QbRZtxXql9LnPrnr5wLXiY5EzX_2jjQJsHjZHPDEEg",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 83019
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8n5WxrR1a4s2jaac8cM-cDWKRz-dJvOhuRz39lh4h52qGm9z7cCjBZ1IpCJp5QbRZtxXql9LnPrnr5wLXiY5EzX_2jjQJsHjZHPDEEg",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "5368bc1e-2210-47ba-ab0f-7325ba2f6a3c",
+    "name": "AK-47 | Slate (Field-Tested)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiVI0POlPPNSMOKcCGKD0ud5vuBlcCW6khUz_W3Sytb4cCqTOFUpWJtzTOUD5hPsw9a0Yrnrs1SK3ooXzy6shilM5311o7FVYrIufmI",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 68488
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiVI0POlPPNSMOKcCGKD0ud5vuBlcCW6khUz_W3Sytb4cCqTOFUpWJtzTOUD5hPsw9a0Yrnrs1SK3ooXzy6shilM5311o7FVYrIufmI",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "605d5261-393f-45c7-90d1-0a20b0c9fec0",
+    "name": "FAMAS | Mecha Industries (Field-Tested)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3n5vh7h1c_M2oaalsM8-eC2SYwNF6ueZhW2ewwx4hsm3dz46heSjCPVUjC8chEOYMtxOwkNHiYb63swXY3Y9Nn32skGoXuc3DGOrc",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 108818
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL3n5vh7h1c_M2oaalsM8-eC2SYwNF6ueZhW2ewwx4hsm3dz46heSjCPVUjC8chEOYMtxOwkNHiYb63swXY3Y9Nn32skGoXuc3DGOrc",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "430d62ba-de4d-4167-bff0-6eae3aea1d25",
+    "name": "M4A1-S | Decimator (Field-Tested)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_eAMWrEwL9JtORqRiSygRI1jDGMnYftb3iUb1dxW5ImFLNftxCxktflZLm2tgaP2otGyn_-hytOvy9q5elQV_A7uvqA6CRSoZY",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 60521
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_eAMWrEwL9JtORqRiSygRI1jDGMnYftb3iUb1dxW5ImFLNftxCxktflZLm2tgaP2otGyn_-hytOvy9q5elQV_A7uvqA6CRSoZY",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "8f3e75e9-7380-4565-8e26-da3f6ac5158a",
+    "name": "Desert Eagle | Cobalt Disruption (Field-Tested)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL1m5fn8Sdk7v-RbKB9IeSXC2mDxNFmteBqQCq4qhEutDWR1I36c3OVbFQjDcRwR7EO4EW-x4HvMumzswfWjd8XnCn2iShM53s5t-0cEf1ycu8KccY",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 79356
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL1m5fn8Sdk7v-RbKB9IeSXC2mDxNFmteBqQCq4qhEutDWR1I36c3OVbFQjDcRwR7EO4EW-x4HvMumzswfWjd8XnCn2iShM53s5t-0cEf1ycu8KccY",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "76615d49-dff4-418c-8410-a3b2365fbd2a",
+    "name": "AK-47 | Neon Revolution (Field-Tested)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSIf6SHGSY2NF6ueZhW2e3w0524mjQzomreXqVbAAhWJF3RuZfuxC5x920Yurh7gONjY0RxHr4kGoXuT5bpI-V",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 87135
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSIf6SHGSY2NF6ueZhW2e3w0524mjQzomreXqVbAAhWJF3RuZfuxC5x920Yurh7gONjY0RxHr4kGoXuT5bpI-V",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "1bbb8c32-afa8-484d-846b-cc941eb67f44",
+    "name": "AWP | Asiimov (Field-Tested)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V6V-Kf2cGFidxOp_pewnF3nhxEt0sGnSzN76dH3GOg9xC8FyEORftRe-x9PuYurq71bW3d8UnjK-0H0YSTpMGQ",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 68175
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V6V-Kf2cGFidxOp_pewnF3nhxEt0sGnSzN76dH3GOg9xC8FyEORftRe-x9PuYurq71bW3d8UnjK-0H0YSTpMGQ",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  },
+  {
+    "id": "fe8eee0a-23d6-4c5f-8d7d-3f653ad0a46d",
+    "name": "★ Gut Knife | Fade (Factory New)",
+    "case": "Static Case",
+    "caseSlug": "static-case-v3",
+    "currentImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1c-uaRaaVSJvGXC1icyOl-pK88HyjikUR_6z_UmIyudy-WPVByCpRzQ7UDukbtmofmM-3r4gaKjINH02yg2St2xdPu",
+    "currentHttp": {
+      "reachable": true,
+      "status": 200,
+      "contentType": "image/png",
+      "contentLength": 79139
+    },
+    "placeholder": false,
+    "exactOfficialMatch": true,
+    "officialImageUrl": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1c-uaRaaVSJvGXC1icyOl-pK88HyjikUR_6z_UmIyudy-WPVByCpRzQ7UDukbtmofmM-3r4gaKjINH02yg2St2xdPu",
+    "replacementAvailable": true,
+    "needsReplacement": false,
+    "resolution": "official exact-name override"
+  }
+]

@@ -1,0 +1,780 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   PAGE PRIMITIVES
+
+   Fourteen pages each hand-built the same header: a technical kicker, a
+   display title, a lede, and an optional read-out on the right. They drifted
+   apart in spacing, type scale and alignment, which is the main reason the
+   product read as a set of separate screens rather than one system.
+
+   One header, one panel, one toolbar. Everything else a page needs it
+   composes from these.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dz-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--dz-s4);
+  margin: 0 0 var(--dz-s6);
+  padding-bottom: var(--dz-s4);
+  border-bottom: 1px solid var(--dz-edge);
+}
+
+.dz-page-header__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s2);
+  /* Without this the flex item refuses to shrink below min-content and a
+     long title pushes the aside off the row. */
+  min-width: 0;
+  flex: 1 1 22rem;
+}
+
+.dz-page-header__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dz-s3);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  font-weight: 600;
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-amber);
+}
+
+.dz-page-header__kicker::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+  flex: 0 0 auto;
+}
+
+.dz-page-header__title {
+  margin: 0;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-xl);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-text-1);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.dz-page-header__lede {
+  margin: 0;
+  max-width: 62ch;
+  font-size: var(--dz-type-sm);
+  line-height: 1.6;
+  color: var(--dz-text-3);
+}
+
+/* Right-hand slot: a balance, an account id, a link back. */
+.dz-page-header__aside {
+  display: flex;
+  align-items: center;
+  gap: var(--dz-s3);
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* The profile avatar rides in the same slot, so it is sized here rather
+   than inheriting whatever the legacy profile header gave it. */
+.dz-page-header__aside .profile-avatar {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--dz-r-md);
+  border: 1px solid var(--dz-edge-strong);
+  background: var(--dz-surface-2);
+  font-family: var(--dz-font-display);
+  font-weight: 700;
+  color: var(--dz-text-2);
+}
+
+.dz-page-header__aside .profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* A labelled figure, the most common thing the slot holds. */
+.dz-readout {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--dz-s2) var(--dz-s4);
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-md);
+  background: var(--dz-surface-1);
+}
+
+.dz-readout__label {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+}
+
+.dz-readout__value {
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--dz-text-1);
+  white-space: nowrap;
+}
+
+/* Secondary action, sized to sit beside a read-out in the header. */
+.dz-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dz-s2);
+  min-height: 38px;
+  padding: 0 var(--dz-s4);
+  border: 1px solid var(--dz-edge-strong);
+  border-radius: var(--dz-r-md);
+  background: var(--dz-surface-2);
+  color: var(--dz-text-2);
+  font-family: var(--dz-font-interface);
+  font-size: var(--dz-type-xs);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background var(--dz-d-micro) var(--dz-e-enter),
+    border-color var(--dz-d-micro) var(--dz-e-enter),
+    color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-btn:hover,
+.dz-btn:focus-visible {
+  background: var(--dz-surface-3);
+  border-color: var(--dz-edge-lit);
+  color: var(--dz-text-1);
+}
+
+.dz-btn:focus-visible {
+  outline: 2px solid var(--dz-amber);
+  outline-offset: 2px;
+}
+
+@media (hover: none) {
+  .dz-btn { min-height: 44px; }
+}
+
+/* ── Panel ───────────────────────────────────────────────────────────────
+   The surface every section sits on. Deliberately flat — no blur, no
+   gradient border — so panels stack without the page turning into soup. */
+.dz-panel {
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-lg);
+  background: linear-gradient(180deg, var(--dz-surface-1), var(--dz-surface-0));
+  padding: clamp(var(--dz-s4), 2vw, var(--dz-s5));
+}
+
+.dz-panel + .dz-panel { margin-top: var(--dz-s4); }
+
+.dz-panel__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--dz-s3);
+  margin-bottom: var(--dz-s4);
+  padding-bottom: var(--dz-s3);
+  border-bottom: 1px solid var(--dz-edge);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────
+   Filters and sorts. Native selects, kept native: a custom dropdown here
+   would cost keyboard and screen-reader behaviour the browser gives free. */
+.dz-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--dz-s3);
+}
+
+.dz-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s1);
+  min-width: 0;
+}
+
+.dz-field > span {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+}
+
+.dz-field select,
+.dz-field input {
+  min-height: 38px;
+  padding: 0 var(--dz-s3);
+  border: 1px solid var(--dz-edge-strong);
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-2);
+  color: var(--dz-text-1);
+  font-family: var(--dz-font-interface);
+  font-size: var(--dz-type-xs);
+  transition:
+    border-color var(--dz-d-micro) var(--dz-e-enter),
+    background var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-field select:hover,
+.dz-field input:hover {
+  border-color: var(--dz-edge-lit);
+}
+
+.dz-field select:focus-visible,
+.dz-field input:focus-visible {
+  outline: 2px solid var(--dz-amber);
+  outline-offset: 1px;
+  border-color: var(--dz-amber);
+}
+
+@media (hover: none) {
+  .dz-field select,
+  .dz-field input { min-height: 44px; }
+}
+
+/* Row variant: icon + input side by side (e.g. a search field). */
+.dz-field--row {
+  flex-direction: row;
+  align-items: center;
+  border: 1px solid var(--dz-edge-strong);
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-2);
+  padding: 0 var(--dz-s3);
+  transition: border-color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-field--row:focus-within {
+  border-color: var(--dz-amber);
+}
+
+.dz-field--row svg {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: var(--dz-text-4);
+}
+
+.dz-field--row input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  min-height: 38px;
+  padding: 0 var(--dz-s2);
+}
+
+.dz-field--row input:hover,
+.dz-field--row input:focus-visible {
+  border-color: transparent;
+  background: transparent;
+  outline: none;
+}
+
+@media (hover: none) {
+  .dz-field--row input { min-height: 44px; }
+}
+
+/* ── Case stage ──────────────────────────────────────────────────────────
+   The case on its own detail page, in the same cell it appeared in on the
+   catalog card and will appear in when opened. That continuity is the point:
+   one object, followed from grid to reveal. */
+.dz-case-stage {
+  margin-bottom: var(--dz-s6);
+}
+
+.dz-case-stage__chamber {
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  max-height: 46vh;
+}
+
+@media (max-width: 760px) {
+  .dz-case-stage__chamber { aspect-ratio: 4 / 3; }
+}
+
+.dz-case-stage__art {
+  width: clamp(160px, 26vw, 320px);
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+}
+
+.dz-case-stage__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.dz-case-stage__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--dz-s4);
+  margin-top: var(--dz-s4);
+  padding-top: var(--dz-s3);
+  border-top: 1px solid var(--dz-edge);
+}
+
+.dz-case-stage__name {
+  display: block;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-md);
+  font-weight: 600;
+  color: var(--dz-text-1);
+  text-transform: none;
+}
+
+/* ── Record card ─────────────────────────────────────────────────────────
+   What dropped, kept on the page after the opening scene is dismissed. It is
+   a record, not a second celebration: the drama belongs to DROP PROTOCOL, and
+   repeating it here would read as the site congratulating itself twice. What
+   this adds is the verification data, which must survive the scene closing. */
+.dz-record {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--dz-s4);
+  align-items: center;
+  padding: var(--dz-s4);
+  border: 1px solid color-mix(in srgb, var(--dz-rarity) 36%, var(--dz-edge));
+  border-left: 3px solid var(--dz-rarity);
+  border-radius: var(--dz-r-lg);
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--dz-rarity) 8%, var(--dz-surface-1)),
+    var(--dz-surface-0) 55%);
+  margin-bottom: var(--dz-s5);
+}
+
+.dz-record__art {
+  width: 110px;
+  height: 82px;
+  object-fit: contain;
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-0);
+}
+
+/* Shared image failure state. It keeps the item's exact name visible without
+   pretending a different skin is the requested one. */
+.dze-item-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 82px;
+  padding: 14px;
+  border: 1px solid #d8d8d1;
+  background: linear-gradient(145deg, #f4f2eb, #e7e5dc);
+  color: #252722;
+  text-align: center;
+}
+.dze-item-fallback span { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #777b73; }
+.dze-item-fallback strong { margin-top: 5px; font-size: 13px; line-height: 1.25; }
+
+.dz-record__label {
+  display: block;
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-rarity);
+}
+
+.dz-record__name {
+  margin: 2px 0;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-lg);
+  font-weight: 700;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-text-1);
+  text-transform: none;
+  overflow-wrap: break-word;
+}
+
+.dz-record__value {
+  margin: 0;
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--dz-text-1);
+}
+
+.dz-record__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--dz-s2);
+  margin-top: var(--dz-s3);
+}
+
+@media (max-width: 600px) {
+  .dz-record {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+}
+
+/* ── Table ───────────────────────────────────────────────────────────────
+   For data that genuinely has rows and columns, like a ledger. Kept as a real
+   <table> rather than rebuilt from divs: the header associations are what let
+   a screen reader say "Amount: −450 ₽" instead of reading a loose number.
+   The wrapper scrolls on narrow screens so the columns stay intact instead of
+   collapsing into unreadable slivers. */
+.dz-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-md);
+}
+
+.dz-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--dz-font-interface);
+  font-size: var(--dz-type-xs);
+}
+
+.dz-table thead th {
+  position: sticky;
+  top: 0;
+  padding: var(--dz-s3);
+  text-align: left;
+  white-space: nowrap;
+  background: var(--dz-surface-2);
+  border-bottom: 1px solid var(--dz-edge-strong);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+}
+
+.dz-table tbody td {
+  padding: var(--dz-s3);
+  border-bottom: 1px solid var(--dz-edge);
+  color: var(--dz-text-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.dz-table tbody tr:last-child td { border-bottom: 0; }
+
+.dz-table tbody tr:hover td { background: var(--dz-surface-1); }
+
+/* Signed amounts. The sign itself carries the meaning; colour reinforces it,
+   so the column still reads correctly without colour vision. */
+.dz-table .dz-amount-pos { color: var(--dz-success); font-weight: 600; }
+.dz-table .dz-amount-neg { color: var(--dz-danger);  font-weight: 600; }
+
+/* ── Status badge ────────────────────────────────────────────────────────
+   KYC state, withdrawal state, anything with a small fixed set of outcomes.
+   The dot plus the wording carry the state; colour only reinforces it, so it
+   still reads without colour vision. */
+.dz-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dz-s2);
+  padding: 2px var(--dz-s3);
+  border: 1px solid color-mix(in srgb, var(--dz-status-color, var(--dz-text-4)) 45%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--dz-status-color, var(--dz-text-4)) 12%, transparent);
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dz-status-color, var(--dz-text-3));
+  white-space: nowrap;
+}
+
+.dz-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: 0 0 auto;
+}
+
+.dz-status--ok      { --dz-status-color: var(--dz-success); }
+.dz-status--pending { --dz-status-color: var(--dz-amber); }
+.dz-status--bad     { --dz-status-color: var(--dz-danger); }
+.dz-status--idle    { --dz-status-color: var(--dz-text-4); }
+
+/* ── Stat tiles ──────────────────────────────────────────────────────────
+   A row of linked figures. Each is a navigation target, so the whole tile is
+   the hit area rather than the number inside it. */
+.dz-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
+  gap: var(--dz-s3);
+}
+
+.dz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s1);
+  padding: var(--dz-s4);
+  border: 1px solid var(--dz-edge);
+  border-radius: var(--dz-r-md);
+  background: linear-gradient(180deg, var(--dz-surface-1), var(--dz-surface-0));
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--dz-d-micro) var(--dz-e-enter),
+    transform var(--dz-d-micro) var(--dz-e-exit),
+    box-shadow var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-stat:hover,
+.dz-stat:focus-visible {
+  border-color: var(--dz-edge-lit);
+  transform: translate3d(0, -2px, 0);
+  box-shadow: var(--dz-shadow-near);
+}
+
+.dz-stat:focus-visible {
+  outline: 2px solid var(--dz-amber);
+  outline-offset: 2px;
+}
+
+.dz-stat__label {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  text-transform: uppercase;
+  color: var(--dz-text-4);
+}
+
+.dz-stat__value {
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-lg);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--dz-tracking-display);
+  color: var(--dz-text-1);
+}
+
+.dz-stat__arrow {
+  margin-top: var(--dz-s1);
+  font-size: var(--dz-type-xs);
+  color: var(--dz-text-4);
+  transition: color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-stat:hover .dz-stat__arrow,
+.dz-stat:focus-visible .dz-stat__arrow { color: var(--dz-amber); }
+
+/* ── Route transition ────────────────────────────────────────────────────
+   Entrance only, opacity and transform only, so it runs on the compositor
+   and cannot reflow the incoming page. Short on purpose: this fires on every
+   navigation, and anything a user feels twice is already too long. */
+.dz-route--enter {
+  animation: dz-route-in var(--dz-d-move) var(--dz-e-exit) both;
+}
+
+@keyframes dz-route-in {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Durations already collapse via tokens; dropping the animation entirely
+     also removes the transform, so nothing is left mid-flight. */
+  .dz-route--enter { animation: none; }
+}
+
+/* ── Log rows ────────────────────────────────────────────────────────────
+   A history or ledger reads as a technical journal, but the figures stay in
+   interface type: a date and an amount are the reason the page exists, so
+   neither is sacrificed to the journal aesthetic. */
+.dz-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dz-s2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dz-log__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--dz-s3);
+  padding: var(--dz-s3);
+  border: 1px solid var(--dz-edge);
+  border-left: 2px solid var(--dz-rarity, var(--dz-edge-strong));
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-1);
+  transition: border-color var(--dz-d-micro) var(--dz-e-enter);
+}
+
+.dz-log__row:hover {
+  border-color: var(--dz-edge-strong);
+  border-left-color: var(--dz-rarity, var(--dz-edge-strong));
+}
+
+.dz-log__art {
+  width: 56px;
+  height: 42px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  border-radius: var(--dz-r-sm);
+  background: var(--dz-surface-0);
+}
+
+.dz-log__main { min-width: 0; }
+
+.dz-log__name {
+  margin: 0;
+  font-family: var(--dz-font-interface);
+  /* Item names are proper nouns from Steam. Legacy ancestors set
+     text-transform:uppercase and it inherits, which rendered
+     "AK-47 | Slate (Field-Tested)" as shouting; reset explicitly so no
+     surrounding page can case-transform a name. */
+  text-transform: none;
+  font-size: var(--dz-type-sm);
+  font-weight: 600;
+  color: var(--dz-text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dz-log__meta {
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  color: var(--dz-text-4);
+}
+
+.dz-log__value {
+  font-family: var(--dz-font-display);
+  font-size: var(--dz-type-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--dz-text-1);
+  white-space: nowrap;
+  text-align: right;
+}
+
+@media (max-width: 520px) {
+  .dz-log__row {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: var(--dz-s2);
+  }
+  /* The amount moves under the name rather than squeezing it to nothing. */
+  .dz-log__value {
+    grid-column: 2;
+    text-align: left;
+  }
+  .dz-page-header { align-items: flex-start; }
+  .dz-page-header__aside { width: 100%; }
+}
+
+/* ── Contextual ambient environment ─────────────────────────────────────
+   When a result is revealed, the case-detail page wrapper gets
+   data-rarity="GOLD" (etc.) and the page breathes the rarity's color.
+   This is a radial ambient glow behind all content — felt, not seen.
+   Only on .case-detail so it never leaks to other pages. */
+
+.case-detail {
+  position: relative;
+}
+
+/* Ambient layer — sits behind the content, overflow clips at the page edge */
+.case-detail::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 55% at 50% 0%,
+    var(--dz-ambient, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--dz-d-scene) var(--dz-e-enter);
+}
+
+/* Children must sit above the ambient layer */
+.case-detail > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Per-rarity ambient color tokens — each rarity gets its own glow character */
+.case-detail[data-rarity="CONSUMER"]   { --dz-ambient: rgba(176, 195, 217, 0.07); }
+.case-detail[data-rarity="INDUSTRIAL"] { --dz-ambient: rgba(94, 152, 217, 0.10); }
+.case-detail[data-rarity="MIL_SPEC"]   { --dz-ambient: rgba(75, 105, 255, 0.11); }
+.case-detail[data-rarity="RESTRICTED"] { --dz-ambient: rgba(136, 71, 255, 0.13); }
+.case-detail[data-rarity="CLASSIFIED"] { --dz-ambient: rgba(211, 44, 230, 0.14); }
+.case-detail[data-rarity="COVERT"]     { --dz-ambient: rgba(235, 75, 75, 0.16); }
+.case-detail[data-rarity="GOLD"]       { --dz-ambient: rgba(124, 107, 255, 0.18); }
+
+/* Show the ambient when rarity is set */
+.case-detail[data-rarity]::before {
+  opacity: 1;
+}
+
+/* dz-record entrance — slides up and fades in on reveal */
+.dz-record {
+  animation: dz-record-in var(--dz-d-move) var(--dz-e-enter) both;
+}
+
+@keyframes dz-record-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Chase rarities (Classified, Covert, Gold) get a stronger border pulse */
+.case-detail[data-rarity="CLASSIFIED"] .dz-record,
+.case-detail[data-rarity="COVERT"]     .dz-record,
+.case-detail[data-rarity="GOLD"]       .dz-record {
+  animation: dz-record-in var(--dz-d-move) var(--dz-e-enter) both,
+             dz-record-pulse 3s 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes dz-record-pulse {
+  from { box-shadow: 0 0 0 0 transparent; }
+  to   { box-shadow: 0 0 32px -4px var(--dz-rarity); }
+}
+
+/* Reduced motion: no animations, ambient stays static */
+@media (prefers-reduced-motion: reduce) {
+  .case-detail::before {
+    transition: none;
+  }
+  .dz-record {
+    animation: none;
+  }
+}

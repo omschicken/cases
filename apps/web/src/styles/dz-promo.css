@@ -1,0 +1,52 @@
+/* First-deposit promo banner */
+.dz-promo-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--dz-s4);
+  padding: var(--dz-s3) var(--dz-s5);
+  background: linear-gradient(90deg, rgba(124, 107, 255, 0.15) 0%, rgba(59, 130, 246, 0.10) 100%);
+  border: 1px solid rgba(124, 107, 255, 0.3);
+  border-radius: var(--dz-r-sm);
+  margin: var(--dz-s4) 0;
+}
+.dz-promo-banner__title { flex: 1 1 auto; font-weight: 500; }
+.dz-promo-banner__percent {
+  font: 900 2rem var(--dz-font-display);
+  color: var(--dz-amber);
+}
+.dz-promo-banner__cap { color: var(--dz-text-dim, inherit); white-space: nowrap; }
+.dz-promo-banner__cta {
+  padding: 0.5rem 1.25rem;
+  background: var(--dz-amber);
+  color: #fff;
+  border-radius: var(--dz-r-sm);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.dz-promo-banner__cta:hover { background: var(--dz-amber-hot); }
+
+@media (max-width: 640px) {
+  .dz-promo-banner { flex-wrap: wrap; gap: var(--dz-s3); padding: var(--dz-s3) var(--dz-s4); }
+  .dz-promo-banner__title { flex-basis: 100%; }
+  .dz-promo-banner__cta { margin-left: auto; }
+}
+
+/* /fair page */
+.fair-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--dz-s4); margin: var(--dz-s5) 0; }
+.fair-step { padding: var(--dz-s4); border: 1px solid rgba(124, 107, 255, 0.25); border-radius: var(--dz-r-sm); background: rgba(124, 107, 255, 0.06); }
+.fair-step__icon { font-size: 1.75rem; }
+.fair-step h3 { margin: var(--dz-s3) 0 var(--dz-s2, 0.5rem); }
+.fair-step p { margin: 0; line-height: 1.55; opacity: 0.85; }
+.fair-calc { display: grid; gap: var(--dz-s4); }
+.fair-calc > h2 { margin: 0; }
+.fair-calc code { word-break: break-all; }
+.fair-history-link { margin: var(--dz-s5) 0; }
+
+/* Crypto deposit */
+.crypto-coins { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--dz-s3); }
+.crypto-coin { display: flex; align-items: center; gap: var(--dz-s3); padding: var(--dz-s3); background: transparent; color: inherit; border: 1px solid rgba(124, 107, 255, 0.25); border-radius: var(--dz-r-sm); cursor: pointer; }
+.crypto-coin--active { border-color: var(--dz-amber); background: rgba(124, 107, 255, 0.12); }
+.crypto-coin__logo { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; color: #fff; font-weight: 700; }
+.crypto-pay__qr { display: grid; place-items: center; padding: var(--dz-s4); background: #fff; border-radius: var(--dz-r-sm); width: fit-content; }
+.crypto-pay input[readonly] { font-family: monospace; }

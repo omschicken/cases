@@ -1,0 +1,5 @@
+-- CreateEnum
+CREATE TYPE "ItemRarity" AS ENUM ('CONSUMER', 'INDUSTRIAL', 'MIL_SPEC', 'RESTRICTED', 'CLASSIFIED', 'COVERT', 'GOLD');
+
+-- AlterTable
+ALTER TABLE "CaseItem" ADD COLUMN     "rarity" "ItemRarity" NOT NULL DEFAULT 'MIL_SPEC';

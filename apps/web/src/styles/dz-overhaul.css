@@ -1,0 +1,2448 @@
+/* ════════════════════════════════════════════════════════════════
+   dz-overhaul.css — cinematic premium pass. Loaded last; visual only.
+   ════════════════════════════════════════════════════════════════ */
+
+:root {
+  --ov-violet: #7c6af7;
+  --ov-violet-hot: #a89df5;
+  --ov-violet-neon: #b040ff;
+  --ov-blue: #4a90d9;
+  --ov-cyan: #00c8ff;
+  --ov-gold: #f0c040;
+  --ov-gold-hot: #ffd966;
+  /* Bebas Neue for major display text — aggressive, condensed, gaming */
+  --ov-font-display: "Bebas Neue", "Rajdhani", "Inter", system-ui, sans-serif;
+  /* Barlow Condensed for UI labels, buttons, chips */
+  --ov-font-ui: "Barlow Condensed", "Rajdhani", "Inter", system-ui, sans-serif;
+  --ov-font: "Rajdhani", "Inter", system-ui, sans-serif;
+}
+
+/* ── 1. Global atmosphere ───────────────────────────────────── */
+html { background: #000; }
+body {
+  background: radial-gradient(ellipse at 50% 0%, #0e1230 0%, #070b14 55%, #000 100%) fixed;
+  min-height: 100vh;
+}
+
+/* Fine grid overlay — barely visible depth */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image:
+    linear-gradient(to right, #8899ff 1px, transparent 1px),
+    linear-gradient(to bottom, #8899ff 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Scanline texture — gaming CRT feel */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.4) 2px,
+    rgba(0, 0, 0, 0.4) 4px
+  );
+}
+
+.dz-aurora { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.dz-aurora i {
+  position: absolute;
+  width: 60vmax; height: 60vmax;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.09;
+  animation: dz-aurora-drift 22s ease-in-out infinite alternate;
+}
+.dz-aurora i:first-child { left: -20vmax; top: -22vmax; background: #5b4fcf; }
+.dz-aurora i:last-child { right: -20vmax; bottom: -24vmax; background: #1a4eb5; animation-delay: -11s; animation-direction: alternate-reverse; }
+.dz-aurora i:nth-child(2) { left: 60%; top: 30%; background: #7c20b5; opacity: 0.05; animation-delay: -6s; width: 40vmax; height: 40vmax; }
+@keyframes dz-aurora-drift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(10vmax, 7vmax); }
+}
+@media (prefers-reduced-motion: reduce) { .dz-aurora i { animation: none; } }
+
+/* ── Typography: Bebas Neue for all major display ─────────────── */
+h1, h2, h3,
+.dzh__title, .hero-v3__title,
+.dz-brand__word {
+  font-family: var(--ov-font-display);
+  letter-spacing: 0.03em;
+}
+h1 { font-weight: 400; } /* Bebas has only 400 */
+h2, h3 { font-weight: 400; }
+
+/* Barlow Condensed for nav, chips, buttons */
+h4,
+.dz-sidebar__link, .pages-bar-link, .dz-brand__word,
+.dzc__name, .dz-protocol__item-name,
+.dzh__btn--primary, .dz-protocol__btn--primary,
+.hero-v3__btn,
+.dz-hero__cta, .site-stats,
+.collection-route strong, .collection-route-meta {
+  font-family: var(--ov-font-ui);
+}
+h4 { font-weight: 700; letter-spacing: 0.04em; }
+
+/* ── 2. Top navigation ──────────────────────────────────────── */
+.pages-bar {
+  background: rgba(5, 6, 14, 0.9);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(120, 100, 255, 0.12);
+}
+.pages-bar-link {
+  font-family: var(--ov-font-ui);
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+.pages-bar-link:hover { color: var(--ov-violet-hot); text-decoration: none; }
+.pages-bar-link.active { color: #fff; border-bottom-color: var(--ov-violet); }
+
+/* ── 3. Case cards — elevated ───────────────────────────────── */
+.dzc {
+  background: linear-gradient(145deg, #0d1226 0%, #08090f 100%);
+  border: 1px solid rgba(100, 90, 220, 0.14);
+  border-radius: 14px;
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+}
+.dzc:hover {
+  border-color: rgba(124, 106, 247, 0.65);
+  box-shadow:
+    0 0 0 1px rgba(124, 106, 247, 0.22),
+    0 0 40px rgba(124, 106, 247, 0.18),
+    0 12px 40px rgba(0, 0, 0, 0.5);
+  transform: translateY(-5px) scale(1.025);
+}
+
+/* Card top — the chest area — stronger rarity atmosphere */
+.dzc__top {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 60%,
+      hsl(var(--chest-hue, 260) 70% 50% / 0.12),
+      transparent 70%),
+    linear-gradient(180deg, #0c1020 0%, #070910 100%);
+}
+
+/* Real image treatment */
+.dzc__img {
+  display: block;
+  max-height: 145px;
+  max-width: 90%;
+  margin: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 18px rgba(124, 106, 247, 0.45));
+  transition: filter 0.28s ease, transform 0.28s ease;
+}
+.dzc:hover .dzc__img {
+  filter: drop-shadow(0 0 30px rgba(124, 106, 247, 0.8));
+  transform: scale(1.07) translateY(-3px);
+}
+
+/* Generated art (CaseMiniArt) — make it MUCH bigger */
+.dzc__chest .dzc-art {
+  width: 100%;
+  height: 100%;
+}
+.dzc-art__box {
+  width: 82%;
+  max-width: 150px;
+}
+.dzc-art__lid {
+  height: 34px;
+}
+.dzc-art__body {
+  height: 90px;
+}
+.dzc-art__glyph-wrap {
+  width: 52px;
+  height: 52px;
+}
+.dzc-art__glyph-wrap .case-chest-glyph {
+  width: 40px;
+  height: 40px;
+}
+.dzc-art__lid-mark {
+  font-size: 0.58rem;
+  letter-spacing: 0.25em;
+}
+.dzc-art__band-text {
+  font-size: 0.48rem;
+  letter-spacing: 0.18em;
+}
+
+/* Card name */
+.dzc__name {
+  font-family: var(--ov-font-ui);
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.02em;
+}
+
+/* Price pill */
+.dzc__price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  padding: 0.28rem 0.8rem;
+  min-width: 0;
+  border-radius: 999px;
+  background: rgba(124, 106, 247, 0.1);
+  border: 1px solid rgba(124, 106, 247, 0.25);
+  font-family: var(--ov-font-ui);
+}
+.dzc__price-label { display: none; }
+.dzc__foot { gap: 0.5rem; }
+.dzc__price .dz-figure {
+  font-size: 0.95rem;
+  white-space: nowrap;
+  color: var(--ov-gold);
+  font-family: var(--ov-font-ui);
+  font-weight: 800;
+}
+
+/* Open button */
+.dzc__open {
+  font-family: var(--ov-font-ui);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+/* ── 4. Collection route tier cards ─────────────────────────── */
+.collection-route {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #0d1226 0%, #08090f 100%);
+  border: 1px solid rgba(100, 90, 220, 0.18);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.collection-route::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 40%,
+    rgba(124, 106, 247, 0.06), transparent 70%);
+  pointer-events: none;
+}
+.collection-route:hover {
+  border-color: rgba(124, 106, 247, 0.55);
+  box-shadow:
+    0 0 35px rgba(124, 106, 247, 0.15),
+    0 12px 40px rgba(0, 0, 0, 0.5);
+  transform: translateY(-4px) scale(1.02);
+}
+.collection-route.is-active {
+  border-color: rgba(124, 106, 247, 0.75);
+  box-shadow:
+    0 0 50px rgba(124, 106, 247, 0.25),
+    inset 0 0 30px rgba(124, 106, 247, 0.05);
+}
+.collection-route-index {
+  font-family: var(--ov-font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: rgba(124, 106, 247, 0.7);
+}
+.collection-route strong {
+  font-family: var(--ov-font-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+.collection-route small {
+  font-family: var(--ov-font-ui);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Tier-specific accent colors */
+.collection-route-entry { --route-accent: #4ab3ff; }
+.collection-route-core  { --route-accent: #7c6af7; }
+.collection-route-apex  { --route-accent: #ff6b35; }
+.collection-route { border-color: rgba(var(--route-accent-rgb, 124, 106, 247), 0.2); }
+.collection-route-entry::before { background: radial-gradient(ellipse 60% 50% at 50% 40%, rgba(74, 179, 255, 0.07), transparent 70%); }
+.collection-route-apex::before  { background: radial-gradient(ellipse 60% 50% at 50% 40%, rgba(255, 107, 53, 0.07), transparent 70%); }
+
+/* Tier card art — make CaseChest bigger */
+.collection-route-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.collection-route-art .case-chest {
+  transform: scale(1.15);
+}
+
+/* ── 5. Case detail image stage ─────────────────────────────── */
+.case-stage {
+  --stage-rarity: #4b69ff;
+  position: relative;
+  width: 100%;
+  height: 420px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 60%,
+      color-mix(in srgb, var(--stage-rarity) 8%, transparent), transparent 75%),
+    linear-gradient(180deg, #060a18 0%, #030509 100%);
+}
+.case-stage__glow {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 550px; height: 550px;
+  max-width: 100%;
+  margin: -275px 0 0 -275px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--stage-rarity) 0%, transparent 65%);
+  opacity: 0.13;
+  filter: blur(70px);
+  animation: stage-pulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes stage-pulse {
+  0%, 100% { opacity: 0.09;  transform: scale(0.93); }
+  50%      { opacity: 0.17; transform: scale(1.07); }
+}
+.case-stage__case {
+  position: relative;
+  z-index: 1;
+  width: 300px;
+  max-width: 70%;
+  max-height: 360px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 50px color-mix(in srgb, var(--stage-rarity) 65%, transparent));
+  animation: float 4.5s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+.case-stage__weapon {
+  position: absolute;
+  z-index: 2;
+  right: 20px; bottom: 20px;
+  width: 160px;
+  margin: 0;
+  opacity: 0.88;
+  text-align: center;
+}
+.case-stage__weapon img {
+  display: block;
+  width: 100%;
+  filter: drop-shadow(0 0 14px var(--stage-rarity));
+}
+.case-stage__weapon figcaption {
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  margin-top: 0.4rem;
+  font: 700 0.75rem var(--ov-font-ui);
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.8);
+}
+.case-stage__weapon figcaption i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--stage-rarity); box-shadow: 0 0 10px var(--stage-rarity); }
+@media (max-width: 640px) {
+  .case-stage { height: 320px; }
+  .case-stage__case { width: 220px; }
+  .case-stage__weapon { width: 110px; right: 8px; bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-stage__glow, .case-stage__case { animation: none; }
+}
+
+/* ── 6. Primary action buttons ──────────────────────────────── */
+.dza-open,
+.dzh__btn--primary, .dz-protocol__btn--primary {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #3b82f6 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 16px 44px;
+  font-family: var(--ov-font-ui);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  box-shadow: 0 4px 28px rgba(124, 106, 247, 0.45), 0 0 0 1px rgba(139, 92, 246, 0.3);
+  transition: all 0.22s ease;
+}
+.dza-open:hover:not(:disabled),
+.dzh__btn--primary:hover, .dz-protocol__btn--primary:hover {
+  box-shadow: 0 8px 50px rgba(124, 106, 247, 0.65), 0 0 0 1px rgba(139, 92, 246, 0.5);
+  transform: translateY(-3px);
+  filter: brightness(1.1);
+}
+.dza-open:active:not(:disabled),
+.dzh__btn--primary:active, .dz-protocol__btn--primary:active { transform: scale(0.97); }
+
+/* ── 7. Win reveal: trophy moment ───────────────────────────── */
+.dz-protocol__item-art img {
+  width: min(210px, 62vw);
+  filter: drop-shadow(0 0 32px var(--dz-rarity, #7c6af7)) drop-shadow(0 0 72px color-mix(in srgb, var(--dz-rarity, #7c6af7) 55%, transparent));
+}
+.dz-protocol__item {
+  padding: 1.5rem 1.75rem;
+  border: 1px solid color-mix(in srgb, var(--dz-rarity, #7c6af7) 55%, transparent);
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgba(15, 22, 41, 0.95), rgba(7, 11, 20, 0.95));
+  box-shadow: 0 0 50px color-mix(in srgb, var(--dz-rarity, #7c6af7) 40%, transparent);
+}
+.dz-protocol__item-name {
+  font-family: var(--ov-font-display);
+  font-size: 36px;
+  font-weight: 400;
+  color: var(--dz-rarity, #fff);
+  margin: 0.25rem 0;
+  letter-spacing: 0.04em;
+}
+.dz-protocol__item-cond { margin: 0; font-size: 0.85rem; color: #8892a8; letter-spacing: 0.08em; }
+.dz-protocol__item-value {
+  color: var(--ov-gold-hot);
+  font-family: var(--ov-font-ui);
+  font-weight: 800;
+  font-size: 1.6rem;
+}
+
+.dz-confetti { position: absolute; left: 50%; top: 42%; width: 0; height: 0; pointer-events: none; z-index: 5; }
+.dz-confetti i {
+  position: absolute;
+  width: 9px; height: 9px;
+  background: hsl(calc(var(--i) * 26deg) 90% 62%);
+  opacity: 0;
+  animation: dz-confetti-burst 1.6s cubic-bezier(0.15, 0.7, 0.3, 1) 0.15s both;
+  transform: rotate(calc(var(--i) * 25deg));
+  --a: calc(var(--i) * 25.7deg);
+}
+@keyframes dz-confetti-burst {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(0); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(cos(var(--a)) * 260px), calc(sin(var(--a)) * 260px + 80px)) rotate(540deg); }
+}
+@media (prefers-reduced-motion: reduce) { .dz-confetti { display: none; } }
+
+/* ── 8. Homepage hero ───────────────────────────────────────── */
+.dzh { position: relative; overflow: hidden; }
+.dzh__title {
+  font-family: var(--ov-font-display);
+  font-size: clamp(3rem, 8vw, 76px);
+  font-weight: 400;
+  color: #fff;
+  line-height: 0.98;
+}
+.dzh__accent { background: linear-gradient(135deg, #c084fc 0%, #818cf8 45%, #38bdf8 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.dzh__lede { color: #7889aa; }
+.dzh__grid { position: relative; z-index: 1; }
+.dzh__ghosts { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.dzh__ghost {
+  position: absolute;
+  width: 200px;
+  max-width: 29vw;
+  opacity: 0.24;
+  filter: blur(5px) drop-shadow(0 0 28px rgba(124, 106, 247, 0.55));
+  animation: float 6.5s ease-in-out infinite;
+}
+.dzh__ghost--0 { left: 4%;  top: 18%; transform: rotate(-12deg); }
+.dzh__ghost--1 { left: 46%; top: 6%;  transform: rotate(9deg);  animation-delay: -2s; }
+.dzh__ghost--2 { right: 6%; bottom: 8%; transform: rotate(-6deg); animation-delay: -4s; }
+@media (max-width: 640px) { .dzh__ghost--1 { display: none; } }
+@media (prefers-reduced-motion: reduce) { .dzh__ghost { animation: none; } }
+
+/* ════ Live drop feed (bottom-left toasts) ════════════════════ */
+.live-feed {
+  position: fixed;
+  left: 24px; bottom: 24px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.live-feed__toast {
+  --rc: #4b69ff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 290px;
+  padding: 10px 14px;
+  background: rgba(8, 10, 22, 0.94);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-left: 3px solid var(--rc);
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  animation: toast-in 0.3s ease-out both, toast-out 0.3s ease-in 4.7s forwards;
+}
+.live-feed__toast img { width: 38px; height: 38px; flex: none; object-fit: contain; filter: drop-shadow(0 0 7px var(--rc)); }
+.live-feed__text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.live-feed__user { font: 700 0.78rem var(--ov-font-ui); letter-spacing: 0.06em; color: #8fa0c4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.live-feed__item { font-size: 0.78rem; color: #e8edf8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.live-feed__price { flex: none; font: 800 0.92rem var(--ov-font-ui); color: var(--ov-gold); }
+@keyframes toast-in  { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+@keyframes toast-out { to { opacity: 0; transform: translateX(-12px); } }
+@media (max-width: 767px) { .live-feed { left: 12px; bottom: 76px; } .live-feed__toast { width: min(290px, calc(100vw - 24px)); } }
+@media (prefers-reduced-motion: reduce) { .live-feed__toast { animation: toast-out 0.3s ease-in 4.7s forwards; } }
+
+/* ════ Stats strip ════════════════════════════════════════════ */
+.site-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 40px;
+  min-height: 38px;
+  padding: 0 16px;
+  background: rgba(124, 106, 247, 0.04);
+  border-bottom: 1px solid rgba(124, 106, 247, 0.1);
+  font: 700 12px var(--ov-font-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5a6b8a;
+}
+.site-stats b { font-weight: 800; color: #a9b6d4; }
+.site-stats__skel { display: block; width: 150px; height: 12px; border-radius: 6px; background: rgba(255, 255, 255, 0.08); animation: stats-pulse 1.2s ease-in-out infinite; }
+@keyframes stats-pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.9; } }
+@media (max-width: 640px) { .site-stats { gap: 2px 18px; padding: 6px 12px; font-size: 11px; } }
+@media (prefers-reduced-motion: reduce) { .site-stats__skel { animation: none; } }
+
+/* ════ Rarity reveal shimmer ══════════════════════════════════ */
+.dz-protocol__item-art { position: relative; }
+.dz-protocol--rarity-CLASSIFIED .dz-protocol__item-art::after,
+.dz-protocol--rarity-COVERT .dz-protocol__item-art::after,
+.dz-protocol--rarity-GOLD .dz-protocol__item-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.2s ease-in-out infinite;
+}
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.dz-protocol--rarity-COVERT, .dz-protocol--rarity-GOLD {
+  box-shadow: inset 0 0 140px color-mix(in srgb, var(--dz-rarity) 22%, transparent);
+}
+
+/* 8 sparkle dots */
+.dz-sparkles { position: absolute; inset: -12%; pointer-events: none; }
+.dz-sparkles i {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: calc(4px + (var(--i) mod 3) * 1px);
+  height: calc(4px + (var(--i) mod 3) * 1px);
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--dz-rarity, #fff) calc(100% - (var(--i) mod 2) * 100%), #fff);
+  box-shadow: 0 0 8px currentColor;
+  color: var(--dz-rarity, #fff);
+  opacity: 0;
+  --a: calc(var(--i) * 45deg);
+  animation: sparkle 1.5s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.19s);
+}
+@keyframes sparkle {
+  0%   { opacity: 0; transform: translate(calc(cos(var(--a)) * 120px), calc(sin(var(--a)) * 120px)) scale(0.3) rotate(0); }
+  45%  { opacity: 1; transform: translate(calc(cos(var(--a)) * 120px), calc(sin(var(--a)) * 120px)) scale(1.2) rotate(90deg); }
+  100% { opacity: 0; transform: translate(calc(cos(var(--a)) * 120px), calc(sin(var(--a)) * 120px)) scale(0.3) rotate(180deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dz-protocol__item-art::after { animation: none; }
+  .dz-sparkles i { animation: none; opacity: 0.7; }
+}
+
+/* ════ Homepage hero v3 ═══════════════════════════════════════ */
+/* ════ Hero v3 — compact stage ══════════════════════════════════ */
+.hero-v3 {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+  background: var(--ov-bg);
+}
+.hero-v3__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 24px 44px;
+  gap: 24px;
+}
+.hero-v3__content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+.hero-v3__title {
+  margin: 0;
+  font-family: var(--ov-font-display);
+  font-size: clamp(52px, 9vw, 96px);
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+  color: #fff;
+  text-transform: uppercase;
+}
+.hero-v3__brand-accent {
+  color: var(--ov-violet-hot, #7c6af7);
+}
+.hero-v3__sub {
+  margin: 0;
+  font: 500 15px var(--ov-font-ui);
+  letter-spacing: 0.05em;
+  color: #4a5568;
+  text-transform: uppercase;
+}
+.hero-v3__btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 13px 32px;
+  border-radius: 6px;
+  font-family: var(--ov-font-ui);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.18s ease;
+  cursor: pointer;
+}
+.hero-v3__btn--primary {
+  background: var(--ov-violet-hot, #7c6af7);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 20px rgba(124, 106, 247, 0.4);
+}
+.hero-v3__btn--primary:hover {
+  box-shadow: 0 4px 32px rgba(124, 106, 247, 0.65);
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+.hero-v3__btn--primary:active { transform: scale(0.97); }
+.hero-v3__showcase { display: none; }
+
+@media (max-width: 640px) {
+  .hero-v3__inner { padding: 32px 16px 36px; }
+  .hero-v3__title { font-size: clamp(44px, 16vw, 64px); }
+}
+
+@media (min-width: 768px) {
+  .hero-v3__showcase {
+    display: block;
+    position: relative;
+    flex: 0 0 420px;
+    min-height: 300px;
+  }
+  .hero-v3__showcase-glow {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 380px; height: 380px;
+    margin: -190px 0 0 -190px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124, 106, 247, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-v3__case {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 240px;
+    margin: -130px 0 0 -120px;
+  }
+  .hero-v3__case img {
+    display: block;
+    width: 100%;
+    filter: drop-shadow(0 0 40px rgba(124, 106, 247, 0.5));
+    animation: float 4.5s ease-in-out infinite;
+  }
+  .hero-v3__case--center { z-index: 3; transform: scale(1.1); }
+  .hero-v3__case--left   { z-index: 2; opacity: 0.65; transform: rotate(-14deg) translateX(-90px) translateY(20px); }
+  .hero-v3__case--right  { z-index: 2; opacity: 0.65; transform: rotate(14deg) translateX(90px) translateY(20px); }
+  .hero-v3__case--left img  { animation-delay: 1s; }
+  .hero-v3__case--right img { animation-delay: 2s; }
+}
+@media (min-width: 768px) and (prefers-reduced-motion: reduce) { .hero-v3__case img { animation: none; } }
+@media (max-width: 767px) { .hero-v3__showcase { display: none; } }
+
+/* ════ Showcase: CaseMiniArt in hero ══════════════════════════ */
+.hero-v3__case .dzc-art__box {
+  width: 78%;
+  max-width: 165px;
+}
+.hero-v3__case .dzc-art__lid { height: 36px; }
+.hero-v3__case .dzc-art__body { height: 96px; }
+.hero-v3__case .dzc-art__glyph-wrap { width: 56px; height: 56px; }
+.hero-v3__case .dzc-art__glyph-wrap .case-chest-glyph { width: 44px; height: 44px; }
+
+/* ════ Live horizontal drop ticker (top of hero) ══════════════ */
+.dzh-feed {
+  display: flex;
+  align-items: center;
+  background: rgba(8, 10, 22, 0.88);
+  border-bottom: 1px solid rgba(124, 106, 247, 0.15);
+  overflow: hidden;
+  white-space: nowrap;
+  height: 38px;
+  position: relative;
+}
+.dzh-feed__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  font: 800 10px var(--ov-font-ui);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #ef4444;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+  flex: none;
+  z-index: 1;
+  background: rgba(8, 10, 22, 0.98);
+}
+.dzh-feed__label i {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 6px #ef4444;
+  animation: live-blink 1s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes live-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.dzh-feed__window {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+}
+.dzh-feed__track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  animation: dzh-scroll 40s linear infinite;
+  will-change: transform;
+}
+@keyframes dzh-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) { .dzh-feed__track { animation: none; } }
+.dzh-drop {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  font: 600 12px var(--ov-font-ui);
+  letter-spacing: 0.04em;
+}
+.dzh-drop img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px var(--rc, #4b69ff));
+}
+.dzh-drop__name {
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dzh-drop__value {
+  color: var(--ov-gold);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* ════ Upgrade UI ══════════════════════════════════════════════ */
+.upgrade-layout { grid-template-columns: minmax(0, 1fr) minmax(220px, 260px) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+.upgrade-layout .dz-pick-grid { max-height: 560px; overflow: auto; padding-right: 4px; }
+.upgrade-selected {
+  --dz-rarity: #4b69ff;
+  display: grid; justify-items: center; gap: 4px;
+  margin: 0 0 var(--dz-s3);
+  padding: 14px;
+  border: 1px solid var(--dz-rarity);
+  border-radius: 14px;
+  background: linear-gradient(160deg, rgba(13, 18, 38, 0.92), rgba(6, 8, 16, 0.92));
+  box-shadow: 0 0 28px color-mix(in srgb, var(--dz-rarity) 30%, transparent);
+  text-align: center;
+}
+.upgrade-selected img { width: 120px; max-width: 70%; filter: drop-shadow(0 0 18px var(--dz-rarity)); }
+.upgrade-selected strong { font: 700 1rem var(--ov-font-ui); }
+.upgrade-selected span { color: var(--ov-gold-hot); font: 800 1.1rem var(--ov-font-ui); }
+
+.upgrade-core { position: sticky; top: 120px; display: grid; justify-items: center; gap: 8px; padding: 20px 14px; text-align: center; }
+.upgrade-core__arrow { font-size: 3.2rem; line-height: 1; color: var(--ov-violet-hot); animation: upgrade-arrow 1.4s ease-in-out infinite; }
+@keyframes upgrade-arrow { 0%, 100% { transform: translateX(-6px); opacity: 0.7; } 50% { transform: translateX(8px); opacity: 1; } }
+.upgrade-core__chance { font: 400 3.2rem var(--ov-font-display); line-height: 1; background: linear-gradient(135deg, #c084fc, #60a5fa); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.upgrade-core__mult { font: 700 1.3rem var(--ov-font-ui); color: #8fa0c4; }
+.upgrade-core__note { margin: 0; font-size: 0.72rem; color: #5a6783; }
+.upgrade-core__btn {
+  width: 100%;
+  padding: 16px 28px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #3b82f6 100%);
+  border: none; border-radius: 8px;
+  font: 800 18px var(--ov-font-ui); letter-spacing: 0.18em; text-transform: uppercase; color: #fff;
+  box-shadow: 0 4px 28px rgba(124, 106, 247, 0.45);
+  cursor: pointer; transition: all 0.22s ease;
+}
+.upgrade-core__btn:hover:not(:disabled) { box-shadow: 0 8px 55px rgba(124, 106, 247, 0.65); transform: translateY(-3px); }
+.upgrade-core__btn:active:not(:disabled) { transform: scale(0.97); }
+.upgrade-core__btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+@media (max-width: 850px) {
+  .upgrade-layout { grid-template-columns: 1fr; }
+  .upgrade-core { position: static; }
+  .upgrade-core__arrow { transform: rotate(90deg); animation: none; }
+}
+@media (prefers-reduced-motion: reduce) { .upgrade-core__arrow { animation: none; } }
+
+.upgrade-roll { position: fixed; inset: 0; z-index: 9000; display: grid; place-items: center; padding: 16px; background: rgba(3, 5, 12, 0.9); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.upgrade-roll.is-won  { animation: roll-flash-win 0.7s ease-out; box-shadow: inset 0 0 180px rgba(52, 211, 153, 0.38); }
+.upgrade-roll.is-lost { animation: roll-flash-lose 0.7s ease-out; box-shadow: inset 0 0 180px rgba(239, 68, 68, 0.38); }
+@keyframes roll-flash-win  { 0% { background: rgba(52, 211, 153, 0.55); } 100% { background: rgba(3, 5, 12, 0.9); } }
+@keyframes roll-flash-lose { 0% { background: rgba(239, 68, 68, 0.55); } 100% { background: rgba(3, 5, 12, 0.9); } }
+.upgrade-roll__panel { position: relative; display: grid; justify-items: center; gap: 14px; width: min(520px, 100%); padding: 36px 24px; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; background: linear-gradient(160deg, #0d1226, #080910); text-align: center; }
+.upgrade-roll__label { font: 800 0.88rem var(--ov-font-ui); letter-spacing: 0.35em; text-transform: uppercase; color: var(--ov-violet); }
+.upgrade-roll__bar { position: relative; width: 100%; height: 22px; border-radius: 11px; background: #12162a; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.08); }
+.upgrade-roll__zone { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: linear-gradient(90deg, #34d399, #60a5fa); animation: roll-fill 0.7s ease-out forwards; }
+@keyframes roll-fill { to { width: var(--chance); } }
+.upgrade-roll__marker { position: absolute; top: -3px; bottom: -3px; left: 0; width: 4px; margin-left: -2px; border-radius: 2px; background: #fff; box-shadow: 0 0 14px #fff; animation: roll-land 1.5s cubic-bezier(0.2, 0.85, 0.25, 1) 0.6s forwards; }
+@keyframes roll-land { 0% { left: 0; } 35% { left: 92%; } 60% { left: 18%; } 85% { left: calc(var(--roll) + 4%); } 100% { left: var(--roll); } }
+.upgrade-roll__pct { font: 400 2.6rem var(--ov-font-display); color: #fff; }
+.upgrade-roll__verdict { font: 800 1.8rem var(--ov-font-ui); letter-spacing: 0.1em; }
+.is-won .upgrade-roll__verdict { color: #34d399; }
+.is-lost .upgrade-roll__verdict { color: #ef4444; }
+.upgrade-roll__item { display: grid; place-items: center; min-height: 150px; }
+.upgrade-roll__item img { width: 180px; max-width: 60vw; }
+.upgrade-roll__win { filter: drop-shadow(0 0 36px rgba(52, 211, 153, 0.75)); animation: roll-slide-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+@keyframes roll-slide-in { from { opacity: 0; transform: translateX(120px) scale(0.8); } to { opacity: 1; transform: none; } }
+.upgrade-roll__shatter { filter: drop-shadow(0 0 24px rgba(239, 68, 68, 0.65)); animation: roll-shatter 1s ease-in 0.2s forwards; }
+@keyframes roll-shatter { 0% { transform: scale(1); opacity: 1; } 25% { transform: scale(1.08) rotate(-3deg); } 100% { transform: scale(0) rotate(14deg); opacity: 0; } }
+.upgrade-roll__name { font: 700 1.2rem var(--ov-font-ui); }
+.upgrade-roll__meta { font: 400 0.75rem monospace; color: #6b7a99; }
+.upgrade-roll .dz-confetti { top: 36%; }
+@media (prefers-reduced-motion: reduce) {
+  .upgrade-roll__marker { animation: none; left: var(--roll); }
+  .upgrade-roll__zone { animation: none; width: var(--chance); }
+  .upgrade-roll.is-won, .upgrade-roll.is-lost { animation: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CARD GRID OVERHAUL v2 — caser.gg level redesign
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Grid: single column on mobile (like caser.gg) ─────────── */
+@media (max-width: 640px) {
+  .dz-case-grid {
+    grid-template-columns: 1fr;
+    gap: .875rem;
+  }
+}
+
+/* ── Card: reset and elevate ────────────────────────────────── */
+.dzc {
+  height: auto;
+  max-width: none;
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: linear-gradient(175deg, #111825 0%, #0a0f18 100%);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.45);
+  overflow: hidden;
+}
+.dzc:hover, .dzc:focus-visible {
+  transform: translateY(-6px);
+  border-color: rgba(139, 92, 246, 0.55);
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(139,92,246,0.35),
+    0 0 70px -8px rgba(99,102,241,0.5);
+}
+
+/* ── Top art zone: bigger so image dominates ────────────────── */
+.dzc__top {
+  min-height: 220px;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Atmospheric glow — fills the top zone */
+.dzc__top::before {
+  background: radial-gradient(ellipse 100% 80% at 50% 80%,
+    hsl(var(--hue) 68% 50% / .18), transparent 72%);
+}
+
+/* ── Chest (art container): bigger ─────────────────────────── */
+.dzc__chest {
+  height: 220px;
+  min-height: unset;
+  padding: 0;
+}
+
+/* Real image: bigger, more impactful */
+.dzc__img {
+  width: 82%;
+  max-height: 200px;
+  filter: drop-shadow(0 10px 28px hsl(var(--hue) 70% 50% / .55));
+}
+
+.dzc:hover .dzc__img {
+  transform: translateY(-8px) scale(1.07);
+  filter: drop-shadow(0 18px 40px hsl(var(--hue) 80% 55% / .75));
+}
+
+/* ── CaseMiniArt: scale up to fill the bigger zone ─────────── */
+.dzc-art {
+  width: 100%;
+  height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dzc-art__glow {
+  width: 180px;
+  height: 180px;
+}
+
+.dzc-art__box {
+  width: 60%;
+  max-width: 155px;
+}
+
+.dzc-art__lid {
+  height: 44px;
+}
+
+.dzc-art__lid-mark {
+  font-size: .82rem;
+}
+
+.dzc-art__body {
+  height: 116px;
+}
+
+.dzc-art__glyph-wrap {
+  width: 64px;
+  height: 64px;
+}
+
+.dzc-art__glyph-wrap .case-chest-glyph {
+  width: 50px;
+  height: 50px;
+}
+
+.dzc-art__lock {
+  height: 22px;
+}
+
+/* ── Serial and dots: remove clutter ───────────────────────── */
+.dzc__serial {
+  display: none;
+}
+
+.dzc__dots {
+  display: none;
+}
+
+/* ── Tier chip: still visible, repositioned ─────────────────── */
+.dzc__chip {
+  top: .75rem;
+  right: .75rem;
+  font-size: .6rem;
+  padding: .22rem .5rem;
+}
+
+/* ── Body: name only, no dots ───────────────────────────────── */
+.dzc__body {
+  padding: .7rem .85rem .3rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.dzc__meta {
+  display: block;
+}
+
+.dzc__name {
+  font-size: clamp(.9rem, 3vw, 1.05rem);
+  font-weight: 700;
+  letter-spacing: .01em;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  color: #e8f0ff;
+  text-transform: none;
+  min-height: unset;
+}
+
+/* ── Footer: vertical stack — price then full-width button ──── */
+.dzc__foot {
+  flex-direction: column;
+  align-items: stretch;
+  gap: .55rem;
+  padding: .5rem .85rem .85rem;
+  border-top: none;
+}
+
+.dzc__price {
+  flex-direction: row;
+  align-items: baseline;
+  gap: .45rem;
+}
+
+.dzc__price-label {
+  font-size: .62rem;
+  color: rgba(140,160,200,0.65);
+}
+
+.dzc__price > :last-child {
+  font-size: 1.1rem;
+  color: #e8b84a;
+}
+
+/* ОТКРЫТЬ — full-width, bold CTA */
+.dzc__open {
+  width: 100%;
+  text-align: center;
+  padding: .72rem 1rem;
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .18em;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #3b82f6 100%);
+  box-shadow: 0 3px 18px rgba(99,102,241,0.4);
+}
+
+.dzc:hover .dzc__open {
+  box-shadow: 0 6px 32px rgba(99,102,241,0.7);
+  filter: brightness(1.12);
+}
+
+/* ── Skeleton: same size as the new cards ───────────────────── */
+.dzc--skeleton {
+  min-height: 350px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   SECTION UPGRADE v3 — full-page premium pass
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Desktop grid: max 4 big cards per row ─────────────────── */
+@media (min-width: 640px) {
+  .dz-case-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+}
+@media (min-width: 1024px) {
+  .dz-case-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.75rem;
+  }
+}
+@media (min-width: 1400px) {
+  .dz-case-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ── КОЛЛЕКЦИИ section header ──────────────────────────────── */
+.dz-page-header {
+  padding: 2rem 0 .5rem;
+  border-bottom: none;
+}
+.dz-page-header__kicker {
+  font-family: var(--ov-font-ui);
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--ov-violet);
+}
+.dz-page-header__kicker::before {
+  background: var(--ov-violet);
+  opacity: .7;
+}
+.dz-page-header__title {
+  font-family: var(--ov-font-display);
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 400;
+  letter-spacing: .04em;
+  color: #fff;
+  line-height: .95;
+  margin: .4rem 0 0;
+}
+.dz-page-header__lede {
+  font-family: var(--ov-font-ui);
+  font-size: .85rem;
+  color: rgba(140,160,200,.65);
+  margin: .6rem 0 0;
+  letter-spacing: .02em;
+}
+
+/* ── Toolbar + search field ────────────────────────────────── */
+.dz-toolbar {
+  align-items: stretch;
+  gap: .75rem;
+  margin-top: 1.25rem;
+}
+
+/* Search field row */
+.dz-field--row {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  padding: 0 .9rem;
+  transition: border-color .18s, background .18s;
+}
+.dz-field--row:focus-within {
+  border-color: rgba(139,92,246,.5);
+  background: rgba(139,92,246,.06);
+  box-shadow: 0 0 0 3px rgba(139,92,246,.12);
+}
+.dz-field--row svg {
+  color: rgba(140,160,200,.55);
+  width: 15px;
+  height: 15px;
+}
+.dz-field--row input {
+  font-family: var(--ov-font-ui);
+  font-size: .85rem;
+  font-weight: 500;
+  color: #d0daf0;
+  min-height: 42px;
+}
+.dz-field--row input::placeholder {
+  color: rgba(140,160,200,.4);
+}
+
+/* Sort dropdown */
+.dz-field {
+  gap: .35rem;
+}
+.dz-field > span {
+  font-family: var(--ov-font-ui);
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  color: rgba(140,160,200,.5);
+}
+.dz-field select {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px;
+  color: #d0daf0;
+  font-family: var(--ov-font-ui);
+  font-size: .85rem;
+  font-weight: 600;
+  padding: 0 .9rem;
+  min-height: 42px;
+  cursor: pointer;
+  appearance: auto;
+}
+.dz-field select:hover {
+  border-color: rgba(139,92,246,.4);
+}
+.dz-field select:focus-visible {
+  outline: none;
+  border-color: rgba(139,92,246,.6);
+  box-shadow: 0 0 0 3px rgba(139,92,246,.12);
+}
+
+/* ── Filter chips ──────────────────────────────────────────── */
+.dz-chips {
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin-top: .85rem;
+}
+.dz-chips button {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 8px;
+  color: rgba(180,200,230,.7);
+  font-family: var(--ov-font-ui);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: .45rem .9rem;
+  gap: .5rem;
+  transition: all .18s;
+}
+.dz-chips button b {
+  background: rgba(139,92,246,.2);
+  color: rgba(180,160,255,.9);
+  font-size: .68rem;
+  padding: .1rem .38rem;
+  border-radius: 4px;
+  min-width: unset;
+}
+.dz-chips button:hover {
+  background: rgba(139,92,246,.1);
+  border-color: rgba(139,92,246,.4);
+  color: #e0e8ff;
+}
+.dz-chips button[aria-pressed="true"] {
+  background: rgba(139,92,246,.18);
+  border-color: rgba(139,92,246,.7);
+  color: #fff;
+  box-shadow: 0 0 16px rgba(139,92,246,.25), inset 0 0 12px rgba(139,92,246,.08);
+}
+.dz-chips button[aria-pressed="true"] b {
+  background: rgba(139,92,246,.4);
+  color: #c4b5fd;
+}
+
+/* ── Collection-discovery section ──────────────────────────── */
+.collection-discovery {
+  margin: 2rem 0 0;
+  gap: 1.25rem;
+}
+.collection-discovery-head h2 {
+  font-family: var(--ov-font-display);
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 400;
+  letter-spacing: .04em;
+  color: #fff;
+  text-transform: uppercase;
+}
+.collection-discovery-head p {
+  font-family: var(--ov-font-ui);
+  font-size: .82rem;
+  color: rgba(140,160,200,.6);
+  letter-spacing: .02em;
+  line-height: 1.55;
+}
+
+/* ── Load-more button ──────────────────────────────────────── */
+.dz-btn {
+  font-family: var(--ov-font-ui);
+  font-weight: 700;
+  font-size: .82rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  border: 1px solid rgba(139,92,246,.45);
+  border-radius: 10px;
+  background: rgba(139,92,246,.08);
+  color: rgba(180,170,255,.9);
+  padding: .9rem 1.5rem;
+  transition: all .2s;
+}
+.dz-btn:hover {
+  background: rgba(139,92,246,.18);
+  border-color: rgba(139,92,246,.7);
+  color: #fff;
+  box-shadow: 0 0 22px rgba(139,92,246,.3);
+}
+
+/* ── Empty state ───────────────────────────────────────────── */
+.dz-empty {
+  padding: 4rem 1rem;
+  text-align: center;
+}
+.dz-empty__mark {
+  font-size: 2.4rem;
+  color: rgba(139,92,246,.3);
+}
+.dz-empty__title {
+  font-family: var(--ov-font-ui);
+  font-size: .9rem;
+  color: rgba(140,160,200,.5);
+  letter-spacing: .06em;
+  margin-top: .75rem;
+}
+
+/* ── Skeleton cards: match new card height ─────────────────── */
+.dz-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.03) 25%,
+    rgba(255,255,255,0.07) 50%,
+    rgba(255,255,255,0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-sweep 1.5s ease-in-out infinite;
+}
+@keyframes skeleton-sweep {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CARD FINAL v4 — price label fix, rarity dots, full-height fix
+   ══════════════════════════════════════════════════════════════ */
+
+/* Fix: show the price "ОТКРЫТЬ ЗА" label */
+.dzc__price-label {
+  display: inline;
+  font-family: var(--ov-font-ui);
+  font-size: .58rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(140,160,210,0.6);
+}
+
+/* Fix: price amount use gold */
+.dzc__price .dz-figure,
+.dzc__price > *:not(.dzc__price-label) {
+  color: #f0c040;
+  font-family: var(--ov-font-ui);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+/* Rarity dots: bring back subtly, row at bottom of name block */
+.dzc__dots {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+}
+.dzc__dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+/* Card body: tight but visible */
+.dzc__body {
+  padding: .65rem .85rem .25rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Gradient divider between art and name */
+.dzc__body::before {
+  content: none;
+}
+
+/* Footer: ensure button is always visible */
+.dzc__foot {
+  flex-direction: column;
+  align-items: stretch;
+  gap: .5rem;
+  padding: .45rem .85rem .9rem;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+/* ОТКРЫТЬ button: wider padding, better contrast */
+.dzc__open {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: .78rem 1rem;
+  font-family: var(--ov-font-ui);
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #3b82f6 100%);
+  box-shadow: 0 3px 18px rgba(99,102,241,0.45);
+  transition: box-shadow .2s, filter .2s;
+}
+
+.dzc:hover .dzc__open {
+  box-shadow: 0 6px 32px rgba(99,102,241,0.75);
+  filter: brightness(1.14);
+}
+
+/* Tier chip: style by tier */
+.dzc__chip {
+  font-family: var(--ov-font-ui);
+  font-weight: 800;
+  font-size: .6rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border-radius: 5px;
+  padding: .2rem .52rem;
+}
+
+/* Skeleton uses auto height too */
+.dzc--skeleton {
+  min-height: 360px;
+  height: auto;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   VISUAL ELEVATION v5 — bigger case art, 5-col grid, premium
+   hover, card shine, case-opening page overhaul
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 1. CASE ART: much bigger box, dramatic glow ────────────── */
+
+/* Widen box to nearly fill the art zone */
+.dzc-art__box {
+  width: 90%;
+  max-width: 220px;
+}
+
+/* Taller lid with metallic shine stripe */
+.dzc-art__lid {
+  height: 56px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(
+    180deg,
+    hsl(var(--h) 55% 38%) 0%,
+    hsl(var(--h) 48% 22%) 100%
+  );
+  border: 1px solid hsl(var(--h) 65% 48% / .75);
+  border-bottom: none;
+}
+
+/* Diagonal shine on lid */
+.dzc-art__lid-stripe {
+  background: linear-gradient(
+    125deg,
+    transparent 20%,
+    hsl(var(--h) 80% 85% / .22) 40%,
+    hsl(var(--h) 90% 95% / .48) 50%,
+    hsl(var(--h) 80% 85% / .22) 60%,
+    transparent 80%
+  );
+}
+
+/* Bigger lid monogram */
+.dzc-art__lid-mark {
+  font-size: .85rem;
+  letter-spacing: .25em;
+  text-shadow: 0 0 12px hsl(var(--h) 90% 70% / .9);
+}
+
+/* Taller body */
+.dzc-art__body {
+  height: 128px;
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(
+    170deg,
+    hsl(var(--h) 32% 17%),
+    hsl(var(--h) 22% 10%)
+  );
+  border: 1px solid hsl(var(--h) 48% 32% / .65);
+  border-top: 1px solid hsl(var(--h) 58% 44% / .55);
+}
+
+/* Diagonal gloss/reflection overlay on body */
+.dzc-art__body::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(
+    140deg,
+    transparent 35%,
+    hsl(var(--h) 70% 80% / .055) 48%,
+    hsl(var(--h) 90% 96% / .09) 53%,
+    transparent 68%
+  );
+  pointer-events: none;
+}
+
+/* Bigger glyph icon */
+.dzc-art__glyph-wrap {
+  width: 72px;
+  height: 72px;
+}
+.dzc-art__glyph-wrap .case-chest-glyph {
+  width: 56px;
+  height: 56px;
+}
+
+/* Band text: slightly wider */
+.dzc-art__band-text {
+  max-width: 110px;
+  font-size: .46rem;
+}
+
+/* Bigger lock clasp */
+.dzc-art__lock {
+  height: 28px;
+}
+.dzc-art__lock-body {
+  width: 18px;
+  height: 9px;
+}
+.dzc-art__lock-gem {
+  width: 7px;
+  height: 7px;
+}
+
+/* Atmospheric glow: bigger area, stronger colors */
+.dzc-art__glow {
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 65%,
+    hsl(var(--h) 80% 58% / .38),
+    hsl(var(--h) 68% 45% / .18) 45%,
+    transparent 72%
+  );
+  filter: blur(18px);
+}
+
+/* On hover: box floats dramatically, glow explodes */
+.dzc:hover .dzc-art__box {
+  transform: translateY(-12px) scale(1.07);
+  filter:
+    drop-shadow(0 0 22px hsl(var(--h) 85% 62% / .9))
+    drop-shadow(0 24px 48px hsl(var(--h) 78% 50% / .7));
+}
+.dzc:hover .dzc-art__glow {
+  opacity: 2.2;
+}
+
+/* Card itself: subtle 3D lift on hover */
+.dzc:hover {
+  transform: translateY(-8px);
+  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.7),
+    0 0 0 1px rgba(139,92,246,0.4),
+    0 0 80px -6px rgba(99,102,241,0.55),
+    inset 0 0 30px -10px rgba(139,92,246,0.08);
+}
+
+/* ── 2. GRID: 5 columns at wide screens ──────────────────────── */
+@media (min-width: 1440px) {
+  .dz-case-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.1rem;
+  }
+}
+@media (min-width: 1200px) and (max-width: 1439px) {
+  .dz-case-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+/* ── 3. CASE OPENING PAGE ──────────────────────────────────────
+   Classes: .case-detail .dza-head .dza-arena .dza-arena__stage
+            .dza-arena__panel .dza-open .dza-demo .dza-hint
+   ─────────────────────────────────────────────────────────────── */
+
+/* Arena: full-bleed dark backdrop */
+.dza-arena {
+  background: radial-gradient(ellipse 120% 80% at 50% 0%,
+    rgba(99,102,241,.07), transparent 65%);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.05);
+  overflow: hidden;
+}
+
+/* Stage: taller so the chest has room to breathe */
+.dza-arena__stage {
+  min-height: 340px;
+  padding: 48px 24px 36px;
+  background: radial-gradient(ellipse 90% 70% at 50% 60%,
+    rgba(99,102,241,.09), transparent 70%);
+  position: relative;
+}
+
+/* Stage: subtle glow ring at the bottom */
+.dza-arena__stage::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent, rgba(139,92,246,.5), transparent);
+}
+
+/* Panel: more breathing room */
+.dza-arena__panel {
+  padding: 24px 28px 32px;
+  gap: 16px;
+  border-top: 1px solid rgba(139,92,246,.18);
+  background: linear-gradient(180deg, rgba(139,92,246,.04), transparent);
+}
+
+/* Price display */
+.dza-arena__price {
+  align-items: center;
+}
+.dza-arena__price .dz-figure {
+  font-family: var(--ov-font-ui);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #f0c040;
+}
+.dza-arena__label {
+  font-family: var(--ov-font-ui);
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  color: rgba(140,160,210,.5);
+}
+
+/* Main open button — even more premium */
+.dza-open {
+  border-radius: 12px;
+  padding: 18px 48px;
+  font-size: 1rem;
+  letter-spacing: .22em;
+  box-shadow:
+    0 4px 32px rgba(99,102,241,.55),
+    0 0 0 1px rgba(139,92,246,.3),
+    inset 0 1px 0 rgba(255,255,255,.15);
+}
+.dza-open:hover:not(:disabled) {
+  box-shadow:
+    0 8px 56px rgba(99,102,241,.75),
+    0 0 0 1px rgba(139,92,246,.5),
+    inset 0 1px 0 rgba(255,255,255,.2);
+}
+
+/* Demo button */
+.dza-demo {
+  font-family: var(--ov-font-ui);
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  padding: .85rem 1.5rem;
+  background: rgba(139,92,246,.1);
+  border: 1px solid rgba(139,92,246,.3);
+  color: rgba(196,181,253,.85);
+  transition: all .2s;
+}
+.dza-demo:hover:not(:disabled) {
+  background: rgba(139,92,246,.2);
+  border-color: rgba(139,92,246,.5);
+  color: #e9d5ff;
+  box-shadow: 0 0 24px rgba(139,92,246,.3);
+}
+
+/* Hint text under buttons */
+.dza-hint {
+  font-family: var(--ov-font-ui);
+  font-size: .78rem;
+  color: rgba(140,160,200,.5);
+  letter-spacing: .02em;
+}
+.dza-hint a {
+  color: #a78bfa;
+  text-decoration: none;
+}
+.dza-hint a:hover {
+  color: #c4b5fd;
+  text-decoration: underline;
+}
+
+/* ── 4. CASE DETAIL COLLECTION ITEMS ────────────────────────── */
+
+/* Skin group cards in the collection listing */
+.dz-skin-group,
+.case-skin-group,
+[class*="skin-group"],
+[class*="item-group"] {
+  border-radius: 12px;
+  background: linear-gradient(160deg, rgba(17,24,37,.95), rgba(10,15,24,.95));
+  border: 1px solid rgba(255,255,255,0.055);
+  transition: all .2s;
+}
+.dz-skin-group:hover,
+.case-skin-group:hover,
+[class*="skin-group"]:hover,
+[class*="item-group"]:hover {
+  transform: translateY(-3px);
+  border-color: rgba(139,92,246,0.35);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.45), 0 0 32px -8px rgba(139,92,246,0.35);
+}
+
+/* ── 5. IMPROVED CARD NAME TYPOGRAPHY ───────────────────────── */
+.dzc__name {
+  font-family: var(--ov-font-ui);
+  font-size: .88rem;
+  font-weight: 700;
+  color: #e8eeff;
+  letter-spacing: .03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+/* Chip: color by tier */
+.dzc__chip[class*="entry"],
+.dzc__chip:contains("entry") {
+  background: rgba(80,160,80,.18);
+  color: #6ee86e;
+  border: 1px solid rgba(80,200,80,.3);
+}
+.dzc__chip[class*="core"] {
+  background: rgba(99,102,241,.18);
+  color: #a5b4fc;
+  border: 1px solid rgba(99,102,241,.35);
+}
+.dzc__chip[class*="apex"] {
+  background: rgba(245,158,11,.15);
+  color: #fcd34d;
+  border: 1px solid rgba(245,158,11,.35);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   VISUAL ELEVATION v6 — Items Grid, Rarity Tiers, Card Polish
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. ITEMS SECTION CONTAINER ──────────────────────────────────────── */
+.dza-items {
+  padding: 48px 0 40px;
+  background: linear-gradient(180deg,
+    rgba(10,12,20,0) 0%,
+    rgba(8,10,18,0.6) 100%);
+}
+
+.dza-items__head {
+  padding: 0 24px 20px;
+  align-items: center;
+}
+
+.dza-items__head h2 {
+  font-family: var(--ov-font-ui);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: rgba(180,200,255,.55);
+  margin: 0;
+}
+
+.dza-items__count {
+  font-family: var(--ov-font-ui);
+  font-size: .72rem;
+  font-weight: 600;
+  color: rgba(140,160,210,.35);
+  letter-spacing: .1em;
+  background: rgba(255,255,255,.04);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+/* ── 2. RARITY TIER HEADERS ──────────────────────────────────────────── */
+.dza-tier {
+  padding: 24px 0 8px;
+}
+
+.dza-tier__title {
+  font-family: var(--ov-font-ui);
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  padding: 0 24px 14px;
+  gap: 14px;
+  color: var(--rc);
+  filter: brightness(1.4);
+}
+
+.dza-tier__title i {
+  height: 1px;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--rc) 35%, transparent),
+    transparent 80%);
+}
+
+.dza-tier__title b {
+  font-family: var(--ov-font-ui);
+  font-size: .62rem;
+  font-weight: 700;
+  color: rgba(140,160,210,.45);
+  background: rgba(255,255,255,.04);
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+/* ── 3. ITEMS GRID — convert horizontal scroll to proper grid ─────────── */
+.dza-items__rail {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 0 24px 16px;
+  overflow-x: unset;
+  scroll-snap-type: unset;
+}
+
+@media (min-width: 900px) {
+  .dza-items__rail {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+  }
+}
+
+/* ── 4. INDIVIDUAL ITEM CARDS ─────────────────────────────────────────── */
+.dza-item {
+  position: relative;
+  flex: unset;
+  width: unset;
+  background: linear-gradient(160deg,
+    rgba(17,22,35,.92),
+    rgba(10,14,22,.95));
+  border: 1px solid rgba(255,255,255,.06);
+  border-top-color: rgba(255,255,255,.09);
+  border-radius: 12px;
+  padding: 12px 10px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  overflow: hidden;
+}
+
+/* Rarity top-edge accent */
+.dza-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--rc),
+    transparent);
+  border-radius: 0 0 2px 2px;
+  opacity: .7;
+}
+
+/* Subtle inner rarity glow at top */
+.dza-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--rc) 8%, transparent),
+    transparent);
+  border-radius: 12px 12px 0 0;
+  pointer-events: none;
+}
+
+.dza-item:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: color-mix(in srgb, var(--rc) 55%, transparent);
+  box-shadow:
+    0 12px 32px rgba(0,0,0,.6),
+    0 0 32px -8px var(--rc);
+}
+
+/* Weapon image — bigger and higher contrast */
+.dza-item img {
+  width: 100%;
+  height: 110px;
+  object-fit: contain;
+  transition: filter .18s, transform .18s;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.5));
+  position: relative;
+  z-index: 1;
+}
+
+.dza-item:hover img {
+  filter:
+    drop-shadow(0 0 8px var(--rc))
+    drop-shadow(0 4px 12px rgba(0,0,0,.6));
+  transform: scale(1.05) translateY(-2px);
+}
+
+/* Chance badge */
+.dza-item__chance {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  font-family: var(--ov-font-ui);
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  color: rgba(180,200,255,.5);
+  background: rgba(0,0,0,.35);
+  padding: 2px 5px;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+}
+
+/* Item name */
+.dza-item__name {
+  font-family: var(--ov-font-ui);
+  font-size: .72rem;
+  font-weight: 700;
+  color: #dde5ff;
+  text-align: center;
+  letter-spacing: .02em;
+  line-height: 1.25;
+  margin: 0;
+  z-index: 1;
+}
+
+/* Price value */
+.dza-item__value {
+  font-family: var(--ov-font-ui);
+  font-size: .72rem;
+  font-weight: 800;
+  color: #f0c040;
+  letter-spacing: .03em;
+  z-index: 1;
+}
+
+/* Wear badges */
+.dza-item__wear {
+  font-family: var(--ov-font-ui);
+  font-size: .55rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: rgba(140,160,210,.4);
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+/* ── 5. RESULT CARD AFTER OPENING ─────────────────────────────────────── */
+.dz-record {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 28px 32px;
+  margin: 0;
+  background: linear-gradient(135deg,
+    rgba(17,22,35,.98),
+    rgba(10,14,26,.98));
+  border-top: 1px solid rgba(255,255,255,.06);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.dz-record::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 120% at 0% 50%,
+    color-mix(in srgb, var(--dz-rarity, #8b5cf6) 12%, transparent),
+    transparent 65%);
+  pointer-events: none;
+}
+
+.dz-record__art {
+  width: 160px;
+  height: 120px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter:
+    drop-shadow(0 0 20px var(--dz-rarity, #8b5cf6))
+    drop-shadow(0 8px 24px rgba(0,0,0,.6));
+  position: relative;
+  z-index: 1;
+}
+
+.dz-record__label {
+  font-family: var(--ov-font-ui);
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--dz-rarity, #8b5cf6);
+  filter: brightness(1.4);
+  display: block;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.dz-record__name {
+  font-family: var(--ov-font-ui);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #eef2ff;
+  margin: 0 0 6px;
+  line-height: 1.15;
+  position: relative;
+  z-index: 1;
+}
+
+.dz-record__value {
+  font-family: var(--ov-font-ui);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #f0c040;
+  margin: 0 0 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.dz-record__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 6. BREADCRUMB & HEAD REFINEMENT ─────────────────────────────────── */
+.dza-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  background: rgba(8,10,18,.6);
+  backdrop-filter: blur(8px);
+}
+
+.dza-crumb {
+  font-family: var(--ov-font-ui);
+  font-size: .72rem;
+  font-weight: 600;
+  color: rgba(140,160,210,.5);
+  letter-spacing: .04em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dza-crumb a {
+  color: rgba(140,160,210,.5);
+  text-decoration: none;
+  transition: color .15s;
+}
+
+.dza-crumb a:hover {
+  color: #a5b4fc;
+}
+
+.dza-crumb [aria-current="page"] {
+  color: #c4b5fd;
+  font-weight: 700;
+}
+
+
+/* ── CASE STAGE: CSS art mode (when case has no real image) ──────────── */
+/* The CaseMiniArt in the stage needs to be scaled up significantly. */
+.case-stage__css-art {
+  position: relative;
+  z-index: 1;
+  /* Scale up the mini art — it's designed for 130×200px cards */
+  transform: scale(2.4);
+  transform-origin: center center;
+  /* Floating animation matching .case-stage__case */
+  animation: float 4.5s ease-in-out infinite;
+  /* Give it breathing room after scale */
+  margin: 60px 0;
+}
+
+/* Boost the glow of the art box when shown in stage */
+.case-stage__css-art .dzc-art__glow {
+  width: 360px;
+  height: 360px;
+  opacity: 1.4;
+  filter: blur(28px);
+}
+
+/* Enhance box shadow in stage mode */
+.case-stage__css-art .dzc-art__box {
+  filter:
+    drop-shadow(0 0 28px hsl(var(--art-hue, var(--h, 250)) 80% 58% / .85))
+    drop-shadow(0 18px 48px rgba(0,0,0,.75));
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   VISUAL ELEVATION v7 — 3D Tilt, Stronger Card Art, Nav Glow Pulse
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. 3D PERSPECTIVE TILT on case art box ──────────────────────────── */
+/* Give the CSS case a subtle 3D tilt so it reads as a physical object.  */
+.dzc-art__box {
+  transform: perspective(520px) rotateX(7deg) rotateY(-3deg);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* On hover the card's box already gets translateY(-12px) scale(1.07).
+   Reset the perspective for hover so the box "comes forward" cleanly.   */
+.dzc:hover .dzc-art__box {
+  transform: perspective(520px) rotateX(2deg) rotateY(2deg)
+             translateY(-12px) scale(1.09);
+  filter:
+    drop-shadow(0 0 26px hsl(var(--h) 85% 62% / .95))
+    drop-shadow(0 28px 56px hsl(var(--h) 78% 50% / .75));
+}
+
+/* ── 2. BAND — larger text so it's readable when scaled ─────────────── */
+.dzc-art__band-text {
+  font-size: .52rem;
+  letter-spacing: .18em;
+  font-weight: 900;
+}
+
+/* ── 3. CARD SERIAL: subtle monospace chip ───────────────────────────── */
+.dzc__serial {
+  font-family: var(--ov-font-ui);
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  opacity: .45;
+}
+
+/* ── 4. RARITY DOTS: slightly bigger and glow on hover ──────────────── */
+.dzc__dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transition: box-shadow .2s;
+}
+.dzc:hover .dzc-dots i,
+.dzc:hover .dzc__dots i {
+  box-shadow: 0 0 6px currentColor;
+}
+
+/* ── 5. CASE STAGE: make the stage taller to give CSS art room ────────── */
+.case-stage {
+  height: 460px;
+}
+
+/* Bigger glow for the stage */
+.case-stage__glow {
+  width: 680px;
+  height: 680px;
+  margin: -340px 0 0 -340px;
+  opacity: 0.16;
+}
+
+/* ── 6. CARD GRID TOP AREA: ensure chest takes up more vertical space ── */
+.dzc__top {
+  padding: 0;
+}
+
+.dzc__chest {
+  width: 100%;
+}
+
+/* ── 7. LOCK GEM: pulsing glow ───────────────────────────────────────── */
+.dzc-art__lock-gem {
+  box-shadow:
+    0 0 6px hsl(var(--art-hue, var(--h, 260)) 90% 75% / .9),
+    0 0 12px hsl(var(--art-hue, var(--h, 260)) 80% 60% / .6);
+  animation: gem-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes gem-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .55; }
+}
+
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   VISUAL ELEVATION v8 — Premium Card Polish, Button Shimmer, Depth
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. CARD BODY: richer gradient + hue-matched border accent ─────── */
+/* Override the flat card background with a deep layered gradient.       */
+.dzc {
+  background:
+    linear-gradient(
+      170deg,
+      hsl(var(--chest-hue, 250) 22% 9%) 0%,
+      hsl(var(--chest-hue, 250) 15% 6%) 100%
+    );
+  border: 1px solid hsl(var(--chest-hue, 250) 30% 18%);
+  border-radius: 16px;
+  overflow: hidden;
+  transition:
+    box-shadow .25s ease,
+    border-color .25s ease,
+    transform .25s ease;
+  position: relative;
+}
+
+/* Top edge accent — a thin glowing line in the case colour */
+.dzc::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  top: 0;
+  height: 2px;
+  width: 60%;
+  left: 20%;
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--chest-hue, 250) 78% 62%),
+    transparent
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Hover: lift, brighter border, hue glow */
+.dzc:hover {
+  border-color: hsl(var(--chest-hue, 250) 70% 45%);
+  box-shadow:
+    0 0 0 1px hsl(var(--chest-hue, 250) 70% 45% / .45),
+    0 20px 60px hsl(var(--chest-hue, 250) 65% 35% / .45),
+    0 8px 20px rgba(0,0,0,.6);
+  transform: translateY(-6px);
+}
+
+/* ── 2. CARD BODY SECTION: name + price area ─────────────────────────── */
+.dzc__body {
+  padding: 12px 14px 8px;
+  border-top: 1px solid rgba(255,255,255,.05);
+  position: relative;
+}
+
+/* Subtle inner light effect — a soft radial from the case hue */
+.dzc__body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    hsl(var(--chest-hue, 250) 65% 35% / .08),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.dzc__name {
+  font-family: var(--ov-font-display, 'Bebas Neue', sans-serif);
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: .04em;
+  color: #dde4ff;
+  line-height: 1.1;
+  margin: 0 0 6px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 3. PRICE + OPEN BUTTON FOOT ─────────────────────────────────────── */
+.dzc__foot {
+  padding: 0 14px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dzc__price {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+.dzc__price-label {
+  font-family: var(--ov-font-ui);
+  font-size: .55rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: rgba(160,180,240,.45);
+  line-height: 1;
+  margin-bottom: 1px;
+}
+
+/* Make price value bigger */
+.dzc__price > *:last-child,
+.dzc__price .dz-money,
+.dzc__price [class*="money"],
+.dzc__price [class*="Money"] {
+  font-family: var(--ov-font-ui);
+  font-size: .95rem;
+  font-weight: 800;
+  color: #f0c040;
+  line-height: 1.1;
+}
+
+/* ── 4. OPEN BUTTON: shimmer + stronger colour ───────────────────────── */
+.dzc__open {
+  font-family: var(--ov-font-ui);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background:
+    linear-gradient(
+      90deg,
+      hsl(var(--chest-hue, 250) 70% 40%),
+      hsl(var(--chest-hue, 250) 65% 52%)
+    );
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  white-space: nowrap;
+  transition: filter .2s;
+}
+
+/* Shimmer sweep on hover */
+.dzc__open::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: -75%;
+  width: 50%;
+  height: 180%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255,255,255,.35) 50%,
+    transparent 80%
+  );
+  transform: skewX(-15deg);
+  transition: left .45s ease;
+  pointer-events: none;
+}
+
+.dzc:hover .dzc__open::after {
+  left: 140%;
+}
+
+.dzc:hover .dzc__open {
+  filter: brightness(1.2);
+}
+
+/* ── 5. TIER CHIP: more premium badge ───────────────────────────────── */
+.dzc__chip {
+  font-family: var(--ov-font-ui);
+  font-size: .55rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(200,220,255,.7);
+  backdrop-filter: blur(4px);
+}
+
+/* ── 6. CARD TOP AREA: ensure chest fills evenly ────────────────────── */
+.dzc__top {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0 8px;
+  position: relative;
+}
+
+/* ── 7. HERO: bigger title punch ─────────────────────────────────────── */
+/* The hero headline on the landing page */
+.dz-hero__title,
+.dz-hero h1,
+[class*="hero"] h1,
+[class*="hero"] h2 {
+  font-family: var(--ov-font-display, 'Bebas Neue', sans-serif);
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  letter-spacing: .02em;
+  line-height: .95;
+}
+
+/* ── 8. COLLECTIONS HEADING ─────────────────────────────────────────── */
+.dz-section__title,
+[class*="section"] h2,
+[class*="section"] h3 {
+  font-family: var(--ov-font-display, 'Bebas Neue', sans-serif);
+  letter-spacing: .03em;
+}
+
+/* ── 9. CASE GRID: ensure 5 columns on wide screens ─────────────────── */
+/* The collections grid */
+.dz-grid,
+.dz-cases-grid,
+[class*="cases-grid"],
+[class*="case-grid"] {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* 4 col on medium */
+@media (max-width: 1200px) {
+  .dz-grid,
+  .dz-cases-grid,
+  [class*="cases-grid"],
+  [class*="case-grid"] {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .dz-grid,
+  .dz-cases-grid,
+  [class*="cases-grid"],
+  [class*="case-grid"] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ── 10. OPENING FULLSCREEN: dark vignette behind animation ──────────── */
+.dza-open__overlay,
+[class*="open-overlay"],
+[class*="opening-overlay"] {
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 40%,
+    rgba(0,0,0,.55) 0%,
+    rgba(0,0,0,.92) 100%
+  );
+}
+
+/* ── 11. REEL ITEMS: ensure visible during animation ─────────────────── */
+.dza-reel__item,
+[class*="reel-item"],
+[class*="reel__item"] {
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(12, 16, 26, .85);
+}
+
+
+/* ── Weapon skin preview on case card ──────────────────────────── */
+.dzc__img--weapon {
+  width: 90%;
+  max-height: 185px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px hsl(var(--chest-hue, 260) 70% 50% / .5));
+}
+.dzc:hover .dzc__img--weapon {
+  transform: translateY(-6px) scale(1.05);
+  filter: drop-shadow(0 14px 36px hsl(var(--chest-hue, 260) 80% 55% / .7));
+}

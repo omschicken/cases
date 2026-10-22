@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Case" ADD COLUMN     "displayOrder" INTEGER NOT NULL DEFAULT 100;

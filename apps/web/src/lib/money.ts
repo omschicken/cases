@@ -1,0 +1,16 @@
+/** Formats an integer-minor-units string (e.g. cents/kopecks, as sent by the API) as a
+ * locale-correct display amount in the site's RUB currency. */
+export function formatMinor(minor: string | number, currency = "RUB", decimals = 2): string {
+  const value = Number(minor) / 10 ** decimals;
+  try {
+    return new Intl.NumberFormat("ru-RU", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(value);
+  } catch {
+    // Unknown/malformed currency code — fall back to a plain numeric label.
+    return `${value.toFixed(decimals)} ${currency}`;
+  }
+}

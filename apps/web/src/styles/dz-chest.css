@@ -1,0 +1,822 @@
+/* ════════════════════════════════════════════════════════════════
+   dz-chest.css  —  CaseChest visual system & cinematic opening
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Colour tokens ───────────────────────────────────────────── */
+.case-chest {
+  --chest-bright: hsl(var(--chest-hue, 120) var(--chest-sat, 65%) var(--chest-lit, 54%));
+  --chest-glow:   hsl(var(--chest-hue, 120) var(--chest-sat, 65%) 78%);
+  --chest-light:  hsl(var(--chest-hue, 120) 40% 55%);
+  --chest-mid:    hsl(var(--chest-hue, 120) 24% 28%);
+  --chest-dark:   hsl(var(--chest-hue, 120) 18% 11%);
+  --lid-rest: 20%;
+
+  position: relative;
+  width: min(100%, 18rem);
+  height: 11rem;
+  margin: auto;
+  perspective: 800px;
+  isolation: isolate;
+}
+
+/* ── Aura ────────────────────────────────────────────────────── */
+.case-chest-aura {
+  position: absolute;
+  inset: 10% 8% 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--chest-bright) 0%, transparent 70%);
+  opacity: .18;
+  filter: blur(24px);
+  animation: chest-aura-pulse 3.6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes chest-aura-pulse {
+  from { opacity: .1;  transform: scale(.85); }
+  to   { opacity: .28; transform: scale(1.1); }
+}
+
+/* ── Atmosphere ──────────────────────────────────────────────── */
+.case-chest-atmosphere {
+  position: absolute;
+  inset: -24% -28%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--chest-bright) 0 10%, transparent 58%);
+  opacity: .06;
+  filter: blur(44px);
+  pointer-events: none;
+  animation: chest-atmosphere-idle 6s ease-in-out infinite alternate;
+}
+@keyframes chest-atmosphere-idle {
+  from { opacity: .04; transform: scale(.88); }
+  to   { opacity: .1;  transform: scale(1.12); }
+}
+
+/* ── Orbit rings ─────────────────────────────────────────────── */
+.case-orbit-ring {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  pointer-events: none;
+  --r: var(--orbit-r, 42px);
+  width: calc(var(--r) * 2);
+  height: calc(var(--r) * 2);
+  margin-left: calc(var(--r) * -1);
+  margin-top: calc(var(--r) * -1);
+  animation: orbit-spin calc(7s + var(--orbit-delay, 0s) * -1.4) linear infinite;
+}
+@keyframes orbit-spin { to { transform: rotate(360deg); } }
+
+.case-orbit-dot {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--chest-bright);
+  box-shadow: 0 0 5px 1px var(--chest-bright);
+  opacity: .5;
+  left: 50%;
+  top: 0;
+  transform-origin: 0 var(--r, 42px);
+  transform: rotate(calc(360deg / var(--orbit-count, 6) * var(--dot-i, 0))) translateX(-50%);
+}
+
+/* ── Assembly ────────────────────────────────────────────────── */
+.case-chest-assembly {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  animation: chest-float 4.2s ease-in-out infinite;
+}
+@keyframes chest-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-5px); }
+}
+
+/* ── Lid ─────────────────────────────────────────────────────── */
+.case-chest-lid {
+  position: absolute;
+  z-index: 3;
+  left: 8%; right: 8%;
+  top: var(--lid-rest, 20%);
+  height: 26%;
+  border: 1.5px solid var(--chest-light);
+  border-bottom: 3px solid var(--chest-bright);
+  clip-path: polygon(5% 0, 95% 0, 100% 28%, 98% 100%, 2% 100%, 0 28%);
+  background: linear-gradient(180deg, var(--chest-light) 0 16%, var(--chest-mid) 16% 78%, var(--chest-dark) 78%);
+  box-shadow: inset 0 3px 0 rgba(255,255,255,.14), inset 0 -2px 0 rgba(0,0,0,.4), 0 6px 14px rgba(0,0,0,.35);
+  transform-origin: 50% 100%;
+  overflow: hidden;
+}
+.case-chest-lid-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 0 14%;
+}
+.case-chest-lid-stripe {
+  position: absolute;
+  left: 0; right: 0;
+  top: 48%; height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--chest-bright) 30%, var(--chest-glow) 50%, var(--chest-bright) 70%, transparent 100%);
+  opacity: .7;
+}
+.case-chest-lid-mark {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--chest-glow);
+  font: 900 .82rem/1 var(--font-display, 'DM Mono', monospace);
+  letter-spacing: .06em;
+  text-shadow: 0 0 8px var(--chest-bright);
+  white-space: nowrap;
+}
+.case-chest-lid-serial {
+  position: absolute;
+  right: 10%; bottom: 14%;
+  color: var(--chest-bright);
+  font: 700 .32rem/1 var(--font-display, monospace);
+  letter-spacing: .14em;
+  opacity: .65;
+}
+.case-chest-lid-edge {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, var(--chest-glow) 25%, var(--chest-bright) 50%, var(--chest-glow) 75%, transparent 100%);
+  opacity: .9;
+  box-shadow: 0 0 8px 1px var(--chest-bright);
+}
+
+/* ── Lock ────────────────────────────────────────────────────── */
+.case-chest-lock {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 0;
+  width: 18%;
+  height: 44%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.case-chest-lock-body {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 0; height: 64%;
+  border: 1.5px solid var(--chest-bright);
+  border-top: 2px solid var(--chest-light);
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);
+  background: linear-gradient(165deg, var(--chest-light) 0 18%, var(--chest-mid) 18% 65%, var(--chest-dark) 65%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 4px 10px rgba(0,0,0,.5);
+}
+.case-chest-lock-shackle {
+  position: absolute;
+  left: 20%; right: 20%;
+  top: 0; height: 50%;
+  border: 2px solid var(--chest-light);
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0 / 80% 80% 0 0;
+  background: transparent;
+}
+.case-chest-lock-gem {
+  position: absolute;
+  left: 50%; top: 34%;
+  width: 38%; height: 32%;
+  transform: translate(-50%, 0);
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--chest-glow) 0 28%, var(--chest-bright) 30% 50%, var(--chest-mid) 52%);
+  box-shadow: 0 0 6px 2px var(--chest-bright), 0 0 14px 4px color-mix(in srgb, var(--chest-bright) 40%, transparent);
+  animation: gem-pulse 2.8s ease-in-out infinite alternate;
+}
+@keyframes gem-pulse {
+  from { box-shadow: 0 0 6px 2px var(--chest-bright), 0 0 14px 4px transparent; }
+  to   { box-shadow: 0 0 10px 4px var(--chest-bright), 0 0 22px 8px color-mix(in srgb, var(--chest-bright) 35%, transparent); }
+}
+
+/* ── Body ────────────────────────────────────────────────────── */
+.case-chest-body {
+  position: absolute;
+  z-index: 2;
+  left: 10%; right: 10%;
+  top: 41%; height: 47%;
+  border: 1.5px solid var(--chest-light);
+  border-bottom: 4px solid var(--chest-bright);
+  clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%);
+  background:
+    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--chest-bright) 22%, transparent) 0 30%, transparent 31%),
+    repeating-linear-gradient(135deg, transparent 0 18px, rgba(0,0,0,.1) 19px 20px),
+    linear-gradient(165deg, var(--chest-mid) 0%, var(--chest-dark) 65%);
+  box-shadow: inset 0 10px 20px rgba(0,0,0,.45), inset 0 -6px 0 rgba(0,0,0,.3), 0 16px 18px rgba(0,0,0,.38);
+  overflow: hidden;
+}
+.case-chest-body::before,
+.case-chest-body::after { display: none; }
+
+.case-chest-body-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(170deg, rgba(255,255,255,.09) 0 35%, transparent 36%);
+  pointer-events: none;
+}
+.case-chest-body-grid {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 28px);
+  opacity: .6;
+  pointer-events: none;
+}
+
+/* Corner accents */
+.case-chest-corner {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-color: var(--chest-bright);
+  border-style: solid;
+  opacity: .75;
+  pointer-events: none;
+}
+.case-chest-corner-tl { top: 8%;  left: 5%;  border-width: 1.5px 0 0 1.5px; }
+.case-chest-corner-tr { top: 8%;  right: 5%; border-width: 1.5px 1.5px 0 0; }
+.case-chest-corner-bl { bottom: 8%; left: 5%;  border-width: 0 0 1.5px 1.5px; }
+.case-chest-corner-br { bottom: 8%; right: 5%; border-width: 0 1.5px 1.5px 0; }
+
+/* Center glyph */
+.case-chest-glyph-wrap {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 44%; height: 78%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.case-chest-glyph-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--chest-bright) 18%, transparent) 0 40%, transparent 42%);
+  filter: blur(4px);
+}
+.case-chest-glyph {
+  position: relative;
+  z-index: 1;
+  width: 60%; height: 60%;
+  color: var(--chest-bright);
+  filter: drop-shadow(0 0 4px var(--chest-bright)) drop-shadow(0 0 10px color-mix(in srgb, var(--chest-bright) 45%, transparent));
+  opacity: .85;
+  animation: glyph-breathe 3.8s ease-in-out infinite alternate;
+}
+@keyframes glyph-breathe {
+  from { opacity: .7;  filter: drop-shadow(0 0 3px var(--chest-bright)); }
+  to   { opacity: .95; filter: drop-shadow(0 0 7px var(--chest-bright)) drop-shadow(0 0 14px color-mix(in srgb, var(--chest-bright) 40%, transparent)); }
+}
+
+/* Name band */
+.case-chest-nameband {
+  position: absolute;
+  left: 5%; right: 5%;
+  bottom: 10%;
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  height: 12%;
+}
+.case-chest-nameband-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--chest-bright) 60%, transparent);
+  opacity: .5;
+}
+.case-chest-nameband-text {
+  flex: 0 0 auto;
+  max-width: 66%;
+  color: var(--chest-glow);
+  font: 800 .3rem/1 var(--font-display, monospace);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: .8;
+}
+
+/* ── Ground shadow ───────────────────────────────────────────── */
+.case-chest-shadow {
+  position: absolute;
+  left: 14%; right: 14%;
+  bottom: 1%;
+  height: 7%;
+  border-radius: 50%;
+  background: #020808;
+  filter: blur(10px);
+  opacity: .7;
+}
+
+/* ── Item reveal ─────────────────────────────────────────────── */
+.case-chest-reveal {
+  position: absolute;
+  z-index: 10;
+  left: 50%; top: 0%;
+  width: 70%; height: auto;
+  transform: translate(-50%, -40%);
+  filter:
+    drop-shadow(0 0 18px var(--chest-bright))
+    drop-shadow(0 0 40px color-mix(in srgb, var(--chest-bright) 55%, transparent))
+    drop-shadow(0 24px 14px rgba(0,0,0,.65));
+  animation: reveal-enter .6s cubic-bezier(.18,.9,.28,1) both;
+}
+@keyframes reveal-enter {
+  from { opacity: 0; transform: translate(-50%, -10%) scale(.5); filter: brightness(4) blur(8px); }
+  50%  { filter: brightness(2) blur(2px); }
+  to   { opacity: 1; transform: translate(-50%, -40%) scale(1); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GSAP BURST OVERLAY — fullscreen opening sequence
+   Layout only. All motion (tension/crack/eruption/reveal/settle) is
+   driven by GSAP acting on these elements' refs — see
+   ChestOpeningOverlay.tsx. No @keyframes here by design: the
+   timeline there is the single source of truth for timing.
+   ═══════════════════════════════════════════════════════════════ */
+
+.chest-burst-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  /* Near-opaque already, so a backdrop-filter blur on whatever's behind it
+     bought almost nothing visually while being one of the costliest effects
+     a compositor can run — radial gradient reads just as deep. */
+  background: radial-gradient(ellipse at center, rgba(10, 8, 6, 0.97) 0%, rgba(0, 0, 0, 0.97) 70%);
+}
+
+.chest-burst-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.chest-burst-stage {
+  /* Set via JS at the reveal beat; every glow/beam/particle after that
+     point falls back to it ahead of the case's own hue — the payoff
+     should look like what dropped, not like the box it came from. */
+  --item-glow: hsl(var(--chest-hue) var(--chest-sat) var(--chest-lit));
+  position: relative;
+  z-index: 2;
+  width: min(90vw, 560px);
+  height: min(70vh, 560px);
+  display: grid;
+  place-items: center;
+  perspective: 900px;
+}
+
+.chest-burst-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: #e8f0ff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chest-burst-shockwave {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 180px;
+  height: 180px;
+  margin: -90px 0 0 -90px;
+  border-radius: 50%;
+  border: 2px solid var(--item-glow);
+  box-shadow: 0 0 24px 4px var(--item-glow);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chest-burst-beam {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  width: 42%;
+  height: 65vh;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: bottom center;
+  background: linear-gradient(to top, var(--item-glow) 0%, transparent 100%);
+  opacity: 0;
+  filter: blur(18px);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.chest-burst-beam-core {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  width: 10%;
+  height: 60vh;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: bottom center;
+  background: linear-gradient(to top, #fff 0%, var(--item-glow) 40%, transparent 100%);
+  opacity: 0;
+  filter: blur(3px);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Tension glow: grows behind the chest through the 0–0.9s build-up —
+   GSAP owns the opacity ramp, this just sets the idle starting point. */
+.chest-burst-aura {
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsl(var(--chest-hue) var(--chest-sat) var(--chest-lit)) 0%, transparent 68%);
+  opacity: 0.18;
+  filter: blur(28px);
+  pointer-events: none;
+}
+
+.chest-burst-chest {
+  position: relative;
+  width: min(58vw, 300px);
+  height: min(38vh, 200px);
+  transform-style: preserve-3d;
+}
+
+/* Brief tag applied for ~100ms right at the crack beat — GSAP drives the
+   actual flash opacity on .chest-burst-flash; this is just a CSS hook for
+   the moment itself (e.g. a quick punch-in on the whole stage). */
+.case-chest-is-cracking {
+  filter: brightness(1.18) contrast(1.05);
+}
+
+.chest-burst-shadow {
+  position: absolute;
+  bottom: 14%;
+  left: 50%;
+  width: min(50vw, 260px);
+  height: 28px;
+  margin-left: calc(min(50vw, 260px) / -2);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55) 0%, transparent 72%);
+  opacity: 0.4;
+  transform-origin: center;
+  pointer-events: none;
+}
+
+.chest-burst-lid {
+  position: absolute;
+  inset: 0 0 50% 0;
+  border-radius: 12px 12px 0 0;
+  background: linear-gradient(
+    145deg,
+    hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.55)) 0%,
+    hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.3)) 100%
+  );
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  transform-origin: bottom center;
+  box-shadow:
+    0 2px 20px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 hsl(var(--chest-hue) var(--chest-sat) 75% / 0.35),
+    inset 0 -6px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* Metallic sheen band — a diagonal catch-light, like brushed metal. */
+.chest-burst-lid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    hsl(var(--chest-hue) var(--chest-sat) 92% / 0.22) 48%,
+    transparent 62%
+  );
+  pointer-events: none;
+}
+
+.chest-burst-lid-mark {
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  color: hsl(var(--chest-hue) var(--chest-sat) 85%);
+}
+
+.chest-burst-lid-serial {
+  font-size: 0.65rem;
+  opacity: 0.5;
+  color: hsl(var(--chest-hue) var(--chest-sat) 85%);
+}
+
+.chest-burst-lock {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border-radius: 50%;
+  background: hsl(var(--chest-hue) var(--chest-sat) 20%);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.chest-burst-lock-halo {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsl(var(--chest-hue) var(--chest-sat) 70%) 0%, transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chest-burst-lock-gem {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: hsl(var(--chest-hue) var(--chest-sat) 70%);
+  box-shadow: 0 0 10px 3px hsl(var(--chest-hue) var(--chest-sat) 60%);
+}
+
+.chest-burst-body {
+  position: absolute;
+  inset: 50% 0 0 0;
+  border-radius: 0 0 12px 12px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 18%,
+      hsl(var(--chest-hue) var(--chest-sat) 70% / 0.05) 18% calc(18% + 1px)
+    ),
+    linear-gradient(
+      145deg,
+      hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.4)) 0%,
+      hsl(var(--chest-hue) var(--chest-sat) calc(var(--chest-lit) * 0.22)) 100%
+    );
+  display: grid;
+  place-items: center;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 hsl(var(--chest-hue) var(--chest-sat) 70% / 0.2);
+}
+
+/* Corner brackets — same device the idle chest uses, so the burst reads
+   as the same object, not a stand-in. */
+.chest-burst-body::before,
+.chest-burst-body::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid hsl(var(--chest-hue) var(--chest-sat) 72% / 0.55);
+  pointer-events: none;
+}
+.chest-burst-body::before {
+  top: 8px;
+  left: 8px;
+  border-right: none;
+  border-bottom: none;
+}
+.chest-burst-body::after {
+  bottom: 8px;
+  right: 8px;
+  border-left: none;
+  border-top: none;
+}
+
+.chest-burst-glyph-wrap {
+  width: 56px;
+  height: 56px;
+  color: hsl(var(--chest-hue) var(--chest-sat) 70%);
+  opacity: 0.6;
+}
+
+.chest-burst-item {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+}
+
+.chest-burst-item img {
+  width: min(32vw, 180px);
+  max-height: 40vh;
+  object-fit: contain;
+  filter: drop-shadow(0 0 30px var(--item-glow));
+  transform-style: preserve-3d;
+}
+
+.chest-burst-item-glow {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--item-glow) 0%, transparent 70%);
+  opacity: 0.5;
+  filter: blur(20px);
+  z-index: -1;
+}
+
+.chest-burst-name {
+  position: absolute;
+  bottom: 8%;
+  z-index: 5;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chest-burst-overlay {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SHOWCASE STATE — chest frozen open after the burst
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Lid stays at full-open angle */
+.case-chest-is-open .case-chest-lid {
+  top: calc(var(--lid-rest, 20%) - 20%) !important;
+  transform: rotateX(-88deg) !important;
+  animation: none !important;
+}
+
+/* Lock is gone */
+.case-chest-is-open .case-chest-lock {
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+/* Interior light pulses slowly — the chest breathes */
+.case-chest-is-open .case-chest-interior-light {
+  opacity: 0.7;
+  transform: scaleX(1);
+  animation: showcase-interior 2.2s ease-in-out infinite !important;
+}
+@keyframes showcase-interior {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scaleX(0.9);
+    box-shadow: 0 -30px 60px 28px var(--chest-bright), 0 0 20px 8px var(--chest-glow);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scaleX(1.1);
+    box-shadow: 0 -56px 110px 52px var(--chest-bright), 0 0 38px 18px var(--chest-glow);
+  }
+}
+
+/* Atmosphere billows continuously */
+.case-chest-is-open .case-chest-atmosphere {
+  animation: showcase-atmosphere 3s ease-in-out infinite alternate !important;
+}
+@keyframes showcase-atmosphere {
+  from { opacity: 0.45; transform: scale(2.0); filter: blur(52px); }
+  to   { opacity: 0.75; transform: scale(2.6); filter: blur(68px); }
+}
+
+/* Aura breathes with rarity color */
+.case-chest-is-open .case-chest-aura {
+  animation: showcase-aura 2.4s ease-in-out infinite alternate !important;
+}
+@keyframes showcase-aura {
+  from { opacity: 0.32; transform: scale(1.5); filter: blur(26px); }
+  to   { opacity: 0.60; transform: scale(1.9); filter: blur(36px); }
+}
+
+/* Orbit rings drift slowly */
+.case-chest-is-open .case-orbit-ring {
+  animation: showcase-orbit 8s linear infinite !important;
+}
+@keyframes showcase-orbit {
+  from { transform: rotate(0deg); opacity: 0.6; }
+  to   { transform: rotate(360deg); opacity: 0.6; }
+}
+
+/* Glyph gone (burned out during opening) */
+.case-chest-is-open .case-chest-glyph,
+.case-chest-is-open .case-chest-nameband,
+.case-chest-is-open .case-chest-lock-gem,
+.case-chest-is-open .case-chest-lock-shackle {
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+/* Corner accents flash gently */
+.case-chest-is-open .case-chest-corner {
+  animation: showcase-corner 2.8s ease-in-out infinite !important;
+}
+@keyframes showcase-corner {
+  0%, 100% { opacity: 0.5; box-shadow: none; }
+  50%       { opacity: 1;   box-shadow: 0 0 8px 3px var(--chest-bright); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-chest-is-open .case-chest-interior-light { animation: none !important; opacity: 0.6; }
+  .case-chest-is-open .case-chest-atmosphere     { animation: none !important; }
+  .case-chest-is-open .case-chest-aura           { animation: none !important; }
+  .case-chest-is-open .case-orbit-ring           { animation: none !important; }
+  .case-chest-is-open .case-chest-corner         { animation: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VARIANT OVERRIDES (v0–v5)
+   ═══════════════════════════════════════════════════════════════ */
+
+.case-chest-v0 .case-chest-body { clip-path: polygon(0 0, 100% 0, 94% 100%, 6% 100%); }
+.case-chest-v0 .case-chest-lid  { clip-path: polygon(7% 0, 93% 0, 100% 27%, 97% 100%, 3% 100%, 0 27%); }
+
+.case-chest-v1 { --lid-rest: 18%; }
+.case-chest-v1 .case-chest-body {
+  left: 7%; right: 7%; top: 35%; height: 54%;
+  clip-path: polygon(5% 0, 95% 0, 100% 17%, 100% 100%, 0 100%, 0 17%);
+  background: repeating-linear-gradient(90deg, transparent 0 11%, color-mix(in srgb, var(--chest-bright) 13%, transparent) 11% 12%), linear-gradient(155deg, var(--chest-mid) 0%, var(--chest-dark) 78%);
+}
+.case-chest-v1 .case-chest-lid  { left: 7%; right: 7%; height: 22%; clip-path: polygon(4% 0, 96% 0, 100% 100%, 0 100%); }
+.case-chest-v1 .case-chest-lock { height: 30%; width: 24%; }
+
+.case-chest-v2 { --lid-rest: 18%; }
+.case-chest-v2 .case-chest-body {
+  left: 13%; right: 13%; top: 35%; height: 56%;
+  clip-path: polygon(12% 0, 88% 0, 100% 20%, 93% 100%, 7% 100%, 0 20%);
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--chest-bright) 30%, transparent) 0 19%, transparent 20%), repeating-radial-gradient(circle at 50% 50%, transparent 0 14px, color-mix(in srgb, var(--chest-bright) 16%, transparent) 15px 16px), linear-gradient(140deg, #635438, #27241e 72%);
+}
+.case-chest-v2 .case-chest-lid  { left: 13%; right: 13%; height: 26%; clip-path: polygon(12% 0, 88% 0, 100% 100%, 0 100%); }
+.case-chest-v2 .case-chest-lock { top: 5%; width: 22%; height: 58%; border-radius: 50%; clip-path: none; }
+.case-chest-v2 .case-chest-lock-body { clip-path: none; border-radius: 50%; }
+.case-chest-v2 .case-chest-lock-shackle { display: none; }
+
+.case-chest-v3 { --lid-rest: 17%; }
+.case-chest-v3 .case-chest-body {
+  left: 9%; right: 9%; top: 32%; height: 57%;
+  clip-path: polygon(0 14%, 9% 0, 91% 0, 100% 14%, 100% 86%, 91% 100%, 9% 100%, 0 86%);
+  background: repeating-linear-gradient(125deg, transparent 0 18px, color-mix(in srgb, var(--chest-bright) 20%, transparent) 18px 22px, transparent 22px 36px), linear-gradient(155deg, #4a2622, #1b1c1c 72%);
+}
+.case-chest-v3 .case-chest-lid  { left: 9%; right: 9%; height: 24%; clip-path: polygon(8% 0, 92% 0, 100% 35%, 95% 100%, 5% 100%, 0 35%); }
+.case-chest-v3 .case-chest-lock { width: 14%; height: 32%; }
+
+.case-chest-v4 { --lid-rest: 15%; }
+.case-chest-v4 .case-chest-body {
+  left: 12%; right: 12%; top: 30%; height: 61%;
+  clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+  background: radial-gradient(circle at 50% 55%, color-mix(in srgb, var(--chest-bright) 28%, transparent), transparent 44%), repeating-linear-gradient(90deg, transparent 0 22px, color-mix(in srgb, var(--chest-bright) 10%, transparent) 23px 24px), linear-gradient(145deg, #273f51, #101922 75%);
+}
+.case-chest-v4 .case-chest-lid  { left: 12%; right: 12%; height: 23%; clip-path: polygon(0 0, 100% 0, 94% 100%, 6% 100%); }
+.case-chest-v4 .case-chest-lock { width: 9%; height: 24%; }
+.case-chest-v4 .case-chest-lock-body { clip-path: none; border-radius: 3px; }
+
+.case-chest-v5 { --lid-rest: 16%; }
+.case-chest-v5 .case-chest-body {
+  left: 7%; right: 7%; top: 33%; height: 56%;
+  clip-path: polygon(4% 0, 22% 0, 27% 8%, 73% 8%, 78% 0, 96% 0, 100% 100%, 0 100%);
+  background: repeating-linear-gradient(45deg, transparent 0 12px, color-mix(in srgb, var(--chest-bright) 8%, transparent) 13px 14px), linear-gradient(155deg, #3b2f00, #1a1a0a 70%);
+}
+.case-chest-v5 .case-chest-lid  { left: 7%; right: 7%; height: 24%; clip-path: polygon(3% 0, 97% 0, 100% 100%, 0 100%); }
+.case-chest-v5 .case-chest-lock { width: 20%; }
+
+/* ── Finish micro-variants ───────────────────────────────────── */
+.case-chest-f1 .case-chest-body { filter: contrast(1.05) saturate(1.15); }
+.case-chest-f2 .case-chest-body-grid { background: repeating-linear-gradient(45deg, rgba(255,255,255,.04) 0 1px, transparent 1px 20px); }
+.case-chest-f3 .case-chest-body-shine { background: linear-gradient(200deg, rgba(255,255,255,.14) 0 25%, transparent 26%); }
+.case-chest-f3 .case-chest-body { filter: saturate(.85) brightness(.96); }
+
+/* ── Card grid variant (scaled-down) ─────────────────────────── */
+.dz-case-card__chest {
+  width: 82%;
+  height: 82%;
+  max-width: 160px;
+}
+.dz-case-card__chest .case-chest-assembly {
+  transform: scale(.72);
+  transform-origin: center bottom;
+}
+.dz-case-card__chest .case-chest-aura,
+.dz-case-card__chest .case-orbit-ring { display: none; }
+.dz-case-card__chest .case-chest-glyph { animation: glyph-breathe 5s ease-in-out infinite alternate; }
+.dz-case-card__chest .case-chest-atmosphere { animation-duration: 9s; opacity: .05; }
+
+/* ── Detail page variant ─────────────────────────────────────── */
+.case-chest-detail {
+  width: min(100%, 28rem);
+  height: 17rem;
+}
+.case-chest-detail .case-chest-lid-mark { font-size: 1rem; }
+.case-chest-detail .case-chest-glyph { width: 55%; height: 55%; }

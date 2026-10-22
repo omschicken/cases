@@ -1,0 +1,34 @@
+.lb-page { --lb-gold: #f5c542; }
+.lb-page .dz-page-header__title { color: var(--lb-gold); letter-spacing: 0.08em; }
+.lb-refresh { padding: 0.5rem 1rem; background: transparent; color: inherit; border: 1px solid rgba(124, 107, 255, 0.4); border-radius: var(--dz-r-sm); cursor: pointer; }
+.lb-refresh:hover { border-color: var(--dz-amber); }
+
+.lb-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: none; }
+.lb-avatar--fallback { display: inline-grid; place-items: center; background: rgba(124, 107, 255, 0.25); font-weight: 700; }
+
+.lb-podium { display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; gap: var(--dz-s4); margin: var(--dz-s5) 0; }
+.lb-podium__card { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: var(--dz-s4); text-align: center; border: 1px solid rgba(124, 107, 255, 0.25); border-radius: var(--dz-r-sm); background: rgba(124, 107, 255, 0.06); }
+.lb-podium__card--1 { padding-block: calc(var(--dz-s5) * 1.6); border-color: var(--lb-gold); background: rgba(245, 197, 66, 0.08); }
+.lb-podium__card--1 .lb-avatar { width: 64px; height: 64px; }
+.lb-podium__medal { font-size: 2.25rem; }
+.lb-podium__name { margin: 0; overflow-wrap: anywhere; }
+.lb-podium__wins { font-size: 1.35rem; color: var(--lb-gold); }
+.lb-podium__meta { opacity: 0.7; font-size: 0.9rem; }
+
+.lb-table tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.03); }
+.lb-table tbody tr:hover { background: rgba(124, 107, 255, 0.10); }
+.lb-player { display: flex; align-items: center; gap: var(--dz-s3); }
+.lb-player .lb-avatar { width: 28px; height: 28px; font-size: 0.8rem; }
+.lb-table tbody tr.lb-me, .lb-podium__card.lb-me { background: rgba(124, 107, 255, 0.22); outline: 1px solid var(--dz-amber); }
+
+.lb-skeleton__podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--dz-s4); margin: var(--dz-s5) 0; }
+.lb-skeleton__card { height: 150px; }
+.lb-skeleton__row { height: 40px; margin-bottom: 6px; }
+.lb-skeleton__card, .lb-skeleton__row { border-radius: var(--dz-r-sm); background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.10), rgba(255,255,255,0.04)); background-size: 200% 100%; animation: lb-shimmer 1.4s linear infinite; }
+@keyframes lb-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .lb-skeleton__card, .lb-skeleton__row { animation: none; } }
+
+@media (max-width: 640px) {
+  .lb-podium { grid-template-columns: 1fr; }
+  .lb-podium__card--1 { order: -1; }
+}

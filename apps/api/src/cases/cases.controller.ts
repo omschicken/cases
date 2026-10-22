@@ -1,0 +1,108 @@
+import { Body, Controller, Get, Header, Param, Post, Res, Sse, UseGuards } from "@nestjs/common";
+import type { Response } from "express";
+import { map } from "rxjs/operators";
+import { Throttle } from "@nestjs/throttler";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { CurrentUser } from "../common/decorators/current-user.decorator";
+import type { AuthenticatedUser } from "../auth/jwt.strategy";
+import { CasesService } from "./cases.service";
+import { OpenCaseDto } from "./dto/open-case.dto";
+import { OpenCaseBatchDto } from "./dto/open-case-batch.dto";
+import { RotateSeedDto } from "./dto/rotate-seed.dto";
+
+@Controller("cases")
+export class CasesController {
+  constructor(private readonly casesService: CasesService) {}
+
+  @Get()
+  @Header("Cache-Control", "public, max-age=0, s-maxage=10, stale-while-revalidate=30")
+  listActive() {
+    return this.casesService.listActive();
+  }
+
+  // Must be declared before the ":slug" route below — both are single path
+  // segments, and NestJS/Express matches in registration order, so ":slug"
+  // would otherwise swallow these as if they were a case slug.
+  @Get("recent-drops")
+  recentDrops() {
+    return this.casesService.listRecentDrops();
+  }
+
+  @Get("stats")
+  stats() {
+    return this.casesService.getPublicStats();
+  }
+
+  // SSE stream — one event per confirmed case opening, broadcast to all
+  // connected clients. The browser reconnects automatically on disconnect.
+  @Sse("drops/stream")
+  dropsStream(@Res() res: Response) {
+    // Keep the connection alive every 25 s to prevent proxy timeouts.
+    const heartbeat = setInterval(() => res.write(": ping\n\n"), 25_000);
+    res.on("close", () => clearInterval(heartbeat));
+    return this.casesService.dropsFeed$.pipe(
+      map((drop) => ({ data: drop })),
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("history/me")
+  myHistory(@CurrentUser() user: AuthenticatedUser) {
+    return this.casesService.listMyOpenEvents(user.id);
+  }
+
+  @Get(":slug")
+  getBySlug(@Param("slug") slug: string) {
+    return this.casesService.getBySlug(slug);
+  }
+
+  // Public: provably-fair results must be independently auditable by anyone,
+  // not just the user who opened the case.
+  @Get("open-events/:id/verify")
+  verify(@Param("id") id: string) {
+    return this.casesService.verifyOpenEvent(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @Post("open")
+  open(@CurrentUser() user: AuthenticatedUser, @Body() dto: OpenCaseDto) {
+    return this.casesService.openCase(user.id, dto.caseId, dto.clientSeed);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  @Post("open-batch")
+  openBatch(@CurrentUser() user: AuthenticatedUser, @Body() dto: OpenCaseBatchDto) {
+    return this.casesService.openCaseBatch(user.id, dto.caseId, dto.count, dto.clientSeed);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("inventory/me")
+  myInventory(@CurrentUser() user: AuthenticatedUser) {
+    return this.casesService.listMyInventory(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("inventory/:id/sell")
+  sell(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
+    return this.casesService.sellItem(user.id, id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("seed/me")
+  async mySeed(@CurrentUser() user: AuthenticatedUser) {
+    const seed = await this.casesService.getOrCreateActiveSeed(user.id);
+    return {
+      serverSeedHash: seed.serverSeedHash,
+      clientSeed: seed.clientSeed,
+      nonce: seed.nonce,
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("seed/rotate")
+  rotateSeed(@CurrentUser() user: AuthenticatedUser, @Body() dto: RotateSeedDto) {
+    return this.casesService.rotateSeed(user.id, dto.nextClientSeed);
+  }
+}

@@ -1,0 +1,5 @@
+# Never publish third-party licensed source assets into this public repo.
+source-private/
+exports/
+*.blend1
+*.blend2

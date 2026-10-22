@@ -1,0 +1,358 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   THE DROP CHAMBER — DROPZONE signature #1
+
+   A case is not printed on a card. It is suspended inside a containment
+   cell built from real 3D planes: back wall, two inward-rotated side walls,
+   a floor that catches a reflection, and a volumetric key light above it.
+
+   Built with CSS 3D transforms only — no WebGL. A 90-case catalog cannot
+   afford a three.js context per card, and the depth cue that actually sells
+   the effect is parallax between stacked planes, which transforms give for
+   free on the compositor.
+
+   Pointer parallax is driven by two vars (--dz-px / --dz-py, range -1..1)
+   written by a single rAF-throttled listener in lib/chamber.ts. Nothing here
+   reads the pointer itself, so adding a chamber costs no extra listener.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.dz-chamber {
+  --dz-px: 0;
+  --dz-py: 0;
+  --dz-chamber-depth: 180px;
+
+  position: relative;
+  perspective: var(--dz-persp);
+  perspective-origin: calc(50% + var(--dz-px) * 6%) calc(45% + var(--dz-py) * 5%);
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: var(--dz-r-lg);
+  background: var(--dz-void);
+}
+
+/* The 3D stage. Children live on real planes inside it. */
+.dz-chamber__cell {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--dz-py) * -1.6deg))
+             rotateY(calc(var(--dz-px) * 2.4deg));
+  transition: transform var(--dz-d-move) var(--dz-e-exit);
+}
+
+/* ── Walls ───────────────────────────────────────────────────────────────
+   The back wall sits at -depth; side walls rotate 90° inward from the left
+   and right edges to close the box. Because they share one preserve-3d
+   parent, perspective resolves them as a genuine interior rather than as
+   three flat gradients. */
+.dz-chamber__wall {
+  position: absolute;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--dz-surface-1), var(--dz-surface-0) 70%, var(--dz-void));
+}
+
+.dz-chamber__wall--back {
+  inset: 0;
+  transform: translateZ(calc(var(--dz-chamber-depth) * -1));
+  /* Scaled up so the wall still covers the frame once perspective shrinks
+     it at that depth — otherwise the void shows through at the corners. */
+  scale: 1.35;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 12%, var(--dz-light-key), transparent 68%),
+    linear-gradient(180deg, var(--dz-surface-2), var(--dz-surface-0) 60%, var(--dz-void));
+}
+
+/* Industrial plating on the back wall — fine horizontal ribs. Drawn as a
+   repeating gradient rather than an image so it stays crisp at any size and
+   costs no request. */
+.dz-chamber__wall--back::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent 0 11px,
+    rgba(0, 0, 0, 0.5) 11px 12px
+  );
+  opacity: 0.5;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 20%, transparent 85%);
+}
+
+.dz-chamber__wall--left,
+.dz-chamber__wall--right {
+  top: 0;
+  bottom: 0;
+  width: var(--dz-chamber-depth);
+}
+
+.dz-chamber__wall--left {
+  left: 0;
+  transform-origin: left center;
+  transform: rotateY(90deg);
+  background: linear-gradient(90deg, var(--dz-surface-0), var(--dz-void));
+}
+
+.dz-chamber__wall--right {
+  right: 0;
+  transform-origin: right center;
+  transform: rotateY(-90deg);
+  background: linear-gradient(-90deg, var(--dz-surface-0), var(--dz-void));
+}
+
+/* Floor — takes the key light as a pool and anchors the object in space.
+   Without a lit floor the case reads as floating in a void instead of
+   standing in a room. */
+.dz-chamber__floor {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: var(--dz-chamber-depth);
+  transform-origin: bottom center;
+  transform: rotateX(90deg);
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 45% 70% at 50% 0%, var(--dz-light-bounce), transparent 70%),
+    linear-gradient(180deg, var(--dz-surface-1), var(--dz-void));
+}
+
+/* ── Volumetric key light ────────────────────────────────────────────────
+   A cone from the ceiling. The clip-path trapezoid is what makes it read as
+   a beam in air rather than as a gradient on glass. */
+.dz-chamber__beam {
+  position: absolute;
+  left: 50%;
+  top: -6%;
+  width: 62%;
+  height: 92%;
+  transform: translateX(-50%) translateZ(calc(var(--dz-chamber-depth) * -0.45));
+  clip-path: polygon(34% 0, 66% 0, 100% 100%, 0 100%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--dz-rarity) 26%, transparent),
+    color-mix(in srgb, var(--dz-rarity) 7%, transparent) 45%,
+    transparent 82%
+  );
+  opacity: 0.75;
+  pointer-events: none;
+  transition: opacity var(--dz-d-move) var(--dz-e-enter);
+}
+
+/* Ceiling fixture the beam comes from — grounds the light in hardware. */
+.dz-chamber__fixture {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 34%;
+  height: 7px;
+  transform: translateX(-50%);
+  border-radius: 0 0 var(--dz-r-sm) var(--dz-r-sm);
+  background: linear-gradient(180deg, var(--dz-metal-edge), var(--dz-metal));
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--dz-rarity) 60%, transparent),
+    0 1px 0 var(--dz-light-spec) inset;
+  pointer-events: none;
+}
+
+/* ── The suspended object ───────────────────────────────────────────────── */
+.dz-chamber__object {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+  /* Pulled toward the viewer and counter-shifted against the cell rotation:
+     the object moves less than the walls, which is the parallax that reads
+     as depth. */
+  transform:
+    translate(-50%, -50%)
+    translateZ(46px)
+    translateX(calc(var(--dz-px) * 10px))
+    translateY(calc(var(--dz-py) * 7px));
+  transition: transform var(--dz-d-move) var(--dz-e-exit);
+  will-change: transform;
+}
+
+.dz-chamber__object > * {
+  filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.7));
+}
+
+/* Contact shadow on the floor, directly under the object. Separate from the
+   drop-shadow so it can squash independently when the object rises. */
+.dz-chamber__contact {
+  position: absolute;
+  left: 50%;
+  bottom: 11%;
+  width: 46%;
+  height: 16px;
+  transform: translateX(-50%) translateZ(10px);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.85), transparent 72%);
+  pointer-events: none;
+  transition: all var(--dz-d-move) var(--dz-e-exit);
+}
+
+/* ── Atmosphere: suspended particulate ───────────────────────────────────
+   Three slow drifting layers. Sized in vmin and driven by one keyframe each
+   so the whole effect is 3 animated elements, not 40 particles. */
+.dz-chamber__dust {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(1.5px 1.5px at 22% 30%, var(--dz-light-rim), transparent),
+    radial-gradient(1px 1px at 68% 55%, var(--dz-light-rim), transparent),
+    radial-gradient(1.5px 1.5px at 44% 72%, var(--dz-light-rim), transparent),
+    radial-gradient(1px 1px at 82% 22%, var(--dz-light-rim), transparent),
+    radial-gradient(1px 1px at 12% 62%, var(--dz-light-rim), transparent);
+  animation: dz-dust-drift 19s linear infinite;
+}
+
+@keyframes dz-dust-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(0, -34px, 0); }
+}
+
+/* ── Frame hardware ──────────────────────────────────────────────────────
+   Drawn on top in 2D, outside the 3D stage, so it stays optically straight
+   while the interior parallaxes behind it. That contrast — a fixed frame
+   over a moving interior — is most of why the depth reads. */
+.dz-chamber__frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  border: 1px solid var(--dz-edge-strong);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.6) inset,
+    0 0 60px rgba(0, 0, 0, 0.75) inset;
+}
+
+/* Corner brackets — the chamber's structural signature. */
+.dz-chamber__bracket {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--dz-metal-edge);
+  pointer-events: none;
+  opacity: 0.85;
+}
+.dz-chamber__bracket--tl { top: 8px;    left: 8px;    border-right: 0; border-bottom: 0; }
+.dz-chamber__bracket--tr { top: 8px;    right: 8px;   border-left: 0;  border-bottom: 0; }
+.dz-chamber__bracket--bl { bottom: 8px; left: 8px;    border-right: 0; border-top: 0;    }
+.dz-chamber__bracket--br { bottom: 8px; right: 8px;   border-left: 0;  border-top: 0;    }
+
+/* ── HUD ─────────────────────────────────────────────────────────────────
+   Instrument read-outs. Decorative density only — never the place for a
+   price, a case name, or anything the user needs to act on. */
+.dz-chamber__hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font-family: var(--dz-font-technical);
+  font-size: var(--dz-type-tech);
+  letter-spacing: var(--dz-tracking-tech);
+  color: var(--dz-text-4);
+  text-transform: uppercase;
+}
+
+.dz-chamber__hud-tl { position: absolute; top: var(--dz-s4); left: var(--dz-s4); }
+.dz-chamber__hud-tr { position: absolute; top: var(--dz-s4); right: var(--dz-s4); text-align: right; }
+.dz-chamber__hud-bl { position: absolute; bottom: var(--dz-s4); left: var(--dz-s4); }
+
+.dz-chamber__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dz-s2);
+  color: var(--dz-rarity);
+}
+
+.dz-chamber__status::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  animation: dz-status-blink 2.4s var(--dz-e-enter) infinite;
+}
+
+@keyframes dz-status-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+/* ═══ Chamber states ═══════════════════════════════════════════════════ */
+
+/* ARMED — the chamber wakes when the case is about to be opened. */
+.dz-chamber.is-armed .dz-chamber__beam    { opacity: 1; }
+.dz-chamber.is-armed .dz-chamber__fixture {
+  box-shadow:
+    0 0 26px color-mix(in srgb, var(--dz-rarity) 85%, transparent),
+    0 1px 0 var(--dz-light-spec) inset;
+}
+.dz-chamber.is-armed .dz-chamber__object {
+  transform:
+    translate(-50%, -50%)
+    translateZ(62px)
+    translateY(-10px);
+}
+.dz-chamber.is-armed .dz-chamber__contact {
+  width: 34%;
+  opacity: 0.55;
+  filter: blur(2px);
+}
+
+/* CYCLING — machinery is running. */
+.dz-chamber.is-cycling .dz-chamber__beam {
+  animation: dz-beam-pulse 0.9s var(--dz-e-enter) infinite;
+}
+
+@keyframes dz-beam-pulse {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+
+/* REVEALED — the cell floods with the item's own rarity color. This is the
+   one moment the interface takes its color from the drop rather than from
+   the brand, which is what makes a GOLD land feel different from a MIL-SPEC
+   without any text telling you so. */
+.dz-chamber.is-revealed .dz-chamber__wall--back {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 16%,
+      color-mix(in srgb, var(--dz-rarity) 34%, transparent), transparent 72%),
+    linear-gradient(180deg, var(--dz-surface-2), var(--dz-surface-0) 60%, var(--dz-void));
+}
+.dz-chamber.is-revealed .dz-chamber__frame {
+  border-color: color-mix(in srgb, var(--dz-rarity) 55%, var(--dz-edge-strong));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--dz-rarity) 30%, transparent) inset,
+    0 0 70px color-mix(in srgb, var(--dz-rarity) 18%, transparent) inset,
+    0 0 40px color-mix(in srgb, var(--dz-rarity) 22%, transparent);
+}
+.dz-chamber.is-revealed .dz-chamber__bracket {
+  border-color: color-mix(in srgb, var(--dz-rarity) 70%, var(--dz-metal-edge));
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────
+   Durations already collapse via tokens. What remains is to stop the
+   infinite ambient loops, which no duration token controls. The chamber
+   keeps its full static composition — depth, light and all — so nothing
+   is lost but the movement. */
+@media (prefers-reduced-motion: reduce) {
+  .dz-chamber__dust,
+  .dz-chamber__status::before,
+  .dz-chamber.is-cycling .dz-chamber__beam {
+    animation: none;
+  }
+  .dz-chamber__cell {
+    transform: none;
+  }
+  /* Drop the parallax and the depth, but KEEP the centring translate: the
+     object is placed at left/top 50% and relies on it. A blanket
+     transform:none here pushed it off by half its own size, so reduced
+     motion got a visibly broken cell. */
+  .dz-chamber__object,
+  .dz-chamber.is-armed .dz-chamber__object {
+    transform: translate(-50%, -50%);
+  }
+}

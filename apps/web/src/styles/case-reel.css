@@ -1,0 +1,285 @@
+/* CaseCrow opening: warm paper, graphite framing, restrained rarity accents. */
+.dz-reel {
+  --reel-card: 174px;
+  --reel-progress: 0;
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: 280px;
+  padding: 14px 0;
+  isolation: isolate;
+}
+.dz-reel__window {
+  height: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.dz-reel__track {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  height: 100%;
+  align-items: center;
+  will-change: transform;
+}
+.dz-reel__card {
+  position: relative;
+  box-sizing: border-box;
+  flex: 0 0 var(--reel-card);
+  width: var(--reel-card);
+  height: 236px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 14px 18px;
+  border: 1px solid #dcded4;
+  border-radius: 10px;
+  background: radial-gradient(ellipse at 50% 56%, color-mix(in srgb, var(--rc) 9%, transparent), transparent 66%), #fffefa;
+  text-align: center;
+  transition: opacity .4s ease, transform .5s cubic-bezier(.22,1,.36,1), border-color .4s, box-shadow .4s;
+}
+.dz-reel__card::after {
+  content: "";
+  position: absolute;
+  inset: auto 18px 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--rc);
+}
+.dz-reel__edition {
+  align-self: stretch;
+  color: #92988c;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-align: left;
+}
+.dz-reel__card img,
+.dz-reel__card .dze-item-fallback {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 108px;
+  object-fit: contain;
+  margin: 10px 0 8px;
+  filter: drop-shadow(0 8px 8px #20221f12);
+}
+.dz-reel__card small { color: #81897c; font-size: 10px; letter-spacing: .035em; }
+.dz-reel__card strong { margin-top: 4px; color: #20221f; font-size: 14px; line-height: 1.25; max-height: 35px; overflow: hidden; }
+.dz-reel__card em { margin-top: auto; padding-top: 8px; color: #4f574d; font-size: 12px; font-style: normal; font-weight: 700; }
+.dz-reel.is-landed .dz-reel__card { opacity: .38; }
+.dz-reel.is-landed .dz-reel__card.is-won {
+  opacity: 1;
+  transform: translateY(-4px) scale(1.035);
+  border-color: var(--rc);
+  box-shadow: 0 12px 24px #20221f12, 0 0 0 1px color-mix(in srgb, var(--rc) 18%, transparent);
+}
+.dz-reel__focus {
+  position: absolute;
+  z-index: -1;
+  top: 20px;
+  bottom: 20px;
+  left: 50%;
+  width: calc(var(--reel-card) + 12px);
+  transform: translateX(-50%);
+  border: 1px solid #8b967d45;
+  border-radius: 13px;
+  background: #8b967d0a;
+  transition: border-color .4s, background .4s;
+}
+.dz-reel.is-landed .dz-reel__focus { border-color: #8b967d88; background: #8b967d12; }
+.dz-reel__marker {
+  position: absolute;
+  inset: 0 auto 0 50%;
+  width: 1px;
+  pointer-events: none;
+  color: #343b30;
+}
+.dz-reel__marker::before,
+.dz-reel__marker::after { content: ""; position: absolute; left: -5px; border: 5px solid transparent; }
+.dz-reel__marker::before { top: 4px; border-top-color: currentColor; }
+.dz-reel__marker::after { bottom: 4px; border-bottom-color: currentColor; }
+.dz-reel__progress {
+  position: absolute;
+  right: 36px;
+  bottom: -12px;
+  left: 36px;
+  height: 1px;
+  background: #d4d7cc;
+  overflow: hidden;
+}
+.dz-reel__progress::after {
+  content: "";
+  display: block;
+  height: 100%;
+  background: #818e74;
+  transform: scaleX(var(--reel-progress));
+  transform-origin: left;
+}
+.dze-opening__visual.is-reel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  height: 320px;
+  padding: 12px 0 28px;
+  background: linear-gradient(135deg, #f3f2ec, #e9e8e0);
+}
+.dze-opening__visual.is-reel .dze-opening__ring { display: none; }
+.dze-opening__dialog { width: min(1180px, 100%); }
+.dze-opening__head { min-height: 66px; padding: 18px 32px; border-bottom: 1px solid #dfdfd7; }
+.dze-opening__signature { display: flex; align-items: center; gap: 24px; }
+.dze-opening__signature .casecrow-logo { width: 114px; }
+.dze-opening__signature .casecrow-logo__lockup { display: block; width: 100%; height: auto; }
+.dze-opening__signature > span:last-child { border-left: 1px solid #d4d7cd; padding-left: 24px; font-size: 9px; letter-spacing: .15em; }
+.dze-opening__visual.is-result { background: radial-gradient(ellipse at 50% 60%, color-mix(in srgb, var(--dze-accent) 8%, #eeede6), #eeede6 70%); }
+.dze-opening__visual.is-result .dze-opening__ring { width: 380px; max-width: 80%; border-color: #cdd2c3; opacity: .55; animation: none; }
+.dze-opening__item { filter: drop-shadow(0 18px 18px #20221f14); }
+.dze-opening__bottom { align-items: center; padding: 28px 36px; }
+.dze-opening__bottom > div:first-child { min-width: 0; }
+.dze-opening__bottom h2 { overflow-wrap: anywhere; }
+.dze-opening__weapon { display: block; margin: 14px 0 0; color: #6f7968; font-size: 13px; }
+.dze-opening__bottom .dze-opening__specs { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: 12px; }
+.dze-opening__rarity { display: inline-flex; align-items: center; gap: 6px; }
+.dze-opening__rarity i { width: 6px; height: 6px; border-radius: 50%; background: var(--dze-accent); }
+.dze-opening__bottom .dze-opening__value { margin-top: 14px; color: #20221f; font-size: 25px; font-weight: 750; letter-spacing: -.04em; }
+.dze-opening__actions { flex-shrink: 0; max-width: 340px; }
+.dze-opening__actions button, .dze-opening__actions a { transition: background .18s, border-color .18s; }
+.dze-opening__actions button:hover, .dze-opening__actions a:hover { background: #e9ece3; border-color: #adb6a3; }
+.dze-opening__actions .dze-opening__primary:hover { background: #45503e; border-color: #45503e; }
+.dze-opening button:focus-visible, .dze-opening a:focus-visible,
+.case-detail button:focus-visible, .case-detail a:focus-visible { outline: 2px solid #64775a; outline-offset: 4px; }
+.dze-opening__head button { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 6px; }
+.dze-opening__waiting { position: absolute; bottom: 22px; display: flex; gap: 8px; align-items: center; color: #626e59; font-size: 11px; }
+.dze-opening__waiting i { width: 6px; height: 6px; border-radius: 50%; background: #859778; animation: dze-wait 1.4s ease-in-out infinite alternate; }
+.dze-recovery { margin-top: 16px; padding: 16px; border: 1px solid #cdd3c3; border-radius: 8px; background: #f0f2eb; font-size: 12px; line-height: 1.6; }
+.dze-recovery p { margin: 0 0 12px; }
+.dze-recovery a { display: inline-block; margin-right: 16px; text-decoration: underline; }
+.dze-recovery button { min-height: 44px; padding: 8px 12px; border: 1px solid #bdc6b2; border-radius: 6px; background: transparent; color: #343c2e; }
+@keyframes dze-wait { to { opacity: .3; } }
+@media (max-width: 520px) {
+  .dz-reel { --reel-card: 142px; height: 260px; }
+  .dz-reel__card { height: 208px; padding: 12px 10px 16px; }
+  .dz-reel__card img, .dz-reel__card .dze-item-fallback { height: 88px; margin-top: 8px; }
+  .dz-reel__card strong { font-size: 12px; max-height: 30px; }
+  .dz-reel__card em { font-size: 11px; }
+  .dz-reel__progress { left: 20px; right: 20px; }
+  .dze-opening__visual.is-reel { height: 310px; padding: 16px 0 28px; }
+  .dze-opening__head { min-height: 58px; padding: 10px 18px; }
+  .dze-opening__signature { gap: 14px; }
+  .dze-opening__signature .casecrow-logo { width: 100px; }
+  .dze-opening__signature > span:last-child { padding-left: 14px; font-size: 8px; }
+  .dze-opening__bottom { align-items: stretch; padding: 20px; gap: 20px; }
+  .dze-opening__bottom h2 { font-size: 26px; }
+  .dze-opening__actions { width: 100%; max-width: none; }
+  .dze-opening__actions button, .dze-opening__actions a { min-height: 48px; }
+  .dze-opening__weapon { margin-top: 12px; }
+  .dze-opening__visual.is-result { height: 240px; }
+  .dze-opening__visual.is-result .dze-opening__item { height: 190px; }
+  .dze-opening__visual.is-result .dze-opening__ring { width: 240px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dz-reel *, .dz-reel *::before, .dz-reel *::after { transition: none !important; animation: none !important; }
+}
+
+/* Case contents: every drop as its own tile, priciest first */
+.case-detail .dza-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  gap: 12px;
+}
+.case-detail .dza-tile {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px 16px;
+  border: 1px solid var(--dze-line);
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at 50% 92%, color-mix(in srgb, var(--rc) 18%, transparent), transparent 66%),
+    white;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.case-detail .dza-tile:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--rc) 55%, var(--dze-line));
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--rc) 16%, transparent);
+}
+.case-detail .dza-tile::after { content: ""; position: absolute; inset: auto 14px 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--rc); }
+.case-detail .dza-tile__top { display: flex; justify-content: space-between; align-items: center; min-height: 18px; }
+.case-detail .dza-tile__wear { padding: 2px 7px; border-radius: 99px; background: #f0efe9; color: #6c7369; font-size: 9px; font-weight: 750; letter-spacing: .08em; }
+.case-detail .dza-tile__chance { color: #8b9089; font-size: 11px; font-weight: 700; }
+.case-detail .dza-tile img,
+.case-detail .dza-tile .dze-item-fallback { width: 100%; height: 118px; margin: 6px 0 8px; object-fit: contain; }
+.case-detail .dza-tile__weapon { color: #8a9087; font-size: 11px; }
+.case-detail .dza-tile__name { margin: 2px 0 8px; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; text-transform: none; color: var(--dze-ink); font-size: 14px; font-weight: 700; line-height: 1.25; }
+.case-detail .dza-tile__value { margin-top: auto; color: var(--dze-ink); font-size: 14px; font-weight: 750; }
+
+@media (max-width: 520px) {
+  .case-detail .dza-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .case-detail .dza-tile img, .case-detail .dza-tile .dze-item-fallback { height: 92px; }
+}
+
+
+
+/* Approved CaseCrow dark mode: drop-pool cards belong to the same surface
+   as the opening stage. Previous white tile backgrounds made the inherited
+   light-on-dark item title and price unreadable (confirmed on screenshots). */
+:root[data-casecrow-theme="dark"] .case-detail .dza-tile{
+  background:
+    radial-gradient(ellipse at 50% 95%,color-mix(in srgb,var(--rc) 13%,transparent),transparent 65%),
+    #1d241e;
+  color:#f4f3ed;
+  border-color:#39473c;
+  box-shadow:inset 0 1px rgba(240,248,237,.05);
+}
+:root[data-casecrow-theme="dark"] .case-detail .dza-tile:hover{
+  border-color:color-mix(in srgb,var(--rc) 48%,#526554);
+  box-shadow:0 12px 34px rgba(0,0,0,.24);
+}
+:root[data-casecrow-theme="dark"] .case-detail .dza-tile__name,
+:root[data-casecrow-theme="dark"] .case-detail .dza-tile__value{
+  color:#f4f3ed;
+  text-shadow:none;
+}
+:root[data-casecrow-theme="dark"] .case-detail .dza-tile__weapon,
+:root[data-casecrow-theme="dark"] .case-detail .dza-tile__chance{
+  color:#b9c9b8;
+}
+:root[data-casecrow-theme="dark"] .case-detail .dza-tile__wear{
+  background:#303c31;
+  color:#dae7d6;
+  border:1px solid #445647;
+}
+:root[data-casecrow-theme="dark"] .case-detail .dze-opening__bottom .dze-opening__value,
+:root[data-casecrow-theme="dark"] .case-detail .dze-opening__weapon{
+  color:#f4f3ed;
+}
+:root[data-casecrow-theme="dark"] .case-detail .dze-opening__bottom p,
+:root[data-casecrow-theme="dark"] .case-detail .dze-opening__specs{
+  color:#bdcdbc;
+}
+:root[data-casecrow-theme="dark"] .case-detail .dze-opening__actions a,
+:root[data-casecrow-theme="dark"] .case-detail .dze-opening__actions button{
+  color:#f4f3ed;
+  background:#28332a;
+  border-color:#4b5d4e;
+}
+:root[data-casecrow-theme="dark"] .case-detail .dze-opening__visual.is-result{
+  background:radial-gradient(ellipse at 50% 52%,color-mix(in srgb,var(--dze-accent) 11%,#222b23),#171e18 74%);
+}
+/* The light variant keeps paper-like cards and genuinely dark copy. */
+:root[data-casecrow-theme="light"] .case-detail .dza-tile{
+  background:
+    radial-gradient(ellipse at 50% 92%,color-mix(in srgb,var(--rc) 10%,transparent),transparent 70%),
+    #fffefa;
+  color:#1c231c;
+}
+:root[data-casecrow-theme="light"] .case-detail .dza-tile__name,
+:root[data-casecrow-theme="light"] .case-detail .dza-tile__value{color:#202820}
+@media(prefers-reduced-motion:reduce){
+  .case-detail .dza-tile,
+  .case-detail .dze-opening__dialog{animation:none!important;transition:none!important}
+  .case-detail .dza-tile:hover{transform:none}
+}
