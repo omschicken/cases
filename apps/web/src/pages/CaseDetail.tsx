@@ -200,6 +200,7 @@ export function CaseDetailPage() {
     setOpening(true);
     setRevealed(false);
     setResult(null);
+    setSoldResult(false);
     setDemoItem(null);
     setProtocolDismissed(false);
     try {
