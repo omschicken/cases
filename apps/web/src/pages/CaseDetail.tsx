@@ -66,6 +66,8 @@ export function CaseDetailPage() {
   const [opening, setOpening] = useState(false);
   const [result, setResult] = useState<OpenCaseResult | null>(null);
   const [batchResults, setBatchResults] = useState<OpenCaseResult[]>([]);
+  const [soldIds, setSoldIds] = useState<string[]>([]);
+  const [sellingId, setSellingId] = useState<string | null>(null);
   const [openCount, setOpenCount] = useState<1 | 3 | 5>(1);
   const [fastOpen, setFastOpen] = useState(false);
   const [demoItem, setDemoItem] = useState<CaseItem | null>(null);
@@ -98,6 +100,7 @@ export function CaseDetailPage() {
     setError(null);
     setResult(null);
     setBatchResults([]);
+    setSoldIds([]);
     setDemoItem(null);
     setRevealed(false);
     api
@@ -178,6 +181,18 @@ export function CaseDetailPage() {
       openingLockRef.current = false;
       skipRequestedRef.current = false;
     }
+  }
+
+  async function sellWonItem(entry: OpenCaseResult) {
+    if (sellingId || soldIds.includes(entry.inventoryItemId)) return;
+    setSellingId(entry.inventoryItemId);
+    try {
+      await api.post(`/cases/inventory/${entry.inventoryItemId}/sell`);
+      setSoldIds((current) => [...current, entry.inventoryItemId]);
+      window.dispatchEvent(new Event("casecrow:wallet-updated"));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Продажа не подтверждена. Проверьте инвентарь перед повторной попыткой.");
+    } finally { setSellingId(null); }
   }
 
   // A visual-only demo: no server request, balance change or inventory item.
@@ -289,6 +304,7 @@ export function CaseDetailPage() {
             <div className="dz-record__actions">
               {result ? (
                 <>
+                  {soldIds.includes(result.inventoryItemId) ? <span className="dz-btn">Продано</span> : <button type="button" className="dz-btn" disabled={sellingId !== null} onClick={() => void sellWonItem(result)}>{sellingId === result.inventoryItemId ? "Продажа…" : "Продать"}</button>}
                   <Link to="/inventory" className="dz-btn">{t("caseDetail.claim", { defaultValue: "Забрать в инвентарь" })}</Link>
                   <Link to={`/verify/${result.openEventId}`} className="dz-btn">{t("caseDetail.verifyThisResult", { defaultValue: "Проверить результат" })}</Link>
                 </>
@@ -321,6 +337,7 @@ export function CaseDetailPage() {
               <EditorialItemImage name={entry.item.name} imageUrl={entry.item.imageUrl} decorative />
               <strong>{entry.item.name}</strong>
               <span>{formatMinor(entry.item.valueMinor, entry.item.currency)}</span>
+              {soldIds.includes(entry.inventoryItemId) ? <span>Продано</span> : <button type="button" className="dz-btn" disabled={sellingId !== null} onClick={() => void sellWonItem(entry)}>{sellingId === entry.inventoryItemId ? "Продажа…" : "Продать"}</button>}
             </article>
           ))}</div>
         </section>
