@@ -61,8 +61,6 @@ export function CaseDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
   const [theCase, setTheCase] = useState<CaseDto | null>(null);
-  const [seedHash, setSeedHash] = useState<string | null>(null);
-  const [clientSeed, setClientSeed] = useState<string | null>(null);
   const [opening, setOpening] = useState(false);
   const [result, setResult] = useState<OpenCaseResult | null>(null);
   const [batchResults, setBatchResults] = useState<OpenCaseResult[]>([]);
@@ -120,17 +118,6 @@ export function CaseDetailPage() {
       });
     return () => { active = false; };
   }, [slug, t, requestId]);
-
-  useEffect(() => {
-    if (!user) return;
-    api
-      .get<{ serverSeedHash: string; clientSeed: string }>("/cases/seed/me")
-      .then((s) => {
-        setSeedHash(s.serverSeedHash);
-        setClientSeed(s.clientSeed);
-      })
-      .catch(() => undefined);
-  }, [user]);
 
   function finishOpening() {
     setOpening(false);
