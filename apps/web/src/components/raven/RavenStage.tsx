@@ -21,7 +21,7 @@ function Stage({ opening, winner, onComplete, sound, onLost }: { opening: boolea
   const complete = useRef(onComplete); complete.current = onComplete;
   const audio = useRef<AudioContext | null>(null);
   useEffect(() => { const query = matchMedia('(prefers-reduced-motion: reduce)'); const change = () => setReduced(query.matches); query.addEventListener('change', change); return () => query.removeEventListener('change', change); }, []);
-  useEffect(() => { if (opening) dispatch('OPEN'); else if (phase === 'openingPending' || phase === 'complete') dispatch('ERROR'); }, [opening]);
+  useEffect(() => { if (opening) dispatch('OPEN'); else if (phase === 'openingPending') dispatch('ERROR'); }, [opening]);
   useEffect(() => { if (opening && winner && phase === 'openingPending') dispatch('CONFIRMED'); }, [opening, winner, phase]);
   // The page opens on the empty courtyard; the sequence only starts once the scene has its textures, so the case never shows half-built.
   const [ready, setReady] = useState(false);

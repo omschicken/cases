@@ -60,8 +60,8 @@ export function travertineTextures(seed = 11, repeat = 1) {
  * warm base, soft pink-beige clouds, a network of branching hairline cracks and tiny pits. Returns colour and bump.
  */
 const marbleCache = new Map<string, { map: CanvasTexture; bump: CanvasTexture; rough: CanvasTexture }>();
-export function marbleTextures(seed = 5, repeat = 1, strength = 1) {
-  const key = `${seed}/${repeat}/${strength}`; const hit = marbleCache.get(key); if (hit) return hit;
+export function marbleTextures(seed = 5, repeat = 1, strength = 1, veinScale = 1, crackDensity = 1) {
+  const key = `${seed}/${repeat}/${strength}/${veinScale}/${crackDensity}`; const hit = marbleCache.get(key); if (hit) return hit;
   const size = 1024; const rand = rng(seed);
   const cloud = noiseCanvas(size, seed, 6, 0.9, 0.5);
   const col = document.createElement('canvas'); col.width = col.height = size; const c = col.getContext('2d')!;
@@ -77,7 +77,7 @@ export function marbleTextures(seed = 5, repeat = 1, strength = 1) {
     for (let s = 0; s < len; s += 6) { a += (rand() - 0.5) * 0.7; px += Math.cos(a) * 6; py += Math.sin(a) * 6; c.lineTo(px, py); if (rand() < 0.04) crack(px, py, a + (rand() > 0.5 ? 1 : -1) * (0.5 + rand() * 0.7), len * (0.35 + rand() * 0.3) - s * 0.4, w * 0.7, depth + 1); }
     c.strokeStyle = `rgba(150,96,68,${Math.min(0.9, (0.08 + rand() * 0.1) * strength)})`; c.lineWidth = w; c.stroke();
   };
-  for (let i = 0; i < 34; i++) crack(rand() * size, rand() * size, rand() * Math.PI * 2, 120 + rand() * 260, 1 + rand() * 0.8, 0);
+  for (let i = 0; i < Math.round(34 * crackDensity); i++) crack(rand() * size, rand() * size, rand() * Math.PI * 2, 120 + rand() * 260, 1 + rand() * 0.8, 0);
   // long flowing veins: a wide soft halo, a mid tone and a thin dark core, drawn wrapped so the tile repeats without a seam
   const veins: { pts: [number, number][]; w: number }[] = [];
   for (let v = 0; v < 11; v++) {
@@ -91,9 +91,11 @@ export function marbleTextures(seed = 5, repeat = 1, strength = 1) {
       const [col, lw] = style(w); ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineJoin = 'round'; ctx.stroke();
     }
   };
-  strokeVeins(c, w => [`rgba(190,140,110,${Math.min(0.5, 0.08 * strength)})`, 18 * w]);
-  strokeVeins(c, w => [`rgba(160,110,86,${Math.min(0.7, 0.14 * strength)})`, 6 * w]);
-  strokeVeins(c, w => [`rgba(130,84,62,${Math.min(0.95, 0.36 * strength)})`, 1.6 * w]);
+  if (veinScale > 0.02) { // the long veins (off for the stones that only have a fine crackle)
+    strokeVeins(c, w => [`rgba(190,140,110,${Math.min(0.4, 0.06 * strength * veinScale)})`, 7 * w]);
+    strokeVeins(c, w => [`rgba(160,110,86,${Math.min(0.6, 0.1 * strength * veinScale)})`, 2.4 * w]);
+    strokeVeins(c, w => [`rgba(130,84,62,${Math.min(0.9, 0.3 * strength * veinScale)})`, 0.7 * w]);
+  }
   // pits: travertine is pocked rather than veined, the pocks are the main surface character
   for (let i = 0; i < 3800; i++) { c.globalAlpha = 0.1 + rand() * 0.34; c.fillStyle = '#7b6350'; const r = 0.6 + Math.pow(rand(), 2) * 2.6; c.beginPath(); c.ellipse(rand() * size, rand() * size, r * 1.5, r, rand() * 3, 0, Math.PI * 2); c.fill(); }
   // a few larger shells / fossil pockets
@@ -159,4 +161,29 @@ function buildDarkStone(seed: number, repeat: number) {
   for (let i = 0; i < 140; i++) { cc.globalAlpha = 0.12 + rand() * 0.3; const x = rand() * size, y = rand() * size, a = rand() * Math.PI, l = 8 + rand() * 60; cc.beginPath(); cc.moveTo(x, y); cc.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); cc.stroke(); }
   cc.globalAlpha = 1;
   return { map: toTexture(color, repeat, true), bump: toTexture(noise, repeat, false) };
+}
+
+const navyCache = new Map<string, { map: CanvasTexture; bump: CanvasTexture }>();
+/**
+ * Dark blue-black stone with thin pale veins and fine speckle, like the body of the case skeleton: a deep navy base, soft cloudy variation,
+ * a web of hairline cracks and a few brighter veins. Cached per seed.
+ */
+export function navyStoneTextures(seed = 7) {
+  const hit = navyCache.get(String(seed)); if (hit) return hit;
+  const size = 1024; const rand = rng(seed); const cloud = noiseCanvas(size, seed, 6, 0.9, 0.5);
+  const col = document.createElement('canvas'); col.width = col.height = size; const c = col.getContext('2d')!;
+  c.fillStyle = '#12151c'; c.fillRect(0, 0, size, size);
+  c.globalCompositeOperation = 'lighten'; c.globalAlpha = 0.16; c.drawImage(cloud, 0, 0); c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
+  const crack = (x: number, y: number, a: number, len: number, w: number, alpha: number, depth: number) => {
+    if (depth > 4 || len < 10) return;
+    c.beginPath(); c.moveTo(x, y); let px = x, py = y;
+    for (let s = 0; s < len; s += 5) { a += (rand() - 0.5) * 0.6; px += Math.cos(a) * 5; py += Math.sin(a) * 5; c.lineTo(px, py); if (rand() < 0.05) crack(px, py, a + (rand() > 0.5 ? 1 : -1) * (0.5 + rand() * 0.7), len * 0.45 - s * 0.3, w * 0.7, alpha * 0.8, depth + 1); }
+    c.strokeStyle = `rgba(205,215,235,${alpha})`; c.lineWidth = w; c.stroke();
+  };
+  for (let i = 0; i < 70; i++) crack(rand() * size, rand() * size, rand() * Math.PI * 2, 90 + rand() * 260, 0.7 + rand() * 0.8, 0.16 + rand() * 0.3, 0);
+  for (let i = 0; i < 7; i++) crack(rand() * size, rand() * size, rand() * Math.PI * 2, 320 + rand() * 420, 1.3 + rand() * 1.2, 0.5 + rand() * 0.3, 1); // a few bright veins
+  for (let i = 0; i < 2600; i++) { c.globalAlpha = 0.1 + rand() * 0.4; c.fillStyle = rand() > 0.5 ? '#aab4c8' : '#05060a'; const r = 0.5 + rand() * 1.4; c.beginPath(); c.arc(rand() * size, rand() * size, r, 0, Math.PI * 2); c.fill(); }
+  c.globalAlpha = 1;
+  const out = { map: toTexture(col, 1, true), bump: toTexture(cloud, 1, false) };
+  navyCache.set(String(seed), out); return out;
 }

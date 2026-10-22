@@ -11,7 +11,7 @@ import type { Pass } from 'three/examples/jsm/postprocessing/Pass.js';
 
 /** Final colour grade, applied in display space after tone mapping: split toning, a touch of contrast, vignette and fine film grain. */
 const GRADE = {
-  uniforms: { tDiffuse: { value: null }, time: { value: 0 }, res: { value: new Vector2(1, 1) }, contrast: { value: 1.07 }, saturation: { value: 1.0 }, vignette: { value: 0.3 }, grain: { value: 0.022 } },
+  uniforms: { tDiffuse: { value: null }, time: { value: 0 }, res: { value: new Vector2(1, 1) }, contrast: { value: 1.02 }, saturation: { value: 1.1 }, vignette: { value: 0.2 }, grain: { value: 0.01 } },
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
   fragmentShader: `
     uniform sampler2D tDiffuse; uniform float time; uniform vec2 res; uniform float contrast; uniform float saturation; uniform float vignette; uniform float grain;
@@ -43,7 +43,7 @@ export function Post() {
     const composer = new EffectComposer(gl, target);
     composer.addPass(new RenderPass(scene, camera));
     const ao = new GTAOPass(scene, camera, size.width, size.height);
-    ao.blendIntensity = 1;
+    ao.blendIntensity = 0.6;
     ao.updateGtaoMaterial({ radius: 0.7, distanceExponent: 1.4, thickness: 1.2, scale: 1.25, samples: 16, distanceFallOff: 1, screenSpaceRadius: false });
     ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, radiusExponent: 1, rings: 2, samples: 16 });
     composer.addPass(ao);
@@ -51,7 +51,7 @@ export function Post() {
     // hide anything named 'dust' while it runs (it is already in the colour image)
     const render = (ao as Pass).render.bind(ao);
     ao.render = (...args: Parameters<Pass['render']>) => { const d = scene.getObjectByName('dust'); const v = d?.visible; if (d) d.visible = false; render(...args); if (d && v !== undefined) d.visible = v; };
-    composer.addPass(new UnrealBloomPass(new Vector2(size.width, size.height), 0.36, 0.75, 0.95));
+    composer.addPass(new UnrealBloomPass(new Vector2(size.width, size.height), 0.16, 0.6, 1.1));
     composer.addPass(new OutputPass());
     const grade = new ShaderPass(new ShaderMaterial(GRADE));
     composer.addPass(grade);
