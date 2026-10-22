@@ -42,10 +42,11 @@ function fineChamferBox(w: number, h: number, d: number, c: number): BufferGeome
   return g;
 }
 
-function Mat({ kind }: { kind: Kind }) {
+function Mat({ kind, plain = false }: { kind: Kind; plain?: boolean }) {
   const tex = useMemo(() => darkStoneTextures(kind === 'stone' ? 3 : 9, kind === 'stone' ? 1.5 : 2), [kind]);
   const ref = useReferenceMaps();
-  if (ref) return <meshStandardMaterial map={ref.body} normalMap={ref.normal} normalScale={[0.7, 0.7] as unknown as never}
+  // `plain` parts (the raised ribs and plates on the lid) use dark worn metal: the projected reference texture is only right from the hero view and showed as pale flat slabs from the site camera
+  if (ref && !plain) return <meshStandardMaterial map={ref.body} normalMap={ref.normal} normalScale={[0.7, 0.7] as unknown as never}
     color={kind === 'armor' ? '#f1ede6' : '#ffffff'} roughness={kind === 'armor' ? 0.5 : 0.62} metalness={kind === 'armor' ? 0.5 : 0.25} />;
   // fallback while the reference textures are still being prepared
   return <meshStandardMaterial map={tex.map} bumpMap={tex.bump} bumpScale={kind === 'stone' ? 2.4 : 1.6}
@@ -55,12 +56,12 @@ function Mat({ kind }: { kind: Kind }) {
 const HERO = heroCamera(CAMERA.position, CAMERA.target, CAMERA.fov);
 const ZERO: V3 = [0, 0, 0];
 
-function P({ p, s, c = 0.03, k, o = ZERO }: { p: V3; s: V3; c?: number; k: Kind; o?: V3 }) {
+function P({ p, s, c = 0.03, k, o = ZERO, plain = false }: { p: V3; s: V3; c?: number; k: Kind; o?: V3; plain?: boolean }) {
   const geometry = useMemo(
     () => bakeProjectedUV(fineChamferBox(s[0], s[1], s[2], c), [p[0] + o[0], p[1] + o[1], p[2] + o[2]], HERO),
     [s[0], s[1], s[2], c, p[0], p[1], p[2], o[0], o[1], o[2]], // eslint-disable-line react-hooks/exhaustive-deps
   );
-  return <mesh position={p} geometry={geometry} castShadow receiveShadow><Mat kind={k} /></mesh>;
+  return <mesh position={p} geometry={geometry} castShadow receiveShadow><Mat kind={k} plain={plain} /></mesh>;
 }
 
 export const ChestModel = forwardRef<Group, { lidRef: React.RefObject<Group>; latchRef: React.RefObject<Group> }>(function ChestModel({ lidRef, latchRef }, ref) {
@@ -88,8 +89,8 @@ export const ChestModel = forwardRef<Group, { lidRef: React.RefObject<Group>; la
       {/* underside of the lid, seen when it is open */}
       <mesh position={[0, -0.006, hz]} rotation={[Math.PI / 2, 0, 0]}><planeGeometry args={[w + 0.08, d + 0.08]} /><meshStandardMaterial color="#0d0c0b" roughness={0.95} /></mesh>
       {/* raised segmented ribs across the lid */}
-      {[-1.75, -0.55, 0.65, 1.75].map(x => <P key={x} p={[x, lidH + 0.05, hz]} s={[0.32, 0.12, d - 0.2]} c={0.04} k="armor" o={LID} />)}
-      {[-0.7, 0.9].map(x => <P key={x} p={[x, lidH + 0.03, hz]} s={[1.05, 0.08, d - 0.7]} c={0.03} k="stone" o={LID} />)}
+      {[-1.75, -0.55, 0.65, 1.75].map(x => <P key={x} p={[x, lidH + 0.05, hz]} s={[0.32, 0.12, d - 0.2]} c={0.04} k="armor" o={LID} plain />)}
+      {[-0.7, 0.9].map(x => <P key={x} p={[x, lidH + 0.03, hz]} s={[1.05, 0.08, d - 0.7]} c={0.03} k="stone" o={LID} plain />)}
       {/* end caps of the lid, over the corner posts */}
       {sx.flatMap(x => sx.map(z => <P key={`${x}${z}`} p={[x * (hx - 0.1), lidH * 0.5, hz + z * (hz - 0.1)]} s={[0.5, lidH + 0.04, 0.5]} c={0.1} k="armor" o={LID} />))}
     </group>

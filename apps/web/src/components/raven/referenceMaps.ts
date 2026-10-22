@@ -11,7 +11,7 @@ const BASE = '/scene-ref/';
 // Baked once from reference.png by the offline step in scene-ref/README: chest albedo (80% desaturated), full colour, normal, height.
 const FILES = { chest: 'reference-chest.jpg', full: 'reference-full.jpg', normal: 'reference-normal.jpg', height: 'reference-height.jpg', pedestal: 'reference-pedestal.jpg', stone: 'reference-stone.jpg' } as const;
 /** The raven's silhouette in reference pixels (1254 px square). */
-export const RAVEN_POLY: [number, number][] = [[670, 455], [640, 520], [560, 545], [548, 600], [545, 700], [520, 770], [505, 788], [480, 774], [455, 796], [425, 778], [395, 800], [365, 780], [335, 798], [305, 774], [275, 794], [245, 770], [215, 786], [185, 760], [155, 778], [125, 752], [100, 760], [92, 740], [75, 700], [65, 600], [70, 500], [90, 430], [100, 395], [190, 380], [300, 345], [330, 342], [480, 340], [600, 345], [640, 420]];
+export const RAVEN_POLY: [number, number][] = [[670, 455], [640, 520], [560, 545], [548, 600], [545, 700], [520, 770], [505, 788], [480, 774], [455, 796], [425, 778], [395, 800], [365, 780], [335, 798], [305, 774], [275, 794], [245, 770], [215, 786], [185, 760], [155, 778], [125, 752], [104, 758], [98, 738], [82, 700], [74, 600], [80, 500], [112, 434], [130, 402], [205, 386], [300, 347], [330, 344], [480, 342], [600, 347], [640, 420]];
 
 /**
  * The case's own surface texture without the raven: the raven is real relief geometry on top, so the baked copy underneath
@@ -50,6 +50,9 @@ function bodyTexture(chest: HTMLImageElement): Texture {
   RAVEN_POLY.forEach(([x, y], i) => (i ? mg.lineTo(x * k, y * k) : mg.moveTo(x * k, y * k))); mg.closePath(); mg.fill();
   lg.globalCompositeOperation = 'destination-in'; lg.drawImage(mask, 0, 0);
   g.drawImage(layer, 0, 0);
+  // left of the case is the reference's pale background: the corner parts of the case reach into it from the site camera and showed as a ghostly pale quad
+  const edge = g.createLinearGradient(86 * k, 0, 110 * k, 0); edge.addColorStop(0, '#1d1c1a'); edge.addColorStop(1, 'rgba(29,28,26,0)');
+  g.fillStyle = '#1d1c1a'; g.fillRect(0, 280 * k, 86 * k, 560 * k); g.fillStyle = edge; g.fillRect(86 * k, 280 * k, 24 * k, 560 * k);
   const t = new Texture(c); t.minFilter = LinearMipmapLinearFilter; t.magFilter = LinearFilter; t.anisotropy = 8; t.colorSpace = SRGBColorSpace; t.needsUpdate = true;
   return t;
 }

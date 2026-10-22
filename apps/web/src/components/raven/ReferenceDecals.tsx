@@ -30,7 +30,15 @@ function Relief({ maps }: { maps: RefMaps }) {
   const w = 5.6, h = 3.0, pos: [number, number, number] = [-0.7, 1.25, hz + 0.04];
   const geometry = useMemo(() => {
     const feather = silhouette(maps.image, 16); const fd = feather.getContext('2d')!.getImageData(0, 0, feather.width, feather.height).data;
-    return displaceFromReference(new PlaneGeometry(w, h, 420, 230), pos, HERO, maps, 0.13, fd);
+    const full = displaceFromReference(new PlaneGeometry(w, h, 420, 230), pos, HERO, maps, 0.13, fd);
+    // keep the relief on the case: nothing past the left corner of the body and nothing below its base
+    const index = full.getIndex()!; const position = full.getAttribute('position'); const keep: number[] = [];
+    for (let i = 0; i < index.count; i += 3) {
+      const a = index.getX(i), b = index.getX(i + 1), c = index.getX(i + 2);
+      const x = (position.getX(a) + position.getX(b) + position.getX(c)) / 3 + pos[0], y = (position.getY(a) + position.getY(b) + position.getY(c)) / 3 + pos[1];
+      if (x > -CHEST.w / 2 + 0.03 && y > 0.04) keep.push(a, b, c);
+    }
+    full.setIndex(keep); return full;
   }, [maps]); // eslint-disable-line react-hooks/exhaustive-deps
   const alpha = useMemo(() => new CanvasTexture(silhouette(maps.image, 3)), [maps]);
   useEffect(() => { if (import.meta.env.DEV) (window as unknown as { __ravenReady?: boolean }).__ravenReady = true; }, []); // dev harness: scene fully built
