@@ -63,11 +63,11 @@ export function CaseOpeningScene({ theCase, winner, winners = [], opening, actio
       <div className="cc-live-courtyard__world" aria-hidden="true"><Suspense fallback={null}><CourtyardWorld phase="idle" reduced={true} backgroundOnly onLost={() => {}} /></Suspense></div>
       <div className="cc-live-courtyard__content">
       <div className="cc-unified-scene-heading"><nav aria-label="Навигация"><Link to="/">Кейсы</Link><span>/</span><span>{theCase.name}</span></nav><h1>{theCase.name}</h1><div className="cc-unified-scene-heading__tools"><button type="button" onClick={toggleSound} aria-pressed={sound}>{sound ? <Volume2 size={17} /> : <VolumeX size={17} />} Звук</button>{opening && <button type="button" onClick={onSkip}><SkipForward size={17} /> Пропустить</button>}</div></div>
-      {resultView || (opening && !winner
-        ? <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера. Повторное нажатие не требуется.</p><button type="button" onClick={onSkip}>Показать результат без анимации</button></div>
-        : theCase.items.length > 0 && (opening && winners.length > 1
+      {resultView || (opening && (winner
+        ? (winners.length > 1
           ? <div className="cc-multi-reels" data-count={winners.length}>{winners.map((item, index) => <div className="cc-multi-reels__row" key={index}><span className="cc-multi-reels__number">{index + 1} / {winners.length}</span><CaseReel items={theCase.items} winner={item} onComplete={() => reelCompleted(index, winners.length)} onTick={tick} /></div>)}</div>
-          : <CaseReel key={opening ? "spin" : "preview"} items={theCase.items} winner={winner ?? theCase.items[0]} preview={!opening} onComplete={onComplete} onTick={tick} />))}
+          : <CaseReel key="spin" items={theCase.items} winner={winner} onComplete={onComplete} onTick={tick} />)
+        : <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера. Повторное нажатие не требуется.</p><button type="button" onClick={onSkip}>Показать результат без анимации</button></div>))}
       
       {!opening && !resultView && <div className={"cc-opening-commit" + (isRaven ? " cc-raven-scene-controls" : "")}>{actions}</div>}
       </div>
