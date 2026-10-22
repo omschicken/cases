@@ -137,7 +137,7 @@ export function UpgraderPage() {
       <PageHeader
         kicker={t("upgrader.kicker")}
         title={t("upgrader.title")}
-        lede={t("upgrader.lede")}
+        lede=""
         aside={<Readout label={t("upgrader.chance")} value={`${(chance * 100).toFixed(1)}${t("upgrader.chanceSuffix")}`} />}
       />
 
@@ -164,7 +164,7 @@ export function UpgraderPage() {
             {inventory.length === 0 ? (
               <GameEmptyState
                 variant="upgrade-source"
-                label="СТАРТ / ИНВЕНТАРЬ"
+                label=""
                 title={t("upgrader.noSourceTitle")}
                 description={t("upgrader.noSourceBody")}
                 action={<Link to="/#collections">{t("home.discoveryHeading", { defaultValue: "Открыть каталог" })} <span aria-hidden="true">↗</span></Link>}
@@ -192,7 +192,7 @@ export function UpgraderPage() {
             <span className="upgrade-core__arrow" aria-hidden="true">➜</span>
             <span className="upgrade-core__chance">{target ? `${(chance * 100).toFixed(1)}%` : "—"}</span>
             <span className="upgrade-core__mult">{target ? `×${multiplier.toFixed(2)}` : t("upgrader.ux.pickBoth", { defaultValue: "Выберите оба предмета" })}</span>
-            <p className="upgrade-core__note">{t("upgrader.fairNote")}</p>
+
             {confirming ? (
               <div className="dz-confirm">
                 <button type="button" className="upgrade-core__btn" onClick={() => void execute()} disabled={submitting}>
@@ -221,14 +221,14 @@ export function UpgraderPage() {
             {!source ? (
               <GameEmptyState
                 variant="upgrade-target"
-                label="ЦЕЛЬ / ЗАБЛОКИРОВАНА"
+                label=""
                 title={t("upgrader.noTargetTitle")}
                 description={t("upgrader.noTargetBody")}
               />
             ) : eligibleTargets.length === 0 ? (
               <GameEmptyState
                 variant="upgrade-target"
-                label="ЦЕЛЬ / НЕТ ВАРИАНТОВ"
+                label=""
                 title={t("upgrader.noTargetsTitle")}
                 description={t("upgrader.noTargetsBody")}
               />
