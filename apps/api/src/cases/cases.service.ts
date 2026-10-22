@@ -10,6 +10,7 @@ import {
 import { Subject } from "rxjs";
 import { PrismaService } from "../prisma/prisma.service";
 import { WalletService } from "../wallet/wallet.service";
+import { assessCaseEconomics } from "../common/util/case-economics";
 import { CreateCaseDto } from "./dto/admin-case.dto";
 import { maskEmail } from "../common/util/mask";
 
@@ -48,14 +49,15 @@ export class CasesService {
         const previous = representative.get(baseName);
         if (!previous || item.valueMinor > previous.valueMinor) representative.set(baseName, item);
       }
-      return { ...itemCase, itemCount: itemCase.items.length, items: [...representative.values()] };
+      const eligibility = assessCaseEconomics(itemCase.items, itemCase.priceMinor);
+      return { ...itemCase, itemCount: itemCase.items.length, ...eligibility, items: [...representative.values()] };
     });
   }
 
   async getBySlug(slug: string) {
     const found = await this.prisma.case.findUnique({ where: { slug }, include: { items: true } });
     if (!found) throw new NotFoundException("Case not found");
-    return found;
+    return { ...found, ...assessCaseEconomics(found.items, found.priceMinor) };
   }
 
   /** Fetches the user's active provably-fair seed pair, creating one on first use. */
@@ -114,6 +116,9 @@ export class CasesService {
       throw new BadRequestException("This case is not configured in RUB");
     }
     if (theCase.items.length === 0) throw new BadRequestException("This case has no items configured");
+    if (!assessCaseEconomics(theCase.items, theCase.priceMinor).canOpen) {
+      throw new BadRequestException("Case temporarily unavailable pending price review");
+    }
 
     const seed = await this.getOrCreateActiveSeed(userId, clientSeedIfFirstUse);
 

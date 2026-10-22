@@ -16,6 +16,11 @@ import "../../styles/editorial-sections.css";
 import "../../styles/casecrow-dark.css";
 
 const topNav = mainNavItems.slice(0, 4);
+const sidebarNav = [
+  ...mainNavItems.slice(0, 4),
+  { to: "/inventory", key: "inventory" as const, icon: IconInventory, end: false },
+  ...mainNavItems.slice(4),
+];
 
 type HeaderProps = {
   searchValue?: string;
@@ -31,7 +36,7 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
   const [balanceMinor, setBalanceMinor] = useState<string | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
-  const [localSearch, setLocalSearch] = useState("");
+  const [localSearch, setLocalSearch] = useState(() => new URLSearchParams(location.search).get("q") ?? "");
   const query = searchValue ?? localSearch;
 
   useEffect(() => {
@@ -50,6 +55,7 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
   }, [user]);
 
   useEffect(() => setProfileOpen(false), [location.pathname]);
+  useEffect(() => { setLocalSearch(new URLSearchParams(location.search).get("q") ?? ""); }, [location.search]);
 
   useEffect(() => {
     if (!profileOpen) return;
@@ -81,7 +87,7 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
     event.preventDefault();
     if (onSearchChange) return;
     const value = query.trim();
-    navigate(value ? `/?q=${encodeURIComponent(value)}#collections` : "/#collections");
+    navigate(value ? `/?q=${encodeURIComponent(value)}#catalog` : "/#catalog");
   };
 
   return (
@@ -99,7 +105,7 @@ export function EditorialHeader({ searchValue, onSearchChange, activeSection }: 
       <div className="fidelity-account">
         <form className="fidelity-search" role="search" onSubmit={submitSearch}>
           <IconSearch />
-          <input value={query} onChange={(event) => updateSearch(event.target.value)} placeholder={t("home.searchPlaceholder")} aria-label={t("home.searchCases")} />
+          <input type="search" value={query} onChange={(event) => updateSearch(event.target.value)} placeholder={t("home.searchPlaceholder")} aria-label={t("home.searchCases")} />
         </form>
         {user ? (
           <>
@@ -136,7 +142,7 @@ export function EditorialSidebar({ activeSection, sections }: { activeSection?: 
   const { t } = useTranslation();
   return <aside className="fidelity-rail">
     <nav aria-label={t("nav.sections", { defaultValue: "Разделы" })}>
-      {(sections ? [...mainNavItems.slice(0, 4), { to: "/inventory", key: "inventory", icon: IconInventory, end: false }, ...mainNavItems.slice(4)] : mainNavItems).map(({ to, key, icon: Icon, end }) => (
+      {sidebarNav.map(({ to, key, icon: Icon, end }) => (
         <NavLink key={to} to={to} end={end} className={({ isActive }) => isActive || (activeSection === "cases" && key === "cases") ? "active" : undefined}>
           <Icon /><span>{t(`nav.sidebar.${key}`)}</span>
         </NavLink>
@@ -156,7 +162,7 @@ export function EditorialAppShell({ children, activeSection, sections }: Editori
       <EditorialSidebar activeSection={activeSection} sections={sections} />
       <main className="fidelity-main">{children}</main>
     </div>
-    <BottomNav includeInventory={sections} />
+    <BottomNav />
   </div>;
 }
 

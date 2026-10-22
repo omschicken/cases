@@ -1,3 +1,5 @@
+import { battleWinChance } from "./battle-odds";
+import { assessCaseEconomics } from "../common/util/case-economics";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { computeRoll, pickWeightedItem } from "@cs2-cases/shared";
 import type { Prisma } from "@prisma/client";
@@ -17,7 +19,7 @@ export class GamesService {
     return this.prisma.caseItem.findMany({
       where: { currency: "RUB", case: { isActive: true } },
       orderBy: { valueMinor: "asc" },
-      take: 250,
+      take: 1000,
     });
   }
 
@@ -79,6 +81,8 @@ export class GamesService {
       if (!target) throw new NotFoundException("Upgrade target not found");
       if (source.caseItem.currency !== "RUB") throw new BadRequestException("Only RUB-priced items can be upgraded");
       if (target.valueMinor <= source.caseItem.valueMinor) throw new BadRequestException("The target must be more valuable than the source item");
+      // A fixed 1% minimum would exceed the advertised 90% gross return beyond 90x.
+      if (target.valueMinor > source.caseItem.valueMinor * 90n) throw new BadRequestException("Upgrade target exceeds maximum 90x source value");
       const rawChance = Number(source.caseItem.valueMinor * 90_000n / target.valueMinor) / 100_000;
       const chance = Math.max(0.01, Math.min(0.75, rawChance));
 
@@ -105,6 +109,9 @@ export class GamesService {
     });
     if (!battleCase || battleCase.items.length === 0) throw new NotFoundException("Battle case not found");
     if (battleCase.items.some((item) => item.currency !== "RUB")) throw new BadRequestException("This case is not configured in RUB");
+    if (!assessCaseEconomics(battleCase.items, battleCase.priceMinor).canBattle) {
+      throw new BadRequestException("Battle temporarily unavailable pending price review");
+    }
     const seed = await this.cases.getOrCreateActiveSeed(userId);
 
     return this.prisma.$transaction(async (tx) => {
@@ -122,6 +129,7 @@ export class GamesService {
       const playerItem = battleCase.items.find((item) => item.id === playerPick.id)!;
       const botItem = battleCase.items.find((item) => item.id === botPick.id)!;
       const won = playerItem.valueMinor >= botItem.valueMinor;
+      const chance = battleWinChance(battleCase.items);
       const winnings = won
         ? await Promise.all([
             tx.inventoryItem.create({ data: { userId, caseItemId: playerItem.id } }),
@@ -138,7 +146,7 @@ export class GamesService {
         outputCaseItemId: won ? playerItem.id : null,
         outputInventoryItemId: winnings[0]?.id,
         roll: playerRoll,
-        chance: 0.5,
+        chance,
         serverSeedHash: lockedSeed.serverSeedHash,
         clientSeed: lockedSeed.clientSeed,
         nonce: lockedSeed.nonce,

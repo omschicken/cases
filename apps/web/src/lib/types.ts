@@ -36,6 +36,8 @@ export interface CaseDto {
   currency: string;
   imageUrl: string;
   isActive: boolean;
+  canOpen?: boolean; // server price/expected-payout safety check
+  canBattle?: boolean; // server battle EV guard
   itemCount?: number; // Full exterior count; list responses contain representative items.
   items: CaseItem[];
 }
