@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, Param, Post, Res, Sse, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Header, Param, Post, Res, Sse, UseGuards } from "@nestjs/common";
 import type { Response } from "express";
 import { map } from "rxjs/operators";
 import { Throttle } from "@nestjs/throttler";
@@ -87,6 +87,14 @@ export class CasesController {
   @Post("inventory/:id/sell")
   sell(@CurrentUser() user: AuthenticatedUser, @Param("id") id: string) {
     return this.casesService.sellItem(user.id, id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  @Post("inventory/sell-batch")
+  sellBatch(@CurrentUser() user: AuthenticatedUser, @Body() body: { ids?: string[] }) {
+    if (!Array.isArray(body?.ids)) throw new BadRequestException("Missing inventory ids");
+    return this.casesService.sellItemsBatch(user.id, body.ids);
   }
 
   @UseGuards(JwtAuthGuard)
