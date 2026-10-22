@@ -162,3 +162,28 @@ function buildDarkStone(seed: number, repeat: number) {
   cc.globalAlpha = 1;
   return { map: toTexture(color, repeat, true), bump: toTexture(noise, repeat, false) };
 }
+
+const navyCache = new Map<string, { map: CanvasTexture; bump: CanvasTexture }>();
+/**
+ * Dark blue-black stone with thin pale veins and fine speckle, like the body of the case skeleton: a deep navy base, soft cloudy variation,
+ * a web of hairline cracks and a few brighter veins. Cached per seed.
+ */
+export function navyStoneTextures(seed = 7) {
+  const hit = navyCache.get(String(seed)); if (hit) return hit;
+  const size = 1024; const rand = rng(seed); const cloud = noiseCanvas(size, seed, 6, 0.9, 0.5);
+  const col = document.createElement('canvas'); col.width = col.height = size; const c = col.getContext('2d')!;
+  c.fillStyle = '#12151c'; c.fillRect(0, 0, size, size);
+  c.globalCompositeOperation = 'lighten'; c.globalAlpha = 0.16; c.drawImage(cloud, 0, 0); c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
+  const crack = (x: number, y: number, a: number, len: number, w: number, alpha: number, depth: number) => {
+    if (depth > 4 || len < 10) return;
+    c.beginPath(); c.moveTo(x, y); let px = x, py = y;
+    for (let s = 0; s < len; s += 5) { a += (rand() - 0.5) * 0.6; px += Math.cos(a) * 5; py += Math.sin(a) * 5; c.lineTo(px, py); if (rand() < 0.05) crack(px, py, a + (rand() > 0.5 ? 1 : -1) * (0.5 + rand() * 0.7), len * 0.45 - s * 0.3, w * 0.7, alpha * 0.8, depth + 1); }
+    c.strokeStyle = `rgba(205,215,235,${alpha})`; c.lineWidth = w; c.stroke();
+  };
+  for (let i = 0; i < 70; i++) crack(rand() * size, rand() * size, rand() * Math.PI * 2, 90 + rand() * 260, 0.7 + rand() * 0.8, 0.16 + rand() * 0.3, 0);
+  for (let i = 0; i < 7; i++) crack(rand() * size, rand() * size, rand() * Math.PI * 2, 320 + rand() * 420, 1.3 + rand() * 1.2, 0.5 + rand() * 0.3, 1); // a few bright veins
+  for (let i = 0; i < 2600; i++) { c.globalAlpha = 0.1 + rand() * 0.4; c.fillStyle = rand() > 0.5 ? '#aab4c8' : '#05060a'; const r = 0.5 + rand() * 1.4; c.beginPath(); c.arc(rand() * size, rand() * size, r, 0, Math.PI * 2); c.fill(); }
+  c.globalAlpha = 1;
+  const out = { map: toTexture(col, 1, true), bump: toTexture(cloud, 1, false) };
+  navyCache.set(String(seed), out); return out;
+}
