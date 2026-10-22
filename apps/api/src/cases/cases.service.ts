@@ -331,6 +331,36 @@ export class CasesService {
     });
   }
 
+  /** Atomically sell a set of owned, RUB-priced inventory items. One request and one wallet credit. */
+  async sellItemsBatch(userId: string, ids: string[]) {
+    const unique = [...new Set(ids)];
+    if (!unique.length || unique.length > 500 || unique.some((id) => !/^[0-9a-f-]{36}$/i.test(id))) {
+      throw new BadRequestException("Select between 1 and 500 valid inventory items");
+    }
+    return this.prisma.$transaction(async (tx) => {
+      const items = await tx.inventoryItem.findMany({
+        where: { id: { in: unique }, userId, status: "IN_INVENTORY" },
+        include: { caseItem: true },
+      });
+      if (items.length !== unique.length || items.some((item) => item.caseItem.currency !== "RUB")) {
+        throw new BadRequestException("Some items are unavailable or cannot be sold");
+      }
+      const claimed = await tx.inventoryItem.updateMany({
+        where: { id: { in: unique }, userId, status: "IN_INVENTORY" },
+        data: { status: "SOLD", resolvedAt: new Date() },
+      });
+      if (claimed.count !== unique.length) throw new BadRequestException("Items changed during sale");
+      const amountMinor = items.reduce((sum, item) => sum + item.caseItem.valueMinor, 0n);
+      // Per-item ledger receipts let existing recovery tools verify each sold item.
+      for (const item of items) {
+        await this.wallet.creditInTx(tx, userId, item.caseItem.valueMinor, {
+          reason: "ITEM_SELL", referenceType: "InventoryItem", referenceId: item.id,
+        });
+      }
+      return { soldCount: items.length, amountMinor: amountMinor.toString(), itemIds: unique };
+    }, { timeout: 30000 });
+  }
+
   async verifyOpenEvent(openEventId: string) {
     const event = await this.prisma.caseOpenEvent.findUnique({
       where: { id: openEventId },
