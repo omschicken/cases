@@ -53,10 +53,11 @@ export function CaseOpeningScene({ theCase, winner, winners = [], opening, actio
     oscillator.start(); oscillator.stop(ctx.currentTime + .03);
     oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
   }
+  const isRaven = theCase.slug === "raven";
   const art = resolveCaseArt(theCase.slug, theCase.imageUrl);
   const featured = [...theCase.items].sort((a, b) => Number(BigInt(b.valueMinor) - BigInt(a.valueMinor))).slice(0, 5);
-  return <div className="cc-opening-page" style={{ "--cc-case-art": `url("${art}")` } as CSSProperties}>
-    <header className="cc-opening-hero">
+  return <div className={"cc-opening-page" + (isRaven ? " cc-raven-page" : "")} style={{ "--cc-case-art": `url("${art}")` } as CSSProperties}>
+    {!isRaven && <header className="cc-opening-hero">
       <div className="cc-opening-hero__copy">
         <nav aria-label="Навигация"><Link to="/">Кейсы</Link><span>/</span><span>{theCase.name}</span></nav>
         <h1>{CASECROW_ORIGINALS_BY_SLUG.has(theCase.slug) ? theCase.name : resultView ? "Твоя новая история" : "Открытие кейса"}</h1>
@@ -67,7 +68,7 @@ export function CaseOpeningScene({ theCase, winner, winners = [], opening, actio
         <button type="button" onClick={toggleSound} aria-pressed={sound}>{sound ? <Volume2 size={18} /> : <VolumeX size={18} />}<span>Звук</span></button>
         {opening && <button type="button" className="cc-skip" onClick={onSkip}><SkipForward size={18} /><span>Пропустить</span></button>}
       </div>
-    </header>
+    </header>}
     <section ref={stage} className="cc-opening-stage" aria-label="Открытие кейса" data-opening={opening}>
       {resultView || (theCase.slug === "raven" && winners.length <= 1 ? <RavenStage key={theCase.id} opening={opening} winner={winner} onComplete={onComplete} sound={sound} fallback={opening && !winner ? <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера.</p></div> : theCase.items.length > 0 ? <CaseReel key={opening ? "spin" : "preview"} items={theCase.items} winner={winner ?? theCase.items[0]} preview={!opening} onComplete={onComplete} onTick={tick} /> : null} /> : opening && !winner
         ? <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера. Повторное нажатие не требуется.</p><button type="button" onClick={onSkip}>Показать результат без анимации</button></div>
@@ -75,7 +76,8 @@ export function CaseOpeningScene({ theCase, winner, winners = [], opening, actio
           ? <div className="cc-multi-reels" data-count={winners.length}>{winners.map((item, index) => <div className="cc-multi-reels__row" key={index}><span className="cc-multi-reels__number">{index + 1} / {winners.length}</span><CaseReel items={theCase.items} winner={item} onComplete={() => reelCompleted(index, winners.length)} onTick={tick} /></div>)}</div>
           : <CaseReel key={opening ? "spin" : "preview"} items={theCase.items} winner={winner ?? theCase.items[0]} preview={!opening} onComplete={onComplete} onTick={tick} />))}
       
-      {!opening && !resultView && <div className="cc-opening-commit">{actions}</div>}
+      {isRaven && <div className="cc-raven-scene-tools"><nav aria-label="Навигация"><Link to="/">Кейсы</Link><span>/</span><span>Raven</span></nav><div className="cc-raven-scene-tools__right"><button type="button" onClick={toggleSound} aria-pressed={sound}>{sound ? <Volume2 size={17} /> : <VolumeX size={17} />}<span>Звук</span></button>{opening && <button type="button" onClick={onSkip}><SkipForward size={17} /><span>Пропустить</span></button>}</div></div>}
+      {!opening && !resultView && <div className={"cc-opening-commit" + (isRaven ? " cc-raven-scene-controls" : "")}>{actions}</div>}
     </section>
     <section className="cc-collection" aria-label="Коллекция и содержимое кейса">
       <div className="cc-collection__cover">
@@ -92,6 +94,6 @@ export function CaseOpeningScene({ theCase, winner, winners = [], opening, actio
         })}</div>
       </div>
     </section>
-    {resultView && <div className="cc-after-result">{actions}</div>}
+    {resultView && <div className={"cc-after-result" + (isRaven ? " cc-raven-after-result" : "")}>{actions}</div>}
   </div>;
 }
