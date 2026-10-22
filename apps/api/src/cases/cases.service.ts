@@ -351,12 +351,10 @@ export class CasesService {
       });
       if (claimed.count !== unique.length) throw new BadRequestException("Items changed during sale");
       const amountMinor = items.reduce((sum, item) => sum + item.caseItem.valueMinor, 0n);
-      // Per-item ledger receipts let existing recovery tools verify each sold item.
-      for (const item of items) {
-        await this.wallet.creditInTx(tx, userId, item.caseItem.valueMinor, {
-          reason: "ITEM_SELL", referenceType: "InventoryItem", referenceId: item.id,
-        });
-      }
+      // A single wallet credit and ledger entry keeps large sales fast and atomic.
+      await this.wallet.creditInTx(tx, userId, amountMinor, {
+        reason: "ITEM_SELL", referenceType: "InventoryBatch", referenceId: unique.slice().sort().join(",").slice(0, 220),
+      });
       return { soldCount: items.length, amountMinor: amountMinor.toString(), itemIds: unique };
     }, { timeout: 30000 });
   }
