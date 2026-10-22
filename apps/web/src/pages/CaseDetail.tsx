@@ -122,6 +122,11 @@ export function CaseDetailPage() {
   const [result, setResult] = useState<OpenCaseResult | null>(null);
   const [demoItem, setDemoItem] = useState<CaseItem | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [batchCount, setBatchCount] = useState(1);
+  const [batchBusy, setBatchBusy] = useState(false);
+  const [batchResults, setBatchResults] = useState<OpenCaseResult[]>([]);
+  const [batchDone, setBatchDone] = useState(false);
+  const [batchFailures, setBatchFailures] = useState(0);
   const [sellingResult, setSellingResult] = useState(false);
   const [soldResult, setSoldResult] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -135,6 +140,8 @@ export function CaseDetailPage() {
     if (!slug) return;
     let active = true;
     setTheCase(null);
+    setBatchResults([]);
+    setBatchDone(false);
     setError(null);
     setIsPreview(false);
     setResult(null);
@@ -205,6 +212,41 @@ export function CaseDetailPage() {
       setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotOpenCase"));
       setOpening(false);
       openingLockRef.current = false;
+    }
+  }
+
+  async function openBatch() {
+    if (!theCase || !user || isPreview || openingLockRef.current || batchBusy) return;
+    openingLockRef.current = true;
+    setBatchBusy(true);
+    setBatchResults([]);
+    setBatchDone(false);
+    setBatchFailures(0);
+    setError(null);
+    try {
+      // Every request is an independent server-authoritative opening.
+      // Sequential requests avoid bursting through the API rate limiter.
+      const won: OpenCaseResult[] = [];
+      let failed = 0;
+      for (let i = 0; i < batchCount; i++) {
+        try {
+          const result = await api.post<OpenCaseResult>("/cases/open", { caseId: theCase.id });
+          won.push(result);
+        } catch {
+          failed++;
+          break; // Do not charge for further openings after a failure.
+        }
+      }
+      setBatchResults(won);
+      setBatchFailures(failed);
+      if (won.length) {
+        window.setTimeout(() => setBatchDone(true), 3300);
+      } else {
+        setError("Не удалось открыть кейсы. Проверь баланс и попробуй ещё раз.");
+      }
+    } finally {
+      openingLockRef.current = false;
+      setBatchBusy(false);
     }
   }
 
@@ -364,10 +406,13 @@ export function CaseDetailPage() {
 
           {user && !isPreview ? (
             <>
-              <button onClick={openCase} disabled={opening} className="dza-open">
-                {opening ? t("caseDetail.rolling") : t("caseDetail.open", { defaultValue: "Открыть" })}
+              <button onClick={batchCount === 1 ? openCase : () => void openBatch()} disabled={opening || batchBusy || (batchResults.length > 0 && !batchDone)} className="dza-open">
+                {opening || batchBusy ? t("caseDetail.rolling") : batchCount === 1 ? t("caseDetail.open", { defaultValue: "Открыть" }) : `Открыть ×${batchCount}`}
               </button>
-              <button onClick={demoSpin} disabled={opening} className="dza-demo">
+              <div className="case-batch-picker" role="group" aria-label="Количество открытий">
+                {[1, 3, 5].map((count) => <button key={count} type="button" className={batchCount === count ? "is-active" : ""} aria-pressed={batchCount === count} disabled={opening || batchBusy} onClick={() => { setBatchCount(count); setBatchResults([]); setBatchDone(false); }}>×{count}</button>)}
+              </div>
+              <button onClick={demoSpin} disabled={opening || batchBusy} className="dza-demo">
                 {t("caseDetail.demoSpin")}
               </button>
             </>
@@ -387,6 +432,32 @@ export function CaseDetailPage() {
         </div>
       </section>
 
+      {batchResults.length > 0 && (
+        <section className="case-batch-results" aria-label="Результаты мультиоткрытия">
+          <div className="case-batch-results__head"><h2>Открыто: {batchResults.length}</h2>
+            <button type="button" onClick={() => { setBatchDone(true); }} disabled={batchDone}>Пропустить анимацию</button>
+          </div>
+          <div className="case-batch-reels">
+            {batchResults.map((entry, index) => (
+              <div className={`case-batch-reel ${batchDone ? "is-done" : "is-spinning"}`} key={entry.openEventId} style={{ "--reel-index": index, "--reel-rarity": rarityColor(entry.item.rarity) } as CSSProperties}>
+                <div className="case-batch-reel__viewport">
+                  <div className="case-batch-reel__track">
+                    {Array.from({ length: 13 }, (_, slot) => {
+                      const filler = theCase.items[(index * 7 + slot * 17) % theCase.items.length] ?? entry.item;
+                      const shown = slot === 11 ? entry.item : filler;
+                      return <div className="case-batch-reel__tile" key={slot}><img src={shown.imageUrl} alt="" /></div>;
+                    })}
+                  </div>
+                  <div className="case-batch-reel__marker" aria-hidden="true" />
+                </div>
+                <div className="case-batch-reel__reward"><img src={entry.item.imageUrl} alt="" /><strong>{entry.item.name}</strong><span>{formatMinor(entry.item.valueMinor, entry.item.currency)}</span></div>
+              </div>
+            ))}
+          </div>
+          {batchFailures > 0 && <p role="alert">Часть открытий не выполнена. Списания за неуспешные открытия не запрашивались повторно.</p>}
+          {batchDone && <Link className="dz-btn" to="/inventory">Перейти в инвентарь</Link>}
+        </section>
+      )}
       {revealed && winningItem && (
         <section
           className="dz-record"
