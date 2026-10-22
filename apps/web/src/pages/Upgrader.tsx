@@ -90,7 +90,7 @@ export function UpgraderPage() {
   const targetParts = shownTargetParts;
   const sourceTitle = sourceParts[1] ?? sourceParts[0] ?? "Выберите предмет";
   const targetTitle = targetParts[1] ?? targetParts[0] ?? "Выберите цель";
-  const rules = <Rules>Один предмет можно обменять на попытку получить более дорогой. Шанс равен 90% отношения цен с округлением сервера, минимум 1%, максимум 75%. Цель не может стоить более чем в 90 раз дороже исходного предмета. При неудаче исходный предмет расходуется. Кнопки ×1.5, ×2, ×3, ×5 автоматически подбирают ближайшую по стоимости цель. В «Мистери» предмет выдаётся всегда: 20% наград стоят 30–60% исходной цены, 15% стоят 60–90%, 50% стоят 90–110%, 10% стоят 110–150%, 5% стоят 150–200%. Если в любом из диапазонов нет предметов, операция недоступна и исходный предмет не расходуется.</Rules>;
+  const rules = <Rules>Один предмет можно обменять на попытку получить более дорогой. Шанс равен отношению цены исходного предмета к цене цели, но не более 75%. Апгрейд ×2 имеет шанс 50%. При неудаче исходный предмет расходуется. Кнопки ×1.5, ×2, ×3, ×5 автоматически подбирают ближайшую по стоимости цель. В «Мистери» предмет выдаётся всегда: 20% наград стоят 30–60% исходной цены, 15% стоят 60–90%, 50% стоят 90–110%, 10% стоят 110–150%, 5% стоят 150–200%. Если в любом из диапазонов нет предметов, операция недоступна и исходный предмет не расходуется.</Rules>;
 
   return <section className={"edv2 cc-upgrade" + (operation.busy || animating ? " is-processing" : "")}>
     <div className="cc-upgrade-horizon" aria-hidden="true">
@@ -131,7 +131,7 @@ export function UpgraderPage() {
             </div>
           </div>
           <div className="edv2-factors cc-upgrade-factors" aria-label={mode === "mystery" ? "Диапазоны наград" : "Подбор цели по цене"}>{(mode === "mystery" ? [] : [1.5, 2, 3, 5]).map(value => <button type="button" key={value} className={factor === value ? "is-active" : ""} aria-pressed={factor === value} disabled={!source || locked || !!result} onClick={() => selectMultiplier(value)}>×{value}</button>)}</div>
-          <p className="cc-upgrade-factor-note">{mode === "mystery" ? <>Награда от 30% до 200% цены.<br/>50% предметов в диапазоне 90–110%.</> : <>Множитель сразу подберёт ближайший скин.<br/>Цель также можно выбрать вручную.</>}</p>
+          
         </div>
 
         <div className={"edv2-panel edv2-upgrade-choice cc-upgrade-choice cc-upgrade-target-card" + (shownTarget ? " has-item" : "") + (result && !animating ? (result.won ? " is-success" : " is-failure") : "")}>
