@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Zap, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { api, ApiError } from "../lib/api";
 import { formatMinor } from "../lib/money";
@@ -240,7 +241,7 @@ export function CaseDetailPage() {
             {user && <div className="cc-opening-multipliers" role="group" aria-label="Количество кейсов">
               {([1, 3, 5] as const).map(count => <button key={count} type="button" className={openCount === count ? "is-active" : ""} disabled={opening || recoveryPending} aria-pressed={openCount === count} onClick={() => setOpenCount(count)}>×{count}</button>)}
             </div>}
-            <label className="cc-fast-toggle"><input type="checkbox" checked={fastOpen} onChange={event => setFastOpen(event.target.checked)} disabled={opening} />Быстро</label>
+            {theCase.slug === "raven" ? <button type="button" className={"cc-raven-fast" + (fastOpen ? " is-active" : "")} aria-pressed={fastOpen} onClick={() => setFastOpen(value => !value)} disabled={opening}><Zap size={17} fill={fastOpen ? "currentColor" : "none"} /><span>Быстро</span>{fastOpen && <Check size={15} />}</button> : <label className="cc-fast-toggle"><input type="checkbox" checked={fastOpen} onChange={event => setFastOpen(event.target.checked)} disabled={opening} />Быстро</label>}
           </div>
           <span className="cc-case-price">{formatMinor((BigInt(theCase.priceMinor) * BigInt(openCount)).toString(), theCase.currency)}</span>
           {user ? (
