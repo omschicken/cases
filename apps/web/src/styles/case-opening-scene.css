@@ -152,3 +152,16 @@
 :root[data-casecrow-theme="dark"] .case-detail .cc-opening-hero h1{color:#f4f5ef!important}
 :root[data-casecrow-theme="dark"] .case-detail .cc-opening-hero p,
 :root[data-casecrow-theme="dark"] .case-detail .cc-opening-hero nav{color:#c1cabc!important}
+
+/* Batch openings: independent reels without changing the CASECROW hero. */
+.cc-multi-reels { width:100%; display:grid; gap:12px; padding:clamp(8px,2vw,22px) 0; }
+.cc-multi-reels__row { position:relative; min-width:0; }
+.cc-multi-reels__number { display:block; margin:0 0 5px; font-size:11px; font-weight:700; letter-spacing:.13em; color:rgba(215,222,213,.75); }
+.cc-multi-reels .dz-reel { width:100%; max-width:none; min-width:0; }
+.cc-multi-reels[data-count="5"] { gap:8px; }
+.cc-multi-reels[data-count="5"] .dz-reel { font-size:12px; }
+@media(max-width:640px) {
+ .cc-multi-reels { gap:8px; }
+ .cc-multi-reels__number { font-size:10px; }
+ .cc-multi-reels .dz-reel { min-width:0; }
+}
