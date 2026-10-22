@@ -122,6 +122,8 @@ export function CaseDetailPage() {
   const [result, setResult] = useState<OpenCaseResult | null>(null);
   const [demoItem, setDemoItem] = useState<CaseItem | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [sellingResult, setSellingResult] = useState(false);
+  const [soldResult, setSoldResult] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [requestId, setRequestId] = useState(0);
   // The staged opening scene is dismissible; the page below keeps the result
@@ -136,6 +138,7 @@ export function CaseDetailPage() {
     setError(null);
     setIsPreview(false);
     setResult(null);
+    setSoldResult(false);
     setDemoItem(null);
     setRevealed(false);
     api
@@ -202,6 +205,20 @@ export function CaseDetailPage() {
       setError(err instanceof ApiError ? err.message : t("caseDetail.couldNotOpenCase"));
       setOpening(false);
       openingLockRef.current = false;
+    }
+  }
+
+  async function sellOpenedItem() {
+    if (!result || sellingResult || soldResult) return;
+    setSellingResult(true);
+    setError(null);
+    try {
+      await api.post(`/cases/inventory/${result.inventoryItemId}/sell`);
+      setSoldResult(true);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Не удалось продать предмет");
+    } finally {
+      setSellingResult(false);
     }
   }
 
@@ -297,6 +314,9 @@ export function CaseDetailPage() {
               onRevealed={handleChestRevealed}
             />
           }
+          onSell={sellOpenedItem}
+          selling={sellingResult}
+          sold={soldResult}
           onSkip={skipAnimation}
           onClose={() => setProtocolDismissed(true)}
           onOpenAgain={openCase}
@@ -388,7 +408,10 @@ export function CaseDetailPage() {
             <div className="dz-record__actions">
               {result ? (
                 <>
-                  <Link to="/inventory" className="dz-btn">{t("caseDetail.claim", { defaultValue: "Забрать в инвентарь" })}</Link>
+                  {soldResult ? <span className="dz-btn">Предмет продан</span> : <>
+                    <button type="button" className="dz-btn" onClick={() => void sellOpenedItem()} disabled={sellingResult}>{sellingResult ? "Продажа…" : `Продать за ${formatMinor(winningItem.valueMinor, winningItem.currency)}`}</button>
+                    <Link to="/inventory" className="dz-btn">{t("caseDetail.claim", { defaultValue: "Забрать в инвентарь" })}</Link>
+                  </>}
                   <Link to={`/verify/${result.openEventId}`} className="dz-btn">{t("caseDetail.verifyThisResult", { defaultValue: "Проверить результат" })}</Link>
                 </>
               ) : (
