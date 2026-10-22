@@ -6,6 +6,7 @@ import type { CaseDto, CaseItem } from "../lib/types";
 import { resolveCaseArt } from "../lib/caseArt";
 import { CASECROW_ORIGINALS_BY_SLUG } from "../lib/casecrowOriginals";
 import { CaseReel } from "./CaseReel";
+import { RavenStage } from "./raven/RavenStage";
 import { EditorialItemImage } from "./editorial/EditorialItemImage";
 
 interface Props {
@@ -68,7 +69,7 @@ export function CaseOpeningScene({ theCase, winner, winners = [], opening, actio
       </div>
     </header>
     <section ref={stage} className="cc-opening-stage" aria-label="Открытие кейса" data-opening={opening}>
-      {resultView || (opening && !winner
+      {resultView || (theCase.slug === "raven" && winners.length <= 1 ? <RavenStage key={theCase.id} opening={opening} winner={winner} onComplete={onComplete} sound={sound} fallback={opening && !winner ? <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера.</p></div> : theCase.items.length > 0 ? <CaseReel key={opening ? "spin" : "preview"} items={theCase.items} winner={winner ?? theCase.items[0]} preview={!opening} onComplete={onComplete} onTick={tick} /> : null} /> : opening && !winner
         ? <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера. Повторное нажатие не требуется.</p><button type="button" onClick={onSkip}>Показать результат без анимации</button></div>
         : theCase.items.length > 0 && (opening && winners.length > 1
           ? <div className="cc-multi-reels" data-count={winners.length}>{winners.map((item, index) => <div className="cc-multi-reels__row" key={index}><span className="cc-multi-reels__number">{index + 1} / {winners.length}</span><CaseReel items={theCase.items} winner={item} onComplete={() => reelCompleted(index, winners.length)} onTick={tick} /></div>)}</div>
