@@ -109,8 +109,9 @@ export class GamesService {
       if (!target) throw new NotFoundException("Upgrade target not found");
       if (source.caseItem.currency !== "RUB") throw new BadRequestException("Only RUB-priced items can be upgraded");
       if (target.valueMinor <= source.caseItem.valueMinor) throw new BadRequestException("The target must be more valuable than the source item");
-      // Fair value-ratio probability: x2 = 50%, x3 = 33.333...%, no house-edge multiplier or artificial caps.
-      const chance = Number(source.caseItem.valueMinor * 1_000_000_000_000n / target.valueMinor) / 1_000_000_000_000;
+      // Exact value-ratio odds capped at 75%: x2 = 50%, x3 = 33.333...%.
+      const ratio = Number(source.caseItem.valueMinor * 1_000_000_000_000n / target.valueMinor) / 1_000_000_000_000;
+      const chance = Math.min(0.75, ratio);
 
       const lockedSeed = await this.lockSeed(tx, seed.id);
       const roll = computeRoll(lockedSeed.serverSeed, lockedSeed.clientSeed, lockedSeed.nonce);
