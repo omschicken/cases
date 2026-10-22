@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SkipForward, Volume2, VolumeX } from "lucide-react";
 import type { CaseDto, CaseItem } from "../lib/types";
@@ -8,6 +8,8 @@ import { CASECROW_ORIGINALS_BY_SLUG } from "../lib/casecrowOriginals";
 import { CaseReel } from "./CaseReel";
 import "../styles/raven-integration.css";
 import { EditorialItemImage } from "./editorial/EditorialItemImage";
+
+const CourtyardWorld = lazy(() => import("./raven/RavenWorld"));
 
 interface Props {
   theCase: CaseDto;
@@ -68,7 +70,9 @@ export function CaseOpeningScene({ theCase, winner, winners = [], opening, actio
         {opening && <button type="button" className="cc-skip" onClick={onSkip}><SkipForward size={18} /><span>Пропустить</span></button>}
       </div>
     </header>}
-    <section ref={stage} className="cc-opening-stage" aria-label="Открытие кейса" data-opening={opening}>
+    <section ref={stage} className="cc-opening-stage cc-live-courtyard" aria-label="Открытие кейса" data-opening={opening}>
+      <div className="cc-live-courtyard__world" aria-hidden="true"><Suspense fallback={null}><CourtyardWorld phase="idle" reduced={true} backgroundOnly onLost={() => {}} /></Suspense></div>
+      <div className="cc-live-courtyard__content">
       {resultView || (opening && !winner
         ? <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера. Повторное нажатие не требуется.</p><button type="button" onClick={onSkip}>Показать результат без анимации</button></div>
         : theCase.items.length > 0 && (opening && winners.length > 1
@@ -77,6 +81,7 @@ export function CaseOpeningScene({ theCase, winner, winners = [], opening, actio
       
       {isRaven && <div className="cc-raven-scene-tools"><nav aria-label="Навигация"><Link to="/">Кейсы</Link><span>/</span><span>Raven</span></nav><div className="cc-raven-scene-tools__right"><button type="button" onClick={toggleSound} aria-pressed={sound}>{sound ? <Volume2 size={17} /> : <VolumeX size={17} />}<span>Звук</span></button>{opening && <button type="button" onClick={onSkip}><SkipForward size={17} /><span>Пропустить</span></button>}</div></div>}
       {!opening && !resultView && <div className={"cc-opening-commit" + (isRaven ? " cc-raven-scene-controls" : "")}>{actions}</div>}
+      </div>
     </section>
     <section className="cc-collection" aria-label="Коллекция и содержимое кейса">
       <div className="cc-collection__cover">
