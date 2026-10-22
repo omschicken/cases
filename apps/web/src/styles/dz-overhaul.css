@@ -2446,3 +2446,29 @@ h4 { font-weight: 700 !important; letter-spacing: 0.04em; }
   transform: translateY(-6px) scale(1.05) !important;
   filter: drop-shadow(0 14px 36px hsl(var(--chest-hue, 260) 80% 55% / .7)) !important;
 }
+
+/* Casecrow upgrade refinement: dark integrated surfaces, not bright placeholder boxes. */
+.upgrade-layout > section {
+  min-width: 0;
+  padding: clamp(14px, 2vw, 26px);
+  background: linear-gradient(155deg, rgba(19, 23, 33, .90), rgba(12, 15, 23, .94));
+  border: 1px solid rgba(185, 195, 217, .09);
+  border-radius: 22px;
+}
+.upgrade-layout .upgrade-selected {
+  min-height: 190px;
+  border-radius: 18px;
+  padding: 24px 14px;
+  background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--dz-rarity) 11%, transparent), transparent 75%), #11151e;
+  border: 1px solid rgba(200, 208, 224, .10);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .03);
+}
+.upgrade-layout .upgrade-selected img { width: min(180px, 70%); max-height: 135px; object-fit: contain; filter: drop-shadow(0 18px 22px rgba(0, 0, 0, .4)); }
+.upgrade-layout .dz-pick-grid { gap: 10px; scrollbar-color: #39404f transparent; }
+.upgrade-layout .dz-pick { border-radius: 14px; }
+.upgrade-layout .upgrade-core { border-radius: 28px; background: radial-gradient(circle at 50% 28%, rgba(130, 105, 228, .08), transparent 66%); }
+.upgrade-layout .upgrade-core__btn { border-radius: 13px; }
+@media (max-width: 850px) {
+ .upgrade-layout > section { padding: 14px; border-radius: 18px; }
+ .upgrade-layout .upgrade-core { padding: 14px; }
+}
