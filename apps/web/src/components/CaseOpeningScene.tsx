@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ShieldCheck, SkipForward, Volume2, VolumeX } from "lucide-react";
+import { SkipForward, Volume2, VolumeX } from "lucide-react";
 import type { CaseDto, CaseItem } from "../lib/types";
 import { resolveCaseArt } from "../lib/caseArt";
 import { CASECROW_ORIGINALS_BY_SLUG } from "../lib/casecrowOriginals";
@@ -11,6 +11,7 @@ import { EditorialItemImage } from "./editorial/EditorialItemImage";
 interface Props {
   theCase: CaseDto;
   winner: CaseItem | null;
+  winners?: CaseItem[];
   opening: boolean;
   actions: ReactNode;
   resultView: ReactNode;
@@ -18,9 +19,15 @@ interface Props {
   onSkip: () => void;
 }
 
-export function CaseOpeningScene({ theCase, winner, opening, actions, resultView, onComplete, onSkip }: Props) {
+export function CaseOpeningScene({ theCase, winner, winners = [], opening, actions, resultView, onComplete, onSkip }: Props) {
   const [sound, setSound] = useState(false);
   const stage = useRef<HTMLElement | null>(null);
+  const finishedReels = useRef(new Set<number>());
+  useEffect(() => { finishedReels.current.clear(); }, [opening]);
+  function reelCompleted(index: number, total: number) {
+    finishedReels.current.add(index);
+    if (finishedReels.current.size >= total) onComplete();
+  }
   useEffect(() => {
     if (opening) stage.current?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
   }, [opening]);
@@ -52,7 +59,7 @@ export function CaseOpeningScene({ theCase, winner, opening, actions, resultView
       <div className="cc-opening-hero__copy">
         <nav aria-label="Навигация"><Link to="/">Кейсы</Link><span>/</span><span>{theCase.name}</span></nav>
         <h1>{CASECROW_ORIGINALS_BY_SLUG.has(theCase.slug) ? theCase.name : resultView ? "Твоя новая история" : "Открытие кейса"}</h1>
-        <p>Каждый скин — новая история</p>
+        
       </div>
       <img className="cc-opening-hero__case" src={art} alt="" />
       <div className="cc-opening-tools">
@@ -63,13 +70,15 @@ export function CaseOpeningScene({ theCase, winner, opening, actions, resultView
     <section ref={stage} className="cc-opening-stage" aria-label="Открытие кейса" data-opening={opening}>
       {resultView || (opening && !winner
         ? <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера. Повторное нажатие не требуется.</p><button type="button" onClick={onSkip}>Показать результат без анимации</button></div>
-        : theCase.items.length > 0 && <CaseReel key={opening ? "spin" : "preview"} items={theCase.items} winner={winner ?? theCase.items[0]} preview={!opening} onComplete={onComplete} onTick={tick} />)}
-      {!resultView && <p className="cc-opening-assurance"><ShieldCheck size={14} />Результат определяется сервером</p>}
+        : theCase.items.length > 0 && (opening && winners.length > 1
+          ? <div className="cc-multi-reels" data-count={winners.length}>{winners.map((item, index) => <div className="cc-multi-reels__row" key={index}><span className="cc-multi-reels__number">{index + 1} / {winners.length}</span><CaseReel items={theCase.items} winner={item} onComplete={() => reelCompleted(index, winners.length)} onTick={tick} /></div>)}</div>
+          : <CaseReel key={opening ? "spin" : "preview"} items={theCase.items} winner={winner ?? theCase.items[0]} preview={!opening} onComplete={onComplete} onTick={tick} />))}
+      
       {!opening && !resultView && <div className="cc-opening-commit">{actions}</div>}
     </section>
     <section className="cc-collection" aria-label="Коллекция и содержимое кейса">
       <div className="cc-collection__cover">
-        <div><span className="cc-collection__badge">◈ CS2</span><h2>{theCase.name}</h2><p>Изучи коллекцию.<br />Найди свой следующий скин.</p></div>
+        <div><span className="cc-collection__badge">◈ CS2</span><h2>{theCase.name}</h2></div>
       </div>
       <div className="cc-collection__contents">
         <header><h2>Содержимое кейса</h2><a href="#all-case-items">Все скины <span>→</span></a></header>
