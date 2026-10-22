@@ -247,7 +247,7 @@ export function CaseDetailPage() {
       data-original-case={CASECROW_ORIGINALS_BY_SLUG.has(theCase.slug) ? "true" : undefined}
       data-rarity={revealed && winningItem ? winningItem.rarity : undefined}
     >
-      <CaseOpeningScene theCase={theCase} winner={winningItem} opening={opening} onComplete={finishOpening} onSkip={skipAnimation}
+      <CaseOpeningScene theCase={theCase} winner={winningItem} winners={batchResults.map(entry => entry.item)} opening={opening} onComplete={finishOpening} onSkip={skipAnimation}
         actions={<>
           <div className="cc-opening-controls" aria-label="Параметры открытия">
             {user && <div className="cc-opening-multipliers" role="group" aria-label="Количество кейсов">
