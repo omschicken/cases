@@ -165,3 +165,23 @@
  .cc-multi-reels__number { font-size:10px; }
  .cc-multi-reels .dz-reel { min-width:0; }
 }
+
+/* Unified temporary courtyard backdrop for all regular case pages.
+   The Raven case retains its interactive 3D environment. */
+.cc-opening-page:not(.cc-raven-page) .cc-opening-hero {
+  background-image:linear-gradient(90deg,rgba(247,245,237,.95) 0%,rgba(247,245,237,.76) 40%,rgba(247,245,237,.05) 100%),url("../assets/casecrow-approved/hero-courtyard-v2.webp");
+  background-size:cover;
+  background-position:center 54%;
+}
+.cc-opening-page:not(.cc-raven-page) .cc-opening-hero::before { display:none; }
+.cc-opening-page:not(.cc-raven-page) .cc-opening-hero::after { display:none; }
+.cc-opening-page:not(.cc-raven-page) .cc-opening-stage {
+  background-image:linear-gradient(180deg,rgba(248,245,238,.42),rgba(248,245,238,.84)),url("../assets/casecrow-approved/hero-courtyard-v2.webp");
+  background-size:cover;
+  background-position:center 65%;
+}
+.cc-opening-page:not(.cc-raven-page) .cc-collection__cover {
+  background-image:linear-gradient(90deg,rgba(240,236,228,.85),rgba(240,236,228,.18)),url("../assets/casecrow-approved/hero-courtyard-v2.webp");
+  background-size:cover;
+  background-position:center 60%;
+}
