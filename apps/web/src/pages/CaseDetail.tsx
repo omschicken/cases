@@ -304,25 +304,14 @@ export function CaseDetailPage() {
             <div className="dz-record__actions">
               {result ? (
                 <>
-                  {soldIds.includes(result.inventoryItemId) ? <span className="dz-btn">Продано</span> : <button type="button" className="dz-btn" disabled={sellingId !== null} onClick={() => void sellWonItem(result)}>{sellingId === result.inventoryItemId ? "Продажа…" : "Продать"}</button>}
+                  {soldIds.includes(result.inventoryItemId) ? <span className="dz-btn">Продано</span> : <button type="button" className="dz-btn cc-result-sell" disabled={sellingId !== null} onClick={() => void sellWonItem(result)}>{sellingId === result.inventoryItemId ? "Продажа…" : "Продать"}</button>}
                   <Link to="/inventory" className="dz-btn">{t("caseDetail.claim", { defaultValue: "Забрать в инвентарь" })}</Link>
-                  <Link to={`/verify/${result.openEventId}`} className="dz-btn">{t("caseDetail.verifyThisResult", { defaultValue: "Проверить результат" })}</Link>
                 </>
               ) : (
                 <Link to="/login" className="dz-btn">{t("caseDetail.logIn")}</Link>
               )}
             </div>
-            {result && (
-              <details className="dz-protocol__fair">
-                <summary>{t("caseDetail.roundDetails")}</summary>
-                <dl>
-                  <dt>roll</dt><dd>{result.roll.toFixed(8)}</dd>
-                  <dt>nonce</dt><dd>{result.nonce}</dd>
-                  <dt>server seed hash</dt><dd>{result.serverSeedHash}</dd>
-                  <dt>client seed</dt><dd>{result.clientSeed}</dd>
-                </dl>
-              </details>
-            )}
+
           </div>
         </section>
       )}</> : null}
@@ -337,28 +326,10 @@ export function CaseDetailPage() {
               <EditorialItemImage name={entry.item.name} imageUrl={entry.item.imageUrl} decorative />
               <strong>{entry.item.name}</strong>
               <span>{formatMinor(entry.item.valueMinor, entry.item.currency)}</span>
-              {soldIds.includes(entry.inventoryItemId) ? <span>Продано</span> : <button type="button" className="dz-btn" disabled={sellingId !== null} onClick={() => void sellWonItem(entry)}>{sellingId === entry.inventoryItemId ? "Продажа…" : "Продать"}</button>}
+              {soldIds.includes(entry.inventoryItemId) ? <span>Продано</span> : <button type="button" className="dz-btn cc-result-sell" disabled={sellingId !== null} onClick={() => void sellWonItem(entry)}>{sellingId === entry.inventoryItemId ? "Продажа…" : "Продать"}</button>}
             </article>
           ))}</div>
         </section>
-      )}
-
-      {seedHash && (
-        <details className="dz-panel cc-opening-audit"><summary>Проверка результата и сведения о генерации</summary><div>
-          <h3>Техническая проверка</h3>
-          <p>
-            {t("caseDetail.serverSeedCommitment")}
-            <br />
-            <code>{seedHash}</code>
-          </p>
-          <p>
-            {t("caseDetail.yourClientSeed")} <code>{clientSeed}</code>
-          </p>
-          <p>
-            {t("caseDetail.rotateHintPrefix")} <Link to="/profile">{t("caseDetail.profileLink")}</Link>{" "}
-            {t("caseDetail.rotateHintSuffix")}
-          </p>
-        </div></details>
       )}
 
       {/* ZONE 3 — contents */}
