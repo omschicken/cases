@@ -16,6 +16,8 @@ export function InventoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sellingId, setSellingId] = useState<string | null>(null);
+  const [sellingAll, setSellingAll] = useState(false);
+  const [confirmAll, setConfirmAll] = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [rarityFilter, setRarityFilter] = useState<ItemRarity | "all">("all");
   const [sort, setSort] = useState<SortMode>("newest");
@@ -53,7 +55,7 @@ export function InventoryPage() {
   }, [items, rarityFilter, sort]);
 
   async function sell(id: string) {
-    if (sellingId) return;
+    if (sellingId || sellingAll) return;
     setSellingId(id);
     setError(null);
     try {
@@ -65,6 +67,31 @@ export function InventoryPage() {
     } finally {
       setSellingId(null);
     }
+  }
+
+  async function sellAll() {
+    if (sellingAll || sellingId || items.length === 0) return;
+    setSellingAll(true);
+    setError(null);
+    setConfirmAll(false);
+    const snapshot = [...items];
+    let failed = 0;
+    for (const item of snapshot) {
+      try {
+        await api.post(`/cases/inventory/${item.id}/sell`);
+        setItems((current) => current.filter((entry) => entry.id !== item.id));
+      } catch {
+        failed += 1;
+      }
+    }
+    try {
+      const updated = await api.get<InventoryItemDto[]>("/cases/inventory/me");
+      setItems(updated);
+    } catch {
+      // Keep successfully sold items removed even if refreshing fails.
+    }
+    if (failed > 0) setError(`Не удалось продать ${failed} из ${snapshot.length} предметов. Проверь инвентарь перед повтором.`);
+    setSellingAll(false);
   }
 
   return (
@@ -93,6 +120,23 @@ export function InventoryPage() {
           </div>
         }
       />
+      {!loading && items.length > 0 && (
+        <div className="inventory-bulk-actions" style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 20 }}>
+          {confirmAll ? (
+            <>
+              <strong>Продать все {items.length} предметов за {formatMinor(items.reduce((total, item) => total + BigInt(item.caseItem.valueMinor), 0n).toString())}?</strong>
+              <button type="button" className="dz-danger" disabled={sellingAll || sellingId !== null} onClick={() => void sellAll()}>
+                {sellingAll ? "Продажа…" : "Подтвердить продажу"}
+              </button>
+              <button type="button" disabled={sellingAll} onClick={() => setConfirmAll(false)}>Отмена</button>
+            </>
+          ) : (
+            <button type="button" className="dz-danger" disabled={sellingAll || sellingId !== null} onClick={() => setConfirmAll(true)}>
+              {sellingAll ? "Продажа…" : `Продать всё · ${items.length}`}
+            </button>
+          )}
+        </div>
+      )}
       {error && <div className="catalog-notice" role="alert"><span>{error}</span><button className="catalog-retry" type="button" onClick={() => void load()}>{t("common.retry")}</button></div>}
       {loading && <div className="dz-item-grid" aria-busy="true">{Array.from({ length: 8 }, (_, index) => <ItemCardSkeleton key={index} />)}</div>}
       {!loading && items.length === 0 && !error && (
@@ -119,7 +163,7 @@ export function InventoryPage() {
                 <p className="dz-item-card__confirm">
                   {t("inventory.confirmSell", { price, defaultValue: "Sell this item for {{price}}?" })}
                 </p>
-                <button type="button" className="dz-danger" onClick={() => void sell(inv.id)} disabled={sellingId === inv.id}>
+                <button type="button" className="dz-danger" onClick={() => void sell(inv.id)} disabled={sellingId === inv.id || sellingAll}>
                   {sellingId === inv.id ? t("inventory.selling") : t("inventory.confirm", { defaultValue: "Confirm sale" })}
                 </button>
                 <button type="button" onClick={() => setConfirmId(null)} disabled={sellingId === inv.id}>
@@ -127,7 +171,7 @@ export function InventoryPage() {
                 </button>
               </>
             ) : (
-              <button type="button" onClick={() => setConfirmId(inv.id)} disabled={sellingId !== null}>
+              <button type="button" onClick={() => setConfirmId(inv.id)} disabled={sellingId !== null || sellingAll}>
                 {t("inventory.sellForBalance")}
               </button>
             )}
