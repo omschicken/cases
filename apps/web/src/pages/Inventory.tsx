@@ -82,8 +82,15 @@ export function InventoryPage() {
         localStorage.removeItem(key); setPending(null);
         setNotice("Продажа завершена, инвентарь и баланс обновлены.");
         inventory.refresh(); window.dispatchEvent(new Event("casecrow:wallet-updated"));
+      } else if (ids.every((id) => current.some((item) => item.id === id && item.status === "IN_INVENTORY"))) {
+        // All items remain available. The server atomically claims items before crediting;
+        // concurrent retries cannot credit the same item twice.
+        localStorage.removeItem(key); setPending(null);
+        setNotice("Предыдущая продажа не завершилась. Предметы доступны, можно попробовать снова.");
+        inventory.refresh();
       } else {
-        setError("Продажа не подтверждена. Повторный запрос не отправляется, чтобы избежать двойной операции.");
+        setError("Часть предметов изменила статус. Обновите инвентарь и проверьте историю операций.");
+        inventory.refresh();
       }
     } catch { setError("Не удалось проверить продажу. Повторный запрос не отправлен."); }
     finally { running.current = false; setBusy(false); }
