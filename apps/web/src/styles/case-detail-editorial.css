@@ -253,3 +253,15 @@
   .case-detail *, .case-detail *::before, .case-detail *::after,
   .dze-opening *, .dze-opening *::before, .dze-opening *::after { animation: none !important; transition: none !important; }
 }
+
+/* Casecrow opening result: primary sell action, quiet secondary navigation. */
+.dz-record__actions { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.dz-record__actions .cc-result-sell, .cc-batch-card .cc-result-sell {
+  appearance:none; border:1px solid rgba(229,206,155,.5);
+  border-radius:12px; padding:12px 22px; min-height:44px;
+  background:linear-gradient(145deg,#e6c994,#caa969); color:#171719;
+  font-weight:750; letter-spacing:.015em; cursor:pointer;
+  box-shadow:0 7px 24px rgba(0,0,0,.16);
+}
+.dz-record__actions .cc-result-sell:hover:not(:disabled), .cc-batch-card .cc-result-sell:hover:not(:disabled) {filter:brightness(1.08); transform:translateY(-1px);}
+.dz-record__actions .cc-result-sell:disabled, .cc-batch-card .cc-result-sell:disabled {opacity:.5;cursor:wait;}
