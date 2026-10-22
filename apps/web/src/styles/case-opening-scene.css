@@ -166,22 +166,23 @@
  .cc-multi-reels .dz-reel { min-width:0; }
 }
 
-/* Unified temporary courtyard backdrop for all regular case pages.
-   The Raven case retains its interactive 3D environment. */
-.cc-opening-page:not(.cc-raven-page) .cc-opening-hero {
-  background-image:linear-gradient(90deg,rgba(247,245,237,.95) 0%,rgba(247,245,237,.76) 40%,rgba(247,245,237,.05) 100%),url("../assets/casecrow-approved/hero-courtyard-v2.webp");
-  background-size:cover;
-  background-position:center 54%;
+/* Temporary shared courtyard for EVERY case, including Raven.
+   No static case model is composited into the hero. The interactive 3D
+   assets remain in the repository for a future staged integration. */
+.cc-opening-page .cc-opening-hero,
+:root[data-casecrow-theme="dark"] .case-detail .cc-opening-hero {
+  background:linear-gradient(90deg,rgba(247,245,237,.93) 0%,rgba(247,245,237,.58) 48%,rgba(247,245,237,.02) 100%),url("../assets/casecrow-approved/hero-courtyard-v2.webp") center 52% / cover no-repeat !important;
 }
-.cc-opening-page:not(.cc-raven-page) .cc-opening-hero::before { display:none; }
-.cc-opening-page:not(.cc-raven-page) .cc-opening-hero::after { display:none; }
-.cc-opening-page:not(.cc-raven-page) .cc-opening-stage {
-  background-image:linear-gradient(180deg,rgba(248,245,238,.42),rgba(248,245,238,.84)),url("../assets/casecrow-approved/hero-courtyard-v2.webp");
-  background-size:cover;
-  background-position:center 65%;
+.cc-opening-page .cc-opening-hero::before,
+.cc-opening-page .cc-opening-hero::after { display:none !important; }
+.cc-opening-page .cc-opening-hero__case { display:none !important; }
+.cc-opening-page .cc-opening-stage,
+.cc-raven-page .cc-opening-stage {
+  background:linear-gradient(180deg,rgba(248,245,238,.18),rgba(248,245,238,.55)),url("../assets/casecrow-approved/hero-courtyard-v2.webp") center 65% / cover no-repeat !important;
 }
-.cc-opening-page:not(.cc-raven-page) .cc-collection__cover {
-  background-image:linear-gradient(90deg,rgba(240,236,228,.85),rgba(240,236,228,.18)),url("../assets/casecrow-approved/hero-courtyard-v2.webp");
-  background-size:cover;
-  background-position:center 60%;
+.cc-opening-page .cc-collection__cover {
+  background:linear-gradient(90deg,rgba(240,236,228,.8),rgba(240,236,228,.12)),url("../assets/casecrow-approved/hero-courtyard-v2.webp") center 60% / cover no-repeat !important;
 }
+.cc-raven-page .cc-opening-stage { min-height:clamp(440px,60vw,680px); display:flex; align-items:center; justify-content:center; padding:28px 0 130px; }
+.cc-raven-page .cc-opening-stage .dz-reel { width:100%; }
+@media(max-width:720px) { .cc-raven-page .cc-opening-stage { padding-bottom:185px; min-height:530px; } }
