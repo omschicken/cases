@@ -83,7 +83,7 @@ function ContactSoil({ heightRef }: { heightRef: React.RefObject<Group> }) {
   </mesh>;
 }
 
-function World({ phase, reduced }: { phase: Phase; reduced: boolean }) {
+function World({ phase, reduced, backgroundOnly = false }: { phase: Phase; reduced: boolean; backgroundOnly?: boolean }) {
   const chest = useRef<Group>(null!); const lid = useRef<Group>(null!); const latch = useRef<Group>(null!);
   const time = useRef({ phase, start: -1 }); const progress = useRef(0);
   const dropLog = useRef<DropLog>({ start: -99, hits: [] }); const origin = useMemo(() => new Vector3(), []);
@@ -94,7 +94,7 @@ function World({ phase, reduced }: { phase: Phase; reduced: boolean }) {
     const length = ((durations as Record<string, number>)[phase] ?? 550) / 1000;
     const p = DEBUG_P ?? Math.min(1, elapsed / length); progress.current = p;
     const t = DEBUG_P !== null ? DEBUG_P * length : elapsed; // seconds into the phase
-    chest.current.visible = phase !== 'loading' && texturesReady; // the page opens on the empty courtyard; the case falls into it, fully built
+    chest.current.visible = !backgroundOnly && phase !== 'loading' && texturesReady; // the page opens on the empty courtyard; the case falls into it, fully built
     // the case drops under gravity, lands on a corner, rebounds and rocks to rest (rigid-body simulation); the impacts throw dust and jolt the camera
     if (phase === 'caseDrop' && !reduced) {
       const pose = simulateDrop(t); dropLog.current = { start: time.current.start, hits: pose.hits };
@@ -103,6 +103,7 @@ function World({ phase, reduced }: { phase: Phase; reduced: boolean }) {
     jolt.y = shakeAt(dropLog.current.hits, clock.elapsedTime - dropLog.current.start);
     // the lid is spring-loaded: it pops as the latch lets go, overshoots, knocks the hinge stop and settles
     const open = ['resultReveal', 'complete'].includes(phase) ? 1.9 : phase === 'lidOpen' ? (reduced ? 1.9 : lidAngle(t)) : phase === 'unlock' ? 0.05 * p * p * (3 - 2 * p) : 0;
+    if (backgroundOnly) return;
     lid.current.rotation.x = -open;
     latch.current.rotation.x = ['lidOpen', 'resultReveal', 'complete'].includes(phase) ? 1.5 : phase === 'unlock' ? p * 1.5 : 0;
   });
@@ -136,12 +137,9 @@ function World({ phase, reduced }: { phase: Phase; reduced: boolean }) {
     <LeafShadows aim={[0, 0, 1]} hole={1.8} spread={4.6} count={420} seed={1234} />
     <LeafShadows aim={[6.5, 3, -3.4]} hole={0} spread={4.2} count={360} seed={99} />
     <group ref={chest} visible={false}>
-      <ChestModel lidRef={lid} latchRef={latch} />
-      <ReferenceDecals />
-      <Raven3D phase={phase} progress={progress} perchY={CHEST.bodyH + CHEST.lidH + .02} />
+      {!backgroundOnly && <><ChestModel lidRef={lid} latchRef={latch} /><ReferenceDecals /><Raven3D phase={phase} progress={progress} perchY={CHEST.bodyH + CHEST.lidH + .02} /></>}
     </group>
-    <ContactSoil heightRef={chest} />
-    <Dust dropRef={dropLog} />
+    {!backgroundOnly && <><ContactSoil heightRef={chest} /><Dust dropRef={dropLog} /></>}
   </>;
 }
 
@@ -159,7 +157,7 @@ function ReadySignal({ onReady }: { onReady?: () => void }) {
   return null;
 }
 
-export default function RavenWorld({ phase, reduced, onLost, manual, onReady }: { phase: Phase; reduced: boolean; onLost: () => void; manual?: (api: RavenManualApi) => void; onReady?: () => void }) {
+export default function RavenWorld({ phase, reduced, onLost, manual, onReady, backgroundOnly = false }: { phase: Phase; reduced: boolean; onLost: () => void; manual?: (api: RavenManualApi) => void; onReady?: () => void; backgroundOnly?: boolean }) {
   // The scene is composed for a wide frame (about 2.2 : 1) and fills the whole stage; the stage keeps its own height.
   return <div className="raven-world" style={{ position: 'relative', width: '100%', height: '100%' }}>
     <Canvas shadows={{ type: VSMShadowMap }} dpr={manual ? (import.meta.env.DEV ? Number(new URLSearchParams(location.search).get('dpr')) || 1 : 1) : [1, 1.75]} frameloop={manual ? 'never' : 'always'} camera={{ position: [...VIEW.position], fov: VIEW.fov }}
@@ -170,7 +168,7 @@ export default function RavenWorld({ phase, reduced, onLost, manual, onReady }: 
       }}>
       <ReadySignal onReady={onReady} />
       {!NO_DOF && <Post />}
-      {ORBIT ? <OrbitControls target={[0.3, 1.0, 0]} makeDefault /> : <CameraRig phase={phase} reduced={reduced} />}<World phase={phase} reduced={reduced} />
+      {ORBIT ? <OrbitControls target={[0.3, 1.0, 0]} makeDefault /> : <CameraRig phase={phase} reduced={reduced} />}<World phase={phase} reduced={reduced} backgroundOnly={backgroundOnly} />
     </Canvas>
   </div>;
 }
