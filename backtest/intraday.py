@@ -37,7 +37,7 @@ class Plan:
     exit_at: int | None = None  # индекс бара, по open которого выходим принудительно
 
 
-def simulate(o, h, l, c, plans, cost, start=0, end=None, risk=0.01, lev=5.0):
+def simulate(o, h, l, c, plans, cost, start=0, end=None, risk=0.01, lev=5.0, stop_first=False):
     taker, maker, slip = cost["taker"], cost["maker"], cost["slip"]
     n = len(c)
     end = n if end is None else end
@@ -57,7 +57,7 @@ def simulate(o, h, l, c, plans, cost, start=0, end=None, risk=0.01, lev=5.0):
         fees = efee + qty * ex * rate
         pnl = pos * (ex - entry) * qty - fees
         eq += pnl
-        trades.append((i, pos, pnl, pnl / risk_usd if risk_usd else 0.0, fees / risk_usd if risk_usd else 0.0, kind, ent_lev, ent_slp))
+        trades.append((i, pos, pnl, pnl / risk_usd if risk_usd else 0.0, fees / risk_usd if risk_usd else 0.0, kind, ent_lev, ent_slp, ent_i))
         pos, qty = 0, 0.0
 
     for i in range(start, end):
@@ -117,6 +117,21 @@ def simulate(o, h, l, c, plans, cost, start=0, end=None, risk=0.01, lev=5.0):
                 if pos == 0:
                     continue
                 ex = kind = None
+                if stop_first:
+                    # консервативно: если за бар достигнуты и стоп, и тейк - считаем стоп; проверка по границам всего бара
+                    if pos == 1:
+                        if sl is not None and l_ <= sl:
+                            ex, kind, rate = min(o_, sl) * (1 - slip), "sl", taker
+                        elif tp is not None and h_ >= tp:
+                            ex, kind, rate = max(o_, tp), "tp", maker
+                    else:
+                        if sl is not None and h_ >= sl:
+                            ex, kind, rate = max(o_, sl) * (1 + slip), "sl", taker
+                        elif tp is not None and l_ <= tp:
+                            ex, kind, rate = min(o_, tp), "tp", maker
+                    if ex is not None:
+                        close_pos(i, ex, rate, kind)
+                    break
                 if pos == 1:
                     if sl is not None and b < start_p and b <= sl:
                         ex, kind, rate = min(o_, sl) * (1 - slip), "sl", taker
