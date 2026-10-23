@@ -24,6 +24,14 @@ interface Props {
 
 export function CaseOpeningScene({ theCase, winner, winners = [], opening, actions, resultView, onComplete, onSkip }: Props) {
   const [sound, setSound] = useState(false);
+  const [live3d, setLive3d] = useState(false);
+  const [sceneReady, setSceneReady] = useState(false);
+  useEffect(() => {
+    // Render the server-hosted approved backdrop directly on phones and low-power devices.
+    // Skip GPU initialization entirely rather than warming it up on every navigation.
+    const prefersStatic = window.matchMedia("(max-width: 767px), (prefers-reduced-motion: reduce)").matches;
+    setLive3d(!prefersStatic);
+  }, []);
   const stage = useRef<HTMLElement | null>(null);
   const finishedReels = useRef(new Set<number>());
   useEffect(() => { finishedReels.current.clear(); }, [opening]);
@@ -60,7 +68,7 @@ export function CaseOpeningScene({ theCase, winner, winners = [], opening, actio
   const featured = [...theCase.items].sort((a, b) => Number(BigInt(b.valueMinor) - BigInt(a.valueMinor))).slice(0, 5);
   return <div className={"cc-opening-page" + (isRaven ? " cc-raven-page" : "")} style={{ "--cc-case-art": `url("${art}")` } as CSSProperties}>
     <section ref={stage} className="cc-opening-stage cc-live-courtyard" aria-label="Открытие кейса" data-opening={opening}>
-      <div className="cc-live-courtyard__world" aria-hidden="true"><Suspense fallback={null}><CourtyardWorld phase="idle" reduced={true} backgroundOnly onLost={() => {}} /></Suspense></div>
+      <div className={"cc-live-courtyard__world" + (sceneReady ? " is-ready" : "")} aria-hidden="true">{live3d && <Suspense fallback={null}><CourtyardWorld phase="idle" reduced={true} backgroundOnly onReady={() => setSceneReady(true)} onLost={() => { setLive3d(false); setSceneReady(false); }} /></Suspense>}</div>
       <div className="cc-live-courtyard__content">
       <div className="cc-unified-scene-heading"><nav aria-label="Навигация"><Link to="/">Кейсы</Link><span>/</span><span>{theCase.name}</span></nav><h1>{theCase.name}</h1><div className="cc-unified-scene-heading__tools"><button type="button" onClick={toggleSound} aria-pressed={sound}>{sound ? <Volume2 size={17} /> : <VolumeX size={17} />} Звук</button>{opening && <button type="button" onClick={onSkip}><SkipForward size={17} /> Пропустить</button>}</div></div>
       {resultView || (opening && (winner
