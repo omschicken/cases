@@ -83,13 +83,10 @@ export function CaseDetailPage() {
   useEffect(() => {
     if (!theCase || !user) return;
     const receipt = loadOpening(user.id, theCase.id);
+    // A confirmed receipt is historical, not an active opening. Never replay
+    // the last drop when a visitor returns to this case.
+    if (receipt?.result) clearOpening(user.id, theCase.id);
     setRecoveryPending(Boolean(receipt && !receipt.result));
-    if (receipt?.result) {
-      setResult(receipt.result);
-      setBatchResults(receipt.results ?? [receipt.result]);
-      setRevealed(true);
-
-    }
   }, [theCase, user]);
 
   useEffect(() => {
@@ -121,8 +118,23 @@ export function CaseDetailPage() {
   }, [slug, t, requestId]);
 
   function finishOpening() {
+    if (user && theCase) clearOpening(user.id, theCase.id);
     setOpening(false);
     setRevealed(true);
+    openingLockRef.current = false;
+    skipRequestedRef.current = false;
+  }
+
+  function dismissResult() {
+    if (requestPendingRef.current || opening) return;
+    if (user && theCase) clearOpening(user.id, theCase.id);
+    setResult(null);
+    setBatchResults([]);
+    setDemoItem(null);
+    setRevealed(false);
+    setSoldIds([]);
+    setError(null);
+    setRecoveryPending(false);
     openingLockRef.current = false;
     skipRequestedRef.current = false;
   }
@@ -294,9 +306,11 @@ export function CaseDetailPage() {
                 <>
                   {soldIds.includes(result.inventoryItemId) ? <span className="dz-btn">Продано</span> : <button type="button" className="dz-btn cc-result-sell" disabled={sellingId !== null} onClick={() => void sellWonItem(result)}>{sellingId === result.inventoryItemId ? "Продажа…" : "Продать"}</button>}
                   <Link to="/inventory" className="dz-btn">{t("caseDetail.claim", { defaultValue: "Забрать в инвентарь" })}</Link>
+                  <button type="button" className="dz-btn" onClick={dismissResult}>Открыть ещё</button>
                 </>
               ) : (
                 <Link to="/login" className="dz-btn">{t("caseDetail.logIn")}</Link>
+                <button type="button" className="dz-btn" onClick={dismissResult}>Закрыть результат</button>
               )}
             </div>
 
@@ -307,7 +321,7 @@ export function CaseDetailPage() {
 
       {revealed && batchResults.length > 1 && (
         <section className="cc-batch-results" aria-label="Полученные предметы" role="status">
-          <div className="cc-batch-heading"><h2>Получено {batchResults.length} предметов</h2><Link to="/inventory">Перейти в инвентарь →</Link></div>
+          <div className="cc-batch-heading"><h2>Получено {batchResults.length} предметов</h2><Link to="/inventory">Перейти в инвентарь →</Link><button type="button" className="dz-btn" onClick={dismissResult}>Открыть ещё</button></div>
           <div className="cc-batch-grid">{batchResults.map((entry, index) => (
             <article key={entry.openEventId} className="cc-batch-card">
               <span className="cc-batch-index">{String(index + 1).padStart(2, "0")} / {batchResults.length}</span>
