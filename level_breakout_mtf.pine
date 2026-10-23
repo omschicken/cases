@@ -1,0 +1,261 @@
+//@version=5
+strategy("Level Breakout MTF (1h levels / 4h EMA / 5m entry)", shorttitle="LvlBO MTF", overlay=true,
+     initial_capital=10000, currency=currency.USD, pyramiding=0,
+     default_qty_type=strategy.fixed, default_qty_value=1,
+     commission_type=strategy.commission.percent, commission_value=0.05,
+     margin_long=5, margin_short=5, slippage=0, calc_on_every_tick=false)
+
+// margin_long / margin_short = 5  ->  плечо 20x (100 / 20). Если меняете плечо, поменяйте оба значения в strategy()
+// и входной параметр "Плечо" ниже.
+
+// ───────────────────────────── Входные параметры ─────────────────────────────
+gLvl = "Уровни"
+levelTf    = input.timeframe("60", "Таймфрейм уровней", group=gLvl)
+nBars      = input.int(200, "N — период поиска уровня (свечей TF уровней)", minval=10, group=gLvl)
+mGap       = input.int(5, "M — мин. расстояние между касаниями (свечей TF уровней)", minval=1, group=gLvl)
+pivL       = input.int(3, "Pivot: свечей слева", minval=1, group=gLvl)
+pivR       = input.int(3, "Pivot: свечей справа", minval=1, group=gLvl)
+tolPct     = input.float(0.05, "Погрешность касания, %", minval=0.0, step=0.01, group=gLvl)
+minTouches = input.int(2, "Мин. число касаний", minval=2, group=gLvl)
+onePerLvl  = input.bool(true, "Не входить повторно в уже отработанный уровень", group=gLvl)
+
+gTr = "Фильтр тренда"
+trendTf = input.timeframe("240", "Таймфрейм тренда", group=gTr)
+emaLen  = input.int(20, "Период EMA", minval=1, group=gTr)
+
+gRisk = "Риск и выходы"
+kBars     = input.int(5, "K — свечей для стопа (на TF графика)", minval=1, group=gRisk)
+riskPct   = input.float(2.0, "Риск на сделку, % баланса", minval=0.1, step=0.1, group=gRisk)
+rrRatio   = input.float(3.0, "Risk/Reward (TP = SL × R)", minval=0.5, step=0.5, group=gRisk)
+leverage  = input.int(20, "Плечо", minval=1, group=gRisk)
+skipOver  = input.bool(true, "Пропускать сделку, если нужный объём > баланс × плечо (иначе — брать максимум)", group=gRisk)
+minSlPct  = input.float(0.0, "Мин. размер стопа, % (0 = без фильтра)", minval=0.0, step=0.05, group=gRisk)
+
+gGen = "Общее"
+allowLong  = input.bool(true, "Разрешить LONG", group=gGen)
+allowShort = input.bool(true, "Разрешить SHORT", group=gGen)
+startTime  = input.time(timestamp("2024-01-01 00:00 +0000"), "Начало теста", group=gGen)
+endTime    = input.time(timestamp("2030-01-01 00:00 +0000"), "Конец теста", group=gGen)
+
+if timeframe.in_seconds() > timeframe.in_seconds(levelTf)
+    runtime.error("Таймфрейм графика должен быть не выше таймфрейма уровней")
+
+tol = tolPct / 100.0
+
+// ───────────────────────────── Данные старших ТФ ─────────────────────────────
+// Всё берётся с [1] + lookahead_on: на графике видны только ЗАКРЫТЫЕ свечи старшего ТФ (без перерисовки).
+f_htf(int l, int r) =>
+    float ph = ta.pivothigh(high, l, r)
+    float pl = ta.pivotlow(low, l, r)
+    int phIdx = na(ph) ? na : bar_index[r]
+    int plIdx = na(pl) ? na : bar_index[r]
+    [ph[1], pl[1], phIdx[1], plIdx[1], bar_index[1]]
+
+[ph1, pl1, phIdx1, plIdx1, idx1] = request.security(syminfo.tickerid, levelTf, f_htf(pivL, pivR), lookahead=barmerge.lookahead_on)
+float emaTrend = request.security(syminfo.tickerid, trendTf, ta.ema(close, emaLen)[1], lookahead=barmerge.lookahead_on)
+
+// ───────────────────────────── Построение уровней ─────────────────────────────
+var float[] hiPr = array.new_float()
+var int[]   hiIx = array.new_int()
+var float[] loPr = array.new_float()
+var int[]   loIx = array.new_int()
+var float[] resLv = array.new_float()   // валидные уровни сопротивления (по High)
+var float[] supLv = array.new_float()   // валидные уровни поддержки (по Low)
+
+var float usedLong = na
+var float usedShort = na
+var float plannedLong = na
+var float plannedShort = na
+
+f_prune(float[] pr, int[] ix, int cur, int n) =>
+    while array.size(ix) > 0 and cur - array.get(ix, 0) > n
+        array.shift(ix)
+        array.shift(pr)
+    true
+
+// Кластеризация пивотов: касания в пределах tol, между соседними касаниями >= m свечей.
+f_build(float[] pr, int[] ix, float[] out, int m, float t, int minT) =>
+    array.clear(out)
+    int n = array.size(pr)
+    if n > 0
+        for i = 0 to n - 1
+            float p = array.get(pr, i)
+            float s = 0.0
+            int c = 0
+            int last = -1000000
+            for j = 0 to n - 1
+                float q = array.get(pr, j)
+                int qi = array.get(ix, j)
+                if math.abs(q - p) / p <= t and qi - last >= m
+                    c += 1
+                    s += q
+                    last := qi
+            if c >= minT
+                array.push(out, s / c)
+    true
+
+f_has(float[] lv, float x, float t) =>
+    bool found = false
+    int n = array.size(lv)
+    if n > 0 and not na(x)
+        for i = 0 to n - 1
+            if math.abs(array.get(lv, i) - x) / x <= t
+                found := true
+    found
+
+// Ближайший валидный уровень выше (above=true) или ниже ref
+f_near(float[] lv, float ref, float used, float t, bool useUsed, bool above) =>
+    float best = na
+    int n = array.size(lv)
+    if n > 0
+        for i = 0 to n - 1
+            float v = array.get(lv, i)
+            bool blocked = useUsed and not na(used) and math.abs(v - used) / v <= t
+            bool side = above ? v > ref : v < ref
+            if side and not blocked
+                if na(best) or (above ? v < best : v > best)
+                    best := v
+    best
+
+int curIdx = nz(idx1, 0)
+bool newPH = not na(ph1) and nz(phIdx1[1], -1) != phIdx1
+bool newPL = not na(pl1) and nz(plIdx1[1], -1) != plIdx1
+bool newHtfBar = curIdx != nz(curIdx[1], 0)
+
+if newPH
+    array.push(hiPr, ph1)
+    array.push(hiIx, phIdx1)
+if newPL
+    array.push(loPr, pl1)
+    array.push(loIx, plIdx1)
+
+if newHtfBar or newPH or newPL
+    f_prune(hiPr, hiIx, curIdx, nBars)
+    f_prune(loPr, loIx, curIdx, nBars)
+    f_build(hiPr, hiIx, resLv, mGap, tol, minTouches)
+    f_build(loPr, loIx, supLv, mGap, tol, minTouches)
+    if not f_has(resLv, usedLong, tol)
+        usedLong := na
+    if not f_has(supLv, usedShort, tol)
+        usedShort := na
+
+// ───────────────────────────── Учёт использованных уровней ─────────────────────────────
+int tradeCnt = strategy.closedtrades + strategy.opentrades
+if tradeCnt > nz(tradeCnt[1], 0)
+    if not na(plannedLong)
+        usedLong := plannedLong
+    if not na(plannedShort)
+        usedShort := plannedShort
+
+// ───────────────────────────── Сигналы и ордера ─────────────────────────────
+float lvUp = f_near(resLv, close, usedLong, tol, onePerLvl, true)
+float lvDn = f_near(supLv, close, usedShort, tol, onePerLvl, false)
+float slL = ta.lowest(low, kBars)     // мин. Low последних K закрытых свечей перед пробоем
+float slS = ta.highest(high, kBars)   // макс. High последних K закрытых свечей перед пробоем
+
+float bal = strategy.initial_capital + strategy.netprofit
+bool inRange = time >= startTime and time <= endTime
+bool flat = strategy.position_size == 0
+
+bool longSetup = flat and inRange and allowLong and not na(emaTrend) and close > emaTrend and not na(lvUp)
+bool shortSetup = flat and inRange and allowShort and not na(emaTrend) and close < emaTrend and not na(lvDn)
+
+float qtyL = na
+float tpL = na
+if longSetup
+    float dist = lvUp - slL
+    if dist > 0 and dist / lvUp * 100 >= minSlPct
+        float vol = bal * riskPct / 100 / (dist / lvUp)      // Объём = (Баланс × риск) / SL%
+        float maxVol = bal * leverage
+        if vol > maxVol
+            vol := skipOver ? na : maxVol
+        if not na(vol)
+            qtyL := vol / lvUp
+            tpL := lvUp + rrRatio * dist
+
+float qtyS = na
+float tpS = na
+if shortSetup
+    float dist = slS - lvDn
+    if dist > 0 and dist / lvDn * 100 >= minSlPct
+        float vol = bal * riskPct / 100 / (dist / lvDn)
+        float maxVol = bal * leverage
+        if vol > maxVol
+            vol := skipOver ? na : maxVol
+        if not na(vol)
+            qtyS := vol / lvDn
+            tpS := lvDn - rrRatio * dist
+
+plannedLong := na
+plannedShort := na
+
+if flat
+    if not na(qtyL)
+        strategy.entry("Long", strategy.long, qty=qtyL, stop=lvUp)               // Buy Stop на уровне
+        strategy.exit("Long exit", "Long", stop=slL, limit=tpL)
+        plannedLong := lvUp
+    else
+        strategy.cancel("Long")
+        strategy.cancel("Long exit")
+    if not na(qtyS)
+        strategy.entry("Short", strategy.short, qty=qtyS, stop=lvDn)             // Sell Stop на уровне
+        strategy.exit("Short exit", "Short", stop=slS, limit=tpS)
+        plannedShort := lvDn
+    else
+        strategy.cancel("Short")
+        strategy.cancel("Short exit")
+else
+    // в позиции: убираем висящий противоположный вход
+    strategy.cancel(strategy.position_size > 0 ? "Short" : "Long")
+
+// ───────────────────────────── Статистика ─────────────────────────────
+var float eqPeak = strategy.initial_capital
+var float maxDdUsd = 0.0
+var float maxDdPct = 0.0
+var int wins = 0
+var int losses = 0
+var int curLossStreak = 0
+var int maxLossStreak = 0
+var float prevNet = 0.0
+
+float eq = strategy.equity
+eqPeak := math.max(eqPeak, eq)
+maxDdUsd := math.max(maxDdUsd, eqPeak - eq)
+maxDdPct := math.max(maxDdPct, (eqPeak - eq) / eqPeak * 100)
+
+if strategy.closedtrades > nz(strategy.closedtrades[1], 0)
+    float pnl = strategy.netprofit - prevNet     // результат сделки с учётом комиссий
+    prevNet := strategy.netprofit
+    if pnl > 0
+        wins += 1
+        curLossStreak := 0
+    else
+        losses += 1
+        curLossStreak += 1
+        maxLossStreak := math.max(maxLossStreak, curLossStreak)
+
+var table tbl = table.new(position.top_right, 2, 9, border_width=1)
+f_row(int r, string name, string val, color c) =>
+    table.cell(tbl, 0, r, name, text_color=color.white, bgcolor=color.new(color.gray, 25), text_halign=text.align_left)
+    table.cell(tbl, 1, r, val, text_color=color.white, bgcolor=color.new(c, 25), text_halign=text.align_right)
+
+if barstate.islast
+    int total = wins + losses
+    float winRate = total > 0 ? wins / total * 100.0 : 0.0
+    float net = strategy.netprofit
+    color neutral = color.new(color.gray, 0)
+    color pc = net >= 0 ? color.green : color.red
+    f_row(0, "Сделок", str.tostring(total), neutral)
+    f_row(1, "Win Rate", str.tostring(winRate, "#.##") + " %  (" + str.tostring(wins) + "W / " + str.tostring(losses) + "L)", neutral)
+    f_row(2, "Прибыль/убыток, $", str.tostring(net, "#.##"), pc)
+    f_row(3, "Прибыль/убыток, %", str.tostring(net / strategy.initial_capital * 100, "#.##") + " %", pc)
+    f_row(4, "Итоговый баланс, $", str.tostring(strategy.initial_capital + net, "#.##"), pc)
+    f_row(5, "Макс. просадка, $", str.tostring(maxDdUsd, "#.##"), color.red)
+    f_row(6, "Макс. просадка, %", str.tostring(maxDdPct, "#.##") + " %", color.red)
+    f_row(7, "Макс. убытков подряд", str.tostring(maxLossStreak), neutral)
+    f_row(8, "Комиссия", "0.05% в одну сторону", neutral)
+
+// ───────────────────────────── Графика ─────────────────────────────
+plot(emaTrend, "EMA тренда (старший ТФ)", color=color.new(color.orange, 0), linewidth=2)
+plot(lvUp, "Ближайшее сопротивление", color=color.new(color.red, 0), style=plot.style_linebr)
+plot(lvDn, "Ближайшая поддержка", color=color.new(color.green, 0), style=plot.style_linebr)
