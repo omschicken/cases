@@ -1,4 +1,4 @@
-"""Прогон внутридневных стратегий: python intraday_run.py <папка_с_5m_csv> [tf_override_min]
+"""Прогон внутридневных стратегий: python intraday_run.py <папка_csv> [tf_файла_мин=5] [tf_стратегий_мин]
 
 Для каждой пары и стратегии: сценарии издержек gross / real / maker, метрики и доходность по годам (real).
 """
@@ -55,12 +55,12 @@ def job(args):
 
 if __name__ == "__main__":
     data = sys.argv[1]
-    override = int(sys.argv[2]) if len(sys.argv) > 2 else None
-    base_tf = override or 5
+    base_tf = int(sys.argv[2]) if len(sys.argv) > 2 else 5
+    override = int(sys.argv[3]) if len(sys.argv) > 3 else None
     with Pool(3) as p:
         res = p.map(job, [(s, data, base_tf, override) for s in SYMS])
     df = pd.DataFrame([r for rr in res for r in rr])
-    df.to_csv(f"intraday_{override or 5}m.csv", index=False)
+    df.to_csv(f"intraday_{base_tf}m_as_{override or 'native'}.csv", index=False)
     pd.set_option("display.width", 250)
     pd.set_option("display.max_columns", 40)
     agg = df.groupby("strat", sort=False).agg(

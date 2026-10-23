@@ -36,7 +36,7 @@ def _market(side, sl, tp):
 
 def orb(x: Ctx, start_min, range_min, rr, session_hours=8, min_w=0.001):
     """Opening range breakout: диапазон первых range_min минут сессии, пробой в любую сторону, SL = противоположный край."""
-    k, plans = range_min // x.tf, {}
+    k, plans = max(1, range_min // x.tf), {}
     sess = session_hours * 60 // x.tf
     for i0 in np.flatnonzero(x.mod == start_min):
         i1 = i0 + k - 1
@@ -179,6 +179,8 @@ def hour_long(x: Ctx, start_h, end_h):
 def tod_momentum(x: Ctx, sig_start, sig_end, trade_start, trade_end):
     """Внутридневной импульс: знак доходности окна [sig_start, sig_end) задаёт направление сделки в [trade_start, trade_end)."""
     plans = {}
+    if min(sig_end - sig_start, trade_end - trade_start) < x.tf:
+        return plans
     span = (trade_end - trade_start) // x.tf
     for i0 in np.flatnonzero(x.mod == sig_start):
         j1 = i0 + (sig_end - sig_start) // x.tf
