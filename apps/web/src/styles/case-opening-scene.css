@@ -223,3 +223,42 @@
 .cc-unified-scene-heading__tools button { padding:9px 11px; font-size:11px; }
 .cc-opening-page .cc-live-courtyard__content>.cc-opening-commit { bottom:12px; gap:9px; padding:12px !important; }
 }
+
+/* Premium translucent drop result over the live courtyard. */
+.cc-opening-page .cc-live-courtyard__content > .dz-record {
+  position:relative;
+  z-index:4;
+  width:min(920px,calc(100% - 36px));
+  min-height:310px;
+  margin:24px auto;
+  box-sizing:border-box;
+  background:linear-gradient(145deg,rgba(43,54,47,.77),rgba(13,22,17,.68)) !important;
+  border:1px solid rgba(255,255,255,.24) !important;
+  border-radius:24px !important;
+  box-shadow:0 22px 68px rgba(8,17,12,.28),inset 0 1px rgba(255,255,255,.14) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
+  backdrop-filter:blur(22px) saturate(145%);
+  color:#f7f7f1 !important;
+  overflow:hidden;
+}
+.cc-opening-page .cc-live-courtyard__content > .dz-record::before {
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 20% 0%,rgba(230,245,226,.11),transparent 64%);
+}
+.cc-opening-page .cc-live-courtyard__content > .dz-record .dz-record__name {color:#fff !important;text-shadow:0 1px 16px rgba(0,0,0,.2);}
+.cc-opening-page .cc-live-courtyard__content > .dz-record .dz-record__value {color:#e1edd9 !important;}
+.cc-opening-page .cc-live-courtyard__content > .dz-record .dz-record__label {color:#bdccbb !important;}
+.cc-opening-page .cc-live-courtyard__content > .dz-record .dz-record__actions {display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.cc-opening-page .cc-live-courtyard__content > .dz-record .dz-btn {
+  display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 17px;
+  border:1px solid rgba(255,255,255,.2) !important;border-radius:13px !important;
+  background:rgba(255,255,255,.11) !important;color:#f8f9f4 !important;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);text-decoration:none;
+}
+.cc-opening-page .cc-live-courtyard__content > .dz-record .dz-btn:hover {background:rgba(255,255,255,.19) !important;}
+.cc-opening-page .cc-live-courtyard__content > .dz-record .cc-result-sell {background:rgba(185,205,174,.25) !important;border-color:rgba(208,229,196,.42) !important;}
+@media(max-width:767px) {
+ .cc-opening-page .cc-live-courtyard__content > .dz-record {width:calc(100% - 24px);padding:20px 16px !important;margin:12px auto;border-radius:19px !important;min-height:0;}
+ .cc-opening-page .cc-live-courtyard__content > .dz-record .dz-record__actions {gap:9px;}
+ .cc-opening-page .cc-live-courtyard__content > .dz-record .dz-btn {flex:1 1 135px;font-size:12px;}
+}
