@@ -47,7 +47,7 @@ def simulate(o, h, l, c, plans, cost, start=0, end=None, risk=0.01, lev=5.0):
     entry = qty = sl = tp = efee = risk_usd = 0.0
     ent_i = 0
     hold = exit_at = None
-    sl_set = tp_set = False
+    ent_lev = ent_slp = 0.0
     pend = None
     trades = []
     curve = np.empty(end - start)
@@ -57,7 +57,7 @@ def simulate(o, h, l, c, plans, cost, start=0, end=None, risk=0.01, lev=5.0):
         fees = efee + qty * ex * rate
         pnl = pos * (ex - entry) * qty - fees
         eq += pnl
-        trades.append((i, pos, pnl, pnl / risk_usd if risk_usd else 0.0, fees / risk_usd if risk_usd else 0.0, kind))
+        trades.append((i, pos, pnl, pnl / risk_usd if risk_usd else 0.0, fees / risk_usd if risk_usd else 0.0, kind, ent_lev, ent_slp))
         pos, qty = 0, 0.0
 
     for i in range(start, end):
@@ -109,6 +109,7 @@ def simulate(o, h, l, c, plans, cost, start=0, end=None, risk=0.01, lev=5.0):
                             risk_usd = eq * 0.01          # условный "R" = 1% капитала для временных стратегий
                         q = min(q, eq * lev / px_in)
                         pos, entry, qty = side, px_in, q
+                        ent_lev, ent_slp = q * px_in / eq, (dist / px_in if dist is not None else 0.0)
                         sl, tp = od.sl, od.tp
                         efee = qty * entry * rate
                         ent_i, hold, exit_at = i, pend.hold, pend.exit_at
