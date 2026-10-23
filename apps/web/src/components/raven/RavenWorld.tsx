@@ -134,7 +134,7 @@ function World({ phase, reduced, backgroundOnly = false }: { phase: Phase; reduc
     <directionalLight position={[3, -3, 6]} intensity={.65} color="#ffc486" />
     <pointLight position={[-0.8, 0.5, 4.2]} intensity={7} distance={7} decay={2} color="#ffbd7a" />
     <directionalLight position={[2, 4, -7]} intensity={.9} color="#fff0d8" />
-    <Environment resolution={512} environmentIntensity={.32}>
+    {!backgroundOnly && <Environment resolution={512} environmentIntensity={.32}>
       {/* sky dome: blue zenith, pale warm horizon, bright sun disc in the sun's direction */}
       <mesh scale={80}>
         <sphereGeometry args={[1, 48, 24]} />
@@ -146,7 +146,7 @@ function World({ phase, reduced, backgroundOnly = false }: { phase: Phase; reduc
       </mesh>
       <Lightformer form="rect" intensity={2.6} color="#fff0dc" position={[-4, 6, 5]} scale={[8, 5, 1]} />
       <Lightformer form="rect" intensity={1.2} color="#ffd9b0" position={[6, 3, -2]} scale={[6, 4, 1]} rotation-y={-Math.PI / 2} />
-    </Environment>
+    </Environment>}
     <Backdrop />
     <group visible={!NO_CASE && !backgroundOnly}>
       <group ref={chest} visible={false}>
@@ -177,14 +177,14 @@ function ReadySignal({ onReady }: { onReady?: () => void }) {
 export default function RavenWorld({ phase, reduced, onLost, manual, onReady, backgroundOnly = false }: { phase: Phase; reduced: boolean; onLost: () => void; manual?: (api: RavenManualApi) => void; onReady?: () => void; backgroundOnly?: boolean }) {
   // The scene is composed for a wide frame (about 2.2 : 1) and fills the whole stage; the stage keeps its own height.
   return <div className="raven-world" style={{ position: 'relative', width: '100%', height: '100%' }}>
-    <Canvas shadows={{ type: VSMShadowMap }} dpr={manual ? (import.meta.env.DEV ? Number(new URLSearchParams(location.search).get('dpr')) || 1 : 1) : [1, 1.75]} frameloop={manual ? 'never' : 'always'} camera={{ position: [SHOT.x, SHOT.y, SHOT.z], fov: SHOT.vfov }}
-      gl={{ antialias: true, powerPreference: 'high-performance', toneMapping: ACESFilmicToneMapping, toneMappingExposure: 0.9 }}
+    <Canvas shadows={backgroundOnly ? false : { type: VSMShadowMap }} dpr={backgroundOnly ? 1 : manual ? (import.meta.env.DEV ? Number(new URLSearchParams(location.search).get('dpr')) || 1 : 1) : [1, 1.75]} frameloop={manual ? 'never' : backgroundOnly ? 'demand' : 'always'} camera={{ position: [SHOT.x, SHOT.y, SHOT.z], fov: SHOT.vfov }}
+      gl={{ antialias: !backgroundOnly, powerPreference: backgroundOnly ? 'low-power' : 'high-performance', toneMapping: ACESFilmicToneMapping, toneMappingExposure: 0.9 }}
       onCreated={({ gl, advance }) => {
         gl.domElement.addEventListener('webglcontextlost', onLost, { once: true });
         manual?.({ advance: (t: number) => advance(t), canvas: gl.domElement });
       }}>
       <ReadySignal onReady={onReady} />
-      {!NO_DOF && <Post />}
+      {!backgroundOnly && !NO_DOF && <Post />}
       {ORBIT ? <OrbitControls target={[0.3, 1.0, 0]} makeDefault /> : <CameraRig phase={phase} reduced={reduced} />}<World phase={phase} reduced={reduced} backgroundOnly={backgroundOnly} />
     </Canvas>
   </div>;
