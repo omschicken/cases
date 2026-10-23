@@ -262,3 +262,15 @@
  .cc-opening-page .cc-live-courtyard__content > .dz-record .dz-record__actions {gap:9px;}
  .cc-opening-page .cc-live-courtyard__content > .dz-record .dz-btn {flex:1 1 135px;font-size:12px;}
 }
+
+/* The approved backdrop is a pre-rendered image served from Vercel/CDN.
+   It paints immediately, with no WebGL/GPU startup on mobile. */
+.cc-opening-page .cc-live-courtyard,
+.cc-raven-page .cc-live-courtyard {
+  background: #e9d8bd url("/scene-ref/background.webp") center center / cover no-repeat !important;
+}
+.cc-opening-page .cc-live-courtyard__world {opacity:0;transition:opacity .38s ease-out;}
+.cc-opening-page .cc-live-courtyard__world.is-ready {opacity:1;}
+@media(max-width:767px) {
+  .cc-opening-page .cc-live-courtyard__world {display:none;}
+}
