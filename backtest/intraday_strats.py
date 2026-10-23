@@ -195,6 +195,36 @@ def tod_momentum(x: Ctx, sig_start, sig_end, trade_start, trade_end):
     return plans
 
 
+def vol_breakout(x: Ctx, k=0.5, use_sl=True, long_only=False):
+    """Волатильный пробой Ларри Вильямса: вход при выходе цены за open дня +/- k * диапазон вчерашнего дня, выход на открытии следующего."""
+    plans = {}
+    day = x.bpd
+    for i0 in np.flatnonzero(x.mod == 0):
+        if i0 < day or i0 + day > x.n or not x.contiguous(i0 - day, i0 + day - 1):
+            continue
+        base = x.c[i0 - 1]
+        rng = x.h[i0 - day:i0].max() - x.l[i0 - day:i0].min()
+        orders = [Order(1, "s", base + k * rng, base if use_sl else None, None)]
+        if not long_only:
+            orders.append(Order(-1, "s", base - k * rng, base if use_sl else None, None))
+        plans[i0 - 1] = Plan(orders, valid_until=i0 + day - 1, exit_at=i0 + day)
+    return plans
+
+
+def pd_breakout(x: Ctx):
+    """Пробой вчерашнего максимума/минимума; SL = середина вчерашнего диапазона; выход на открытии следующего дня."""
+    plans = {}
+    day = x.bpd
+    for i0 in np.flatnonzero(x.mod == 0):
+        if i0 < day or i0 + day > x.n or not x.contiguous(i0 - day, i0 + day - 1):
+            continue
+        hi, lo = x.h[i0 - day:i0].max(), x.l[i0 - day:i0].min()
+        mid = (hi + lo) / 2
+        plans[i0 - 1] = Plan([Order(1, "s", hi, mid, None), Order(-1, "s", lo, mid, None)],
+                             valid_until=i0 + day - 1, exit_at=i0 + day)
+    return plans
+
+
 # (имя, ТФ минут, построитель)
 def catalog():
     items = []
@@ -215,5 +245,10 @@ def catalog():
         ("Лонг 21:00-23:00 UTC", 5, lambda x: hour_long(x, 21, 23)),
         ("Импульс 13:30-14:00 -> 20:30-21:00", 5, lambda x: tod_momentum(x, 810, 840, 1230, 1260)),
         ("Импульс 00:00-04:00 -> 04:00-08:00", 5, lambda x: tod_momentum(x, 0, 240, 240, 480)),
+        ("Vol-пробой Вильямса k0.5 (SL=open)", 5, lambda x: vol_breakout(x, 0.5, True)),
+        ("Vol-пробой Вильямса k0.5 (без SL)", 5, lambda x: vol_breakout(x, 0.5, False)),
+        ("Vol-пробой Вильямса k1.0 (SL=open)", 5, lambda x: vol_breakout(x, 1.0, True)),
+        ("Vol-пробой Вильямса k0.5 лонг (SL=open)", 5, lambda x: vol_breakout(x, 0.5, True, True)),
+        ("Пробой вчерашнего H/L (SL=середина)", 5, pd_breakout),
     ]
     return items

@@ -32,7 +32,7 @@ def fetch(sym, iv, days):
         t = d[-1][0] + 1
         if len(d) < 1000:
             break
-    df = pd.DataFrame(rows, columns="t o h l c v ct qv n tb tq i".split())[["t", "o", "h", "l", "c", "v"]].astype(float)
+    df = pd.DataFrame(rows, columns="t o h l c v ct qv n tb tq i".split())[["t", "o", "h", "l", "c", "v", "n", "tb"]].astype(float)
     df["t"] = df["t"].astype("int64")
     return df.drop_duplicates("t").reset_index(drop=True)
 

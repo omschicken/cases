@@ -136,8 +136,9 @@ def simulate(o, h, l, c, plans, cost, start=0, end=None, risk=0.01, lev=5.0):
         if d > mdd:
             mdd = d
         curve[i - start] = mtm
-        if pos == 0 and pend is None and i in plans and i + 1 < end:
-            pend = plans[i]
+        exits_next = pos != 0 and ((exit_at is not None and i + 1 >= exit_at) or (hold is not None and i + 1 - ent_i >= hold))
+        if (pos == 0 or exits_next) and pend is None and i in plans and i + 1 < end:
+            pend = plans[i]                       # позиция, закрывающаяся по времени на следующем open, не блокирует новый план
     return trades, curve, mdd * 100
 
 
