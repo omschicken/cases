@@ -274,3 +274,15 @@
 @media(max-width:767px) {
   .cc-opening-page .cc-live-courtyard__world {display:none;}
 }
+
+/* Slow reel during server confirmation, with no overlay and no invented winner. */
+.cc-opening-page .cc-pending-reel {position:relative;z-index:3;width:100%;overflow:hidden;}
+.cc-opening-page .cc-pending-reel__track {
+  width:max-content !important;
+  gap:12px;
+  animation:cc-pending-roll 38s linear infinite;
+  will-change:transform;
+}
+.cc-opening-page .cc-pending-reel .dz-reel__card {flex:0 0 var(--reel-card);box-sizing:border-box;}
+@keyframes cc-pending-roll {from {transform:translate3d(0,0,0)} to {transform:translate3d(-50%,0,0)}}
+@media(prefers-reduced-motion:reduce){.cc-opening-page .cc-pending-reel__track{animation-duration:80s}}
