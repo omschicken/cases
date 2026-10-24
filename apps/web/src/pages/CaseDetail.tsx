@@ -309,8 +309,10 @@ export function CaseDetailPage() {
                   <button type="button" className="dz-btn" onClick={dismissResult}>Открыть ещё</button>
                 </>
               ) : (
-                <Link to="/login" className="dz-btn">{t("caseDetail.logIn")}</Link>
-                <button type="button" className="dz-btn" onClick={dismissResult}>Закрыть результат</button>
+                <>
+                  <Link to="/login" className="dz-btn">{t("caseDetail.logIn")}</Link>
+                  <button type="button" className="dz-btn" onClick={dismissResult}>Закрыть результат</button>
+                </>
               )}
             </div>
 
