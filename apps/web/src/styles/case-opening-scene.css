@@ -286,3 +286,15 @@
 .cc-opening-page .cc-pending-reel .dz-reel__card {flex:0 0 var(--reel-card);box-sizing:border-box;}
 @keyframes cc-pending-roll {from {transform:translate3d(0,0,0)} to {transform:translate3d(-50%,0,0)}}
 @media(prefers-reduced-motion:reduce){.cc-opening-page .cc-pending-reel__track{animation-duration:80s}}
+
+/* Remove the near-black rectangular background baked into some remote CS2
+   item images, without changing the underlying item/image assets. */
+.cc-opening-page .cc-live-courtyard__content > .dz-record .dz-record__art:not(.dze-item-fallback) {
+  background:transparent !important;
+  mix-blend-mode:screen;
+  object-fit:contain;
+  filter:drop-shadow(0 14px 22px rgba(0,0,0,.22));
+}
+.cc-opening-page .cc-live-courtyard__content > .dz-record {
+  isolation:isolate;
+}
