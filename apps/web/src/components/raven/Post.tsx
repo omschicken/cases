@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { HalfFloatType, ShaderMaterial, Vector2, WebGLRenderTarget } from 'three';
+import type { Object3D } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
@@ -50,7 +51,11 @@ export function Post() {
     // the normal / depth prepass draws every object with an override material, which turns soft sprites (dust) into solid quads:
     // hide anything named 'dust' while it runs (it is already in the colour image)
     const render = (ao as Pass).render.bind(ao);
-    ao.render = (...args: Parameters<Pass['render']>) => { const d = scene.getObjectByName('dust'); const v = d?.visible; if (d) d.visible = false; render(...args); if (d && v !== undefined) d.visible = v; };
+    // the foliage is left out of it too: AO computed from pixel-sized depth samples makes the thin leaf and trunk silhouettes blocky (the colour pass is multisampled, the AO is not)
+    ao.render = (...args: Parameters<Pass['render']>) => {
+      const hidden: { o: Object3D; v: boolean }[] = []; scene.traverse(o => { if (o.name === 'dust' || o.name === 'foliage') hidden.push({ o, v: o.visible }); });
+      hidden.forEach(h => { h.o.visible = false; }); render(...args); hidden.forEach(h => { h.o.visible = h.v; });
+    };
     composer.addPass(new UnrealBloomPass(new Vector2(size.width, size.height), 0.16, 0.6, 1.1));
     composer.addPass(new OutputPass());
     const grade = new ShaderPass(new ShaderMaterial(GRADE));
