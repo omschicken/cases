@@ -17,7 +17,8 @@
     "prisma:reprice-cases": "tsx prisma/reprice-cases.ts",
     "seed:cases": "tsx scripts/seed-cases.ts",
     "seed:cases:db": "tsx prisma/seed-cases.ts",
-    "fix:images": "tsx prisma/fix-item-images.ts"
+    "fix:images": "tsx prisma/fix-item-images.ts",
+    "prisma:sync-csmoney": "tsx prisma/sync-csmoney.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
