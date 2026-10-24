@@ -11,6 +11,27 @@ import { EditorialItemImage } from "./editorial/EditorialItemImage";
 
 const CourtyardWorld = lazy(() => import("./raven/RavenWorld"));
 
+/** Slow visual reel while the server determines the result; never chooses a winner. */
+function PendingReel({ items }: { items: CaseItem[] }) {
+  const visible = items.slice(0, 18);
+  if (!visible.length) return null;
+  const loop = [...visible, ...visible];
+  return <div className="dz-reel cc-pending-reel" role="status" aria-label="Открываем кейс, ожидаем результат сервера">
+    <div className="dz-reel__window">
+      <div className="dz-reel__track cc-pending-reel__track">
+        {loop.map((item, index) => {
+          const [weapon, finish] = item.name.replace(/ \\([^)]*\\)$/, "").split(" | ");
+          return <div key={index} className="dz-reel__card">
+            <EditorialItemImage name={item.name} imageUrl={item.imageUrl} decorative loading={index < 8 ? "eager" : "lazy"} />
+            <small>{weapon}</small><strong>{finish || weapon}</strong>
+          </div>;
+        })}
+      </div>
+    </div>
+    <span className="dz-reel__focus" /><span className="dz-reel__marker" />
+  </div>;
+}
+
 interface Props {
   theCase: CaseDto;
   winner: CaseItem | null;
@@ -75,7 +96,7 @@ export function CaseOpeningScene({ theCase, winner, winners = [], opening, actio
         ? (winners.length > 1
           ? <div className="cc-multi-reels" data-count={winners.length}>{winners.map((item, index) => <div className="cc-multi-reels__row" key={index}><span className="cc-multi-reels__number">{index + 1} / {winners.length}</span><CaseReel items={theCase.items} winner={item} onComplete={() => reelCompleted(index, winners.length)} onTick={tick} /></div>)}</div>
           : <CaseReel key="spin" items={theCase.items} winner={winner} onComplete={onComplete} onTick={tick} />)
-        : <div className="cc-opening-wait" role="status"><span /><h2>Подтверждаем открытие</h2><p>Ожидаем ответ сервера. Повторное нажатие не требуется.</p><button type="button" onClick={onSkip}>Показать результат без анимации</button></div>))}
+        : <PendingReel items={theCase.items} />))}
       
       {!opening && !resultView && <div className={"cc-opening-commit" + (isRaven ? " cc-raven-scene-controls" : "")}>{actions}</div>}
       </div>
